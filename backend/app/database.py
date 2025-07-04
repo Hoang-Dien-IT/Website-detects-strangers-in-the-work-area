@@ -1,9 +1,9 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.errors import ConnectionFailure
-from .config import get_settings  # Sửa: import get_settings thay vì settings
+from .config import get_settings
 import asyncio
 
-settings = get_settings()  # Sửa: gọi function để lấy settings
+settings = get_settings()
 
 class DatabaseManager:
     client: AsyncIOMotorClient = None
@@ -42,12 +42,22 @@ async def close_mongo_connection():
 def get_database():
     """Get database instance"""
     if db_manager.database is None:
-        raise RuntimeError("Database not connected. Call connect_to_mongo() first.")
+        raise Exception("Database not connected. Call connect_to_mongo() first.")
     return db_manager.database
+
+# ✅ ADD: get_db function for FastAPI dependency injection (SQLAlchemy style)
+def get_db():
+    """
+    Dependency function for FastAPI - returns database instance
+    This mimics SQLAlchemy's session pattern but for MongoDB
+    """
+    return get_database()
 
 # Event handlers for FastAPI
 async def startup_db_client():
+    """Startup event handler for database"""
     await connect_to_mongo()
 
 async def shutdown_db_client():
+    """Shutdown event handler for database"""
     await close_mongo_connection()

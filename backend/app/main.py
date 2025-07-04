@@ -1,80 +1,210 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from .routers import auth, camera, person, admin, detection, stream, websocket
-from .routers import settings as settings_router  # Sửa: đổi tên để tránh xung đột
-from .config import get_settings
+from fastapi.responses import JSONResponse
+from .routers import auth, camera, person, admin, detection, stream, websocket, settings
 from .database import startup_db_client, shutdown_db_client
+import logging
 import os
-from contextlib import asynccontextmanager
+import time
 
-# Sử dụng lifespan thay vì on_event (fix deprecation warning)
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Startup
-    await startup_db_client()
-    yield
-    # Shutdown
-    await shutdown_db_client()
-
-settings = get_settings()
+# ✅ Setup enhanced logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 app = FastAPI(
-    title="Face Recognition SaaS API",
-    description="API for Face Recognition as a Service Platform",
+    title="SafeFace API",
+    description="AI-powered face recognition security system",
     version="1.0.0",
     docs_url="/docs",
-    redoc_url="/redoc",
-    lifespan=lifespan  # Sử dụng lifespan thay vì on_event
+    redoc_url="/redoc"
 )
 
-# CORS
+# ✅ Enhanced CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.get_cors_origins_list(),
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:3001",
+        "http://127.0.0.1:3001"
+    ],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"],
     allow_headers=["*"],
+    expose_headers=["*"],
+    max_age=3600
 )
 
-# Create upload directories
-os.makedirs("uploads", exist_ok=True)
-os.makedirs("uploads/faces", exist_ok=True)
-os.makedirs("uploads/detections", exist_ok=True)
+# ✅ Enhanced request logging middleware
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start_time = time.time()
+    
+    # Log request với details
+    client_ip = request.client.host if request.client else 'unknown'
+    logger.info(f"🔵 {request.method} {request.url.path} - Client: {client_ip}")
+    
+    # Log auth header for debugging (chỉ first 20 chars cho security)
+    auth_header = request.headers.get("authorization")
+    if auth_header:
+        logger.info(f"🔵 Auth header present: {auth_header[:20]}...")
+    else:
+        logger.info(f"🔵 No auth header")
+    
+    # Log query parameters
+    if request.url.query:
+        logger.info(f"🔵 Query params: {request.url.query}")
+    
+    # Process request
+    try:
+        response = await call_next(request)
+        
+        # Log response
+        process_time = time.time() - start_time
+        status_emoji = "✅" if response.status_code < 400 else "❌"
+        logger.info(f"{status_emoji} {request.method} {request.url.path} - {response.status_code} ({process_time:.3f}s)")
+        
+        return response
+    except Exception as e:
+        process_time = time.time() - start_time
+        logger.error(f"❌ {request.method} {request.url.path} - ERROR: {str(e)} ({process_time:.3f}s)")
+        raise
 
-# Static files
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+# Database events
+@app.on_event("startup")
+async def startup_event():
+    """Khởi tạo kết nối database khi start app"""
+    try:
+        await startup_db_client()
+        logger.info("✅ Database connected successfully")
+    except Exception as e:
+        logger.error(f"❌ Database connection failed: {e}")
+        raise
 
-# Include routers with proper prefixes
-app.include_router(auth.router, prefix="/api", tags=["Authentication"])
-app.include_router(camera.router, prefix="/api", tags=["Cameras"])
-app.include_router(person.router, prefix="/api", tags=["Known Persons"])
-app.include_router(detection.router, prefix="/api", tags=["Detections"])
-app.include_router(admin.router, prefix="/api", tags=["Admin"])
-app.include_router(settings_router.router, prefix="/api", tags=["Settings"])  # Sửa: sử dụng settings_router
-app.include_router(stream.router, prefix="/api", tags=["Streaming"])
-app.include_router(websocket.router, prefix="/api") 
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Đóng kết nối database khi shutdown app"""
+    try:
+        await shutdown_db_client()
+        logger.info("✅ Database disconnected successfully")
+    except Exception as e:
+        logger.error(f"❌ Database disconnection failed: {e}")
 
+# ✅ Include routers với prefix /api
+try:
+    # Auth router - MUST BE FIRST
+    app.include_router(auth.router, prefix="/api")
+    logger.info("✅ Auth router included")
+    
+    # Specific routers with detailed endpoints
+    app.include_router(detection.router, prefix="/api")
+    logger.info("✅ Detection router included")
+    
+    app.include_router(camera.router, prefix="/api")
+    logger.info("✅ Camera router included")
+    
+    app.include_router(person.router, prefix="/api")
+    logger.info("✅ Person router included")
+    
+    app.include_router(settings.router, prefix="/api")
+    logger.info("✅ Settings router included")
+    
+    # Stream và WebSocket
+    app.include_router(stream.router, prefix="/api")
+    logger.info("✅ Stream router included")
+    
+    app.include_router(websocket.router, prefix="/api")
+    logger.info("✅ WebSocket router included")
+    
+    # Admin router - LAST
+    app.include_router(admin.router, prefix="/api")
+    logger.info("✅ Admin router included")
+    
+    logger.info("✅ All routers included successfully")
+except Exception as e:
+    logger.error(f"❌ Error including routers: {e}")
+    raise
+
+# Serve static files
+uploads_dir = "uploads"
+if not os.path.exists(uploads_dir):
+    os.makedirs(uploads_dir)
+    logger.info(f"✅ Created uploads directory: {uploads_dir}")
+    
+app.mount("/uploads", StaticFiles(directory=uploads_dir), name="uploads")
+
+# Root endpoint
 @app.get("/")
 async def root():
     return {
-        "message": "Face Recognition SaaS API",
+        "message": "SafeFace API Server",
         "version": "1.0.0",
+        "status": "running",
         "docs": "/docs",
-        "redoc": "/redoc"
+        "health": "/health"
     }
 
+# Health check endpoint
 @app.get("/health")
 async def health_check():
     return {
         "status": "healthy",
-        "services": {
-            "database": "ready",
-            "face_processor": "ready",
-            "notification": "configured" if settings.smtp_username else "not_configured"
-        }
+        "timestamp": time.time(),
+        "uptime": f"{time.time() - start_time:.2f} seconds" if 'start_time' in globals() else "unknown"
     }
+
+# Debug endpoint
+@app.get("/debug/headers")
+async def debug_headers(request: Request):
+    """Debug endpoint để check request headers"""
+    return {
+        "headers": dict(request.headers),
+        "method": request.method,
+        "url": str(request.url),
+        "client": request.client.host if request.client else None,
+        "query_params": dict(request.query_params)
+    }
+
+# ✅ Fixed exception handlers
+@app.exception_handler(404)
+async def not_found_handler(request: Request, exc: HTTPException):
+    logger.warning(f"🔍 404 Not Found: {request.method} {request.url.path}")
+    return JSONResponse(
+        status_code=404,
+        content={"detail": "Endpoint not found", "path": request.url.path}
+    )
+
+@app.exception_handler(500)
+async def internal_error_handler(request: Request, exc: Exception):
+    logger.error(f"💥 500 Internal Error: {request.method} {request.url.path} - {str(exc)}")
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal server error", "path": request.url.path}
+    )
+
+@app.exception_handler(Exception)
+async def general_exception_handler(request: Request, exc: Exception):
+    logger.error(f"💥 Unhandled Exception: {request.method} {request.url.path} - {str(exc)}")
+    return JSONResponse(
+        status_code=500,
+        content={"detail": f"Internal server error: {str(exc)}", "path": request.url.path}
+    )
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    
+    # Record start time for uptime calculation
+    start_time = time.time()
+    
+    logger.info("🚀 Starting SafeFace API Server...")
+    uvicorn.run(
+        "app.main:app", 
+        host="0.0.0.0", 
+        port=8000, 
+        reload=True,
+        log_level="info"
+    )

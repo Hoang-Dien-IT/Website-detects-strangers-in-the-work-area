@@ -3,17 +3,48 @@ import numpy as np
 import insightface
 from insightface.app import FaceAnalysis
 import faiss
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Dict
 import asyncio
 import concurrent.futures
 import gc
 import torch
+import time
+from collections import defaultdict
+
+class DetectionTracker:
+    """Track detections to avoid duplicate alerts"""
+    def __init__(self, cooldown_seconds: int = 30):
+        self.last_detections: Dict[str, Dict[str, float]] = defaultdict(dict)
+        self.cooldown_seconds = cooldown_seconds
+    
+    def should_alert(self, camera_id: str, person_id: str = None, detection_type: str = "unknown") -> bool:
+        """Check if we should send alert for this detection"""
+        key = person_id if person_id else f"unknown_{detection_type}"
+        current_time = time.time()
+        
+        last_time = self.last_detections[camera_id].get(key, 0)
+        
+        if current_time - last_time > self.cooldown_seconds:
+            self.last_detections[camera_id][key] = current_time
+            return True
+        
+        return False
+    
+    def cleanup_old_detections(self):
+        """Remove old detection records"""
+        current_time = time.time()
+        for camera_id in list(self.last_detections.keys()):
+            for key in list(self.last_detections[camera_id].keys()):
+                if current_time - self.last_detections[camera_id][key] > self.cooldown_seconds * 2:
+                    del self.last_detections[camera_id][key]
 
 class FaceProcessorService:
     def __init__(self):
         self.face_app = FaceAnalysis(providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
-        self.face_app.prepare(  ctx_id=0, det_size=(640, 640))
+        self.face_app.prepare(ctx_id=0, det_size=(640, 640))
         self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=2)
+        self.detection_tracker = DetectionTracker(cooldown_seconds=30)
+        self.tracker = DetectionTracker()
 
     def cleanup(self):
         """Giải phóng tài nguyên"""
@@ -117,3 +148,5 @@ class FaceProcessorService:
 
 # Global instance
 face_processor = FaceProcessorService()
+import atexit
+atexit.register(face_processor.cleanup)

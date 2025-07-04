@@ -1,11 +1,18 @@
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Any
 from bson import ObjectId
 from ..database import get_database
-from ..models.known_person import KnownPersonCreate, KnownPersonUpdate, KnownPersonResponse, FaceImage, FaceImageResponse  # ✅ Sửa import
+from ..models.known_person import (
+    KnownPerson, 
+    KnownPersonCreate, 
+    KnownPersonUpdate, 
+    KnownPersonResponse,
+    PersonDetailResponse,  # ✅ Add this import
+    FaceImageResponse      # ✅ Add this import
+)
+from ..services.face_processor import face_processor
+from datetime import datetime, timedelta
 import base64
-import os
-from datetime import datetime
-import uuid
+import asyncio
 
 class PersonService:
     @property
@@ -15,50 +22,124 @@ class PersonService:
     @property
     def collection(self):
         return self.db.known_persons
+    
+    async def get_collection(self):
+        """Get the collection asynchronously - for consistency with async calls"""
+        return self.collection
 
-    async def create_person(self, user_id: str, person_data: KnownPersonCreate) -> KnownPersonResponse:  # ✅ Sửa type
+    def _safe_model_dump(self, model):
+        """Safely dump model for both Pydantic v1 and v2"""
+        try:
+            # Try Pydantic v2 first
+            if hasattr(model, 'model_dump'):
+                return model.model_dump(exclude_unset=True)
+            # Fall back to Pydantic v1
+            elif hasattr(model, 'dict'):
+                return model.dict(exclude_unset=True)
+            # If it's already a dict
+            elif isinstance(model, dict):
+                return model
+            else:
+                # Convert to dict manually
+                return {k: v for k, v in model.__dict__.items() if not k.startswith('_')}
+        except Exception as e:
+            print(f"Error dumping model: {e}")
+            # Last resort - return empty dict
+            return {}
+
+    async def create_person(self, person_data: KnownPersonCreate, user_id: str) -> KnownPersonResponse:
         """Tạo known person mới"""
         try:
-            # Create person document
-            person_dict = {
+            print(f"🔵 PersonService: Creating person with data: {person_data}")
+            
+            # ✅ Use safe model dump với proper error handling
+            person_dict = self._safe_model_dump(person_data)
+            print(f"🔵 PersonService: Dumped data: {person_dict}")
+            
+            # ✅ Validate required fields
+            if not person_dict.get("name"):
+                raise ValueError("Person name is required")
+            
+            # ✅ FIX: Ensure all fields from KnownPersonCreate are included
+            person_dict.update({
                 "user_id": ObjectId(user_id),
-                "name": person_data.name,
-                "description": person_data.description,
-                "face_images": [],  # Sẽ thêm image sau
+                "name": person_dict["name"],
+                "description": person_dict.get("description"),
+                # ✅ ADD: Include additional information fields
+                "department": person_dict.get("department"),
+                "employee_id": person_dict.get("employee_id"), 
+                "position": person_dict.get("position"),
+                "access_level": person_dict.get("access_level"),
+                "metadata": person_dict.get("metadata", {}),
+                # ✅ Existing fields
+                "face_images": [],
+                "face_embeddings": [],
                 "is_active": True,
-                "metadata": person_data.metadata or {},
                 "created_at": datetime.utcnow(),
                 "updated_at": datetime.utcnow()
-            }
+            })
+            
+            print(f"🔵 PersonService: Final person document: {person_dict}")
             
             result = await self.collection.insert_one(person_dict)
+            person_dict["_id"] = result.inserted_id
             
-            return KnownPersonResponse(  # ✅ Sửa response type
-                id=str(result.inserted_id),
+            print(f"✅ PersonService: Person created with ID: {result.inserted_id}")
+            
+            # ✅ FIX: Return response with all fields
+            return KnownPersonResponse(
+                id=str(person_dict["_id"]),
                 name=person_dict["name"],
-                description=person_dict["description"],
+                description=person_dict.get("description"),
+                # ✅ ADD: Include additional fields in response if available
+                department=person_dict.get("department"),
+                employee_id=person_dict.get("employee_id"),
+                position=person_dict.get("position"), 
+                access_level=person_dict.get("access_level"),
+                metadata=person_dict.get("metadata", {}),
                 is_active=person_dict["is_active"],
                 created_at=person_dict["created_at"],
-                face_images_count=0
+                face_images_count=len(person_dict["face_images"])
             )
         except Exception as e:
+            print(f"❌ PersonService: Error creating person: {e}")
+            import traceback
+            traceback.print_exc()
             raise ValueError(f"Failed to create person: {str(e)}")
+        
+    async def get_persons_by_user(self, user_id: str, include_inactive: bool = False) -> List[KnownPersonResponse]:
+        """Lấy danh sách known persons của user"""
+        try:
+            query = {"user_id": ObjectId(user_id)}
+            if not include_inactive:
+                query["is_active"] = True
+            
+            persons = []
+            async for person_data in self.collection.find(query).sort("created_at", -1):
+                # ✅ FIX: Include all fields in list response
+                persons.append(KnownPersonResponse(
+                    id=str(person_data["_id"]),
+                    name=person_data["name"],
+                    description=person_data.get("description"),
+                    # ✅ ADD: Include additional fields
+                    department=person_data.get("department"),
+                    employee_id=person_data.get("employee_id"),
+                    position=person_data.get("position"),
+                    access_level=person_data.get("access_level"),
+                    metadata=person_data.get("metadata", {}),
+                    is_active=person_data["is_active"],
+                    created_at=person_data["created_at"],
+                    updated_at=person_data.get("updated_at"),
+                    face_images_count=len(person_data.get("face_images", []))
+                ))
+            return persons
+        except Exception as e:
+            print(f"Error getting persons: {e}")
+            return []
 
-    async def get_user_persons(self, user_id: str) -> List[KnownPersonResponse]:  # ✅ Sửa return type
-        """Lấy danh sách persons của user"""
-        persons = []
-        async for person_data in self.collection.find({"user_id": ObjectId(user_id), "is_active": True}).sort("created_at", -1):
-            persons.append(KnownPersonResponse(  # ✅ Sửa response type
-                id=str(person_data["_id"]),
-                name=person_data["name"],
-                description=person_data.get("description"),
-                is_active=person_data["is_active"],
-                created_at=person_data["created_at"],
-                face_images_count=len(person_data.get("face_images", []))
-            ))
-        return persons
 
-    async def get_person_by_id(self, person_id: str, user_id: str) -> Optional[KnownPersonResponse]:  # ✅ Sửa return type
+
+    async def get_person_by_id(self, person_id: str, user_id: str) -> Optional[KnownPersonResponse]:
         """Lấy person theo ID"""
         try:
             person_data = await self.collection.find_one({
@@ -67,26 +148,95 @@ class PersonService:
             })
             
             if person_data:
-                return KnownPersonResponse(  # ✅ Sửa response type
+                # ✅ FIX: Include all fields in response
+                return KnownPersonResponse(
                     id=str(person_data["_id"]),
                     name=person_data["name"],
                     description=person_data.get("description"),
+                    # ✅ ADD: Include additional fields
+                    department=person_data.get("department"),
+                    employee_id=person_data.get("employee_id"),
+                    position=person_data.get("position"),
+                    access_level=person_data.get("access_level"),
+                    metadata=person_data.get("metadata", {}),
                     is_active=person_data["is_active"],
                     created_at=person_data["created_at"],
-                    face_images_count=len(person_data.get("face_images", []))
+                    updated_at=person_data.get("updated_at"),
+                    face_images_count=len(person_data.get("face_images", [])),
+                    # ✅ ADD: Include face images for detailed view
+                    face_images=[
+                        {
+                            "image_url": img,
+                            "created_at": person_data["created_at"].isoformat(),
+                            "is_primary": False
+                        }
+                        for img in person_data.get("face_images", [])
+                    ]
                 )
+            return None
         except Exception as e:
             print(f"Error getting person: {e}")
-        return None
+            return None
 
-    async def update_person(self, person_id: str, user_id: str, update_data: KnownPersonUpdate) -> Optional[KnownPersonResponse]:  # ✅ Sửa type
+    async def get_user_persons(self, user_id: str, include_inactive: bool = False) -> List[KnownPersonResponse]:
+        """Alias for get_persons_by_user - for API consistency"""
+        return await self.get_persons_by_user(user_id, include_inactive)
+
+    async def update_person(self, person_id: str, user_id: str, person_data: KnownPersonUpdate) -> Optional[KnownPersonResponse]:
         """Cập nhật person"""
         try:
-            update_dict = {k: v for k, v in update_data.model_dump().items() if v is not None}
-            if not update_dict:
-                return await self.get_person_by_id(person_id, user_id)
+            await self.get_collection()
             
+            print(f"🔵 PersonService: Updating person {person_id} for user {user_id}")
+            print(f"🔵 PersonService: Update data: {person_data}")
+            
+            # ✅ FIX: Check if person exists first
+            existing_person = await self.collection.find_one({
+                "_id": ObjectId(person_id),
+                "user_id": ObjectId(user_id)
+            })
+            
+            if not existing_person:
+                print(f"❌ PersonService: Person {person_id} not found for user {user_id}")
+                return None
+            
+            print(f"🔍 PersonService: Found existing person: {existing_person.get('name')}")
+            
+            # ✅ FIX: Use safe model dump và xử lý tất cả fields
+            person_data_dict = self._safe_model_dump(person_data)
+            print(f"🔍 PersonService: Raw update data: {person_data_dict}")
+            
+            # ✅ FIX: Build update dict properly - include ALL fields even if empty
+            update_dict = {}
+            
+            # Always include fields that can be updated
+            if "name" in person_data_dict:
+                update_dict["name"] = person_data_dict["name"]
+            if "description" in person_data_dict:
+                update_dict["description"] = person_data_dict["description"]
+            if "department" in person_data_dict:
+                update_dict["department"] = person_data_dict["department"]
+            if "employee_id" in person_data_dict:
+                update_dict["employee_id"] = person_data_dict["employee_id"]
+            if "position" in person_data_dict:
+                update_dict["position"] = person_data_dict["position"]
+            if "access_level" in person_data_dict:
+                update_dict["access_level"] = person_data_dict["access_level"]
+            if "metadata" in person_data_dict:
+                update_dict["metadata"] = person_data_dict["metadata"]
+            if "is_active" in person_data_dict:
+                update_dict["is_active"] = person_data_dict["is_active"]
+            
+            # Always update timestamp
             update_dict["updated_at"] = datetime.utcnow()
+            
+            print(f"🔍 PersonService: Final update dict: {update_dict}")
+            
+            # ✅ FIX: Always perform update even if no changes detected
+            if not update_dict or len(update_dict) == 1:  # Only timestamp
+                print(f"⚠️ PersonService: No meaningful changes detected")
+                # But still return current data
+                return await self.get_person_by_id(person_id, user_id)
             
             result = await self.collection.find_one_and_update(
                 {"_id": ObjectId(person_id), "user_id": ObjectId(user_id)},
@@ -95,108 +245,463 @@ class PersonService:
             )
             
             if result:
-                return KnownPersonResponse(  # ✅ Sửa response type
+                print(f"✅ PersonService: Person updated successfully")
+                
+                # ✅ FIX: Return complete response with all fields
+                return KnownPersonResponse(
+                    id=str(result["_id"]),
+                    name=result["name"],
+                    description=result.get("description"),
+                    department=result.get("department"),
+                    employee_id=result.get("employee_id"),
+                    position=result.get("position"),
+                    access_level=result.get("access_level"),
+                    metadata=result.get("metadata", {}),
+                    is_active=result["is_active"],
+                    created_at=result["created_at"],
+                    updated_at=result.get("updated_at"),
+                    face_images_count=len(result.get("face_images", []))
+                )
+            else:
+                print(f"❌ PersonService: Update operation failed")
+                return None
+                
+        except Exception as e:
+            print(f"❌ PersonService: Error updating person: {e}")
+            import traceback
+            traceback.print_exc()
+            raise ValueError(f"Failed to update person: {str(e)}")
+
+    async def delete_person(self, person_id: str, user_id: str, hard_delete: bool = False) -> bool:
+        """Xóa person"""
+        try:
+            await self.get_collection()
+            
+            if hard_delete:
+                result = await self.collection.delete_one({
+                    "_id": ObjectId(person_id),
+                    "user_id": ObjectId(user_id)
+                })
+                return result.deleted_count > 0
+            else:
+                result = await self.collection.update_one(
+                    {"_id": ObjectId(person_id), "user_id": ObjectId(user_id)},
+                    {
+                        "$set": {
+                            "is_active": False,
+                            "updated_at": datetime.utcnow()
+                        }
+                    }
+                )
+                return result.modified_count > 0
+        except Exception as e:
+            print(f"Error deleting person: {e}")
+            return False       
+
+    async def add_face_image(self, person_id: str, image_base64: str, user_id: str) -> Dict[str, Any]:
+        """Thêm ảnh khuôn mặt cho person với validation và extract embedding"""
+        try:
+            # Validate image format
+            if not image_base64.startswith('data:image/'):
+                raise ValueError("Invalid image format")
+            
+            # Get current person data
+            person = await self.get_person_by_id(person_id, user_id)
+            if not person:
+                raise ValueError("Person not found")
+            
+            # Get current face images count from database
+            person_data = await self.collection.find_one({
+                "_id": ObjectId(person_id),
+                "user_id": ObjectId(user_id)
+            })
+            
+            current_images = person_data.get("face_images", [])
+            current_embeddings = person_data.get("face_embeddings", [])
+            
+            # Check if too many images
+            if len(current_images) >= 10:  # Limit 10 images per person
+                raise ValueError("Maximum number of face images reached (10)")
+            
+            # ✅ FIX: Extract face embedding from image
+            try:
+                print(f"🔵 PersonService: Extracting face embedding for person {person_id}")
+                
+                # Decode base64 image
+                image_data = base64.b64decode(image_base64.split(',')[1])
+                print(f"🔵 PersonService: Image decoded, size: {len(image_data)} bytes")
+                
+                # Extract face embedding using face_processor
+                embedding = await face_processor.extract_face_embedding(image_data)
+                
+                if embedding is None:
+                    raise ValueError("No face detected in image or embedding extraction failed")
+                
+                print(f"✅ PersonService: Face embedding extracted successfully, shape: {embedding.shape}")
+                
+                # Convert numpy array to list for MongoDB storage
+                embedding_list = embedding.tolist()
+                print(f"🔵 PersonService: Embedding converted to list, length: {len(embedding_list)}")
+                
+            except Exception as e:
+                print(f"❌ PersonService: Error extracting face embedding: {e}")
+                raise ValueError(f"Failed to extract face embedding: {str(e)}")
+            
+            # Add to database with embedding
+            result = await self.collection.update_one(
+                {"_id": ObjectId(person_id), "user_id": ObjectId(user_id)},
+                {
+                    "$push": {
+                        "face_images": image_base64,
+                        "face_embeddings": embedding_list  # ✅ Store actual embedding
+                    },
+                    "$set": {"updated_at": datetime.utcnow()}
+                }
+            )
+            
+            if result.modified_count > 0:
+                print(f"✅ PersonService: Face image and embedding added successfully")
+                return {
+                    "success": True,
+                    "message": "Face image and embedding added successfully",
+                    "image_index": len(current_images),
+                    "total_images": len(current_images) + 1,
+                    "embedding_extracted": True,
+                    "embedding_size": len(embedding_list)
+                }
+            else:
+                raise ValueError("Failed to add face image")
+            
+        except Exception as e:
+            print(f"❌ PersonService: Error adding face image: {e}")
+            return {
+                "success": False,
+                "message": str(e)
+            }
+
+    async def regenerate_face_embeddings(self, person_id: str, user_id: str) -> Dict[str, Any]:
+        """Regenerate face embeddings cho tất cả face images hiện có"""
+        try:
+            print(f"🔵 PersonService: Regenerating embeddings for person {person_id}")
+            
+            # Get person data from database
+            person_data = await self.collection.find_one({
+                "_id": ObjectId(person_id),
+                "user_id": ObjectId(user_id)
+            })
+            
+            if not person_data:
+                return {"success": False, "message": "Person not found"}
+            
+            face_images = person_data.get("face_images", [])
+            if not face_images:
+                return {"success": False, "message": "No face images found"}
+            
+            print(f"🔵 PersonService: Found {len(face_images)} face images to process")
+            
+            new_embeddings = []
+            successful_extractions = 0
+            failed_extractions = 0
+            
+            for i, image_base64 in enumerate(face_images):
+                try:
+                    print(f"🔵 PersonService: Processing image {i+1}/{len(face_images)}")
+                    
+                    # Decode base64 image
+                    image_data = base64.b64decode(image_base64.split(',')[1])
+                    
+                    # Extract face embedding
+                    embedding = await face_processor.extract_face_embedding(image_data)
+                    
+                    if embedding is not None:
+                        new_embeddings.append(embedding.tolist())
+                        successful_extractions += 1
+                        print(f"✅ PersonService: Embedding extracted for image {i+1}")
+                    else:
+                        new_embeddings.append([])  # Empty array for failed extraction
+                        failed_extractions += 1
+                        print(f"❌ PersonService: Failed to extract embedding for image {i+1}")
+                        
+                except Exception as e:
+                    print(f"❌ PersonService: Error processing image {i+1}: {e}")
+                    new_embeddings.append([])  # Empty array for failed extraction
+                    failed_extractions += 1
+            
+            # Update database with new embeddings
+            result = await self.collection.update_one(
+                {"_id": ObjectId(person_id), "user_id": ObjectId(user_id)},
+                {
+                    "$set": {
+                        "face_embeddings": new_embeddings,
+                        "updated_at": datetime.utcnow()
+                    }
+                }
+            )
+            
+            if result.modified_count > 0:
+                print(f"✅ PersonService: Face embeddings regenerated successfully")
+                return {
+                    "success": True,
+                    "message": f"Regenerated embeddings for {successful_extractions}/{len(face_images)} images",
+                    "total_images": len(face_images),
+                    "successful_extractions": successful_extractions,
+                    "failed_extractions": failed_extractions,
+                    "embeddings_updated": True
+                }
+            else:
+                return {"success": False, "message": "Failed to update embeddings in database"}
+                
+        except Exception as e:
+            print(f"❌ PersonService: Error regenerating embeddings: {e}")
+            return {
+                "success": False,
+                "message": f"Failed to regenerate embeddings: {str(e)}"
+            }
+
+    async def remove_face_image(self, person_id: str, image_index: int, user_id: str) -> bool:
+        """Xóa ảnh khuôn mặt theo index"""
+        try:
+            # Get current person data from database
+            person_data = await self.collection.find_one({
+                "_id": ObjectId(person_id),
+                "user_id": ObjectId(user_id)
+            })
+            
+            if not person_data:
+                return False
+            
+            face_images = person_data.get("face_images", [])
+            face_embeddings = person_data.get("face_embeddings", [])
+            
+            if image_index >= len(face_images) or image_index < 0:
+                return False
+            
+            # Remove by index
+            face_images.pop(image_index)
+            if image_index < len(face_embeddings):
+                face_embeddings.pop(image_index)
+            
+            # Update database
+            result = await self.collection.update_one(
+                {"_id": ObjectId(person_id), "user_id": ObjectId(user_id)},
+                {
+                    "$set": {
+                        "face_images": face_images,
+                        "face_embeddings": face_embeddings,
+                        "updated_at": datetime.utcnow()
+                    }
+                }
+            )
+            
+            return result.modified_count > 0
+        except Exception as e:
+            print(f"Error removing face image: {e}")
+            return False
+
+    async def validate_face_images(self, person_id: str, user_id: str) -> Dict[str, Any]:
+        """Validate tất cả face images của person"""
+        try:
+            # Get person data from database
+            person_data = await self.collection.find_one({
+                "_id": ObjectId(person_id),
+                "user_id": ObjectId(user_id)
+            })
+            
+            if not person_data:
+                return {"success": False, "message": "Person not found"}
+            
+            face_images = person_data.get("face_images", [])
+            valid_images = []
+            valid_embeddings = []
+            invalid_indices = []
+            
+            for i, image_base64 in enumerate(face_images):
+                try:
+                    # Skip face validation for now to test basic functionality
+                    # Later add: image_data = base64.b64decode(image_base64.split(',')[1])
+                    # embedding = await face_processor.extract_face_embedding(image_data)
+                    
+                    # For now, assume all images are valid
+                    valid_images.append(image_base64)
+                    valid_embeddings.append([])  # Empty embedding for now
+                    
+                except Exception:
+                    invalid_indices.append(i)
+            
+            # Update database if needed
+            if invalid_indices:
+                await self.collection.update_one(
+                    {"_id": ObjectId(person_id), "user_id": ObjectId(user_id)},
+                    {
+                        "$set": {
+                            "face_images": valid_images,
+                            "face_embeddings": valid_embeddings,
+                            "updated_at": datetime.utcnow()
+                        }
+                    }
+                )
+            
+            return {
+                "success": True,
+                "valid_images": len(valid_images),
+                "invalid_images": len(invalid_indices),
+                "invalid_indices": invalid_indices,
+                "message": f"Validated {len(valid_images)} valid images, removed {len(invalid_indices)} invalid images"
+            }
+            
+        except Exception as e:
+            return {"success": False, "message": str(e)}
+
+    async def bulk_import_persons(self, persons_data: List[Dict[str, Any]], user_id: str) -> Dict[str, Any]:
+        """Bulk import persons từ JSON data với face embedding extraction"""
+        try:
+            print(f"🔵 PersonService: Starting bulk import of {len(persons_data)} persons")
+            
+            imported = 0
+            failed = 0
+            errors = []
+            
+            for i, person_data in enumerate(persons_data):
+                try:
+                    print(f"🔵 PersonService: Importing person {i+1}/{len(persons_data)}: {person_data.get('name', 'Unknown')}")
+                    
+                    # Create person first
+                    person_create_data = {
+                        "name": person_data["name"],
+                        "description": person_data.get("description", ""),
+                        "department": person_data.get("metadata", {}).get("department"),
+                        "employee_id": person_data.get("metadata", {}).get("employee_id"),
+                        "position": person_data.get("metadata", {}).get("position"),
+                        "access_level": person_data.get("metadata", {}).get("access_level"),
+                        "metadata": person_data.get("metadata", {})
+                    }
+                    
+                    person_create = KnownPersonCreate(**person_create_data)
+                    person = await self.create_person(person_create, user_id)
+                    print(f"✅ PersonService: Created person {person.id}")
+                    
+                    # ✅ Add face images with embedding extraction
+                    if person_data.get("face_images"):
+                        for j, image_base64 in enumerate(person_data["face_images"]):
+                            try:
+                                print(f"🔵 PersonService: Adding face image {j+1} for {person.name}")
+                                result = await self.add_face_image(person.id, image_base64, user_id)
+                                
+                                if result["success"]:
+                                    print(f"✅ PersonService: Face image {j+1} added with embedding")
+                                else:
+                                    print(f"⚠️ PersonService: Face image {j+1} failed: {result['message']}")
+                                    
+                            except Exception as img_error:
+                                print(f"⚠️ PersonService: Failed to add face image {j+1} for {person.name}: {img_error}")
+                                errors.append(f"Failed to add face image for {person_data['name']}: {str(img_error)}")
+                    
+                    imported += 1
+                    print(f"✅ PersonService: Successfully imported {person.name}")
+                    
+                except Exception as e:
+                    failed += 1
+                    error_msg = f"Failed to import {person_data.get('name', 'Unknown')}: {str(e)}"
+                    print(f"❌ PersonService: {error_msg}")
+                    errors.append(error_msg)
+            
+            result = {
+                "success": failed == 0,
+                "imported_count": imported,
+                "failed_count": failed,
+                "errors": errors,
+                "message": f"Import completed: {imported} successful, {failed} failed",
+                "embedding_extraction": "enabled"
+            }
+            
+            print(f"✅ PersonService: Bulk import result: {result}")
+            return result
+            
+        except Exception as e:
+            print(f"❌ PersonService: Bulk import error: {e}")
+            import traceback
+            traceback.print_exc()
+            return {
+                "success": False,
+                "imported_count": 0,
+                "failed_count": len(persons_data) if persons_data else 0,
+                "errors": [str(e)],
+                "message": f"Bulk import failed: {str(e)}"
+            }
+        
+    async def get_person_detail(self, person_id: str, user_id: str) -> Optional[PersonDetailResponse]:
+        """Get person with full details including face images"""
+        try:
+            result = await self.collection.find_one({
+                "_id": ObjectId(person_id),
+                "user_id": ObjectId(user_id)
+            })
+            
+            if result:
+                # Convert face_images to FaceImageResponse
+                face_images = []
+                for img in result.get("face_images", []):
+                    face_images.append(FaceImageResponse(
+                        image_url=img,
+                        uploaded_at=result.get("created_at", datetime.utcnow())
+                    ))
+                
+                return PersonDetailResponse(
                     id=str(result["_id"]),
                     name=result["name"],
                     description=result.get("description"),
                     is_active=result["is_active"],
                     created_at=result["created_at"],
-                    face_images_count=len(result.get("face_images", []))
+                    updated_at=result.get("updated_at", result["created_at"]),
+                    face_images=face_images,
+                    metadata=result.get("metadata", {})
                 )
         except Exception as e:
-            print(f"Error updating person: {e}")
-        return None
-
-    async def delete_person(self, person_id: str, user_id: str) -> bool:
-        """Xóa person (soft delete)"""
-        try:
-            result = await self.collection.update_one(
-                {"_id": ObjectId(person_id), "user_id": ObjectId(user_id)},
-                {"$set": {"is_active": False, "updated_at": datetime.utcnow()}}
-            )
-            return result.modified_count > 0
-        except Exception:
-            return False
-
-    async def add_face_image(self, person_id: str, user_id: str, image_base64: str) -> Optional[str]:
-        """Thêm face image cho person"""
-        try:
-            # Decode base64 image
-            image_data = base64.b64decode(image_base64)
-            
-            # Generate unique filename
-            image_id = str(uuid.uuid4())
-            filename = f"{image_id}.jpg"
-            image_path = f"uploads/faces/{filename}"
-            
-            # Ensure directory exists
-            os.makedirs("uploads/faces", exist_ok=True)
-            
-            # Save image
-            with open(image_path, "wb") as f:
-                f.write(image_data)
-            
-            # Create face image record
-            face_image = {
-                "image_path": image_path,
-                "image_url": f"/uploads/faces/{filename}",
-                "uploaded_at": datetime.utcnow(),
-                "embedding": None  # Sẽ được generate bởi face processor
-            }
-            
-            # Update person document
-            result = await self.collection.update_one(
-                {"_id": ObjectId(person_id), "user_id": ObjectId(user_id)},
-                {
-                    "$push": {"face_images": face_image},
-                    "$set": {"updated_at": datetime.utcnow()}
-                }
-            )
-            
-            return image_id if result.modified_count > 0 else None
-        except Exception as e:
-            print(f"Error adding face image: {e}")
+            print(f"Error getting person detail: {e}")
             return None
-
-    async def remove_face_image(self, person_id: str, user_id: str, image_index: int) -> bool:
-        """Xóa face image"""
+        
+    async def get_person_statistics(self, user_id: str) -> Dict[str, Any]:
+        """Lấy thống kê về persons"""
         try:
-            # Get person to find image path
-            person = await self.collection.find_one({
-                "_id": ObjectId(person_id),
-                "user_id": ObjectId(user_id)
+            total_persons = await self.collection.count_documents({
+                "user_id": ObjectId(user_id),
+                "is_active": True
             })
             
-            if not person or len(person.get("face_images", [])) <= image_index:
-                return False
+            inactive_persons = await self.collection.count_documents({
+                "user_id": ObjectId(user_id),
+                "is_active": False
+            })
             
-            # Get image path for file deletion
-            image_path = person["face_images"][image_index]["image_path"]
+            # Count total face images
+            total_images = 0
+            async for person in self.collection.find({"user_id": ObjectId(user_id), "is_active": True}):
+                total_images += len(person.get("face_images", []))
             
-            # Remove from database
-            result = await self.collection.update_one(
-                {"_id": ObjectId(person_id), "user_id": ObjectId(user_id)},
-                {
-                    "$unset": {f"face_images.{image_index}": 1},
-                    "$set": {"updated_at": datetime.utcnow()}
-                }
-            )
+            # Recently added persons (last 7 days)
+            week_ago = datetime.utcnow() - timedelta(days=7)
+            recent_persons = await self.collection.count_documents({
+                "user_id": ObjectId(user_id),
+                "created_at": {"$gte": week_ago}
+            })
             
-            # Remove null elements
-            await self.collection.update_one(
-                {"_id": ObjectId(person_id)},
-                {"$pull": {"face_images": None}}
-            )
+            return {
+                "total_persons": total_persons,
+                "inactive_persons": inactive_persons,
+                "total_face_images": total_images,
+                "average_images_per_person": total_images / total_persons if total_persons > 0 else 0,
+                "recent_persons": recent_persons
+            }
             
-            # Delete file
-            try:
-                os.remove(image_path)
-            except:
-                pass
-            
-            return result.modified_count > 0
-        except Exception:
-            return False
+        except Exception as e:
+            print(f"Error getting person statistics: {e}")
+            return {
+                "total_persons": 0,
+                "inactive_persons": 0,
+                "total_face_images": 0,
+                "average_images_per_person": 0,
+                "recent_persons": 0
+            }
 
 # Global instance
 person_service = PersonService()

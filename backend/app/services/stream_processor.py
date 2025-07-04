@@ -255,5 +255,35 @@ class StreamProcessor:
                 "resolution": "Unknown"
             }
 
+    async def _send_detection_alert(self, camera_id: str, detection: Dict[str, Any]):
+        """Send detection alert via WebSocket"""
+        try:
+            # Get camera info from active streams
+            camera_info = self.active_streams.get(camera_id, {})
+            camera_name = camera_info.get("camera", {}).name if camera_info.get("camera") else f"Camera {camera_id}"
+            
+            alert_message = {
+                "type": "detection_alert",
+                "data": {
+                    "camera_id": camera_id,
+                    "camera_name": camera_name,
+                    "person_id": detection.get('person_id'),
+                    "person_name": detection.get('person_name', 'Unknown'),
+                    "confidence": detection.get('recognition_confidence', 0),
+                    "timestamp": time.time(),
+                    "bbox": detection.get('bbox'),
+                    "detection_type": "known_person" if detection.get('person_id') else "unknown_person",
+                    "location": camera_info.get("camera", {}).location if camera_info.get("camera") else None
+                }
+            }
+            
+            print(f"🔔 Sending detection alert: {alert_message['data']['detection_type']} at {camera_name}")
+            
+            # Send to all connected clients via WebSocket
+            await websocket_manager.broadcast_message(alert_message)
+            
+        except Exception as e:
+            print(f"Error sending detection alert: {e}")
+
 # Global instance
 stream_processor = StreamProcessor()

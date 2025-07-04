@@ -23,17 +23,21 @@ class AlertSettings(BaseModel):
 class CameraCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=100)
     description: Optional[str] = None
+    location: Optional[str] = None  # Add this field
     camera_type: CameraType
     camera_url: Optional[str] = None
     username: Optional[str] = None
     password: Optional[str] = None
-    detection_enabled: Optional[bool] = True  # Thêm field này
+    detection_enabled: Optional[bool] = True
     stream_settings: Optional[StreamSettings] = None
     alert_settings: Optional[AlertSettings] = None
+    tags: Optional[List[str]] = None  # Add this field
+
 
 class CameraUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=100)
     description: Optional[str] = None
+    location: Optional[str] = None  # Add this field
     camera_url: Optional[str] = None
     username: Optional[str] = None
     password: Optional[str] = None
@@ -42,20 +46,24 @@ class CameraUpdate(BaseModel):
     detection_enabled: Optional[bool] = None
     stream_settings: Optional[StreamSettings] = None
     alert_settings: Optional[AlertSettings] = None
+    tags: Optional[List[str]] = None  # Add this field
 
 class CameraResponse(BaseModel):
     id: str
     name: str
     description: Optional[str] = None
+    location: Optional[str] = None  # Add this field
     camera_type: CameraType
-    camera_url: Optional[str] = None  # ✅ Thêm dòng này
+    camera_url: Optional[str] = None
     is_active: bool
+    is_streaming: bool
     is_recording: bool
     detection_enabled: bool
     stream_settings: Dict[str, Any] = {}
     alert_settings: Dict[str, Any] = {}
     created_at: datetime
     last_online: Optional[datetime] = None
+    tags: Optional[List[str]] = None  # Add this field
 
 class CameraStreamInfo(BaseModel):
     camera_id: str
@@ -69,11 +77,13 @@ class Camera(BaseModel):
     user_id: str
     name: str
     description: Optional[str] = None
+    location: Optional[str] = None  # Add this field
     camera_type: CameraType
     camera_url: Optional[str] = None
     username: Optional[str] = None
     password: Optional[str] = None
     is_active: bool = True
+    is_streaming: bool = False
     is_recording: bool = False
     detection_enabled: bool = True
     stream_settings: Dict[str, Any] = {}
@@ -81,3 +91,20 @@ class Camera(BaseModel):
     created_at: datetime
     updated_at: datetime
     last_online: Optional[datetime] = None
+    tags: Optional[List[str]] = None  # Add this field
+
+class CameraSettings(BaseModel):
+    stream_settings: Optional[dict] = {}
+    detection_settings: Optional[dict] = {}
+    notification_settings: Optional[dict] = {}
+    recording_settings: Optional[dict] = {}
+
+class SystemInfo(BaseModel):
+    cpu_usage: float
+    memory_usage: float
+    disk_usage: float
+    temperature: Optional[float] = None
+    uptime: int
+    network_speed: dict
+    firmware_version: str
+    last_maintenance: Optional[str] = None

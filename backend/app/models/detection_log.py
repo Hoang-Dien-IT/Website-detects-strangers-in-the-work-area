@@ -16,7 +16,7 @@ class DetectionLogCreate(BaseModel):
     confidence: float = Field(..., ge=0.0, le=1.0)
     similarity_score: Optional[float] = Field(None, ge=0.0, le=1.0)
     image_base64: str
-    bbox: List[int] = Field(..., min_items=4, max_items=4)  # [x, y, width, height]
+    bbox: List[int] = Field(..., min_length=4, max_length=4)  # [x, y, width, height]
 
 class DetectionLogResponse(BaseModel):
     id: str
@@ -29,6 +29,9 @@ class DetectionLogResponse(BaseModel):
     bbox: List[int]
     timestamp: datetime
     is_alert_sent: bool
+
+    class Config:
+        from_attributes = True
 
 class DetectionStats(BaseModel):
     total_detections: int
@@ -62,3 +65,6 @@ class DetectionLog(BaseModel):
     is_alert_sent: bool
     alert_methods: List[str] = []
     metadata: Dict[str, Any] = {}
+
+    class Config:
+        from_attributes = True

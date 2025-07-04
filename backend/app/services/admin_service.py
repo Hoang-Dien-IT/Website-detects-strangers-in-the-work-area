@@ -64,16 +64,12 @@ class AdminService:
         users = []
         
         async for user_data in db.users.find().sort("created_at", -1):
-            # Count user's cameras
+            # Count user's cameras, persons, detections...
             camera_count = await db.cameras.count_documents({"user_id": user_data["_id"]})
-            
-            # Count user's persons
             person_count = await db.known_persons.count_documents({
                 "user_id": user_data["_id"],
                 "is_active": True
             })
-            
-            # Count user's detections
             detection_count = await db.detection_logs.count_documents({"user_id": user_data["_id"]})
             
             users.append({
@@ -83,8 +79,20 @@ class AdminService:
                 "full_name": user_data["full_name"],
                 "is_active": user_data["is_active"],
                 "is_admin": user_data["is_admin"],
+                "role": user_data.get("role", "user"),
+                "phone": user_data.get("phone"),
+                "department": user_data.get("department"),
+                # ✅ Add new profile fields
+                "location": user_data.get("location"),
+                "bio": user_data.get("bio"),
+                "website": user_data.get("website"),
+                "job_title": user_data.get("job_title"),
+                "company": user_data.get("company"),
+                "timezone": user_data.get("timezone", "UTC+7"),
+                "avatar_url": user_data.get("avatar_url"),
                 "created_at": user_data["created_at"],
                 "updated_at": user_data.get("updated_at"),
+                "last_login": user_data.get("last_login"),
                 "stats": {
                     "cameras": camera_count,
                     "persons": person_count,

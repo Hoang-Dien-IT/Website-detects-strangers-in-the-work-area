@@ -18,21 +18,28 @@ async def get_dashboard_stats(
     current_admin: User = Depends(get_admin_user)
 ) -> Dict[str, Any]:
     """Lấy thống kê tổng quan cho admin dashboard"""
-    return await admin_service.get_dashboard_stats()
+    try:
+        stats = await admin_service.get_dashboard_stats()
+        return stats
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to get dashboard stats: {str(e)}"
+        )
 
 @router.get("/users")
 async def get_all_users(
     current_admin: User = Depends(get_admin_user)
 ) -> List[Dict[str, Any]]:
     """Lấy danh sách tất cả users"""
-    return await admin_service.get_all_users()
-
-@router.get("/system/health")
-async def get_system_health(
-    current_admin: User = Depends(get_admin_user)
-) -> Dict[str, Any]:
-    """Lấy thông tin sức khỏe hệ thống"""
-    return await admin_service.get_system_health()
+    try:
+        users = await admin_service.get_all_users()
+        return users
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to get users: {str(e)}"
+        )
 
 @router.post("/users/{user_id}/toggle-status")
 async def toggle_user_status(
@@ -86,6 +93,20 @@ async def toggle_admin_role(
         raise HTTPException(
             status_code=400,
             detail=f"Failed to update admin role: {str(e)}"
+        )
+
+@router.get("/system/health")
+async def get_system_health(
+    current_admin: User = Depends(get_admin_user)
+) -> Dict[str, Any]:
+    """Lấy thông tin sức khỏe hệ thống"""
+    try:
+        health_info = await admin_service.get_system_health()
+        return health_info
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to get system health: {str(e)}"
         )
 
 @router.get("/system/logs")

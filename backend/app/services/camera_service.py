@@ -1,4 +1,4 @@
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Any
 from bson import ObjectId
 from ..database import get_database
 from ..models.camera import Camera, CameraCreate, CameraUpdate, CameraResponse, CameraStreamInfo
@@ -59,18 +59,21 @@ class CameraService:
                 "user_id": ObjectId(user_id),
                 "name": camera_data.name,
                 "description": camera_data.description,
+                "location": camera_data.location,  # Thêm dòng này
                 "camera_type": camera_data.camera_type,
                 "camera_url": camera_data.camera_url,
                 "username": camera_data.username,
                 "password": camera_data.password,
                 "is_active": True,
+                "is_streaming": False,
                 "is_recording": False,
                 "detection_enabled": camera_data.detection_enabled if camera_data.detection_enabled is not None else True,
-                "stream_settings": stream_settings,  # Sửa: sử dụng dict
-                "alert_settings": alert_settings,    # Sửa: sử dụng dict
+                "stream_settings": stream_settings,
+                "alert_settings": alert_settings,
                 "created_at": datetime.utcnow(),
                 "updated_at": datetime.utcnow(),
-                "last_online": None
+                "last_online": None,
+                "tags": camera_data.tags or []  # Thêm dòng này
             }
             
             result = await self.collection.insert_one(camera_dict)
@@ -79,15 +82,18 @@ class CameraService:
                 id=str(result.inserted_id),
                 name=camera_dict["name"],
                 description=camera_dict["description"],
+                location=camera_dict["location"],  # Thêm dòng này
                 camera_type=camera_dict["camera_type"],
                 camera_url=camera_dict["camera_url"],
                 is_active=camera_dict["is_active"],
+                is_streaming=camera_dict["is_streaming"],
                 is_recording=camera_dict["is_recording"],
                 detection_enabled=camera_dict["detection_enabled"],
                 stream_settings=camera_dict["stream_settings"],
                 alert_settings=camera_dict["alert_settings"],
                 created_at=camera_dict["created_at"],
-                last_online=camera_dict.get("last_online")
+                last_online=camera_dict.get("last_online"),
+                tags=camera_dict["tags"]  # Thêm dòng này
             )
         except Exception as e:
             raise ValueError(f"Failed to create camera: {str(e)}")
@@ -148,15 +154,18 @@ class CameraService:
                 id=str(camera_data["_id"]),
                 name=camera_data["name"],
                 description=camera_data.get("description"),
+                location=camera_data.get("location"),  # Thêm dòng này
                 camera_type=camera_data["camera_type"],
-                camera_url=camera_data.get("camera_url"),  # ✅ Thêm dòng này
+                camera_url=camera_data.get("camera_url"),
                 is_active=camera_data["is_active"],
+                is_streaming=camera_data.get("is_streaming", False),
                 is_recording=camera_data.get("is_recording", False),
                 detection_enabled=camera_data.get("detection_enabled", True),
                 stream_settings=camera_data.get("stream_settings", {}),
                 alert_settings=camera_data.get("alert_settings", {}),
                 created_at=camera_data["created_at"],
-                last_online=camera_data.get("last_online")
+                last_online=camera_data.get("last_online"),
+                tags=camera_data.get("tags", [])  # Thêm dòng này
             ))
         return cameras
 
@@ -173,20 +182,75 @@ class CameraService:
                     id=str(camera_data["_id"]),
                     name=camera_data["name"],
                     description=camera_data.get("description"),
+                    location=camera_data.get("location"),  # Thêm dòng này
                     camera_type=camera_data["camera_type"],
-                    camera_url=camera_data.get("camera_url"),  # ✅ Thêm dòng này
+                    camera_url=camera_data.get("camera_url"),
                     is_active=camera_data["is_active"],
+                    is_streaming=camera_data.get("is_streaming", False),
                     is_recording=camera_data.get("is_recording", False),
                     detection_enabled=camera_data.get("detection_enabled", True),
                     stream_settings=camera_data.get("stream_settings", {}),
                     alert_settings=camera_data.get("alert_settings", {}),
                     created_at=camera_data["created_at"],
-                    last_online=camera_data.get("last_online")
+                    last_online=camera_data.get("last_online"),
+                    tags=camera_data.get("tags", [])  # Thêm dòng này
                 )
         except Exception as e:
             print(f"Error getting camera: {e}")
         return None
 
+    async def get_cameras_by_location(self, user_id: str, location: str) -> List[CameraResponse]:
+        """Lấy camera theo location"""
+        cameras = []
+        async for camera_data in self.collection.find({
+            "user_id": ObjectId(user_id),
+            "location": {"$regex": location, "$options": "i"}  # Case insensitive search
+        }).sort("created_at", -1):
+            cameras.append(CameraResponse(
+                id=str(camera_data["_id"]),
+                name=camera_data["name"],
+                description=camera_data.get("description"),
+                location=camera_data.get("location"),
+                camera_type=camera_data["camera_type"],
+                camera_url=camera_data.get("camera_url"),
+                is_active=camera_data["is_active"],
+                is_streaming=camera_data.get("is_streaming", False),
+                is_recording=camera_data.get("is_recording", False),
+                detection_enabled=camera_data.get("detection_enabled", True),
+                stream_settings=camera_data.get("stream_settings", {}),
+                alert_settings=camera_data.get("alert_settings", {}),
+                created_at=camera_data["created_at"],
+                last_online=camera_data.get("last_online"),
+                tags=camera_data.get("tags", [])
+            ))
+        return cameras
+
+    async def get_cameras_by_tags(self, user_id: str, tags: List[str]) -> List[CameraResponse]:
+        """Lấy camera theo tags"""
+        cameras = []
+        async for camera_data in self.collection.find({
+            "user_id": ObjectId(user_id),
+            "tags": {"$in": tags}  # Any of the provided tags
+        }).sort("created_at", -1):
+            cameras.append(CameraResponse(
+                id=str(camera_data["_id"]),
+                name=camera_data["name"],
+                description=camera_data.get("description"),
+                location=camera_data.get("location"),
+                camera_type=camera_data["camera_type"],
+                camera_url=camera_data.get("camera_url"),
+                is_active=camera_data["is_active"],
+                is_streaming=camera_data.get("is_streaming", False),
+                is_recording=camera_data.get("is_recording", False),
+                detection_enabled=camera_data.get("detection_enabled", True),
+                stream_settings=camera_data.get("stream_settings", {}),
+                alert_settings=camera_data.get("alert_settings", {}),
+                created_at=camera_data["created_at"],
+                last_online=camera_data.get("last_online"),
+                tags=camera_data.get("tags", [])
+            ))
+        return cameras
+    
     async def update_camera(self, camera_id: str, user_id: str, update_data: CameraUpdate) -> Optional[CameraResponse]:
         """Cập nhật camera"""
         try:
@@ -218,14 +282,18 @@ class CameraService:
                     id=str(result["_id"]),
                     name=result["name"],
                     description=result.get("description"),
+                    location=result.get("location"),  # Thêm dòng này
                     camera_type=result["camera_type"],
+                    camera_url=result.get("camera_url"),
                     is_active=result["is_active"],
+                    is_streaming=result.get("is_streaming", False),
                     is_recording=result.get("is_recording", False),
                     detection_enabled=result.get("detection_enabled", True),
                     stream_settings=result.get("stream_settings", {}),
                     alert_settings=result.get("alert_settings", {}),
                     created_at=result["created_at"],
-                    last_online=result.get("last_online")
+                    last_online=result.get("last_online"),
+                    tags=result.get("tags", [])  # Thêm dòng này
                 )
         except Exception as e:
             print(f"Error updating camera: {e}")
@@ -307,6 +375,119 @@ class CameraService:
                 "connection_type": "network",
                 "url": camera.camera_url
             }
+
+    async def get_camera_settings(self, camera_id: str) -> Dict[str, Any]:
+        """Lấy cài đặt chi tiết của camera"""
+        try:
+            camera_data = await self.collection.find_one({"_id": ObjectId(camera_id)})
+            if not camera_data:
+                return {}
+            
+            return {
+                "stream_settings": camera_data.get("stream_settings", {}),
+                "detection_settings": camera_data.get("detection_settings", {}),
+                "notification_settings": camera_data.get("notification_settings", {}),
+                "recording_settings": camera_data.get("recording_settings", {})
+            }
+        except Exception as e:
+            print(f"Error getting camera settings: {e}")
+            return {}
+
+    async def update_camera_settings(self, camera_id: str, settings_data: Dict[str, Any]) -> bool:
+        """Cập nhật cài đặt chi tiết của camera"""
+        try:
+            update_dict = {
+                "updated_at": datetime.utcnow()
+            }
+            
+            # Merge settings data
+            if "stream_settings" in settings_data:
+                update_dict["stream_settings"] = settings_data["stream_settings"]
+            if "detection_settings" in settings_data:
+                update_dict["detection_settings"] = settings_data["detection_settings"]
+                # Update detection_enabled if provided
+                if "enabled" in settings_data["detection_settings"]:
+                    update_dict["detection_enabled"] = settings_data["detection_settings"]["enabled"]
+            if "notification_settings" in settings_data:
+                update_dict["notification_settings"] = settings_data["notification_settings"]
+            if "recording_settings" in settings_data:
+                update_dict["recording_settings"] = settings_data["recording_settings"]
+                # Update is_recording if provided
+                if "enabled" in settings_data["recording_settings"]:
+                    update_dict["is_recording"] = settings_data["recording_settings"]["enabled"]
+            
+            result = await self.collection.update_one(
+                {"_id": ObjectId(camera_id)},
+                {"$set": update_dict}
+            )
+            
+            return result.modified_count > 0
+        except Exception as e:
+            print(f"Error updating camera settings: {e}")
+            return False
+
+    async def get_system_info(self, camera_id: str) -> Dict[str, Any]:
+        """Lấy thông tin hệ thống của camera"""
+        try:
+            # This would typically connect to the camera's management interface
+            # For now, return mock data
+            import psutil
+            import time
+            
+            # Get system stats (this would be camera-specific in real implementation)
+            cpu_percent = psutil.cpu_percent(interval=1)
+            memory = psutil.virtual_memory()
+            disk = psutil.disk_usage('/')
+            
+            return {
+                "cpu_usage": cpu_percent,
+                "memory_usage": memory.percent,
+                "disk_usage": disk.percent,
+                "temperature": 45.0,  # Mock temperature
+                "uptime": int(time.time() - psutil.boot_time()),
+                "network_speed": {
+                    "upload": 10.5,
+                    "download": 25.3
+                },
+                "firmware_version": "v1.2.3",
+                "last_maintenance": datetime.utcnow().isoformat()
+            }
+        except Exception as e:
+            print(f"Error getting system info: {e}")
+            # Return default mock data
+            return {
+                "cpu_usage": 0.0,
+                "memory_usage": 0.0,
+                "disk_usage": 0.0,
+                "temperature": None,
+                "uptime": 0,
+                "network_speed": {"upload": 0.0, "download": 0.0},
+                "firmware_version": "unknown",
+                "last_maintenance": None
+            }
+
+
+    async def start_streaming(self, camera_id: str, user_id: str) -> bool:
+        """Bắt đầu streaming cho camera"""
+        try:
+            result = await self.collection.update_one(
+                {"_id": ObjectId(camera_id), "user_id": ObjectId(user_id)},
+                {"$set": {"is_streaming": True, "updated_at": datetime.utcnow()}}
+            )
+            return result.modified_count > 0
+        except Exception:
+            return False
+
+    async def stop_streaming(self, camera_id: str, user_id: str) -> bool:
+        """Dừng streaming cho camera"""
+        try:
+            result = await self.collection.update_one(
+                {"_id": ObjectId(camera_id), "user_id": ObjectId(user_id)},
+                {"$set": {"is_streaming": False, "updated_at": datetime.utcnow()}}
+            )
+            return result.modified_count > 0
+        except Exception:
+            return False
 
 # Global instance
 camera_service = CameraService()
