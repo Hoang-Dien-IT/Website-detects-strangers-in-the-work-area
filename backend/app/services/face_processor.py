@@ -3,48 +3,17 @@ import numpy as np
 import insightface
 from insightface.app import FaceAnalysis
 import faiss
-from typing import List, Tuple, Optional, Dict
+from typing import List, Tuple, Optional
 import asyncio
 import concurrent.futures
 import gc
 import torch
-import time
-from collections import defaultdict
-
-class DetectionTracker:
-    """Track detections to avoid duplicate alerts"""
-    def __init__(self, cooldown_seconds: int = 30):
-        self.last_detections: Dict[str, Dict[str, float]] = defaultdict(dict)
-        self.cooldown_seconds = cooldown_seconds
-    
-    def should_alert(self, camera_id: str, person_id: str = None, detection_type: str = "unknown") -> bool:
-        """Check if we should send alert for this detection"""
-        key = person_id if person_id else f"unknown_{detection_type}"
-        current_time = time.time()
-        
-        last_time = self.last_detections[camera_id].get(key, 0)
-        
-        if current_time - last_time > self.cooldown_seconds:
-            self.last_detections[camera_id][key] = current_time
-            return True
-        
-        return False
-    
-    def cleanup_old_detections(self):
-        """Remove old detection records"""
-        current_time = time.time()
-        for camera_id in list(self.last_detections.keys()):
-            for key in list(self.last_detections[camera_id].keys()):
-                if current_time - self.last_detections[camera_id][key] > self.cooldown_seconds * 2:
-                    del self.last_detections[camera_id][key]
 
 class FaceProcessorService:
     def __init__(self):
         self.face_app = FaceAnalysis(providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
-        self.face_app.prepare(ctx_id=0, det_size=(640, 640))
+        self.face_app.prepare(  ctx_id=0, det_size=(640, 640))
         self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=2)
-        self.detection_tracker = DetectionTracker(cooldown_seconds=30)
-        self.tracker = DetectionTracker()
 
     def cleanup(self):
         """Giải phóng tài nguyên"""
@@ -114,37 +83,113 @@ class FaceProcessorService:
             print(f"Error detecting faces: {e}")
             return []
 
-    def create_face_index(self, embeddings: List[np.ndarray]) -> faiss.Index:
-        """Tạo FAISS index từ danh sách embeddings"""
-        if not embeddings:
-            return None
-        
-        embeddings_array = np.array(embeddings).astype('float32')
-        # Chuẩn hóa để sử dụng cosine similarity
-        faiss.normalize_L2(embeddings_array)
-        
-        # Tạo index
-        index = faiss.IndexFlatIP(embeddings_array.shape[1])
-        index.add(embeddings_array)
-        return index
+    async def detect_and_recognize_faces(self, frame: np.ndarray, known_persons: List[dict] = None) -> List[dict]:
+        """Phát hiện và nhận dạng khuôn mặt trong frame cho streaming - dựa theo code mẫu"""
+        loop = asyncio.get_event_loop()
+        return await loop.run_in_executor(
+            self.executor,
+            self._detect_and_recognize_sync,
+            frame,
+            known_persons or []
+        )
 
-    def search_similar_face(self, query_embedding: np.ndarray, index: faiss.Index, threshold: float = 0.6) -> Tuple[bool, float]:
-        """Tìm kiếm khuôn mặt tương tự"""
-        if index is None:
-            return False, 0.0
+    def _detect_and_recognize_sync(self, frame: np.ndarray, known_persons: List[dict]) -> List[dict]:
+        """Phát hiện và nhận dạng khuôn mặt (sync version) - tương tự code mẫu"""
+        try:
+            # Phát hiện khuôn mặt giống như code mẫu
+            faces = self.face_app.get(frame)
+            result = []
+            
+            # Tạo FAISS index từ known_persons nếu có
+            face_db = []
+            names = []
+            
+            for person in known_persons:
+                if 'embeddings' in person and person['embeddings']:
+                    for embedding in person['embeddings']:
+                        face_db.append(embedding)
+                        names.append(person['name'])
+            
+            # Chuyển sang numpy array để dùng với FAISS như code mẫu
+            if face_db:
+                face_db_array = np.array(face_db).astype('float32')
+                
+                # Tạo FAISS index
+                index = faiss.IndexFlatIP(face_db_array.shape[1])
+                # Chuẩn hóa vector về unit vector để dùng cosine similarity
+                faiss.normalize_L2(face_db_array)
+                index.add(face_db_array)
+            else:
+                index = None
+            
+            # Xử lý từng khuôn mặt được phát hiện
+            for face in faces:
+                # Lấy bounding box giống code mẫu
+                x1, y1, x2, y2 = map(int, face.bbox)
+                bbox = [x1, y1, x2 - x1, y2 - y1]  # [x, y, width, height]
+                
+                # Nhận dạng khuôn mặt giống code mẫu
+                name = self._get_face_name(face.embedding, index, names)
+                
+                detection = {
+                    'bbox': bbox,
+                    'confidence': float(face.det_score),
+                    'person_id': None,
+                    'person_name': name,
+                    'recognition_confidence': 0.0,
+                    'is_new_detection': False
+                }
+                
+                # Nếu là người đã biết, tìm person_id
+                if name != "Unknown":
+                    for person in known_persons:
+                        if person['name'] == name:
+                            detection['person_id'] = person['id']
+                            detection['is_new_detection'] = True
+                            break
+                
+                result.append(detection)
+            
+            return result
+            
+        except Exception as e:
+            print(f"Error detecting and recognizing faces: {e}")
+            return []
+
+    def _get_face_name(self, face_embedding, index, names, recognition_threshold=0.6):
+        """Nhận dạng tên khuôn mặt - tương tự code mẫu"""
+        if index is None or len(names) == 0:
+            return "Unknown"
         
-        # Chuẩn hóa query embedding
-        query = query_embedding.astype('float32').reshape(1, -1)
-        faiss.normalize_L2(query)
-        
-        # Tìm kiếm
-        distances, indices = index.search(query, 1)
-        
-        if len(distances[0]) > 0:
-            similarity = distances[0][0]
-            return similarity > threshold, float(similarity)
-        
-        return False, 0.0
+        try:
+            # Chuẩn hóa embedding giống code mẫu
+            embedding = face_embedding.astype('float32').reshape(1, -1)
+            faiss.normalize_L2(embedding)
+            
+            # Tìm vector gần nhất
+            D, I = index.search(embedding, 1)
+            max_similarity = D[0][0]
+            max_index = I[0][0]
+            
+            if max_similarity > recognition_threshold:
+                return names[max_index]
+            return "Unknown"
+        except Exception as e:
+            print(f"Error in face recognition: {e}")
+            return "Unknown"
+
+    def _calculate_similarity(self, embedding1: np.ndarray, embedding2: np.ndarray) -> float:
+        """Tính toán độ tương đồng giữa hai embeddings"""
+        try:
+            # Normalize embeddings
+            emb1 = embedding1 / np.linalg.norm(embedding1)
+            emb2 = embedding2 / np.linalg.norm(embedding2)
+            
+            # Calculate cosine similarity
+            similarity = np.dot(emb1, emb2)
+            return float(similarity)
+        except:
+            return 0.0
 
 # Global instance
 face_processor = FaceProcessorService()
