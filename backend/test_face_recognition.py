@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
-Test script để kiểm tra face recognition system với hỗ trợ tiếng Việt
+Test script để kiểm tra face recognition system
 """
 import asyncio
 import sys
@@ -12,30 +11,10 @@ from app.database import get_database
 from app.services.face_processor import face_processor
 from app.services.stream_processor import stream_processor
 
-async def test_vietnamese_support():
-    """Test Vietnamese text support"""
-    try:
-        print("🔵 Testing Vietnamese text support...")
-        
-        # Test Vietnamese names
-        vietnamese_names = ["Hoàng Nguyên", "Trần Thị Lan", "Nguyễn Văn Minh", "Phạm Thị Hương"]
-        
-        for name in vietnamese_names:
-            print(f"✅ Vietnamese name test: {name}")
-            # Test encoding
-            encoded = name.encode('utf-8')
-            decoded = encoded.decode('utf-8')
-            assert name == decoded, f"Encoding test failed for {name}"
-        
-        print("✅ Vietnamese text encoding/decoding successful!")
-        
-    except Exception as e:
-        print(f"❌ Error in Vietnamese support test: {e}")
-
 async def test_known_persons():
     """Test loading known persons from database"""
     try:
-        print("\n🔵 Testing known persons loading...")
+        print("🔵 Testing known persons loading...")
         
         db = get_database()
         
@@ -108,39 +87,12 @@ async def test_face_detection():
         import traceback
         traceback.print_exc()
 
-async def test_vietnamese_text_rendering():
-    """Test Vietnamese text rendering với PIL"""
-    try:
-        print("\n🔵 Testing Vietnamese text rendering...")
-        
-        # Test stream processor Vietnamese method
-        import numpy as np
-        test_frame = np.zeros((480, 640, 3), dtype=np.uint8)
-        
-        # Test rendering Vietnamese text
-        vietnamese_text = "Hoàng Nguyên (0.95)"
-        
-        # This should not crash
-        result_frame = stream_processor._put_vietnamese_text(
-            test_frame, vietnamese_text, (50, 50), 
-            font_size=20, color=(0, 255, 0)
-        )
-        
-        print(f"✅ Vietnamese text rendering successful: '{vietnamese_text}'")
-        
-    except Exception as e:
-        print(f"❌ Error in Vietnamese text rendering: {e}")
-        import traceback
-        traceback.print_exc()
-
 async def main():
     """Main test function"""
-    print("🚀 Starting Face Recognition System Test với hỗ trợ tiếng Việt\n")
+    print("🚀 Starting Face Recognition System Test\n")
     
-    await test_vietnamese_support()
     await test_known_persons()
     await test_face_detection()
-    await test_vietnamese_text_rendering()
     
     print("\n✅ Test completed!")
 

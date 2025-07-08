@@ -1,7 +1,7 @@
 import cv2
 import asyncio
 import numpy as np
-from typing import Dict, Any, Optional, AsyncGenerator, List
+from typing import Dict, Any, Optional, AsyncGenerator, List, List
 from ..models.camera import CameraResponse
 from ..services.face_processor import face_processor
 from ..services.websocket_manager import websocket_manager
@@ -9,61 +9,12 @@ import concurrent.futures
 import time
 import base64
 from io import BytesIO
-from PIL import Image, ImageDraw, ImageFont
-import io
 
 class StreamProcessor:
     def __init__(self):
         self.active_streams: Dict[str, Dict[str, Any]] = {}
         self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=4)
         self._frame_times: Dict[str, float] = {}  # Để tracking FPS
-        
-        # Load font for Vietnamese text (fallback to default if not available)
-        try:
-            # Try to load a font that supports Vietnamese
-            self.font = ImageFont.truetype("arial.ttf", 20)
-            self.font_small = ImageFont.truetype("arial.ttf", 16)
-        except:
-            # Fallback to default font
-            self.font = ImageFont.load_default()
-            self.font_small = ImageFont.load_default()
-
-    def _put_vietnamese_text(self, frame, text, position, font_size=20, color=(255, 255, 255), thickness=2):
-        """
-        Render Vietnamese text on OpenCV frame using PIL
-        """
-        try:
-            # Convert BGR to RGB
-            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            pil_image = Image.fromarray(frame_rgb)
-            draw = ImageDraw.Draw(pil_image)
-            
-            # Select font based on size
-            if font_size <= 16:
-                font = self.font_small
-            else:
-                font = self.font
-            
-            # Convert color from BGR to RGB
-            if isinstance(color, tuple) and len(color) == 3:
-                pil_color = (color[2], color[1], color[0])  # BGR to RGB
-            else:
-                pil_color = color
-            
-            # Draw text
-            draw.text(position, text, font=font, fill=pil_color)
-            
-            # Convert back to BGR
-            frame_bgr = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
-            return frame_bgr
-            
-        except Exception as e:
-            print(f"Error rendering Vietnamese text: {e}")
-            # Fallback to cv2.putText with ASCII-safe text
-            safe_text = text.encode('ascii', 'ignore').decode('ascii')
-            cv2.putText(frame, safe_text, position, cv2.FONT_HERSHEY_SIMPLEX, 
-                       font_size/20, color, thickness)
-            return frame
 
     async def get_stream_info(self, camera_id: str) -> Dict[str, Any]:
         """Lấy thông tin stream"""
@@ -206,9 +157,9 @@ class StreamProcessor:
             # Hiển thị FPS lên góc trên bên trái giống code mẫu
             cv2.putText(frame, f"FPS: {fps:.2f}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
             
-            # Add camera name với hỗ trợ tiếng Việt
-            frame = self._put_vietnamese_text(frame, f"Camera: {camera.name}", (10, 70), 
-                                            font_size=16, color=(0, 255, 0))
+            # Add camera name
+            cv2.putText(frame, f"Camera: {camera.name}", (10, 70), 
+                       cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
             
             # Add timestamp
             timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
@@ -240,18 +191,15 @@ class StreamProcessor:
                         # Màu khác nhau cho người đã biết và không xác định giống code mẫu
                         if name == "Unknown":
                             color = (0, 0, 255)  # Đỏ cho người lạ
-                            display_name = "Người lạ"
                         else:
                             color = (0, 255, 0)  # Xanh lá cho người đã biết
-                            display_name = name
                         
                         # Vẽ bounding box
                         cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
                         
-                        # Thêm tên với hỗ trợ tiếng Việt
-                        label = f"{display_name} ({confidence:.2f})"
-                        frame = self._put_vietnamese_text(frame, label, (x1, y1 - 30), 
-                                                        font_size=16, color=color)
+                        # Thêm tên và độ tin cậy giống code mẫu
+                        label = f"{name} ({confidence:.2f})"
+                        cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
                         
                         # Send detection alert via WebSocket if it's a new detection
                         if detection.get('person_id') and detection.get('is_new_detection'):

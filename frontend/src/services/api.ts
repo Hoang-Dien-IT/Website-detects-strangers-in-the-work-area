@@ -1,22 +1,22 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-
+import { API_BASE_URL, AUTH_CONFIG, ERROR_MESSAGES } from '@/lib/config';
 class ApiService {
   private api: AxiosInstance;
 
   constructor() {
     this.api = axios.create({
-      baseURL: process.env.REACT_APP_API_URL || 'http://localhost:8000/api',
-      timeout: 30000,
+      baseURL: API_BASE_URL,
       headers: {
         'Content-Type': 'application/json',
       },
+      timeout: 30000, // 30 seconds
     });
 
     // Request interceptor
     this.api.interceptors.request.use(
       (config) => {
-        const token = localStorage.getItem('access_token');
-        if (token && !config.headers.Authorization) {
+        const token = localStorage.getItem(AUTH_CONFIG.TOKEN_KEY);
+        if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
@@ -31,7 +31,9 @@ class ApiService {
       (response) => response,
       (error) => {
         if (error.response?.status === 401) {
-          localStorage.removeItem('access_token');
+          // Clear auth data and redirect to login
+          localStorage.removeItem(AUTH_CONFIG.TOKEN_KEY);
+          localStorage.removeItem(AUTH_CONFIG.USER_KEY);
           window.location.href = '/login';
         }
         return Promise.reject(error);
@@ -190,6 +192,24 @@ class ApiService {
       return response;
     } catch (error: any) {
       console.error(`❌ UPLOAD Error: ${url}`, error);
+      throw this.handleError(error);
+    }
+  }
+
+  async patch<T>(url: string, data?: any): Promise<AxiosResponse<T>> {
+    try {
+      const token = localStorage.getItem('access_token');
+      const config: AxiosRequestConfig = {
+        headers: {
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+      };
+      
+      console.log(`🔵 PATCH Request: ${url} - Auth: ${token ? '✅' : '❌'}`);
+      const response = await this.api.patch<T>(url, data, config);
+      return response;
+    } catch (error: any) {
+      console.error(`❌ PATCH Error: ${url}`, error);
       throw this.handleError(error);
     }
   }
