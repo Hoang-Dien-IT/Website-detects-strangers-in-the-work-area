@@ -1,6 +1,18 @@
 import cv2
 import asyncio
 import numpy as np
+from typing import Dict, Any, Optional, AsyncGenerator
+from ..models.camera import CameraResponse
+from ..services.face_processor import face_processor
+from ..services.websocket_manager import websocket_manager
+import concurrent.futures
+import time
+import base64
+from io import BytesIO
+from PIL import Image, ImageDraw, ImageFont
+import os
+import asyncio
+import numpy as np
 from typing import Dict, Any, Optional, AsyncGenerator, List, List
 from ..models.camera import CameraResponse
 from ..services.face_processor import face_processor
@@ -197,9 +209,12 @@ class StreamProcessor:
                         # Vẽ bounding box
                         cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
                         
-                        # Thêm tên và độ tin cậy giống code mẫu
+                        # Thêm tên và độ tin cậy giống code mẫu - sử dụng UTF-8 text
                         label = f"{name} ({confidence:.2f})"
-                        cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
+                        
+                        # Sử dụng function UTF-8 để vẽ tiếng Việt đúng
+                        frame = self._draw_utf8_text(frame, label, (x1, y1 - 30), 
+                                                   font_scale=0.8, color=color, thickness=2)
                         
                         # Send detection alert via WebSocket if it's a new detection
                         if detection.get('person_id') and detection.get('is_new_detection'):
@@ -364,14 +379,24 @@ class StreamProcessor:
                                 print(f"Error converting list to array: {e}")
                 
                 if embeddings:
+                    # Đảm bảo name được encode/decode đúng UTF-8
+                    person_name = person_data['name']
+                    if isinstance(person_name, bytes):
+                        person_name = person_name.decode('utf-8')
+                    elif not isinstance(person_name, str):
+                        person_name = str(person_name)
+                    
                     known_persons.append({
                         'id': str(person_data['_id']),
-                        'name': person_data['name'],
+                        'name': person_name,
                         'embeddings': embeddings
                     })
-                    print(f"✅ Loaded person: {person_data['name']} with {len(embeddings)} embeddings")
+                    print(f"✅ Loaded person: {person_name} with {len(embeddings)} embeddings")
                 else:
-                    print(f"⚠️ Person {person_data['name']} has no valid embeddings")
+                    person_name = person_data['name']
+                    if isinstance(person_name, bytes):
+                        person_name = person_name.decode('utf-8')
+                    print(f"⚠️ Person {person_name} has no valid embeddings")
             
             print(f"✅ Loaded {len(known_persons)} known persons for recognition")
             return known_persons
@@ -381,6 +406,48 @@ class StreamProcessor:
             import traceback
             traceback.print_exc()
             return []
+
+    def _draw_utf8_text(self, frame: np.ndarray, text: str, position: tuple, 
+                       font_scale: float = 0.8, color: tuple = (0, 255, 0), thickness: int = 2) -> np.ndarray:
+        """Draw UTF-8 text (including Vietnamese) on frame using PIL"""
+        try:
+            # Convert OpenCV frame (BGR) to PIL Image (RGB)
+            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            pil_image = Image.fromarray(frame_rgb)
+            draw = ImageDraw.Draw(pil_image)
+            
+            # Try to load a font that supports Vietnamese characters
+            font_size = int(20 * font_scale)
+            try:
+                # Try to use a system font that supports Vietnamese
+                if os.name == 'nt':  # Windows
+                    font_path = "C:/Windows/Fonts/arial.ttf"
+                else:  # Linux/Mac
+                    font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+                
+                if os.path.exists(font_path):
+                    font = ImageFont.truetype(font_path, font_size)
+                else:
+                    font = ImageFont.load_default()
+            except:
+                font = ImageFont.load_default()
+            
+            # Convert BGR color to RGB for PIL
+            pil_color = (color[2], color[1], color[0])
+            
+            # Draw text with PIL
+            draw.text(position, text, font=font, fill=pil_color)
+            
+            # Convert back to OpenCV format (RGB to BGR)
+            frame_with_text = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
+            return frame_with_text
+            
+        except Exception as e:
+            print(f"Error drawing UTF-8 text: {e}")
+            # Fallback to ASCII-only version if UTF-8 fails
+            ascii_text = text.encode('ascii', 'ignore').decode('ascii')
+            cv2.putText(frame, ascii_text, position, cv2.FONT_HERSHEY_SIMPLEX, font_scale, color, thickness)
+            return frame
 
 # Global instance
 stream_processor = StreamProcessor()

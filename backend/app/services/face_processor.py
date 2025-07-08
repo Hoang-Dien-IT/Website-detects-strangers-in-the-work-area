@@ -106,9 +106,16 @@ class FaceProcessorService:
             
             for person in known_persons:
                 if 'embeddings' in person and person['embeddings']:
+                    person_name = person['name']
+                    # Đảm bảo name là UTF-8 string đúng
+                    if isinstance(person_name, bytes):
+                        person_name = person_name.decode('utf-8')
+                    elif not isinstance(person_name, str):
+                        person_name = str(person_name)
+                        
                     for embedding in person['embeddings']:
                         face_db.append(embedding)
-                        names.append(person['name'])
+                        names.append(person_name)
             
             # Chuyển sang numpy array để dùng với FAISS như code mẫu
             if face_db:
@@ -172,7 +179,13 @@ class FaceProcessorService:
             max_index = I[0][0]
             
             if max_similarity > recognition_threshold:
-                return names[max_index]
+                recognized_name = names[max_index]
+                # Đảm bảo name là UTF-8 string đúng
+                if isinstance(recognized_name, bytes):
+                    recognized_name = recognized_name.decode('utf-8')
+                elif not isinstance(recognized_name, str):
+                    recognized_name = str(recognized_name)
+                return recognized_name
             return "Unknown"
         except Exception as e:
             print(f"Error in face recognition: {e}")

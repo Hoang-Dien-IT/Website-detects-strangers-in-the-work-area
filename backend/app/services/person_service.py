@@ -63,7 +63,7 @@ class PersonService:
             # ✅ FIX: Ensure all fields from KnownPersonCreate are included
             person_dict.update({
                 "user_id": ObjectId(user_id),
-                "name": person_dict["name"],
+                "name": str(person_dict["name"]).strip(),  # Đảm bảo name là string và trim whitespace
                 "description": person_dict.get("description"),
                 # ✅ ADD: Include additional information fields
                 "department": person_dict.get("department"),
