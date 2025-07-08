@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { cameraService } from '@/services/camera.service';
 import { detectionService } from '@/services/detection.service';
 import { alertService } from '@/services/alert.service';
+import { personService } from '@/services/person.service';
 
 export interface SidebarCounts {
   totalCameras: number;
@@ -28,15 +29,18 @@ export const useSidebarCounts = () => {
 
       const [
         camerasResponse,
+        personsResponse,
         detectionsResponse,
         alertsResponse
       ] = await Promise.allSettled([
         cameraService.getCameras(),
+        personService.getPersons(),
         detectionService.getDetections(),
         alertService.getUnreadCount()
       ]);
 
       const cameras = camerasResponse.status === 'fulfilled' ? camerasResponse.value : [];
+      const persons = personsResponse.status === 'fulfilled' ? personsResponse.value : [];
       const detections = detectionsResponse.status === 'fulfilled' ? detectionsResponse.value : [];
       const unreadAlerts = alertsResponse.status === 'fulfilled' ? alertsResponse.value : 0;
 
@@ -55,7 +59,7 @@ export const useSidebarCounts = () => {
       setCounts({
         totalCameras: Array.isArray(cameras) ? cameras.length : 0,
         activeCameras: Array.isArray(cameras) ? cameras.filter(c => c.is_active).length : 0,
-        totalPersons: 0, // Will be updated when person service is available
+        totalPersons: Array.isArray(persons) ? persons.filter(p => p.is_active).length : 0,
         todayDetections,
         unreadAlerts,
         isLoading: false,

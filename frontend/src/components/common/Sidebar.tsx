@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useWebSocketContext } from '@/contexts/WebSocketContext';
+import { useSidebarCounts } from '@/hooks/useSidebarCounts';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -61,9 +62,10 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
   const location = useLocation();
   const { user, logout } = useAuth();
   const { isConnected } = useWebSocketContext();
+  const { counts } = useSidebarCounts();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
-  // ✅ Enhanced menu structure theo yêu cầu
+  // ✅ Enhanced menu structure with dynamic counts
   const menuItems: MenuItem[] = [
     {
       title: 'Dashboard',
@@ -74,7 +76,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
       title: 'Cameras',
       icon: Camera,
       path: '/app/cameras',
-      badge: '4',
+      badge: counts.isLoading ? '...' : counts.totalCameras.toString(),
       subItems: [
         {
           title: 'All Cameras',
@@ -90,6 +92,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
           title: 'Live Streams',
           icon: Video,
           path: '/app/live',
+          badge: counts.isLoading ? '...' : counts.activeCameras.toString(),
         }
       ]
     },
@@ -97,7 +100,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
       title: 'Known Persons',
       icon: Users,
       path: '/app/persons',
-      badge: '12',
+      badge: counts.isLoading ? '...' : counts.totalPersons.toString(),
       subItems: [
         {
           title: 'All Persons',
@@ -120,7 +123,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
       title: 'Detections',
       icon: Shield,
       path: '/app/detections',
-      badge: '8',
+      badge: counts.isLoading ? '...' : counts.todayDetections.toString(),
       subItems: [
         {
           title: 'Live Detection',
@@ -136,6 +139,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
           title: 'Alerts',
           icon: AlertTriangle,
           path: '/app/detections/alerts',
+          badge: counts.isLoading ? '...' : counts.unreadAlerts.toString(),
         }
       ]
     },
