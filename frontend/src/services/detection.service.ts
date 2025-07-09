@@ -35,10 +35,12 @@ export interface DetectionFilter {
   start_date?: string;
   end_date?: string;
   limit?: number;
+  skip?: number;
   offset?: number;
   search?: string;
   min_confidence?: number;
   max_confidence?: number;
+  type?: string;
 }
 
 export interface DetectionResponse {
