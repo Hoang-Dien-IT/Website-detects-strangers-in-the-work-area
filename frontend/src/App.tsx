@@ -46,6 +46,8 @@ const PersonFormPage = React.lazy(() => import('@/pages/PersonFormPage'));
 
 // Detection & Monitoring
 const DetectionsPage = React.lazy(() => import('@/pages/DetectionsPage'));
+const DetectionHistoryPage = React.lazy(() => import('@/pages/DetectionHistoryPage'));
+const AlertsPage = React.lazy(() => import('@/pages/AlertsPage'));
 const LiveMonitoringPage = React.lazy(() => import('@/pages/LiveMonitoringPage'));
 
 // Analytics & Reports
@@ -406,24 +408,19 @@ const App: React.FC = () => {
                               <DetectionsPage />
                             </Suspense>
                           } />
-                          <Route path="live" element={
-                            <Suspense fallback={<LoadingSpinner />}>
-                              <DetectionsPage />
-                            </Suspense>
-                          } />
                           <Route path="history" element={
                             <Suspense fallback={<LoadingSpinner />}>
-                              <DetectionsPage />
+                              <DetectionHistoryPage />
                             </Suspense>
                           } />
                           <Route path="alerts" element={
                             <Suspense fallback={<LoadingSpinner />}>
-                              <DetectionsPage />
+                              <AlertsPage />
                             </Suspense>
                           } />
                           <Route path="archive" element={
                             <Suspense fallback={<LoadingSpinner />}>
-                              <DetectionsPage />
+                              <DetectionHistoryPage />
                             </Suspense>
                           } />
                         </Route>
@@ -455,31 +452,7 @@ const App: React.FC = () => {
                               <AnalyticsPage />
                             </Suspense>
                           } />
-                        </Route>
-
-                        {/* Reports & Export */}
-                        <Route path="reports">
-                          <Route index element={
-                            <Suspense fallback={<LoadingSpinner />}>
-                              <ReportsPage />
-                            </Suspense>
-                          } />
-                          <Route path="detection" element={
-                            <Suspense fallback={<LoadingSpinner />}>
-                              <ReportsPage />
-                            </Suspense>
-                          } />
-                          <Route path="security" element={
-                            <Suspense fallback={<LoadingSpinner />}>
-                              <ReportsPage />
-                            </Suspense>
-                          } />
-                          <Route path="activity" element={
-                            <Suspense fallback={<LoadingSpinner />}>
-                              <ReportsPage />
-                            </Suspense>
-                          } />
-                          <Route path="scheduled" element={
+                          <Route path="reports" element={
                             <Suspense fallback={<LoadingSpinner />}>
                               <ReportsPage />
                             </Suspense>

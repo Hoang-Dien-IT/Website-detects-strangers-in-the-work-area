@@ -269,6 +269,9 @@ const ReportsPage: React.FC = () => {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="detection">Detection Report</SelectItem>
+                        <SelectItem value="security">Security Report</SelectItem>
+                        <SelectItem value="scheduled">Scheduled Report</SelectItem>
                         <SelectItem value="summary">Summary Report</SelectItem>
                         <SelectItem value="detailed">Detailed Report</SelectItem>
                         <SelectItem value="analytics">Analytics Report</SelectItem>

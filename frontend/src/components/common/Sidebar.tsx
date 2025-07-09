@@ -126,11 +126,6 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
       badge: counts.isLoading ? '...' : counts.todayDetections.toString(),
       subItems: [
         {
-          title: 'Live Detection',
-          icon: Activity,
-          path: '/app/detections/live',
-        },
-        {
           title: 'Detection History',
           icon: Clock,
           path: '/app/detections/history',
@@ -162,28 +157,6 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
           title: 'Reports',
           icon: FileText,
           path: '/app/analytics/reports',
-        }
-      ]
-    },
-    {
-      title: 'Reports',
-      icon: FileText,
-      path: '/app/reports',
-      subItems: [
-        {
-          title: 'Detection Reports',
-          icon: Shield,
-          path: '/app/reports/detection',
-        },
-        {
-          title: 'Security Reports',
-          icon: Lock,
-          path: '/app/reports/security',
-        },
-        {
-          title: 'Scheduled Reports',
-          icon: Calendar,
-          path: '/app/reports/scheduled',
         }
       ]
     },
