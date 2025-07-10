@@ -122,50 +122,79 @@ class DetectionService:
         except Exception as e:
             print(f"Error sending stranger alert: {e}")
 
-    async def get_user_detections(self, user_id: str, filter_data: DetectionFilter) -> List[DetectionLogResponse]:
-        """Lấy danh sách detection logs với filter"""
+    async def get_user_detections(self, user_id: str, filters: DetectionFilter) -> List[Dict[str, Any]]:
+        """Lấy danh sách detections của user với các bộ lọc"""
         try:
+            print(f"🔵 DetectionService: Getting detections for user {user_id} with filters: {filters}")
+            
+            # Build base query
             query = {"user_id": ObjectId(user_id)}
             
             # Apply filters
-            if filter_data.camera_id:
-                query["camera_id"] = ObjectId(filter_data.camera_id)
-            
-            if filter_data.detection_type:
-                query["detection_type"] = filter_data.detection_type
-            
-            if filter_data.start_date and filter_data.end_date:
-                query["timestamp"] = {
-                    "$gte": filter_data.start_date,
-                    "$lte": filter_data.end_date
-                }
-            
-            # Execute query
-            logs = []
-            cursor = self.collection.find(query).sort("timestamp", -1).skip(filter_data.offset).limit(filter_data.limit)
-            
-            async for log_data in cursor:
-                # Get camera name
-                camera = await self.db.cameras.find_one({"_id": log_data["camera_id"]})
-                camera_name = camera["name"] if camera else "Unknown Camera"
+            if filters.camera_id:
+                try:
+                    query["camera_id"] = ObjectId(filters.camera_id)
+                except:
+                    # Handle case where ID is invalid
+                    print(f"⚠️ Invalid camera_id format: {filters.camera_id}")
+                    pass
+                    
+            if filters.detection_type:
+                query["detection_type"] = filters.detection_type
                 
-                logs.append(DetectionLogResponse(
-                    id=str(log_data["_id"]),
-                    camera_name=camera_name,
-                    detection_type=log_data["detection_type"],
-                    person_name=log_data.get("person_name"),
-                    confidence=log_data["confidence"],
-                    similarity_score=log_data.get("similarity_score"),
-                    image_url=f"/uploads/detections/{os.path.basename(log_data.get('image_path', ''))}" if log_data.get("image_path") else "",
-                    bbox=log_data.get("bbox", []),
-                    timestamp=log_data["timestamp"],
-                    is_alert_sent=log_data.get("is_alert_sent", False)
-                ))
+            if filters.start_date:
+                if not "timestamp" in query:
+                    query["timestamp"] = {}
+                query["timestamp"]["$gte"] = filters.start_date
+                
+            if filters.end_date:
+                if not "timestamp" in query:
+                    query["timestamp"] = {}
+                query["timestamp"]["$lte"] = filters.end_date
+                
+            print(f"🔵 Final MongoDB query: {query}")
+                
+            # Execute query with pagination
+            cursor = self.collection.find(query).sort("timestamp", -1).skip(filters.offset).limit(filters.limit)
             
-            return logs
+            # Get camera name lookup dict for efficiency
+            camera_dict = {}
+            cameras_cursor = self.db.cameras.find({"user_id": ObjectId(user_id)})
+            async for camera in cameras_cursor:
+                camera_dict[str(camera["_id"])] = camera.get("name", "Unknown Camera")
+                
+            # Process results
+            results = []
+            async for detection in cursor:
+                # Get camera name
+                camera_id = str(detection.get("camera_id", ""))
+                camera_name = camera_dict.get(camera_id, "Unknown Camera")
+                
+                # Format response
+                detection_response = {
+                    "id": str(detection["_id"]),
+                    "camera_id": camera_id,
+                    "camera_name": camera_name,
+                    "detection_type": detection.get("detection_type", "unknown"),
+                    "person_id": str(detection.get("person_id")) if detection.get("person_id") else None,
+                    "person_name": detection.get("person_name", "Unknown"),
+                    "confidence": detection.get("confidence", 0.0),
+                    "similarity_score": detection.get("similarity_score"),
+                    "image_path": detection.get("image_path", ""),
+                    "image_url": f"/uploads/detections/{os.path.basename(detection.get('image_path', ''))}",
+                    "bbox": detection.get("bbox", [0, 0, 0, 0]),
+                    "timestamp": detection.get("timestamp", datetime.utcnow()),
+                    "is_alert_sent": detection.get("is_alert_sent", False),
+                }
+                results.append(detection_response)
+            
+            print(f"✅ DetectionService: Found {len(results)} detections")
+            return results
             
         except Exception as e:
-            print(f"Error getting user detections: {e}")
+            import traceback
+            print(f"❌ Error getting user detections: {e}")
+            traceback.print_exc()
             return []
 
     async def get_detection_stats(self, user_id: str) -> DetectionStats:

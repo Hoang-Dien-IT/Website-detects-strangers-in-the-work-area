@@ -8,12 +8,53 @@ import asyncio
 import concurrent.futures
 import gc
 import torch
+import logging
+
+logger = logging.getLogger(__name__)
 
 class FaceProcessorService:
     def __init__(self):
-        self.face_app = FaceAnalysis(providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
-        self.face_app.prepare(  ctx_id=0, det_size=(640, 640))
-        self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=2)
+        # Detect available providers and choose the best one
+        available_providers = self._get_available_providers()
+        logger.info(f"Available providers: {available_providers}")
+        
+        # Initialize face analysis with GPU if available
+        self.face_app = FaceAnalysis(providers=available_providers)
+        
+        # Use GPU context if CUDA is available, otherwise CPU
+        ctx_id = 0 if 'CUDAExecutionProvider' in available_providers else -1
+        self.face_app.prepare(ctx_id=ctx_id, det_size=(640, 640))
+        
+        # Adjust thread pool based on GPU availability
+        max_workers = 4 if 'CUDAExecutionProvider' in available_providers else 2
+        self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers)
+        
+        logger.info(f"FaceProcessor initialized with providers: {available_providers}")
+        logger.info(f"Using context ID: {ctx_id} ({'GPU' if ctx_id >= 0 else 'CPU'})")
+    
+    def _get_available_providers(self) -> List[str]:
+        """Get list of available execution providers, prioritizing GPU"""
+        providers = []
+        
+        # Try to use CUDA if available
+        try:
+            import onnxruntime as ort
+            available = ort.get_available_providers()
+            
+            if 'CUDAExecutionProvider' in available:
+                providers.append('CUDAExecutionProvider')
+                logger.info("✅ CUDA GPU support detected")
+            elif 'DmlExecutionProvider' in available:
+                providers.append('DmlExecutionProvider')
+                logger.info("✅ DirectML GPU support detected")
+            
+            providers.append('CPUExecutionProvider')
+            
+        except Exception as e:
+            logger.warning(f"Error detecting GPU providers: {e}")
+            providers = ['CPUExecutionProvider']
+        
+        return providers
 
     def cleanup(self):
         """Giải phóng tài nguyên"""

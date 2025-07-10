@@ -34,7 +34,7 @@ async def get_detections(
     detection_type: Optional[str] = Query(None),
     start_date: Optional[str] = Query(None),
     end_date: Optional[str] = Query(None),
-    limit: int = Query(50, ge=1, le=100),
+    limit: int = Query(50, ge=1, le=1000),  # Tăng limit lên 1000
     offset: int = Query(0, ge=0),
     current_user: User = Depends(get_current_active_user)
 ):
@@ -58,9 +58,21 @@ async def get_detections(
             except:
                 end_datetime = datetime.fromisoformat(end_date)
         
+        # Convert detection_type to proper enum value if provided
+        detection_type_enum = None
+        if detection_type:
+            try:
+                from ..models.detection_log import DetectionType
+                # Check if it's a valid enum value
+                if detection_type in [e.value for e in DetectionType]:
+                    detection_type_enum = detection_type
+                print(f"🔵 Converted detection_type: {detection_type} -> {detection_type_enum}")
+            except Exception as e:
+                print(f"❌ Error converting detection_type: {e}")
+
         filter_data = DetectionFilter(
             camera_id=camera_id,
-            detection_type=detection_type,
+            detection_type=detection_type_enum,
             start_date=start_datetime,
             end_date=end_datetime,
             limit=limit,

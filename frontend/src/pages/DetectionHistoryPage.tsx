@@ -95,6 +95,7 @@ const DetectionHistoryPage: React.FC = () => {
 
   const loadStats = async () => {
     try {
+      // Try to load stats with large limit (now allowed up to 1000)
       const response = await detectionService.getDetections({ limit: 1000 });
       const allDetections = Array.isArray(response) ? response : response.detections || [];
       
@@ -113,6 +114,15 @@ const DetectionHistoryPage: React.FC = () => {
       });
     } catch (error) {
       console.error('Error loading stats:', error);
+      toast.error('Error loading detection statistics');
+      
+      // Set default stats in case of error
+      setStats({
+        total: 0,
+        today: 0,
+        known: 0,
+        unknown: 0
+      });
     }
   };
 

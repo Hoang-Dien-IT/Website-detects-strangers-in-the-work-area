@@ -47,7 +47,7 @@ class DetectionFilter(BaseModel):
     detection_type: Optional[DetectionType] = None
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
-    limit: int = Field(50, ge=1, le=100)
+    limit: int = Field(50, ge=1, le=1000)  # Tăng limit lên 1000
     offset: int = Field(0, ge=0)
 
 class DetectionLog(BaseModel):

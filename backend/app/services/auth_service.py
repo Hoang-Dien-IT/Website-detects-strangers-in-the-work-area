@@ -26,11 +26,19 @@ class AuthService:
 
     def verify_password(self, plain_password: str, hashed_password: str) -> bool:
         """Verify a plain password against its hash"""
-        return self.pwd_context.verify(plain_password, hashed_password)
-
+        try:
+            return self.pwd_context.verify(plain_password, hashed_password)
+        except Exception as e:
+            logger.error(f"Password verification error: {e}")
+            return False
+    
     def get_password_hash(self, password: str) -> str:
         """Hash a password"""
-        return self.pwd_context.hash(password)
+        try:
+            return self.pwd_context.hash(password)
+        except Exception as e:
+            logger.error(f"Password hashing error: {e}")
+            raise HTTPException(status_code=500, detail="Password hashing failed")
 
     def create_access_token(self, data: dict, expires_delta: Optional[timedelta] = None):
         """Create JWT access token"""

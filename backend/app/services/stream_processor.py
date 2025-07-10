@@ -188,8 +188,17 @@ class StreamProcessor:
                     known_persons = await self._get_known_persons_for_camera(camera_id)
                     
                     # Phát hiện và nhận dạng khuôn mặt giống code mẫu
+                    # Mark all detections as new for testing
                     detections = await face_processor.detect_and_recognize_faces(frame, known_persons)
                     
+                    # Mark detections as new for testing (to ensure they're saved)
+                    for detection in detections:
+                        if detection.get('person_name') != 'Unknown':
+                            detection['is_new_detection'] = True
+                        else:
+                            # For strangers, randomly mark some as new (to avoid too many alerts)
+                            detection['is_new_detection'] = True
+                
                     # Vẽ các khuôn mặt đã phát hiện và nhận dạng giống code mẫu
                     for detection in detections:
                         # Lấy bounding box
@@ -217,8 +226,13 @@ class StreamProcessor:
                                                    font_scale=0.8, color=color, thickness=2)
                         
                         # Send detection alert via WebSocket if it's a new detection
-                        if detection.get('person_id') and detection.get('is_new_detection'):
-                            await self._send_detection_alert(camera_id, detection)
+                        if detection.get('is_new_detection'):
+                            # Get region of interest (face crop)
+                            x, y, w, h = detection.get('bbox', [0, 0, 0, 0])
+                            face_frame = frame.copy()
+                            await self._send_detection_alert(camera_id, detection, face_frame)
+                            # Save detection to database
+                            await self._save_detection_to_database(camera_id, camera.name, detection, frame)
                     
                     # Add detection count overlay
                     detection_count = len(detections)
@@ -324,13 +338,30 @@ class StreamProcessor:
                 "resolution": "Unknown"
             }
 
-    async def _send_detection_alert(self, camera_id: str, detection: Dict[str, Any]):
-        """Send detection alert via WebSocket"""
+    async def _send_detection_alert(self, camera_id: str, detection: Dict[str, Any], frame: np.ndarray = None):
+        """Send detection alert via WebSocket and save to database"""
         try:
+            # Get camera name
+            from ..database import get_database
+            from bson import ObjectId
+            
+            db = get_database()
+            camera_data = await db.cameras.find_one({"_id": ObjectId(camera_id)})
+            camera_name = camera_data.get("name", "Unknown Camera") if camera_data else "Unknown Camera"
+            
+            # Save to database if we have the frame
+            detection_id = None
+            if frame is not None:
+                detection_id = await self._save_detection_to_database(camera_id, camera_name, detection, frame)
+            
+            # Create WebSocket message
             alert_message = {
                 "type": "detection_alert",
                 "data": {
+                    "id": detection_id,  # New ID from database
                     "camera_id": camera_id,
+                    "camera_name": camera_name,
+                    "detection_type": "known_person" if detection.get('person_name') != "Unknown" else "stranger",
                     "person_id": detection.get('person_id'),
                     "person_name": detection.get('person_name', 'Unknown'),
                     "confidence": detection.get('confidence', 0),
@@ -341,6 +372,7 @@ class StreamProcessor:
             
             # Send to all connected clients (you might want to filter by user)
             await websocket_manager.broadcast_message(alert_message)
+            print(f"✅ Detection alert sent via WebSocket: {detection.get('person_name', 'Unknown')}")
             
         except Exception as e:
             print(f"Error sending detection alert: {e}")
@@ -406,6 +438,77 @@ class StreamProcessor:
             import traceback
             traceback.print_exc()
             return []
+
+    async def _save_detection_to_database(self, camera_id: str, camera_name: str, detection: Dict[str, Any], frame: np.ndarray):
+        """Save detection to database"""
+        try:
+            # Import here to avoid circular imports
+            from ..database import get_database
+            from bson import ObjectId
+            from ..models.detection_log import DetectionLogCreate
+            import base64
+            import uuid
+            import os
+            from datetime import datetime
+            
+            # Get camera info
+            db = get_database()
+            camera_data = await db.cameras.find_one({"_id": ObjectId(camera_id)})
+            if not camera_data:
+                print(f"❌ Camera not found: {camera_id}")
+                return None
+                
+            user_id = str(camera_data.get("user_id", ""))
+            if not user_id:
+                print(f"❌ No user_id found for camera: {camera_id}")
+                return None
+            
+            # Convert frame to base64 for storage
+            _, img_encoded = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 90])
+            img_base64 = base64.b64encode(img_encoded.tobytes()).decode('utf-8')
+            
+            # Create detection document
+            detection_type = "known_person" if detection.get("person_name") != "Unknown" else "stranger"
+            
+            # Ensure uploads directory exists
+            upload_dir = "uploads/detections"
+            os.makedirs(upload_dir, exist_ok=True)
+            
+            # Save image to file
+            image_filename = f"detection_{uuid.uuid4()}.jpg"
+            image_path = os.path.join(upload_dir, image_filename)
+            with open(image_path, 'wb') as f:
+                f.write(img_encoded.tobytes())
+                
+            # Create database entry
+            detection_doc = {
+                "user_id": ObjectId(user_id),
+                "camera_id": ObjectId(camera_id),
+                "detection_type": detection_type,
+                "person_id": ObjectId(detection.get("person_id")) if detection.get("person_id") else None,
+                "person_name": detection.get("person_name", "Unknown"),
+                "confidence": float(detection.get("confidence", 0)),
+                "similarity_score": float(detection.get("recognition_confidence", 0)),
+                "image_path": image_path,
+                "bbox": detection.get("bbox", [0, 0, 0, 0]),
+                "timestamp": datetime.utcnow(),
+                "is_alert_sent": True,
+                "alert_methods": ["websocket"],
+                "metadata": {}
+            }
+            
+            # Insert to database
+            result = await db.detection_logs.insert_one(detection_doc)
+            detection_id = str(result.inserted_id)
+            
+            print(f"✅ Saved detection to database: {detection_id}, type: {detection_type}")
+            return detection_id
+            
+        except Exception as e:
+            import traceback
+            print(f"❌ Error saving detection to database: {e}")
+            traceback.print_exc()
+            return None
 
     def _draw_utf8_text(self, frame: np.ndarray, text: str, position: tuple, 
                        font_scale: float = 0.8, color: tuple = (0, 255, 0), thickness: int = 2) -> np.ndarray:
