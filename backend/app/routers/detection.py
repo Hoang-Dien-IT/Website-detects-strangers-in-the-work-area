@@ -256,3 +256,29 @@ async def export_detection_stats(
     except Exception as e:
         print(f"❌ Error exporting stats: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/tracking-status/{camera_id}")
+async def get_detection_tracking_status(
+    camera_id: str,
+    current_user: User = Depends(get_current_active_user)
+):
+    """Lấy trạng thái tracking detection cho camera"""
+    try:
+        from ..services.detection_tracker import detection_tracker
+        
+        presence_info = detection_tracker.get_presence_info(camera_id)
+        
+        return {
+            "camera_id": camera_id,
+            "active_presences": len(presence_info),
+            "presences": presence_info,
+            "tracking_active": True
+        }
+    except Exception as e:
+        print(f"❌ Error getting tracking status: {e}")
+        return {
+            "camera_id": camera_id,
+            "active_presences": 0,
+            "presences": {},
+            "tracking_active": False
+        }

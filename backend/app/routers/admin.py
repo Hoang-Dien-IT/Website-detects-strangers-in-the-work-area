@@ -4,6 +4,8 @@ from ..models.user import User
 from ..services.admin_service import admin_service
 from ..services.auth_service import get_admin_user
 from pydantic import BaseModel
+import time
+import time
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
@@ -132,4 +134,76 @@ async def get_user_details(
         raise HTTPException(
             status_code=400,
             detail=f"Failed to get user details: {str(e)}"
+        )
+
+@router.get("/detection-tracking")
+async def get_detection_tracking_overview(
+    current_admin: User = Depends(get_admin_user)
+):
+    """Lấy tổng quan về detection tracking trên toàn hệ thống"""
+    try:
+        from ..services.detection_tracker import detection_tracker
+        
+        # Lấy thông tin từ tất cả cameras
+        total_presences = 0
+        cameras_with_activity = 0
+        tracking_details = {}
+        
+        # Iterate through all active cameras (you might want to get this from database)
+        from ..database import get_database
+        db = get_database()
+        
+        cameras_cursor = db.cameras.find({"is_active": True})
+        
+        async for camera in cameras_cursor:
+            camera_id = str(camera["_id"])
+            camera_name = camera.get("name", "Unknown")
+            
+            presence_info = detection_tracker.get_presence_info(camera_id)
+            
+            if presence_info:
+                cameras_with_activity += 1
+                total_presences += len(presence_info)
+                
+                tracking_details[camera_id] = {
+                    "camera_name": camera_name,
+                    "active_presences": len(presence_info),
+                    "presences": presence_info
+                }
+        
+        return {
+            "total_presences": total_presences,
+            "cameras_with_activity": cameras_with_activity,
+            "tracking_details": tracking_details,
+            "system_status": "active" if total_presences > 0 else "idle"
+        }
+        
+    except Exception as e:
+        print(f"❌ Error getting detection tracking overview: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to get detection tracking overview: {str(e)}"
+        )
+
+@router.post("/detection-tracking/reset")
+async def reset_detection_tracking(
+    current_admin: User = Depends(get_admin_user)
+):
+    """Reset detection tracking (xóa tất cả presence tracking)"""
+    try:
+        from ..services.detection_tracker import detection_tracker
+        
+        # Reset all presences
+        detection_tracker.presences.clear()
+        
+        return {
+            "message": "Detection tracking reset successfully",
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        print(f"❌ Error resetting detection tracking: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to reset detection tracking: {str(e)}"
         )

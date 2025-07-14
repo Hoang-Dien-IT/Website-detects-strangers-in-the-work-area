@@ -5,6 +5,7 @@ from typing import Dict, Any, Optional, AsyncGenerator
 from ..models.camera import CameraResponse
 from ..services.face_processor import face_processor
 from ..services.websocket_manager import websocket_manager
+from ..services.detection_tracker import detection_tracker
 import concurrent.futures
 import time
 import base64
@@ -52,6 +53,9 @@ class StreamProcessor:
             if camera_id in self.active_streams:
                 return True  # Already streaming
             
+            # Khởi động detection_tracker nếu chưa chạy
+            detection_tracker.start_cleanup_task()
+            
             # Initialize stream
             self.active_streams[camera_id] = {
                 "camera": camera,
@@ -81,6 +85,10 @@ class StreamProcessor:
                 
                 # Remove from active streams
                 del self.active_streams[camera_id]
+                
+                # Dừng detection_tracker nếu không còn stream nào active
+                if not self.active_streams:
+                    await detection_tracker.stop_cleanup_task()
                 
                 print(f"Stream stopped for camera: {camera_id}")
                 return True
@@ -187,17 +195,30 @@ class StreamProcessor:
                     # Load known persons for recognition
                     known_persons = await self._get_known_persons_for_camera(camera_id)
                     
-                    # Phát hiện và nhận dạng khuôn mặt giống code mẫu
-                    # Mark all detections as new for testing
+                    # Phát hiện và nhận dạng khuôn mặt với detection tracking
                     detections = await face_processor.detect_and_recognize_faces(frame, known_persons)
                     
-                    # Mark detections as new for testing (to ensure they're saved)
+                    # Sử dụng detection_tracker để quyết định có lưu detection hay không
                     for detection in detections:
-                        if detection.get('person_name') != 'Unknown':
-                            detection['is_new_detection'] = True
-                        else:
-                            # For strangers, randomly mark some as new (to avoid too many alerts)
-                            detection['is_new_detection'] = True
+                        person_name = detection.get('person_name', 'Unknown')
+                        person_id = detection.get('person_id')
+                        confidence = detection.get('confidence', 0)
+                        
+                        # Xác định loại detection
+                        detection_type = "known_person" if person_name != "Unknown" else "stranger"
+                        
+                        # Sử dụng detection_tracker để quyết định có lưu hay không
+                        should_save = detection_tracker.track_detection(
+                            camera_id=camera_id,
+                            person_id=person_id or f"unknown_{int(time.time())}",
+                            person_name=person_name,
+                            detection_type=detection_type,
+                            confidence=confidence
+                        )
+                        
+                        # Đánh dấu nếu cần lưu detection này
+                        detection['should_save'] = should_save
+                        detection['detection_type'] = detection_type
                 
                     # Vẽ các khuôn mặt đã phát hiện và nhận dạng giống code mẫu
                     for detection in detections:
@@ -225,14 +246,12 @@ class StreamProcessor:
                         frame = self._draw_utf8_text(frame, label, (x1, y1 - 30), 
                                                    font_scale=0.8, color=color, thickness=2)
                         
-                        # Send detection alert via WebSocket if it's a new detection
-                        if detection.get('is_new_detection'):
+                        # Chỉ lưu và gửi alert nếu detection_tracker cho phép
+                        if detection.get('should_save'):
                             # Get region of interest (face crop)
                             x, y, w, h = detection.get('bbox', [0, 0, 0, 0])
                             face_frame = frame.copy()
                             await self._send_detection_alert(camera_id, detection, face_frame)
-                            # Save detection to database
-                            await self._save_detection_to_database(camera_id, camera.name, detection, frame)
                     
                     # Add detection count overlay
                     detection_count = len(detections)
@@ -349,7 +368,7 @@ class StreamProcessor:
             camera_data = await db.cameras.find_one({"_id": ObjectId(camera_id)})
             camera_name = camera_data.get("name", "Unknown Camera") if camera_data else "Unknown Camera"
             
-            # Save to database if we have the frame
+            # Save to database since detection_tracker approved this detection
             detection_id = None
             if frame is not None:
                 detection_id = await self._save_detection_to_database(camera_id, camera_name, detection, frame)
@@ -361,7 +380,7 @@ class StreamProcessor:
                     "id": detection_id,  # New ID from database
                     "camera_id": camera_id,
                     "camera_name": camera_name,
-                    "detection_type": "known_person" if detection.get('person_name') != "Unknown" else "stranger",
+                    "detection_type": detection.get('detection_type', 'unknown'),
                     "person_id": detection.get('person_id'),
                     "person_name": detection.get('person_name', 'Unknown'),
                     "confidence": detection.get('confidence', 0),
