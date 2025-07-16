@@ -84,7 +84,40 @@ export interface DetectionStats {
   last_updated: string;
 }
 
-// ✅ ADD: Chart data interfaces
+// Analytics interfaces
+export interface AnalyticsOverview {
+  overview: {
+    total_detections: number;
+    stranger_detections: number;
+    known_person_detections: number;
+    detection_accuracy: number;
+    alerts_sent: number;
+  };
+  time_based: {
+    today: number;
+    this_week: number;
+    this_month: number;
+    last_24h_strangers: number;
+  };
+  camera_stats: {
+    total_cameras: number;
+    active_cameras: number;
+    streaming_cameras: number;
+    offline_cameras: number;
+  };
+  person_stats: {
+    total_known_persons: number;
+  };
+  top_cameras: Array<{
+    camera_id: string;
+    camera_name: string;
+    detection_count: number;
+    stranger_count: number;
+  }>;
+  hourly_pattern: Record<string, number>;
+  last_updated: string;
+}
+
 export interface ChartDataset {
   label: string;
   data: number[];
@@ -98,7 +131,11 @@ export interface ChartData {
   chart_type: string;
   time_range: string;
   labels: string[];
-  datasets: ChartDataset[];
+  datasets: Array<{
+    label: string;
+    data: number[];
+    color?: string;
+  }>;
 }
 
 // ✅ ADD: Top camera interface
@@ -256,272 +293,143 @@ class DetectionService {
     } catch (error: any) {
       console.error('❌ DetectionService: Error getting chart data:', error);
       
-      // ✅ Return fallback chart data structure
-      console.log('⚠️ DetectionService: Using fallback chart data');
-      return this.generateFallbackChartData(timeRange, chartType);
-    }
-  }
-
-  // ✅ FIX: Fallback chart data generator with proper return type
-  private generateFallbackChartData(timeRange: string, chartType: string): ChartData {
-    const days = timeRange === '24h' ? 1 : timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : 90;
-    const labels: string[] = [];
-    const strangersData: number[] = [];
-    const knownData: number[] = [];
-    
-    for (let i = days - 1; i >= 0; i--) {
-      const date = new Date();
-      date.setDate(date.getDate() - i);
-      
-      if (timeRange === '24h') {
-        // Generate hourly data for 24h
-        for (let hour = 0; hour < 24; hour++) {
-          labels.push(`${hour.toString().padStart(2, '0')}:00`);
-          strangersData.push(Math.floor(Math.random() * 5) + 1);
-          knownData.push(Math.floor(Math.random() * 8) + 2);
-        }
-        break;
-      } else {
-        labels.push(date.toISOString().split('T')[0]);
-        strangersData.push(Math.floor(Math.random() * 20) + 5);
-        knownData.push(Math.floor(Math.random() * 15) + 10);
-      }
-    }
-
-    return {
-      chart_type: chartType,
-      time_range: timeRange,
-      labels,
-      datasets: [
-        {
-          label: 'Stranger Detections',
-          data: strangersData,
-          backgroundColor: 'rgba(239, 68, 68, 0.1)',
-          borderColor: '#EF4444',
-          borderWidth: 2,
-          fill: true
-        },
-        {
-          label: 'Known Person Detections',
-          data: knownData,
-          backgroundColor: 'rgba(16, 185, 129, 0.1)',
-          borderColor: '#10B981',
-          borderWidth: 2,
-          fill: true
-        }
-      ]
-    };
-  }
-
-  // ✅ FIX: Hourly stats with proper typing
-  async getHourlyStats(date?: string): Promise<HourlyStats> {
-    try {
-      console.log('🔵 DetectionService: Getting hourly stats...', { date });
-      
-      const params = date ? { date } : {};
-      const response = await apiService.get<HourlyStats>('/detections/stats/hourly', params);
-      
-      console.log('✅ DetectionService: Got hourly stats:', response.data);
-      return response.data;
-    } catch (error: any) {
-      console.error('❌ DetectionService: Error getting hourly stats:', error);
-      
-      // Return fallback hourly data
-      const hourlyData = [];
-      for (let hour = 0; hour < 24; hour++) {
-        hourlyData.push({
-          hour: `${hour.toString().padStart(2, '0')}:00`,
-          detections: Math.floor(Math.random() * 10) + 1,
-          strangers: Math.floor(Math.random() * 5) + 1,
-          known_persons: Math.floor(Math.random() * 8) + 2
-        });
-      }
-      return { hourly_data: hourlyData };
-    }
-  }
-
-  // ✅ FIX: Real-time stats with proper typing
-  async getRealTimeStats(): Promise<RealTimeStats> {
-    try {
-      console.log('🔵 DetectionService: Getting real-time stats...');
-      
-      const response = await apiService.get<RealTimeStats>('/detections/stats/realtime');
-      console.log('✅ DetectionService: Got real-time stats:', response.data);
-      return response.data;
-    } catch (error: any) {
-      console.error('❌ DetectionService: Error getting real-time stats:', error);
-      
-      // Return fallback real-time data
+      // Return fallback chart data
       return {
-        last_30_minutes: {
-          total_detections: Math.floor(Math.random() * 10) + 1,
-          stranger_detections: Math.floor(Math.random() * 5) + 1,
-          known_person_detections: Math.floor(Math.random() * 8) + 2,
-          active_cameras: Math.floor(Math.random() * 5) + 1
-        },
-        current_activity: {
-          streaming_cameras: Math.floor(Math.random() * 3) + 1,
-          detection_rate: Math.random() * 5 + 1,
-          system_load: Math.random() * 100
-        }
+        chart_type: chartType,
+        time_range: timeRange,
+        labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'],
+        datasets: [
+          {
+            label: 'Stranger Detections',
+            data: [12, 8, 15, 6, 11, 9, 13],
+            color: '#EF4444'
+          },
+          {
+            label: 'Known Person Detections',
+            data: [45, 52, 38, 61, 49, 44, 56],
+            color: '#10B981'
+          }
+        ]
       };
     }
   }
 
-  async cleanupOldDetections(daysToKeep: number = 30): Promise<any> {
-    try {
-      console.log('🔵 DetectionService: Cleaning up old detections...', { daysToKeep });
-      
-      const response = await apiService.post('/detections/cleanup', null, {
-        params: { days_to_keep: daysToKeep }
-      });
-      console.log('✅ DetectionService: Cleanup completed:', response.data);
-      return response.data;
-    } catch (error: any) {
-      console.error('❌ DetectionService: Error cleaning up detections:', error);
-      throw new Error(error.message || 'Failed to cleanup old detections');
-    }
-  }
-
-  // ✅ FIX: Detection alerts with proper typing
-  async getDetectionAlerts(limit: number = 10): Promise<any[]> {
-    try {
-      console.log('🔵 DetectionService: Getting detection alerts...', { limit });
-      
-      const response = await apiService.get<any[]>('/detections/alerts', { limit });
-      console.log('✅ DetectionService: Got detection alerts:', response.data);
-      
-      // ✅ Ensure we return an array
-      if (Array.isArray(response.data)) {
-        return response.data;
-      } else {
-        console.warn('⚠️ DetectionService: Expected array but got:', typeof response.data);
-        return [];
-      }
-    } catch (error: any) {
-      console.error('❌ DetectionService: Error getting detection alerts:', error);
-      
-      // Return fallback alert data
-      return [];
-    }
-  }
-
-  async markAlertAsRead(alertId: string): Promise<void> {
-    try {
-      console.log('🔵 DetectionService: Marking alert as read...', { alertId });
-      
-      await apiService.put(`/detections/alerts/${alertId}/read`);
-      console.log('✅ DetectionService: Alert marked as read');
-    } catch (error: any) {
-      console.error('❌ DetectionService: Error marking alert as read:', error);
-      throw new Error(error.message || 'Failed to mark alert as read');
-    }
-  }
-
-  // ✅ FIX: Export stats method with proper blob handling
+  // ✅ ADD: Export detection stats method
   async exportStats(timeRange: string = '7d', format: string = 'csv'): Promise<Blob> {
     try {
-      console.log('🔵 DetectionService: Exporting stats...', { timeRange, format });
+      console.log('🔵 DetectionService: Exporting detection stats...', { timeRange, format });
       
-      // ✅ Method 1: Use downloadBlob if available
-      if (typeof apiService.downloadBlob === 'function') {
-        const blob = await apiService.downloadBlob('/detections/stats/export', {
-          time_range: timeRange,
-          format: format
-        });
-        console.log('✅ DetectionService: Stats exported successfully via downloadBlob');
-        return blob;
-      }
-      
-      // ✅ Method 2: Use getBlobResponse if available
-      if (typeof apiService.getBlobResponse === 'function') {
-        const blob = await apiService.getBlobResponse('/detections/stats/export', {
-          time_range: timeRange,
-          format: format
-        }, {
-          'Accept': format === 'csv' ? 'text/csv' : 'application/json'
-        });
-        console.log('✅ DetectionService: Stats exported successfully via getBlobResponse');
-        return blob;
-      }
-      
-      // ✅ Method 3: Fallback with fetch API
-      console.warn('⚠️ DetectionService: Blob methods not available, using fetch fallback');
-      return await this.makeBlobAPIRequest('/detections/stats/export', {
+      const blob = await apiService.downloadBlob('/detections/stats/export', {
         time_range: timeRange,
         format: format
       });
       
+      console.log('✅ DetectionService: Stats exported successfully');
+      return blob;
     } catch (error: any) {
       console.error('❌ DetectionService: Error exporting stats:', error);
-      throw new Error(error.message || 'Failed to export stats');
-    }
-  }
-
-  private async makeBlobAPIRequest(url: string, params: any): Promise<Blob> {
-    try {
-      const token = localStorage.getItem('access_token');
-      const baseURL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
-      
-      const queryParams = new URLSearchParams(params);
-      const fullUrl = `${baseURL}${url}?${queryParams}`;
-      
-      const response = await fetch(fullUrl, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': params.format === 'csv' ? 'text/csv' : 'application/json'
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      
-      return await response.blob();
-    } catch (error) {
-      console.error('❌ DetectionService: Blob API request failed:', error);
       throw error;
     }
   }
 
-
-  // ✅ FIX: Top cameras method with proper typing
-  async getTopCameras(timeRange: string = '7d', limit: number = 10): Promise<TopCamera[]> {
+  // ✅ ADD: Cleanup old detections method
+  async cleanupOldDetections(daysToKeep: number = 30): Promise<any> {
     try {
-      console.log('🔵 DetectionService: Getting top cameras...', { timeRange, limit });
+      console.log('🔵 DetectionService: Cleaning up old detections...', { daysToKeep });
       
-      const response = await apiService.get<TopCamera[]>('/detections/stats/top-cameras', {
-        time_range: timeRange,
-        limit: limit
-      });
+      const response = await apiService.post(`/detections/cleanup?days_to_keep=${daysToKeep}`);
       
-      console.log('✅ DetectionService: Got top cameras:', response.data);
-      
-      // ✅ Ensure we return an array
-      if (Array.isArray(response.data)) {
-        return response.data;
-      } else {
-        console.warn('⚠️ DetectionService: Expected array but got:', typeof response.data);
-        return this.getFallbackTopCameras();
-      }
+      console.log('✅ DetectionService: Old detections cleaned up successfully');
+      return response.data;
     } catch (error: any) {
-      console.error('❌ DetectionService: Error getting top cameras:', error);
-      
-      // Return fallback top cameras data
-      return this.getFallbackTopCameras();
+      console.error('❌ DetectionService: Error cleaning up old detections:', error);
+      throw error;
     }
   }
 
-  // ✅ FIX: Fallback top cameras with proper typing
-  private getFallbackTopCameras(): TopCamera[] {
-    return [
-      { camera_id: '1', camera_name: 'Front Door Camera', detection_count: 125, stranger_count: 45, known_person_count: 80 },
-      { camera_id: '2', camera_name: 'Back Entrance', detection_count: 89, stranger_count: 32, known_person_count: 57 },
-      { camera_id: '3', camera_name: 'Parking Lot', detection_count: 76, stranger_count: 28, known_person_count: 48 },
-      { camera_id: '4', camera_name: 'Reception Area', detection_count: 65, stranger_count: 15, known_person_count: 50 },
-      { camera_id: '5', camera_name: 'Main Hallway', detection_count: 54, stranger_count: 22, known_person_count: 32 }
-    ];
+  // ✅ ADD: Get analytics overview method
+  async getAnalytics(timeRange: string = '7d'): Promise<AnalyticsOverview> {
+    try {
+      console.log('🔵 DetectionService: Getting analytics overview...', { timeRange });
+      
+      const response = await apiService.get<AnalyticsOverview>('/detections/stats/overview');
+      
+      console.log('✅ DetectionService: Got analytics overview:', response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error('❌ DetectionService: Error getting analytics overview:', error);
+      
+      // Return fallback analytics data
+      return {
+        overview: {
+          total_detections: 0,
+          stranger_detections: 0,
+          known_person_detections: 0,
+          detection_accuracy: 0,
+          alerts_sent: 0
+        },
+        time_based: {
+          today: 0,
+          this_week: 0,
+          this_month: 0,
+          last_24h_strangers: 0
+        },
+        camera_stats: {
+          total_cameras: 0,
+          active_cameras: 0,
+          streaming_cameras: 0,
+          offline_cameras: 0
+        },
+        person_stats: {
+          total_known_persons: 0
+        },
+        top_cameras: [],
+        hourly_pattern: {},
+        last_updated: new Date().toISOString()
+      };
+    }
+  }
+
+  // Add trends data method
+  async getTrendsData(timeRange: string = '7d'): Promise<any> {
+    try {
+      const response = await apiService.get(`/detections/stats/trends?time_range=${timeRange}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching trends data:', error);
+      throw error;
+    }
+  }
+
+  // Add reports methods
+  async generateReport(reportConfig: any): Promise<any> {
+    try {
+      const response = await apiService.post('/detections/reports/generate', reportConfig);
+      return response.data;
+    } catch (error) {
+      console.error('Error generating report:', error);
+      throw error;
+    }
+  }
+
+  async getReportHistory(): Promise<any> {
+    try {
+      const response = await apiService.get('/detections/reports/history');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching report history:', error);
+      throw error;
+    }
+  }
+
+  async getReportTemplates(): Promise<any> {
+    try {
+      const response = await apiService.get('/detections/reports/templates');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching report templates:', error);
+      throw error;
+    }
   }
 }
 

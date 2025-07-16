@@ -39,6 +39,7 @@ import {
 import { DateRange } from 'react-day-picker';
 import { DatePickerWithRange } from '@/components/ui/date-range-picker';
 import { useAuth } from '@/hooks/useAuth';
+import { detectionService } from '@/services/detection.service';
 import { toast } from 'sonner';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 
@@ -46,10 +47,23 @@ interface ReportData {
   id: string;
   name: string;
   description: string;
-  type: 'daily' | 'weekly' | 'monthly' | 'custom';
+  type: 'daily' | 'weekly' | 'monthly' | 'custom' | 'security';
   created_at: string;
   file_size: string;
   status: 'ready' | 'generating' | 'failed';
+  summary?: {
+    total_detections: number;
+    known_detections: number;
+    stranger_detections: number;
+    accuracy_rate: number;
+    cameras_active: number;
+  };
+  daily_trends?: Array<{
+    date: string;
+    detections: number;
+    known: number;
+    strangers: number;
+  }>;
 }
 
 interface ReportFilters {
@@ -64,90 +78,92 @@ const ReportsPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [reports, setReports] = useState<ReportData[]>([]);
+  const [previewData, setPreviewData] = useState<any>(null);
+  const [summaryStats, setSummaryStats] = useState({
+    total_detections: 0,
+    known_detections: 0,
+    stranger_detections: 0,
+    cameras_active: 0,
+    accuracy_rate: 0
+  });
   const [filters, setFilters] = useState<ReportFilters>({
-    dateRange: undefined,
+    dateRange: {
+      from: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      to: new Date()
+    },
     cameras: [],
     detection_type: 'all',
     report_type: 'summary'
   });
 
-  // Mock data for existing reports
-  const mockReports: ReportData[] = [
-    {
-      id: '1',
-      name: 'Weekly Detection Summary',
-      description: 'Detection activity summary for last week',
-      type: 'weekly',
-      created_at: '2024-01-15T10:30:00Z',
-      file_size: '2.4 MB',
-      status: 'ready'
-    },
-    {
-      id: '2',
-      name: 'Monthly Analytics Report',
-      description: 'Comprehensive analytics for December 2023',
-      type: 'monthly',
-      created_at: '2024-01-01T09:00:00Z',
-      file_size: '8.7 MB',
-      status: 'ready'
-    },
-    {
-      id: '3',
-      name: 'Custom Security Report',
-      description: 'Custom report for specific date range',
-      type: 'custom',
-      created_at: '2024-01-10T14:20:00Z',
-      file_size: '4.1 MB',
-      status: 'ready'
-    },
-    {
-      id: '4',
-      name: 'Daily Activity Report',
-      description: 'Today\'s detection activity',
-      type: 'daily',
-      created_at: '2024-01-16T08:00:00Z',
-      file_size: '1.2 MB',
-      status: 'generating'
-    }
-  ];
-
-  // Sample chart data for report preview
-  const previewData = [
-    { date: '2024-01-01', detections: 45, known: 38, strangers: 7 },
-    { date: '2024-01-02', detections: 52, known: 44, strangers: 8 },
-    { date: '2024-01-03', detections: 38, known: 32, strangers: 6 },
-    { date: '2024-01-04', detections: 61, known: 53, strangers: 8 },
-    { date: '2024-01-05', detections: 49, known: 41, strangers: 8 },
-    { date: '2024-01-06', detections: 44, known: 37, strangers: 7 },
-    { date: '2024-01-07', detections: 56, known: 48, strangers: 8 }
-  ];
-
-  const summaryStats = {
-    total_detections: 1247,
-    known_detections: 952,
-    stranger_detections: 295,
-    cameras_active: 8,
-    accuracy_rate: 97.8
-  };
-
-  useEffect(() => {
-    loadReports();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const loadReports = async () => {
+  const loadReports = React.useCallback(async () => {
     try {
       setLoading(true);
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setReports(mockReports);
+      // Load existing reports from backend
+      const reportsData = await detectionService.getReportHistory();
+      // Ensure reportsData is an array
+      setReports(Array.isArray(reportsData) ? reportsData : []);
     } catch (error) {
       console.error('Error loading reports:', error);
       toast.error('Failed to load reports');
+      // Set empty array on error
+      setReports([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  const loadReportPreview = React.useCallback(async () => {
+    try {
+      if (!filters.dateRange?.from || !filters.dateRange?.to) return;
+      
+      const reportConfig = {
+        start_date: filters.dateRange.from.toISOString(),
+        end_date: filters.dateRange.to.toISOString(),
+        detection_type: filters.detection_type === 'all' ? 'all' : filters.detection_type,
+        report_type: filters.report_type
+      };
+      
+      const reportData = await detectionService.generateReport(reportConfig);
+      
+      // Update preview data
+      setPreviewData(reportData.daily_trends || []);
+      setSummaryStats({
+        total_detections: reportData.summary?.total_detections || 0,
+        known_detections: reportData.summary?.known_detections || 0,
+        stranger_detections: reportData.summary?.stranger_detections || 0,
+        cameras_active: reportData.summary?.cameras_active || 0,
+        accuracy_rate: reportData.summary?.accuracy_rate || 0
+      });
+      
+    } catch (error) {
+      console.error('Error loading report preview:', error);
+      // Use fallback data on error
+      setPreviewData([
+        { date: '2024-01-01', detections: 45, known: 38, strangers: 7 },
+        { date: '2024-01-02', detections: 52, known: 44, strangers: 8 },
+        { date: '2024-01-03', detections: 38, known: 32, strangers: 6 },
+        { date: '2024-01-04', detections: 61, known: 53, strangers: 8 },
+        { date: '2024-01-05', detections: 49, known: 41, strangers: 8 },
+        { date: '2024-01-06', detections: 44, known: 37, strangers: 7 },
+        { date: '2024-01-07', detections: 56, known: 48, strangers: 8 }
+      ]);
+    }
+  }, [filters.dateRange, filters.detection_type, filters.report_type]);
+
+  useEffect(() => {
+    const initializeData = async () => {
+      await loadReports();
+      await loadReportPreview();
+    };
+    initializeData();
+  }, [loadReports, loadReportPreview]);
+
+  useEffect(() => {
+    if (filters.dateRange?.from && filters.dateRange?.to) {
+      loadReportPreview();
+    }
+  }, [filters.dateRange, filters.detection_type, filters.report_type, loadReportPreview]);
 
   const handleGenerateReport = async () => {
     try {
@@ -159,17 +175,26 @@ const ReportsPage: React.FC = () => {
         return;
       }
 
-      // Simulate report generation
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      const reportConfig = {
+        start_date: filters.dateRange.from.toISOString(),
+        end_date: filters.dateRange.to.toISOString(),
+        detection_type: filters.detection_type === 'all' ? 'all' : filters.detection_type,
+        report_type: filters.report_type
+      };
+
+      // Generate actual report
+      const reportData = await detectionService.generateReport(reportConfig);
       
       const newReport: ReportData = {
         id: Date.now().toString(),
-        name: `Custom Report - ${filters.report_type}`,
+        name: `${filters.report_type.charAt(0).toUpperCase() + filters.report_type.slice(1)} Report`,
         description: `Generated report for ${filters.dateRange.from.toLocaleDateString()} to ${filters.dateRange.to.toLocaleDateString()}`,
         type: 'custom',
         created_at: new Date().toISOString(),
         file_size: '3.2 MB',
-        status: 'ready'
+        status: 'ready',
+        summary: reportData.summary,
+        daily_trends: reportData.daily_trends
       };
 
       setReports(prev => [newReport, ...prev]);
@@ -236,7 +261,10 @@ const ReportsPage: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-900">Reports</h1>
           <p className="text-gray-600">Generate and manage detection reports</p>
         </div>
-        <Button onClick={loadReports} variant="outline">
+        <Button onClick={() => {
+          loadReports();
+          loadReportPreview();
+        }} variant="outline">
           <RefreshCw className="w-4 h-4 mr-2" />
           Refresh
         </Button>
@@ -373,9 +401,17 @@ const ReportsPage: React.FC = () => {
                     <ResponsiveContainer width="100%" height={300}>
                       <AreaChart data={previewData}>
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="date" />
+                        <XAxis 
+                          dataKey="date"
+                          tickFormatter={(value) => new Date(value).toLocaleDateString('vi-VN', { 
+                            month: 'short', 
+                            day: 'numeric' 
+                          })}
+                        />
                         <YAxis />
-                        <Tooltip />
+                        <Tooltip 
+                          labelFormatter={(value) => new Date(value).toLocaleDateString('vi-VN')}
+                        />
                         <Area 
                           type="monotone" 
                           dataKey="known" 
@@ -411,48 +447,56 @@ const ReportsPage: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {reports.map((report) => (
-                  <div key={report.id} className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex items-center space-x-4">
-                      <FileText className={`h-8 w-8 ${getReportTypeColor(report.type)}`} />
-                      <div>
-                        <h4 className="font-medium">{report.name}</h4>
-                        <p className="text-sm text-gray-600">{report.description}</p>
-                        <div className="flex items-center space-x-2 mt-1">
-                          {getStatusBadge(report.status)}
-                          <Badge variant="outline" className="capitalize">
-                            {report.type}
-                          </Badge>
-                          <span className="text-xs text-gray-500">{report.file_size}</span>
+                {Array.isArray(reports) && reports.length > 0 ? (
+                  reports.map((report) => (
+                    <div key={report.id} className="flex items-center justify-between p-4 border rounded-lg">
+                      <div className="flex items-center space-x-4">
+                        <FileText className={`h-8 w-8 ${getReportTypeColor(report.type)}`} />
+                        <div>
+                          <h4 className="font-medium">{report.name}</h4>
+                          <p className="text-sm text-gray-600">{report.description}</p>
+                          <div className="flex items-center space-x-2 mt-1">
+                            {getStatusBadge(report.status)}
+                            <Badge variant="outline" className="capitalize">
+                              {report.type}
+                            </Badge>
+                            <span className="text-xs text-gray-500">{report.file_size}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm text-gray-500">
-                        {new Date(report.created_at).toLocaleDateString()}
-                      </span>
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => handleDownloadReport(report)}
-                        disabled={report.status !== 'ready'}
-                      >
-                        <Download className="w-4 h-4 mr-1" />
-                        Download
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => handleEmailReport(report)}
-                        disabled={report.status !== 'ready'}
-                      >
-                        <Mail className="w-4 h-4 mr-1" />
-                        Email
-                      </Button>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm text-gray-500">
+                          {new Date(report.created_at).toLocaleDateString()}
+                        </span>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handleDownloadReport(report)}
+                          disabled={report.status !== 'ready'}
+                        >
+                          <Download className="w-4 h-4 mr-1" />
+                          Download
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handleEmailReport(report)}
+                          disabled={report.status !== 'ready'}
+                        >
+                          <Mail className="w-4 h-4 mr-1" />
+                          Email
+                        </Button>
+                      </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <FileText className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                    <p>No reports available</p>
+                    <p className="text-sm">Generate your first report to see it here</p>
                   </div>
-                ))}
+                )}
               </div>
             </CardContent>
           </Card>

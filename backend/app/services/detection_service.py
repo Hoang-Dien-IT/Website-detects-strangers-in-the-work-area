@@ -940,5 +940,451 @@ class DetectionService:
                 "limit": filters.limit
             }
         
+    async def get_trends_data(self, user_id: str, time_range: str = "7d") -> Dict[str, Any]:
+        """Lấy dữ liệu trends với thống kê theo ngày"""
+        try:
+            # Parse time range
+            days = {"7d": 7, "30d": 30, "90d": 90, "1y": 365}.get(time_range, 7)
+            start_date = datetime.utcnow() - timedelta(days=days)
+            
+            query = {
+                "user_id": ObjectId(user_id),
+                "timestamp": {"$gte": start_date}
+            }
+            
+            # Daily statistics
+            daily_stats = []
+            for i in range(days):
+                day_start = start_date + timedelta(days=i)
+                day_end = day_start + timedelta(days=1)
+                
+                day_query = {
+                    **query,
+                    "timestamp": {"$gte": day_start, "$lt": day_end}
+                }
+                
+                total_detections = await self.collection.count_documents(day_query)
+                stranger_detections = await self.collection.count_documents({
+                    **day_query, "detection_type": "stranger"
+                })
+                known_detections = await self.collection.count_documents({
+                    **day_query, "detection_type": "known_person"
+                })
+                
+                # Calculate accuracy for the day
+                accuracy_rate = 0
+                if total_detections > 0:
+                    accuracy_rate = (known_detections / total_detections) * 100
+                
+                daily_stats.append({
+                    "date": day_start.strftime("%Y-%m-%d"),
+                    "total_detections": total_detections,
+                    "known_detections": known_detections,
+                    "stranger_detections": stranger_detections,
+                    "accuracy_rate": round(accuracy_rate, 1)
+                })
+            
+            # Monthly comparison (last 6 months)
+            monthly_stats = []
+            current_date = datetime.utcnow()
+            for i in range(6):
+                month_start = current_date.replace(day=1) - timedelta(days=i * 30)
+                month_end = month_start + timedelta(days=32)
+                month_end = month_end.replace(day=1) - timedelta(days=1)
+                
+                month_query = {
+                    **query,
+                    "timestamp": {"$gte": month_start, "$lt": month_end}
+                }
+                
+                current_month_detections = await self.collection.count_documents(month_query)
+                
+                # Previous year same month
+                prev_year_start = month_start.replace(year=month_start.year - 1)
+                prev_year_end = month_end.replace(year=month_end.year - 1)
+                
+                prev_year_query = {
+                    "user_id": ObjectId(user_id),
+                    "timestamp": {"$gte": prev_year_start, "$lt": prev_year_end}
+                }
+                
+                prev_year_detections = await self.collection.count_documents(prev_year_query)
+                
+                # Calculate growth rate
+                growth_rate = 0
+                if prev_year_detections > 0:
+                    growth_rate = ((current_month_detections - prev_year_detections) / prev_year_detections) * 100
+                
+                monthly_stats.append({
+                    "month": month_start.strftime("%b"),
+                    "current_year": current_month_detections,
+                    "previous_year": prev_year_detections,
+                    "growth_rate": round(growth_rate, 1)
+                })
+            
+            monthly_stats.reverse()  # Show chronological order
+            
+            # Get basic overview for patterns
+            overview_stats = await self.get_stats_overview(user_id)
+            
+            # Detection patterns
+            total_detections = overview_stats["overview"]["total_detections"]
+            known_detections = overview_stats["overview"]["known_person_detections"]
+            stranger_detections = overview_stats["overview"]["stranger_detections"]
+            
+            detection_patterns = []
+            if total_detections > 0:
+                known_percentage = round((known_detections / total_detections) * 100, 1)
+                stranger_percentage = round((stranger_detections / total_detections) * 100, 1)
+                false_positive_percentage = max(0, 100 - known_percentage - stranger_percentage)
+                false_positive_count = max(0, total_detections - known_detections - stranger_detections)
+                
+                detection_patterns = [
+                    {
+                        "pattern_type": "Known Persons",
+                        "count": known_detections,
+                        "percentage": known_percentage,
+                        "color": "#10B981"
+                    },
+                    {
+                        "pattern_type": "Strangers",
+                        "count": stranger_detections,
+                        "percentage": stranger_percentage,
+                        "color": "#EF4444"
+                    },
+                    {
+                        "pattern_type": "False Positives",
+                        "count": false_positive_count,
+                        "percentage": false_positive_percentage,
+                        "color": "#F59E0B"
+                    }
+                ]
+            
+            # Performance metrics
+            hourly_pattern = overview_stats["hourly_pattern"]
+            peak_hour = "14"  # default
+            if hourly_pattern:
+                peak_hour = max(hourly_pattern.keys(), key=lambda x: hourly_pattern[x])
+            
+            # Calculate trends
+            recent_detections = sum(day["total_detections"] for day in daily_stats[-7:])
+            previous_detections = sum(day["total_detections"] for day in daily_stats[-14:-7]) if len(daily_stats) >= 14 else recent_detections
+            
+            detection_growth = 0
+            if previous_detections > 0:
+                detection_growth = ((recent_detections - previous_detections) / previous_detections) * 100
+            
+            accuracy_trend = 0
+            if len(daily_stats) >= 7:
+                recent_accuracy = sum(day["accuracy_rate"] for day in daily_stats[-7:]) / 7
+                previous_accuracy = sum(day["accuracy_rate"] for day in daily_stats[-14:-7]) / 7 if len(daily_stats) >= 14 else recent_accuracy
+                if previous_accuracy > 0:
+                    accuracy_trend = recent_accuracy - previous_accuracy
+            
+            return {
+                "daily_trends": daily_stats,
+                "monthly_comparison": monthly_stats,
+                "detection_patterns": detection_patterns,
+                "hourly_pattern": hourly_pattern,
+                "performance_metrics": {
+                    "detection_growth": round(detection_growth, 1),
+                    "accuracy_trend": round(accuracy_trend, 1),
+                    "peak_detection_hour": f"{peak_hour}:00",
+                    "avg_response_time": 0.85,  # Static for now
+                    "most_active_day": "Wednesday"  # Static for now
+                },
+                "overview": overview_stats["overview"],
+                "time_based": overview_stats["time_based"],
+                "camera_stats": overview_stats["camera_stats"]
+            }
+            
+        except Exception as e:
+            print(f"Error getting trends data: {e}")
+            import traceback
+            traceback.print_exc()
+            return {
+                "daily_trends": [],
+                "monthly_comparison": [],
+                "detection_patterns": [],
+                "hourly_pattern": {},
+                "performance_metrics": {
+                    "detection_growth": 0,
+                    "accuracy_trend": 0,
+                    "peak_detection_hour": "14:00",
+                    "avg_response_time": 0.85,
+                    "most_active_day": "Wednesday"
+                },
+                "overview": {
+                    "total_detections": 0,
+                    "stranger_detections": 0,
+                    "known_person_detections": 0,
+                    "detection_accuracy": 0.0,
+                    "alerts_sent": 0
+                },
+                "time_based": {
+                    "today": 0,
+                    "this_week": 0,
+                    "this_month": 0,
+                    "last_24h_strangers": 0
+                },
+                "camera_stats": {
+                    "total_cameras": 0,
+                    "active_cameras": 0,
+                    "streaming_cameras": 0,
+                    "offline_cameras": 0
+                }
+            }
+
+    async def generate_report_data(self, user_id: str, report_config: Dict[str, Any]) -> Dict[str, Any]:
+        """Tạo dữ liệu báo cáo thực tế từ hệ thống"""
+        try:
+            start_date = datetime.fromisoformat(report_config.get('start_date', (datetime.utcnow() - timedelta(days=7)).isoformat()))
+            end_date = datetime.fromisoformat(report_config.get('end_date', datetime.utcnow().isoformat()))
+            detection_type = report_config.get('detection_type', 'all')
+            
+            # Base query
+            query = {
+                "user_id": ObjectId(user_id),
+                "timestamp": {"$gte": start_date, "$lte": end_date}
+            }
+            
+            # Add detection type filter if specified
+            if detection_type in ['known_person', 'stranger']:
+                query["detection_type"] = detection_type
+            
+            # Get basic statistics
+            total_detections = await self.collection.count_documents(query)
+            
+            stranger_query = {**query, "detection_type": "stranger"}
+            known_query = {**query, "detection_type": "known_person"}
+            
+            stranger_detections = await self.collection.count_documents(stranger_query)
+            known_detections = await self.collection.count_documents(known_query)
+            
+            # Calculate accuracy
+            accuracy_rate = 0
+            if total_detections > 0:
+                accuracy_rate = (known_detections / total_detections) * 100
+            
+            # Get daily trend data
+            daily_trends = []
+            current_date = start_date
+            while current_date <= end_date:
+                day_start = current_date.replace(hour=0, minute=0, second=0, microsecond=0)
+                day_end = day_start + timedelta(days=1)
+                
+                day_query = {
+                    **query,
+                    "timestamp": {"$gte": day_start, "$lt": day_end}
+                }
+                
+                day_total = await self.collection.count_documents(day_query)
+                day_strangers = await self.collection.count_documents({
+                    **day_query, "detection_type": "stranger"
+                })
+                day_known = await self.collection.count_documents({
+                    **day_query, "detection_type": "known_person"
+                })
+                
+                daily_trends.append({
+                    "date": current_date.strftime("%Y-%m-%d"),
+                    "detections": day_total,
+                    "known": day_known,
+                    "strangers": day_strangers
+                })
+                
+                current_date += timedelta(days=1)
+            
+            # Get hourly pattern
+            hourly_pattern = {}
+            for hour in range(24):
+                hour_start = start_date.replace(hour=hour, minute=0, second=0, microsecond=0)
+                hour_end = hour_start + timedelta(hours=1)
+                
+                hour_query = {
+                    **query,
+                    "timestamp": {"$gte": hour_start, "$lt": hour_end}
+                }
+                
+                hour_count = await self.collection.count_documents(hour_query)
+                hourly_pattern[f"{hour:02d}:00"] = hour_count
+            
+            # Get camera statistics
+            camera_stats = await self.collection.aggregate([
+                {"$match": query},
+                {"$group": {
+                    "_id": "$camera_id",
+                    "detection_count": {"$sum": 1},
+                    "stranger_count": {
+                        "$sum": {"$cond": [{"$eq": ["$detection_type", "stranger"]}, 1, 0]}
+                    },
+                    "known_count": {
+                        "$sum": {"$cond": [{"$eq": ["$detection_type", "known_person"]}, 1, 0]}
+                    }
+                }},
+                {"$sort": {"detection_count": -1}},
+                {"$limit": 10}
+            ]).to_list(length=10)
+            
+            # Enrich camera data
+            camera_performance = []
+            for stat in camera_stats:
+                camera_data = await self.db.cameras.find_one({"_id": stat["_id"]})
+                if camera_data:
+                    camera_performance.append({
+                        "camera_id": str(stat["_id"]),
+                        "camera_name": camera_data["name"],
+                        "detection_count": stat["detection_count"],
+                        "stranger_count": stat["stranger_count"],
+                        "known_count": stat["known_count"],
+                        "accuracy": (stat["known_count"] / stat["detection_count"] * 100) if stat["detection_count"] > 0 else 0
+                    })
+            
+            # Get recent detections for timeline
+            recent_detections = await self.collection.find(
+                query,
+                {"timestamp": 1, "detection_type": 1, "person_name": 1, "camera_id": 1}
+            ).sort("timestamp", -1).limit(50).to_list(length=50)
+            
+            # Enrich recent detections with camera names
+            detection_timeline = []
+            for detection in recent_detections:
+                camera_data = await self.db.cameras.find_one({"_id": detection["camera_id"]})
+                detection_timeline.append({
+                    "timestamp": detection["timestamp"].isoformat(),
+                    "detection_type": detection["detection_type"],
+                    "person_name": detection.get("person_name", "Unknown"),
+                    "camera_name": camera_data["name"] if camera_data else "Unknown Camera"
+                })
+            
+            return {
+                "report_config": report_config,
+                "period": {
+                    "start_date": start_date.isoformat(),
+                    "end_date": end_date.isoformat(),
+                    "days": (end_date - start_date).days + 1
+                },
+                "summary": {
+                    "total_detections": total_detections,
+                    "known_detections": known_detections,
+                    "stranger_detections": stranger_detections,
+                    "accuracy_rate": round(accuracy_rate, 1),
+                    "cameras_active": len(camera_performance),
+                    "avg_detections_per_day": round(total_detections / max(1, (end_date - start_date).days + 1), 1)
+                },
+                "daily_trends": daily_trends,
+                "hourly_pattern": hourly_pattern,
+                "camera_performance": camera_performance,
+                "detection_timeline": detection_timeline,
+                "generated_at": datetime.utcnow().isoformat()
+            }
+            
+        except Exception as e:
+            print(f"Error generating report data: {e}")
+            import traceback
+            traceback.print_exc()
+            return {
+                "report_config": report_config,
+                "period": {
+                    "start_date": start_date.isoformat() if 'start_date' in locals() else None,
+                    "end_date": end_date.isoformat() if 'end_date' in locals() else None,
+                    "days": 0
+                },
+                "summary": {
+                    "total_detections": 0,
+                    "known_detections": 0,
+                    "stranger_detections": 0,
+                    "accuracy_rate": 0,
+                    "cameras_active": 0,
+                    "avg_detections_per_day": 0
+                },
+                "daily_trends": [],
+                "hourly_pattern": {},
+                "camera_performance": [],
+                "detection_timeline": [],
+                "generated_at": datetime.utcnow().isoformat()
+            }
+
+    async def get_available_reports(self, user_id: str) -> List[Dict[str, Any]]:
+        """Lấy danh sách báo cáo có sẵn"""
+        # This would typically come from a reports collection
+        # For now, return mock data that represents actual report types
+        return [
+            {
+                "id": "weekly_summary",
+                "name": "Weekly Summary Report",
+                "description": "Detection activity summary for the past week",
+                "type": "weekly",
+                "template": True,
+                "config": {
+                    "start_date": (datetime.utcnow() - timedelta(days=7)).isoformat(),
+                    "end_date": datetime.utcnow().isoformat(),
+                    "detection_type": "all"
+                }
+            },
+            {
+                "id": "monthly_analytics",
+                "name": "Monthly Analytics Report",
+                "description": "Comprehensive analytics for the past month",
+                "type": "monthly",
+                "template": True,
+                "config": {
+                    "start_date": (datetime.utcnow() - timedelta(days=30)).isoformat(),
+                    "end_date": datetime.utcnow().isoformat(),
+                    "detection_type": "all"
+                }
+            },
+            {
+                "id": "security_incidents",
+                "name": "Security Incidents Report",
+                "description": "Focus on stranger detections and security alerts",
+                "type": "security",
+                "template": True,
+                "config": {
+                    "start_date": (datetime.utcnow() - timedelta(days=7)).isoformat(),
+                    "end_date": datetime.utcnow().isoformat(),
+                    "detection_type": "stranger"
+                }
+            }
+        ]
+
+    async def get_report_history(self, user_id: str) -> List[Dict[str, Any]]:
+        """Lấy lịch sử báo cáo đã tạo"""
+        try:
+            # In a real implementation, this would query a reports collection
+            # For now, return mock data representing recent reports
+            return [
+                {
+                    "id": "report_001",
+                    "name": "Weekly Detection Summary",
+                    "description": "Detection activity summary for last week",
+                    "type": "weekly",
+                    "created_at": (datetime.utcnow() - timedelta(days=1)).isoformat(),
+                    "file_size": "2.4 MB",
+                    "status": "ready"
+                },
+                {
+                    "id": "report_002",
+                    "name": "Monthly Analytics Report",
+                    "description": "Comprehensive analytics for last month",
+                    "type": "monthly",
+                    "created_at": (datetime.utcnow() - timedelta(days=3)).isoformat(),
+                    "file_size": "8.7 MB",
+                    "status": "ready"
+                },
+                {
+                    "id": "report_003",
+                    "name": "Security Incidents Report",
+                    "description": "Stranger detection incidents",
+                    "type": "security",
+                    "created_at": (datetime.utcnow() - timedelta(days=5)).isoformat(),
+                    "file_size": "4.1 MB",
+                    "status": "ready"
+                }
+            ]
+        except Exception as e:
+            print(f"❌ Error getting report history: {e}")
+            return []
+
 # Global instance
 detection_service = DetectionService()

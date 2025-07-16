@@ -306,8 +306,10 @@ async def get_detection_history(
         
         # Sử dụng detection_optimizer nếu có thể, nếu không, fallback về detection_service
         try:
-            from ..services.detection_optimizer_service import DetectionOptimizerService
-            detection_optimizer = DetectionOptimizerService()
+            from ..routers.detection_optimizer import detection_optimizer
+            
+            if detection_optimizer is None:
+                raise ImportError("Detection optimizer service not initialized")
             
             # Chuyển đổi filter format
             optimizer_filters = {}
@@ -366,3 +368,65 @@ async def get_detection_history(
             status_code=500,
             detail=f"Failed to get detection history: {str(e)}"
         )
+
+@router.get("/stats/trends")
+async def get_trends_data(
+    time_range: str = Query("7d", regex="^(7d|30d|90d|1y)$"),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Lấy dữ liệu trends với thống kê theo ngày"""
+    try:
+        print(f"🔵 Getting trends data for user: {current_user.id}, time_range: {time_range}")
+        trends_data = await detection_service.get_trends_data(str(current_user.id), time_range)
+        print(f"✅ Trends data loaded successfully")
+        return trends_data
+    except Exception as e:
+        print(f"❌ Error getting trends data: {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/reports/generate")
+async def generate_report(
+    report_config: dict,
+    current_user: User = Depends(get_current_active_user)
+):
+    """Tạo báo cáo với dữ liệu thực tế"""
+    try:
+        print(f"🔵 Generating report for user: {current_user.id}")
+        report_data = await detection_service.generate_report_data(str(current_user.id), report_config)
+        print(f"✅ Report generated successfully")
+        return report_data
+    except Exception as e:
+        print(f"❌ Error generating report: {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/reports/history")
+async def get_report_history(
+    current_user: User = Depends(get_current_active_user)
+):
+    """Lấy lịch sử báo cáo đã tạo"""
+    try:
+        print(f"🔵 Getting report history for user: {current_user.id}")
+        history = await detection_service.get_report_history(str(current_user.id))
+        print(f"✅ Report history loaded successfully")
+        return history
+    except Exception as e:
+        print(f"❌ Error getting report history: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/reports/templates")
+async def get_report_templates(
+    current_user: User = Depends(get_current_active_user)
+):
+    """Lấy danh sách template báo cáo có sẵn"""
+    try:
+        print(f"🔵 Getting report templates for user: {current_user.id}")
+        templates = await detection_service.get_available_reports(str(current_user.id))
+        print(f"✅ Report templates loaded successfully")
+        return templates
+    except Exception as e:
+        print(f"❌ Error getting report templates: {e}")
+        raise HTTPException(status_code=500, detail=str(e))

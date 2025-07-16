@@ -25,6 +25,7 @@ import {
   BarChart,
   Bar,
   PieChart as RechartsPieChart,
+  Pie,
   Cell,
   XAxis,
   YAxis,
@@ -35,7 +36,7 @@ import {
   Area
 } from 'recharts';
 // import { useAuth } from '@/hooks/useAuth';
-// import { detectionService } from '@/services/detection.service';
+import { detectionService } from '@/services/detection.service';
 // import { cameraService } from '@/services/camera.service';
 import { toast } from 'sonner';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
@@ -84,28 +85,6 @@ const AnalyticsPage: React.FC = () => {
     detection_types: []
   });
 
-  // Sample data for charts
-  const mockDetectionTrends = [
-    { date: '2024-01-01', known: 45, strangers: 12, total: 57 },
-    { date: '2024-01-02', known: 52, strangers: 8, total: 60 },
-    { date: '2024-01-03', known: 38, strangers: 15, total: 53 },
-    { date: '2024-01-04', known: 61, strangers: 6, total: 67 },
-    { date: '2024-01-05', known: 49, strangers: 11, total: 60 },
-    { date: '2024-01-06', known: 44, strangers: 9, total: 53 },
-    { date: '2024-01-07', known: 56, strangers: 13, total: 69 }
-  ];
-
-  const mockHourlyPatterns = [
-    { hour: 0, detections: 2 }, { hour: 1, detections: 1 }, { hour: 2, detections: 0 },
-    { hour: 3, detections: 1 }, { hour: 4, detections: 0 }, { hour: 5, detections: 3 },
-    { hour: 6, detections: 8 }, { hour: 7, detections: 15 }, { hour: 8, detections: 25 },
-    { hour: 9, detections: 32 }, { hour: 10, detections: 28 }, { hour: 11, detections: 35 },
-    { hour: 12, detections: 30 }, { hour: 13, detections: 38 }, { hour: 14, detections: 33 },
-    { hour: 15, detections: 29 }, { hour: 16, detections: 31 }, { hour: 17, detections: 27 },
-    { hour: 18, detections: 22 }, { hour: 19, detections: 18 }, { hour: 20, detections: 12 },
-    { hour: 21, detections: 8 }, { hour: 22, detections: 5 }, { hour: 23, detections: 3 }
-  ];
-
   // const detectionTypeColors = ['#3B82F6', '#EF4444', '#10B981', '#F59E0B'];
 
   useEffect(() => {
@@ -117,42 +96,94 @@ const AnalyticsPage: React.FC = () => {
     try {
       setLoading(true);
       
-      // Mock data for now - replace with actual API calls
-      const mockStats: AnalyticsStats = {
-        total_detections: 1247,
-        known_detections: 952,
-        stranger_detections: 295,
-        accuracy_rate: 97.8,
-        cameras_active: 8,
-        top_cameras: [
-          { camera_name: 'Main Entrance', detection_count: 342, accuracy: 98.2 },
-          { camera_name: 'Office Floor 1', detection_count: 287, accuracy: 97.1 },
-          { camera_name: 'Parking Lot', detection_count: 156, accuracy: 96.8 },
-          { camera_name: 'Reception Area', detection_count: 134, accuracy: 98.9 },
-          { camera_name: 'Conference Room', detection_count: 89, accuracy: 99.1 }
-        ],
-        detection_trends: mockDetectionTrends,
-        hourly_patterns: mockHourlyPatterns,
+      // Load real data from backend
+      const [analyticsResponse, chartResponse] = await Promise.all([
+        detectionService.getAnalytics(timeRange),
+        detectionService.getChartData(timeRange, 'area')
+      ]);
+      
+      // Transform data for display
+      const transformedStats: AnalyticsStats = {
+        total_detections: analyticsResponse.overview.total_detections,
+        known_detections: analyticsResponse.overview.known_person_detections,
+        stranger_detections: analyticsResponse.overview.stranger_detections,
+        accuracy_rate: analyticsResponse.overview.detection_accuracy,
+        cameras_active: analyticsResponse.camera_stats.active_cameras,
+        top_cameras: analyticsResponse.top_cameras.map(camera => ({
+          camera_name: camera.camera_name,
+          detection_count: camera.detection_count,
+          accuracy: camera.stranger_count > 0 ? 
+            ((camera.detection_count - camera.stranger_count) / camera.detection_count * 100) : 100
+        })),
+        detection_trends: chartResponse.labels.map((label, index) => ({
+          date: label,
+          known: chartResponse.datasets.find(d => d.label.includes('Known'))?.data[index] || 0,
+          strangers: chartResponse.datasets.find(d => d.label.includes('Stranger'))?.data[index] || 0,
+          total: (chartResponse.datasets.find(d => d.label.includes('Known'))?.data[index] || 0) + 
+                 (chartResponse.datasets.find(d => d.label.includes('Stranger'))?.data[index] || 0)
+        })),
+        hourly_patterns: Object.entries(analyticsResponse.hourly_pattern).map(([hour, detections]) => ({
+          hour: parseInt(hour.split(':')[0]),
+          detections: detections as number
+        })),
         detection_types: [
-          { name: 'Known Persons', value: 952, color: '#10B981' },
-          { name: 'Strangers', value: 295, color: '#EF4444' }
+          { 
+            name: 'Known Persons', 
+            value: analyticsResponse.overview.known_person_detections, 
+            color: '#10B981' 
+          },
+          { 
+            name: 'Strangers', 
+            value: analyticsResponse.overview.stranger_detections, 
+            color: '#EF4444' 
+          }
         ]
       };
-
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      setStats(mockStats);
+      setStats(transformedStats);
+      
     } catch (error) {
       console.error('Error loading analytics:', error);
       toast.error('Failed to load analytics data');
+      
+      // Fallback to empty data
+      setStats({
+        total_detections: 0,
+        known_detections: 0,
+        stranger_detections: 0,
+        accuracy_rate: 0,
+        cameras_active: 0,
+        top_cameras: [],
+        detection_trends: [],
+        hourly_patterns: [],
+        detection_types: []
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleExportReport = () => {
-    toast.success('Analytics report exported successfully');
+  const handleExportReport = async () => {
+    try {
+      toast.info('🔄 Exporting analytics report...');
+      
+      const blob = await detectionService.exportStats(timeRange, 'csv');
+      
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `analytics-report-${timeRange}-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast.success('✅ Analytics report exported successfully');
+    } catch (error) {
+      console.error('Error exporting report:', error);
+      toast.error('❌ Failed to export analytics report');
+    }
   };
 
   if (loading) {
@@ -213,7 +244,10 @@ const AnalyticsPage: React.FC = () => {
           <CardContent>
             <div className="text-2xl font-bold">{stats.known_detections.toLocaleString()}</div>
             <p className="text-xs text-gray-600">
-              {((stats.known_detections / stats.total_detections) * 100).toFixed(1)}% of total
+              {stats.total_detections > 0 
+                ? `${((stats.known_detections / stats.total_detections) * 100).toFixed(1)}% of total`
+                : '0% of total'
+              }
             </p>
           </CardContent>
         </Card>
@@ -226,14 +260,17 @@ const AnalyticsPage: React.FC = () => {
           <CardContent>
             <div className="text-2xl font-bold">{stats.stranger_detections.toLocaleString()}</div>
             <p className="text-xs text-gray-600">
-              {((stats.stranger_detections / stats.total_detections) * 100).toFixed(1)}% of total
+              {stats.total_detections > 0 
+                ? `${((stats.stranger_detections / stats.total_detections) * 100).toFixed(1)}% of total`
+                : '0% of total'
+              }
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Accuracy Rate</CardTitle>
+            <CardTitle className="text-sm font-medium">Acquaintance rate</CardTitle>
             <Target className="h-4 w-4 text-purple-600" />
           </CardHeader>
           <CardContent>
@@ -261,32 +298,42 @@ const AnalyticsPage: React.FC = () => {
               <CardTitle>Detection Trends Over Time</CardTitle>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
-                <AreaChart data={mockDetectionTrends}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis />
-                  <Tooltip />
-                  <Area 
-                    type="monotone" 
-                    dataKey="known" 
-                    stackId="1"
-                    stroke="#10B981" 
-                    fill="#10B981" 
-                    fillOpacity={0.6}
-                    name="Known Persons"
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="strangers" 
-                    stackId="1"
-                    stroke="#EF4444" 
-                    fill="#EF4444" 
-                    fillOpacity={0.6}
-                    name="Strangers"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+              {stats.detection_trends.length > 0 ? (
+                <ResponsiveContainer width="100%" height={400}>
+                  <AreaChart data={stats.detection_trends}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <Tooltip />
+                    <Area 
+                      type="monotone" 
+                      dataKey="known" 
+                      stackId="1"
+                      stroke="#10B981" 
+                      fill="#10B981" 
+                      fillOpacity={0.6}
+                      name="Known Persons"
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="strangers" 
+                      stackId="1"
+                      stroke="#EF4444" 
+                      fill="#EF4444" 
+                      fillOpacity={0.6}
+                      name="Strangers"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="flex items-center justify-center h-64 text-gray-500">
+                  <div className="text-center">
+                    <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                    <p>No detection trends data available</p>
+                    <p className="text-sm">Data will appear here once detections are recorded</p>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -298,15 +345,25 @@ const AnalyticsPage: React.FC = () => {
               <CardTitle>Hourly Detection Patterns</CardTitle>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={mockHourlyPatterns}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="hour" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="detections" fill="#3B82F6" />
-                </BarChart>
-              </ResponsiveContainer>
+              {stats.hourly_patterns.length > 0 ? (
+                <ResponsiveContainer width="100%" height={400}>
+                  <BarChart data={stats.hourly_patterns}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="hour" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="detections" fill="#3B82F6" />
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="flex items-center justify-center h-64 text-gray-500">
+                  <div className="text-center">
+                    <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                    <p>No hourly patterns data available</p>
+                    <p className="text-sm">Data will appear here once detections are recorded</p>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -318,26 +375,36 @@ const AnalyticsPage: React.FC = () => {
               <CardTitle>Top Performing Cameras</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {stats.top_cameras.map((camera, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <Camera className="h-5 w-5 text-blue-600" />
-                      <div>
-                        <p className="font-medium">{camera.camera_name}</p>
-                        <p className="text-sm text-gray-600">
-                          {camera.detection_count} detections
-                        </p>
+              {stats.top_cameras.length > 0 ? (
+                <div className="space-y-4">
+                  {stats.top_cameras.map((camera, index) => (
+                    <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <Camera className="h-5 w-5 text-blue-600" />
+                        <div>
+                          <p className="font-medium">{camera.camera_name}</p>
+                          <p className="text-sm text-gray-600">
+                            {camera.detection_count} detections
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <Badge variant="default">
+                          {camera.accuracy.toFixed(1)}% accuracy
+                        </Badge>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <Badge variant="default">
-                        {camera.accuracy}% accuracy
-                      </Badge>
-                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-64 text-gray-500">
+                  <div className="text-center">
+                    <Camera className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                    <p>No camera performance data available</p>
+                    <p className="text-sm">Data will appear here once cameras start detecting</p>
                   </div>
-                ))}
-              </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -350,33 +417,45 @@ const AnalyticsPage: React.FC = () => {
                 <CardTitle>Detection Distribution</CardTitle>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <RechartsPieChart>
-                    <Tooltip />
-                    <RechartsPieChart
-                      data={stats.detection_types}
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={80}
-                      dataKey="value"
-                    >
-                      {stats.detection_types.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
+                {stats.detection_types.length > 0 && stats.total_detections > 0 ? (
+                  <>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <RechartsPieChart>
+                        <Tooltip />
+                        <Pie
+                          data={stats.detection_types}
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={80}
+                          dataKey="value"
+                        >
+                          {stats.detection_types.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                      </RechartsPieChart>
+                    </ResponsiveContainer>
+                    <div className="flex justify-center space-x-4 mt-4">
+                      {stats.detection_types.map((type, index) => (
+                        <div key={index} className="flex items-center space-x-2">
+                          <div 
+                            className="w-3 h-3 rounded-full" 
+                            style={{ backgroundColor: type.color }}
+                          />
+                          <span className="text-sm">{type.name}: {type.value}</span>
+                        </div>
                       ))}
-                    </RechartsPieChart>
-                  </RechartsPieChart>
-                </ResponsiveContainer>
-                <div className="flex justify-center space-x-4 mt-4">
-                  {stats.detection_types.map((type, index) => (
-                    <div key={index} className="flex items-center space-x-2">
-                      <div 
-                        className="w-3 h-3 rounded-full" 
-                        style={{ backgroundColor: type.color }}
-                      />
-                      <span className="text-sm">{type.name}</span>
                     </div>
-                  ))}
-                </div>
+                  </>
+                ) : (
+                  <div className="flex items-center justify-center h-64 text-gray-500">
+                    <div className="text-center">
+                      <Target className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                      <p>No detection distribution data available</p>
+                      <p className="text-sm">Data will appear here once detections are recorded</p>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -385,21 +464,31 @@ const AnalyticsPage: React.FC = () => {
                 <CardTitle>Weekly Summary</CardTitle>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={mockDetectionTrends}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <Tooltip />
-                    <Line 
-                      type="monotone" 
-                      dataKey="total" 
-                      stroke="#3B82F6" 
-                      strokeWidth={3}
-                      name="Total Detections"
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
+                {stats.detection_trends.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={stats.detection_trends}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="date" />
+                      <YAxis />
+                      <Tooltip />
+                      <Line 
+                        type="monotone" 
+                        dataKey="total" 
+                        stroke="#3B82F6" 
+                        strokeWidth={3}
+                        name="Total Detections"
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="flex items-center justify-center h-64 text-gray-500">
+                    <div className="text-center">
+                      <Eye className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                      <p>No weekly summary data available</p>
+                      <p className="text-sm">Data will appear here once detections are recorded</p>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

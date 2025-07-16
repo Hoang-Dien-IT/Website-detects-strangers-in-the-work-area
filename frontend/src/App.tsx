@@ -18,7 +18,6 @@ import PublicLayout from '@/components/common/PublicLayout';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import AdminRoute from '@/components/auth/AdminRoute';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import { FaceImageUpload } from './components/persons';
 
 // ===== PUBLIC PAGES =====
 const HomePage = React.lazy(() => import('@/pages/HomePage'));
@@ -52,6 +51,8 @@ const LiveMonitoringPage = React.lazy(() => import('@/pages/LiveMonitoringPage')
 
 // Analytics & Reports
 const AnalyticsPage = React.lazy(() => import('@/pages/AnalyticsPage'));
+const OverviewPage = React.lazy(() => import('@/pages/OverviewPage'));
+const TrendsPage = React.lazy(() => import('@/pages/TrendsPage'));
 const ReportsPage = React.lazy(() => import('@/pages/ReportsPage'));
 
 // Settings & Profile
@@ -434,12 +435,12 @@ const App: React.FC = () => {
                           } />
                           <Route path="overview" element={
                             <Suspense fallback={<LoadingSpinner />}>
-                              <AnalyticsPage />
+                              <OverviewPage />
                             </Suspense>
                           } />
                           <Route path="trends" element={
                             <Suspense fallback={<LoadingSpinner />}>
-                              <AnalyticsPage />
+                              <TrendsPage />
                             </Suspense>
                           } />
                           <Route path="heatmap" element={
