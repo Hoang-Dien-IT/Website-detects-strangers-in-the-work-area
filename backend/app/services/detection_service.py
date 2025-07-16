@@ -860,5 +860,85 @@ class DetectionService:
             print(f"Error exporting stats: {e}")
             return ""
 
+    async def get_detections(self, user_id: str, filters: DetectionFilter) -> Dict[str, Any]:
+        """Lấy danh sách các detection logs theo filter"""
+        try:
+            # Build query
+            query = {"user_id": ObjectId(user_id)}
+            
+            if filters.detection_type:
+                query["detection_type"] = filters.detection_type
+                
+            if filters.camera_id:
+                query["camera_id"] = ObjectId(filters.camera_id)
+                
+            if filters.date_from or filters.date_to:
+                query["timestamp"] = {}
+                if filters.date_from:
+                    query["timestamp"]["$gte"] = filters.date_from
+                if filters.date_to:
+                    query["timestamp"]["$lte"] = filters.date_to
+            
+            # Calculate pagination
+            skip = (filters.page - 1) * filters.limit
+            
+            # Execute query
+            cursor = self.collection.find(query).sort("timestamp", -1).skip(skip).limit(filters.limit)
+            
+            # Convert to list
+            detections = []
+            async for doc in cursor:
+                # Get camera name if available
+                camera_name = "Unknown"
+                if "camera_id" in doc:
+                    camera = await self.db.cameras.find_one({"_id": doc["camera_id"]})
+                    if camera:
+                        camera_name = camera.get("name", "Unknown")
+                
+                # Format detection
+                detection = {
+                    "id": str(doc["_id"]),
+                    "camera_id": str(doc["camera_id"]),
+                    "camera_name": camera_name,
+                    "detection_type": doc.get("detection_type", "unknown"),
+                    "person_id": str(doc["person_id"]) if doc.get("person_id") else None,
+                    "person_name": doc.get("person_name", "Unknown"),
+                    "confidence": doc.get("confidence", 0),
+                    "timestamp": doc.get("timestamp", datetime.utcnow()),
+                    "image_path": doc.get("image_path", "")
+                }
+                
+                detections.append(detection)
+            
+            # Get counts
+            total_count = await self.collection.count_documents(query)
+            
+            # Count by type
+            query_known = {**query, "detection_type": "known_person"}
+            known_persons = await self.collection.count_documents(query_known)
+            
+            query_stranger = {**query, "detection_type": "stranger"}
+            strangers = await self.collection.count_documents(query_stranger)
+            
+            return {
+                "detections": detections,
+                "total_count": total_count,
+                "known_persons": known_persons,
+                "strangers": strangers,
+                "page": filters.page,
+                "limit": filters.limit
+            }
+            
+        except Exception as e:
+            print(f"Error getting detections: {e}")
+            return {
+                "detections": [],
+                "total_count": 0,
+                "known_persons": 0,
+                "strangers": 0,
+                "page": filters.page,
+                "limit": filters.limit
+            }
+        
 # Global instance
 detection_service = DetectionService()

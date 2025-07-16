@@ -282,3 +282,87 @@ async def get_detection_tracking_status(
             "presences": {},
             "tracking_active": False
         }
+
+@router.get("/history")
+async def get_detection_history(
+    detection_type: Optional[str] = Query(None, regex="^(known_person|stranger)$"),
+    camera_id: Optional[str] = Query(None),
+    date_from: Optional[datetime] = Query(None),
+    date_to: Optional[datetime] = Query(None),
+    page: int = Query(1, ge=1),
+    limit: int = Query(20, ge=1, le=100),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Lấy lịch sử detection"""
+    try:
+        filters = DetectionFilter(
+            detection_type=detection_type,
+            camera_id=camera_id,
+            date_from=date_from,
+            date_to=date_to,
+            page=page,
+            limit=limit
+        )
+        
+        # Sử dụng detection_optimizer nếu có thể, nếu không, fallback về detection_service
+        try:
+            from ..services.detection_optimizer_service import DetectionOptimizerService
+            detection_optimizer = DetectionOptimizerService()
+            
+            # Chuyển đổi filter format
+            optimizer_filters = {}
+            if detection_type:
+                optimizer_filters["detection_type"] = detection_type
+            if camera_id:
+                optimizer_filters["camera_id"] = camera_id
+            if date_from:
+                optimizer_filters["date_from"] = date_from
+            if date_to:
+                optimizer_filters["date_to"] = date_to
+                
+            skip = (page - 1) * limit
+            
+            sessions = await detection_optimizer.get_sessions(
+                user_id=current_user.id,
+                filters=optimizer_filters,
+                limit=limit,
+                skip=skip
+            )
+            
+            stats = await detection_optimizer.get_session_stats(user_id=current_user.id)
+            
+            # Format để tương thích với frontend
+            detections = []
+            for session in sessions:
+                detection = {
+                    "id": session.get("id"),
+                    "camera_id": session.get("camera_id"),
+                    "camera_name": session.get("camera_name"),
+                    "detection_type": session.get("detection_type"),
+                    "person_id": None,  # Temporarily not included
+                    "person_name": session.get("person_name"),
+                    "confidence": session.get("max_confidence"),
+                    "timestamp": session.get("session_start"),
+                    "image_path": "",  # Temporarily not included
+                }
+                detections.append(detection)
+            
+            return {
+                "detections": detections,
+                "total_count": stats.get("total_sessions", 0),
+                "known_persons": stats.get("known_person_sessions", 0),
+                "strangers": stats.get("stranger_sessions", 0),
+                "page": page,
+                "limit": limit
+            }
+            
+        except Exception as optimizer_error:
+            print(f"Warning: Detection optimizer failed, falling back to standard service: {optimizer_error}")
+            # Fallback to regular detection service
+            return await detection_service.get_detections(str(current_user.id), filters)
+            
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to get detection history: {str(e)}"
+        )

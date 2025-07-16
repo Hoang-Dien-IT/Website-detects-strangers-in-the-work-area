@@ -6,6 +6,7 @@ from ..models.camera import CameraResponse
 from ..services.face_processor import face_processor
 from ..services.websocket_manager import websocket_manager
 from ..services.detection_tracker import detection_tracker
+from ..services.detection_optimizer_service import DetectionOptimizerService
 import concurrent.futures
 import time
 import base64
@@ -368,10 +369,14 @@ class StreamProcessor:
             camera_data = await db.cameras.find_one({"_id": ObjectId(camera_id)})
             camera_name = camera_data.get("name", "Unknown Camera") if camera_data else "Unknown Camera"
             
-            # Save to database since detection_tracker approved this detection
+            # Save to database using both methods for compatibility
             detection_id = None
             if frame is not None:
-                detection_id = await self._save_detection_to_database(camera_id, camera_name, detection, frame)
+                # Use both detection optimizer and normal save for compatibility
+                detection_id = await self._save_optimized_detection(camera_id, camera_name, detection, frame)
+                if not detection_id:
+                    # Fallback to traditional method if optimizer fails
+                    detection_id = await self._save_detection_to_database(camera_id, camera_name, detection, frame)
             
             # Create WebSocket message
             alert_message = {
@@ -526,6 +531,89 @@ class StreamProcessor:
         except Exception as e:
             import traceback
             print(f"❌ Error saving detection to database: {e}")
+            traceback.print_exc()
+            return None
+
+    async def _save_optimized_detection(self, camera_id: str, camera_name: str, detection: Dict[str, Any], frame: np.ndarray):
+        """Lưu detection sử dụng Detection Optimizer Service"""
+        try:
+            # Import here to avoid circular imports
+            from ..database import get_database
+            from bson import ObjectId
+            import base64
+            import os
+            import uuid
+            from datetime import datetime
+            
+            # Get camera info
+            db = get_database()
+            camera_data = await db.cameras.find_one({"_id": ObjectId(camera_id)})
+            if not camera_data:
+                print(f"❌ Camera not found: {camera_id}")
+                return None
+                
+            user_id = str(camera_data.get("user_id", ""))
+            if not user_id:
+                print(f"❌ No user_id found for camera: {camera_id}")
+                return None
+            
+            # Convert frame to base64 for storage
+            _, img_encoded = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 90])
+            img_base64 = base64.b64encode(img_encoded.tobytes()).decode('utf-8')
+            
+            # Create detection document
+            detection_type = "known_person" if detection.get("person_name") != "Unknown" else "stranger"
+            
+            # Ensure uploads directory exists
+            upload_dir = "uploads/detections"
+            os.makedirs(upload_dir, exist_ok=True)
+            
+            # Save image to file
+            image_filename = f"detection_{uuid.uuid4()}.jpg"
+            image_path = os.path.join(upload_dir, image_filename)
+            with open(image_path, 'wb') as f:
+                f.write(img_encoded.tobytes())
+            
+            # Prepare detection data for optimizer
+            detection_data = {
+                "user_id": user_id,
+                "camera_id": camera_id,
+                "detection_type": detection_type,
+                "person_id": detection.get("person_id"),
+                "person_name": detection.get("person_name", "Unknown"),
+                "confidence": float(detection.get("confidence", 0)),
+                "similarity_score": float(detection.get("recognition_confidence", 0)),
+                "image_path": image_path,
+                "bbox": detection.get("bbox", [0, 0, 0, 0]),
+                "timestamp": datetime.utcnow(),
+                "is_alert_sent": True,
+                "alert_methods": ["websocket"],
+                "notes": f"Detected by {camera_name}"
+            }
+            
+            try:
+                # Use the existing detection optimizer from router
+                from ..routers.detection_optimizer import detection_optimizer
+                
+                if detection_optimizer is not None:
+                    # Process detection with optimizer
+                    detection_id = await detection_optimizer.process_detection(detection_data)
+                else:
+                    # Fall back to traditional save if optimizer isn't available
+                    print("⚠️ Detection optimizer service not available, falling back to traditional save")
+                    detection_id = None  # Will be saved by the original method
+            except Exception as optimizer_error:
+                print(f"⚠️ Error using detection optimizer: {optimizer_error}")
+                detection_id = None  # Will be saved by the original method
+            
+            if detection_id:
+                print(f"✅ Optimized detection saved: {detection.get('person_name')} - ID: {detection_id}")
+            
+            return detection_id
+            
+        except Exception as e:
+            print(f"❌ Error saving optimized detection: {e}")
+            import traceback
             traceback.print_exc()
             return None
 

@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
-from .routers import auth, camera, person, admin, detection, stream, websocket, settings, alerts
+from .routers import auth, camera, person, admin, detection, stream, websocket, settings, alerts, detection_optimizer
 from .database import startup_db_client, shutdown_db_client
 import logging
 import os
@@ -103,6 +103,10 @@ try:
     # Specific routers with detailed endpoints
     app.include_router(detection.router, prefix="/api")
     logger.info("✅ Detection router included")
+    
+    # Detection Optimizer router
+    app.include_router(detection_optimizer.router)
+    logger.info("✅ Detection Optimizer router included")
     
     app.include_router(alerts.router, prefix="/api/alerts", tags=["alerts"])
     logger.info("✅ Alerts router included")
