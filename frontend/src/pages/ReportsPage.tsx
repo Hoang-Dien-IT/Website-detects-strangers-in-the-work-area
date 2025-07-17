@@ -101,13 +101,18 @@ const ReportsPage: React.FC = () => {
       setLoading(true);
       // Load existing reports from backend
       const reportsData = await detectionService.getReportHistory();
+      
       // Ensure reportsData is an array
-      setReports(Array.isArray(reportsData) ? reportsData : []);
+      if (Array.isArray(reportsData)) {
+        setReports(reportsData);
+      } else {
+        console.warn('Reports data is not an array:', reportsData);
+        setReports([]);
+      }
     } catch (error) {
       console.error('Error loading reports:', error);
       toast.error('Failed to load reports');
-      // Set empty array on error
-      setReports([]);
+      setReports([]); // Set empty array on error
     } finally {
       setLoading(false);
     }
@@ -454,47 +459,47 @@ const ReportsPage: React.FC = () => {
                         <FileText className={`h-8 w-8 ${getReportTypeColor(report.type)}`} />
                         <div>
                           <h4 className="font-medium">{report.name}</h4>
-                          <p className="text-sm text-gray-600">{report.description}</p>
-                          <div className="flex items-center space-x-2 mt-1">
-                            {getStatusBadge(report.status)}
-                            <Badge variant="outline" className="capitalize">
-                              {report.type}
-                            </Badge>
-                            <span className="text-xs text-gray-500">{report.file_size}</span>
-                          </div>
+                        <p className="text-sm text-gray-600">{report.description}</p>
+                        <div className="flex items-center space-x-2 mt-1">
+                          {getStatusBadge(report.status)}
+                          <Badge variant="outline" className="capitalize">
+                            {report.type}
+                          </Badge>
+                          <span className="text-xs text-gray-500">{report.file_size}</span>
                         </div>
                       </div>
-
-                      <div className="flex items-center space-x-2">
-                        <span className="text-sm text-gray-500">
-                          {new Date(report.created_at).toLocaleDateString()}
-                        </span>
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={() => handleDownloadReport(report)}
-                          disabled={report.status !== 'ready'}
-                        >
-                          <Download className="w-4 h-4 mr-1" />
-                          Download
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={() => handleEmailReport(report)}
-                          disabled={report.status !== 'ready'}
-                        >
-                          <Mail className="w-4 h-4 mr-1" />
-                          Email
-                        </Button>
-                      </div>
                     </div>
+
+                    <div className="flex items-center space-x-2">
+                      <span className="text-sm text-gray-500">
+                        {new Date(report.created_at).toLocaleDateString()}
+                      </span>
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => handleDownloadReport(report)}
+                        disabled={report.status !== 'ready'}
+                      >
+                        <Download className="w-4 h-4 mr-1" />
+                        Download
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => handleEmailReport(report)}
+                        disabled={report.status !== 'ready'}
+                      >
+                        <Mail className="w-4 h-4 mr-1" />
+                        Email
+                      </Button>
+                    </div>
+                  </div>
                   ))
                 ) : (
                   <div className="text-center py-8 text-gray-500">
                     <FileText className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                    <p>No reports available</p>
-                    <p className="text-sm">Generate your first report to see it here</p>
+                    <p>No reports found</p>
+                    <p className="text-sm">Generate your first report to get started</p>
                   </div>
                 )}
               </div>
