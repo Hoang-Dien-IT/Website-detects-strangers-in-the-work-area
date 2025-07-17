@@ -25,6 +25,7 @@ import { settingsService, UserSettings } from '@/services/settings.service';
 import { userService } from '@/services/user.service';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 // Animation variants
 const fadeInUp = {
@@ -90,6 +91,7 @@ interface SystemPreferences {
 const SettingsPage: React.FC = () => {
   const { user, updateUser } = useAuth();
   const { isConnected } = useWebSocketContext();
+  const navigate = useNavigate();
   
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('profile');
@@ -367,10 +369,14 @@ const SettingsPage: React.FC = () => {
               <Shield className="w-4 h-4" />
               <span className="hidden sm:inline">Security</span>
             </TabsTrigger>
-            <TabsTrigger value="face-recognition" className="flex items-center space-x-2 data-[state=active]:bg-orange-600 data-[state=active]:text-white">
+            <Button
+              variant="ghost"
+              className="flex items-center space-x-2 hover:bg-orange-600 hover:text-white transition-colors"
+              onClick={() => navigate('/dashboard/settings/face-recognition')}
+            >
               <Brain className="w-4 h-4" />
               <span className="hidden sm:inline">AI Settings</span>
-            </TabsTrigger>
+            </Button>
             <TabsTrigger value="system" className="flex items-center space-x-2 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">
               <Monitor className="w-4 h-4" />
               <span className="hidden sm:inline">System</span>
@@ -973,124 +979,6 @@ const SettingsPage: React.FC = () => {
                     <Eye className="h-4 w-4 mr-2" />
                     View Full History
                   </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          {/* Face Recognition Settings Tab */}
-          <TabsContent value="face-recognition" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Brain className="h-5 w-5" />
-                    <span>AI Detection Settings</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Face Detection</Label>
-                      <p className="text-sm text-gray-600">Enable AI-powered face detection</p>
-                    </div>
-                    <Switch
-                      checked={faceRecognitionSettings.detection_enabled}
-                      onCheckedChange={(checked) => 
-                        setFaceRecognitionSettings(prev => ({ ...prev, detection_enabled: checked }))
-                      }
-                    />
-                  </div>
-
-                  <Separator />
-
-                  <div className="space-y-2">
-                    <Label htmlFor="confidence_threshold">
-                      Confidence Threshold: {Math.round(faceRecognitionSettings.confidence_threshold * 100)}%
-                    </Label>
-                    <input
-                      id="confidence_threshold"
-                      type="range"
-                      min="0.5"
-                      max="0.99"
-                      step="0.01"
-                      value={faceRecognitionSettings.confidence_threshold}
-                      onChange={(e) => 
-                        setFaceRecognitionSettings(prev => ({ 
-                          ...prev, 
-                          confidence_threshold: parseFloat(e.target.value) 
-                        }))
-                      }
-                      className="w-full"
-                    />
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>Low (50%)</span>
-                      <span>High (99%)</span>
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Save Unknown Faces</Label>
-                      <p className="text-sm text-gray-600">Store images of unrecognized faces</p>
-                    </div>
-                    <Switch
-                      checked={faceRecognitionSettings.save_unknown_faces}
-                      onCheckedChange={(checked) => 
-                        setFaceRecognitionSettings(prev => ({ ...prev, save_unknown_faces: checked }))
-                      }
-                    />
-                  </div>
-
-                  <Separator />
-
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Anti-Spoofing Protection</Label>
-                      <p className="text-sm text-gray-600">Detect fake faces and images</p>
-                    </div>
-                    <Switch
-                      checked={faceRecognitionSettings.anti_spoofing_enabled}
-                      onCheckedChange={(checked) => 
-                        setFaceRecognitionSettings(prev => ({ ...prev, anti_spoofing_enabled: checked }))
-                      }
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Zap className="h-5 w-5" />
-                    <span>Performance Settings</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Real-time Processing</Label>
-                      <p className="text-sm text-gray-600">Process video frames in real-time</p>
-                    </div>
-                    <Switch
-                      checked={faceRecognitionSettings.real_time_processing}
-                      onCheckedChange={(checked) => 
-                        setFaceRecognitionSettings(prev => ({ ...prev, real_time_processing: checked }))
-                      }
-                    />
-                  </div>
-
-                  <Separator />
-
-                  <Alert>
-                    <Brain className="h-4 w-4" />
-                    <AlertDescription>
-                      Higher confidence thresholds reduce false positives but may miss some faces. 
-                      Adjust based on your security needs.
-                    </AlertDescription>
-                  </Alert>
                 </CardContent>
               </Card>
             </div>

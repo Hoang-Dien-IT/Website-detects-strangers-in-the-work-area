@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
-from .routers import auth, camera, person, admin, detection, stream, websocket, settings, alerts, detection_optimizer
+from .routers import auth, camera, person, admin, detection, stream, websocket, settings, alerts, detection_optimizer, user
 from .database import startup_db_client, shutdown_db_client
 import logging
 import os
@@ -119,6 +119,9 @@ try:
     
     app.include_router(settings.router, prefix="/api")
     logger.info("✅ Settings router included")
+    
+    app.include_router(user.router, prefix="/api")
+    logger.info("✅ User router included")
     
     # Stream và WebSocket
     app.include_router(stream.router, prefix="/api")

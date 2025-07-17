@@ -57,6 +57,10 @@ const ReportsPage = React.lazy(() => import('@/pages/ReportsPage'));
 
 // Settings & Profile
 const SettingsPage = React.lazy(() => import('@/pages/SettingsPage'));
+const GeneralSettingsPage = React.lazy(() => import('@/pages/GeneralSettingsPage'));
+const FaceRecognitionSettingsPage = React.lazy(() => import('@/pages/FaceRecognitionSettingsPage'));
+const NotificationSettingsPage = React.lazy(() => import('@/pages/NotificationSettingsPage'));
+const SecuritySettingsPage = React.lazy(() => import('@/pages/SecuritySettingsPage'));
 const ProfilePage = React.lazy(() => import('@/pages/ProfilePage'));
 
 // Admin Panel
@@ -469,22 +473,22 @@ const App: React.FC = () => {
                           } />
                           <Route path="general" element={
                             <Suspense fallback={<LoadingSpinner />}>
-                              <SettingsPage />
+                              <GeneralSettingsPage />
                             </Suspense>
                           } />
                           <Route path="face-recognition" element={
                             <Suspense fallback={<LoadingSpinner />}>
-                              <SettingsPage />
+                              <FaceRecognitionSettingsPage />
                             </Suspense>
                           } />
                           <Route path="notifications" element={
                             <Suspense fallback={<LoadingSpinner />}>
-                              <SettingsPage />
+                              <NotificationSettingsPage />
                             </Suspense>
                           } />
                           <Route path="security" element={
                             <Suspense fallback={<LoadingSpinner />}>
-                              <SettingsPage />
+                              <SecuritySettingsPage />
                             </Suspense>
                           } />
                           <Route path="advanced" element={

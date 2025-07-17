@@ -119,7 +119,7 @@ class UserService {
   async updateProfile(userData: UserUpdate): Promise<User> {
     try {
       console.log('🔵 UserService: Updating profile...', userData);
-      const response = await apiService.put<User>('/auth/profile', userData);
+      const response = await apiService.put<User>('/users/profile', userData);
       console.log('✅ UserService: Profile updated successfully');
       return response.data;
     } catch (error: any) {
@@ -134,7 +134,7 @@ class UserService {
   async changePassword(passwordData: PasswordChangeData): Promise<void> {
     try {
       console.log('🔵 UserService: Changing password...');
-      await apiService.post('/auth/change-password', passwordData);
+      await apiService.post('/users/change-password', passwordData);
       console.log('✅ UserService: Password changed successfully');
     } catch (error: any) {
       console.error('❌ UserService: Error changing password:', error);
@@ -152,7 +152,7 @@ class UserService {
       const formData = new FormData();
       formData.append('file', file);
       
-      const response = await apiService.upload<{ avatar_url: string }>('/auth/upload-avatar', formData);
+      const response = await apiService.upload<{ avatar_url: string }>('/users/upload-avatar', formData);
       console.log('✅ UserService: Avatar uploaded successfully');
       return response.data;
     } catch (error: any) {
