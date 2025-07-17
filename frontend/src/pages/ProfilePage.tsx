@@ -22,6 +22,21 @@ import ProfileSettings from '@/components/settings/ProfileSettings';
 const ProfilePage: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  // Đường dẫn base cho avatar (có thể điều chỉnh theo backend)
+  const AVATAR_BASE_URL = "http://localhost:8000";
+  // Xây dựng src cho avatar
+  let avatarSrc: string | undefined = undefined;
+  if (user?.avatar_url) {
+    if (user.avatar_url.startsWith('http')) {
+      avatarSrc = user.avatar_url;
+    } else if (user.avatar_url.startsWith('/uploads/avatars/')) {
+      avatarSrc = AVATAR_BASE_URL + user.avatar_url;
+    } else {
+      avatarSrc = AVATAR_BASE_URL + '/uploads/avatars/' + user.avatar_url;
+    }
+  }
+  // eslint-disable-next-line no-console
+  console.log('Avatar URL:', user?.avatar_url, '-> src:', avatarSrc);
 
   const handleProfileSave = (data: any) => {
     console.log('Profile saved:', data);
@@ -91,8 +106,20 @@ const ProfilePage: React.FC = () => {
                 <CardHeader className="text-center">
                   <div className="flex justify-center mb-4">
                     <div className="relative">
-                      <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">
-                        {user?.full_name?.charAt(0) || 'U'}
+                      {/* Avatar hiển thị ảnh nếu có, fallback nếu không */}
+                      <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-500">
+                        <img
+                          src={avatarSrc || '/default-avatar.png'}
+                          alt="Avatar"
+                          className="w-full h-full object-cover"
+                          onError={e => (e.currentTarget.src = '/default-avatar.png')}
+                        />
+                        {/* Nếu không có avatar, hiển thị chữ cái đầu */}
+                        {!avatarSrc && (
+                          <span className="absolute text-white text-2xl font-bold">
+                            {user?.full_name?.charAt(0) || 'U'}
+                          </span>
+                        )}
                       </div>
                       <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
                         <CheckCircle className="w-3 h-3 text-white" />

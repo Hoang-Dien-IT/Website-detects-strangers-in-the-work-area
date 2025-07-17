@@ -14,8 +14,8 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useWebSocketContext } from '@/contexts/WebSocketContext';
-import { settingsService, UserSettings } from '@/services/settings.service';
-import { userService, UserUpdate } from '@/services/user.service';
+import { settingsService } from '@/services/settings.service';
+import { userService } from '@/services/user.service';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -51,8 +51,6 @@ interface SystemPreferences {
 }
 
 const GeneralSettingsPage: React.FC = () => {
-  // Đường dẫn base cho avatar
-  const AVATAR_BASE_URL = "http://localhost:8000";
   const { user, updateUser } = useAuth();
   const { isConnected } = useWebSocketContext();
   const navigate = useNavigate();
@@ -111,13 +109,11 @@ const GeneralSettingsPage: React.FC = () => {
         const settings = await settingsService.getUserSettings();
         setSystemPreferences(prev => ({
           ...prev,
-          theme: settings.dark_mode ? 'dark' : 'light',
+          theme: (settings as any).theme || 'light',
           language: settings.language || 'vi',
           timezone: settings.timezone || 'Asia/Ho_Chi_Minh',
-          enable_animations: true,
-          auto_save: true,
-          show_tooltips: true,
-          compact_mode: false
+          enable_animations: (settings as any).enable_animations ?? true,
+          auto_save: (settings as any).auto_save ?? true
         }));
       } catch (error) {
         console.error('Error loading system preferences:', error);
@@ -155,22 +151,12 @@ const GeneralSettingsPage: React.FC = () => {
 
     setLoading(true);
     try {
-      const updateData: UserUpdate = {
-        full_name: profileData.full_name,
-        email: profileData.email,
-        phone: profileData.phone,
-        location: profileData.location,
-        bio: profileData.bio,
-        website: profileData.website,
-        job_title: profileData.job_title,
-        company: profileData.company
-      };
-      await userService.updateProfile(updateData);
-      // Lấy lại user mới nhất từ backend
-      const currentUser = await userService.getCurrentUser();
-      updateUser(currentUser);
+      await userService.updateProfile(profileData);
+      const updatedUser = await userService.getCurrentUser();
+      updateUser(updatedUser);
       setProfileSaved(true);
       toast.success('Profile updated successfully');
+      
       setTimeout(() => setProfileSaved(false), 2000);
     } catch (error: any) {
       toast.error(error.message || 'Failed to update profile');
@@ -183,12 +169,7 @@ const GeneralSettingsPage: React.FC = () => {
   const handleSaveSystemPreferences = async () => {
     setLoading(true);
     try {
-      const userSettings: Partial<UserSettings> = {
-        dark_mode: systemPreferences.theme === 'dark',
-        language: systemPreferences.language,
-        timezone: systemPreferences.timezone
-      };
-      await settingsService.updateUserSettings(userSettings);
+      await settingsService.updateUserSettings(systemPreferences);
       setSystemSaved(true);
       toast.success('System preferences updated successfully');
       
@@ -218,13 +199,10 @@ const GeneralSettingsPage: React.FC = () => {
 
     setUploadingAvatar(true);
     try {
-      const result = await userService.uploadAvatar(file);
-      if (result.avatar_url) {
-        // Update user with new avatar URL
-        const currentUser = await userService.getCurrentUser();
-        updateUser(currentUser);
-        toast.success('Avatar updated successfully');
-      }
+      await userService.uploadAvatar(file);
+      const updatedUser = await userService.getCurrentUser();
+      updateUser(updatedUser);
+      toast.success('Avatar updated successfully');
     } catch (error: any) {
       toast.error(error.message || 'Failed to upload avatar');
     } finally {
@@ -284,23 +262,7 @@ const GeneralSettingsPage: React.FC = () => {
                 <div className="flex items-center space-x-4">
                   <div className="relative">
                     <Avatar className="h-16 w-16">
-                      {(() => {
-                        let avatarSrc: string | undefined = undefined;
-                        if (user?.avatar_url) {
-                          if (user.avatar_url.startsWith('http')) {
-                            avatarSrc = user.avatar_url;
-                          } else if (user.avatar_url.startsWith('/uploads/avatars/')) {
-                            avatarSrc = AVATAR_BASE_URL + user.avatar_url;
-                          } else {
-                            avatarSrc = AVATAR_BASE_URL + '/uploads/avatars/' + user.avatar_url;
-                          }
-                        }
-                        // Log kiểm tra giá trị avatar_url
-                        // eslint-disable-next-line no-console
-                        console.log('Avatar URL:', user?.avatar_url, '-> src:', avatarSrc);
-                        // Nếu không có avatar, dùng ảnh mặc định
-                        return <AvatarImage src={avatarSrc || '/default-avatar.png'} />;
-                      })()}
+                      <AvatarImage src={user?.avatar_url} />
                       <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white text-lg font-bold">
                         {user?.full_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'NHD'}
                       </AvatarFallback>

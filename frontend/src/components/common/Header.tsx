@@ -695,7 +695,22 @@ const Header: React.FC<HeaderProps> = ({
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="flex items-center space-x-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800">
               <Avatar className="h-8 w-8">
-                <AvatarImage src={user?.avatar_url} alt={user?.full_name} />
+                {(() => {
+                  let avatarSrc: string | undefined = undefined;
+                  const AVATAR_BASE_URL = "http://localhost:8000";
+                  if (user?.avatar_url) {
+                    if (user.avatar_url.startsWith('http')) {
+                      avatarSrc = user.avatar_url;
+                    } else if (user.avatar_url.startsWith('/uploads/avatars/')) {
+                      avatarSrc = AVATAR_BASE_URL + user.avatar_url;
+                    } else {
+                      avatarSrc = AVATAR_BASE_URL + '/uploads/avatars/' + user.avatar_url;
+                    }
+                  }
+                  // eslint-disable-next-line no-console
+                  console.log('Header Avatar URL:', user?.avatar_url, '-> src:', avatarSrc);
+                  return <AvatarImage src={avatarSrc || '/default-avatar.png'} alt={user?.full_name} onError={e => (e.currentTarget.src = '/default-avatar.png')} />;
+                })()}
                 <AvatarFallback className="bg-blue-600 text-white">
                   {user?.full_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
                 </AvatarFallback>
