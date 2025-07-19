@@ -48,117 +48,132 @@ class StreamProcessor:
                 "uptime": 0
             }
 
+    import threading
+    import queue
+
+    def _frame_reader(self, camera_id: str, camera: CameraResponse, frame_queue: 'queue.Queue', stop_event: 'threading.Event'):
+        """Luồng đọc frame liên tục cho camera"""
+        if camera.camera_type == "webcam":
+            cap = cv2.VideoCapture(0)
+        elif camera.camera_url:
+            cap = cv2.VideoCapture(camera.camera_url)
+        else:
+            cap = cv2.VideoCapture(0)
+        if not cap.isOpened():
+            return
+        self.active_streams[camera_id]["cap"] = cap
+        while not stop_event.is_set():
+            ret, frame = cap.read()
+            if not ret:
+                continue
+            # Giữ queue chỉ 1 frame mới nhất (loại bỏ frame cũ)
+            if not frame_queue.empty():
+                try:
+                    frame_queue.get_nowait()
+                except Exception:
+                    pass
+            frame_queue.put(frame)
+        cap.release()
+
     async def start_stream(self, camera_id: str, camera: CameraResponse) -> bool:
-        """Bắt đầu stream camera"""
+        """Bắt đầu stream camera (tối ưu đa luồng đọc frame)"""
         try:
             if camera_id in self.active_streams:
                 return True  # Already streaming
-            
-            # Khởi động detection_tracker nếu chưa chạy
             detection_tracker.start_cleanup_task()
-            
-            # Initialize stream
+            import threading
+            import queue
+            frame_queue = queue.Queue(maxsize=1)
+            stop_event = threading.Event()
+            reader_thread = threading.Thread(target=self._frame_reader, args=(camera_id, camera, frame_queue, stop_event), daemon=True)
             self.active_streams[camera_id] = {
                 "camera": camera,
                 "is_active": True,
                 "start_time": time.time(),
                 "viewers_count": 0,
-                "cap": None
+                "cap": None,
+                "frame_queue": frame_queue,
+                "stop_event": stop_event,
+                "reader_thread": reader_thread
             }
-            
+            reader_thread.start()
             print(f"Stream started for camera: {camera.name}")
             return True
-            
         except Exception as e:
             print(f"Error starting stream: {e}")
             return False
 
     async def stop_stream(self, camera_id: str) -> bool:
-        """Dừng stream camera"""
+        """Dừng stream camera (tối ưu đa luồng)"""
         try:
             if camera_id in self.active_streams:
                 stream = self.active_streams[camera_id]
                 stream["is_active"] = False
-                
+                # Stop frame reader thread
+                if stream.get("stop_event"):
+                    stream["stop_event"].set()
+                if stream.get("reader_thread"):
+                    stream["reader_thread"].join(timeout=1)
                 # Close camera capture if exists
                 if stream.get("cap"):
                     stream["cap"].release()
-                
-                # Remove from active streams
                 del self.active_streams[camera_id]
-                
-                # Dừng detection_tracker nếu không còn stream nào active
                 if not self.active_streams:
                     await detection_tracker.stop_cleanup_task()
-                
                 print(f"Stream stopped for camera: {camera_id}")
                 return True
             return False
-            
         except Exception as e:
             print(f"Error stopping stream: {e}")
             return False
 
     async def generate_video_stream(self, camera_id: str, camera: CameraResponse) -> AsyncGenerator[bytes, None]:
-        """Generate video stream frames"""
+        """Generate video stream frames (tối ưu đa luồng, AI mỗi 5 frame)"""
         try:
-            # Ensure stream is started
             await self.start_stream(camera_id, camera)
-            
-            if camera.camera_type == "webcam":
-                # Use webcam (index 0)
-                cap = cv2.VideoCapture(0)
-            elif camera.camera_url:
-                # Use IP camera URL
-                cap = cv2.VideoCapture(camera.camera_url)
-            else:
-                # Fallback to webcam
-                cap = cv2.VideoCapture(0)
-            
-            if not cap.isOpened():
-                # If real camera fails, generate dummy frames
+            stream = self.active_streams.get(camera_id)
+            if not stream or "frame_queue" not in stream:
                 async for frame in self._generate_dummy_frames():
                     yield frame
                 return
-            
-            # Store capture object
-            if camera_id in self.active_streams:
-                self.active_streams[camera_id]["cap"] = cap
-            
+            frame_queue = stream["frame_queue"]
             frame_count = 0
+            last_ai_result = None
             while True:
                 if camera_id not in self.active_streams or not self.active_streams[camera_id]["is_active"]:
                     break
-                
-                ret, frame = cap.read()
-                if not ret:
-                    print(f"Failed to read frame from camera {camera_id}")
-                    # Generate dummy frame
+                try:
+                    frame = frame_queue.get(timeout=1)
+                except Exception:
                     frame = self._create_dummy_frame(f"Camera {camera.name} - No Signal")
-                
-                # Process frame (resize, add overlays, etc.)
-                frame = await self._process_frame(frame, camera_id, camera)
-                
-                # Encode frame to JPEG
-                _, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 70])
+                frame_count += 1
+                # Chỉ xử lý AI mỗi 5 frame, các frame còn lại chỉ overlay lại kết quả AI cũ
+                if camera.detection_enabled and frame_count % 5 == 0:
+                    processed_frame = await self._process_frame(frame.copy(), camera_id, camera)
+                    last_ai_result = processed_frame
+                elif last_ai_result is not None:
+                    processed_frame = last_ai_result.copy()
+                    # Cập nhật overlay thời gian, FPS, camera name
+                    current_time = time.time()
+                    fps = 0
+                    if hasattr(self, '_frame_times') and camera_id in self._frame_times:
+                        fps = 1.0 / (current_time - self._frame_times[camera_id])
+                        self._frame_times[camera_id] = current_time
+                    cv2.putText(processed_frame, f"FPS: {fps:.2f}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+                    cv2.putText(processed_frame, f"Camera: {camera.name}", (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+                    timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+                    cv2.putText(processed_frame, timestamp, (10, processed_frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+                else:
+                    processed_frame = await self._process_frame(frame.copy(), camera_id, camera)
+                _, buffer = cv2.imencode('.jpg', processed_frame, [cv2.IMWRITE_JPEG_QUALITY, 70])
                 frame_bytes = buffer.tobytes()
-                
-                # Yield frame in multipart format
                 yield (b'--frame\r\n'
                        b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
-                
-                frame_count += 1
-                await asyncio.sleep(1/30)  # 30 FPS
-                
+                await asyncio.sleep(0.001)  # sleep rất nhỏ để tránh block event loop
         except Exception as e:
             print(f"Error in video stream: {e}")
-            # Generate error frame
             async for frame in self._generate_error_frames(str(e)):
                 yield frame
-        finally:
-            # Cleanup
-            if 'cap' in locals():
-                cap.release()
 
     async def _process_frame(self, frame: np.ndarray, camera_id: str, camera: CameraResponse) -> np.ndarray:
         """Process frame (add overlays, detection, etc.) - theo code mẫu"""
