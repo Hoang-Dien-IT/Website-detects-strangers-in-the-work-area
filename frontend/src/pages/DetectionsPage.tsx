@@ -30,8 +30,6 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
 } from '@/components/ui/dialog';
 import {
   Select,
@@ -62,6 +60,30 @@ import { useWebSocketContext } from '@/contexts/WebSocketContext';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 
+// Child component to handle image fallback and prevent flickering
+const DetectionCardImage: React.FC<{ image_url?: string; image_path?: string; id: string; detection_type: string }> = ({ image_url, image_path, id, detection_type }) => {
+  const initialSrc = image_url || (image_path ? `/backend/uploads/detections/${image_path}` : '/no-image.png');
+  const [imgSrc, setImgSrc] = React.useState(initialSrc);
+  React.useEffect(() => {
+    setImgSrc(image_url || (image_path ? `/backend/uploads/detections/${image_path}` : '/no-image.png'));
+    // eslint-disable-next-line
+  }, [image_url, image_path, id]);
+  return (
+    <>
+      <img
+        src={imgSrc}
+        alt="Detection"
+        className="h-20 w-20 object-cover rounded-xl border-2 border-white shadow-md group-hover:scale-105 transition-transform duration-300 bg-white"
+        onError={() => setImgSrc('/no-image.png')}
+      />
+      <div className="absolute top-2 left-2">
+        <Badge variant={detection_type === 'stranger' ? 'destructive' : 'default'} className="text-xs px-2 py-1">
+          {detection_type === 'stranger' ? 'Unknown' : 'Known'}
+        </Badge>
+      </div>
+    </>
+  );
+};
 // ✅ FIX: Update interfaces to match service types
 interface DetectionCamera {
   id: string;
@@ -115,6 +137,7 @@ const DetectionsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDetection, setSelectedDetection] = useState<Detection | null>(null);
   const [showImageDialog, setShowImageDialog] = useState(false);
+  const [loadingDetail, setLoadingDetail] = useState(false);
   const [cleanupDialog, setCleanupDialog] = useState<CleanupDialogState>({
     open: false,
     daysToKeep: 30,
@@ -719,94 +742,64 @@ const DetectionsPage: React.FC = () => {
                 {filteredDetections.map((detection, index) => (
                   <motion.div
                     key={detection.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05, duration: 0.3 }}
-                    className="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer group"
-                    onClick={() => {
-                      setSelectedDetection(detection);
-                      setShowImageDialog(true);
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.04, duration: 0.35 }}
+                    className={`relative group rounded-2xl border-2 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all cursor-pointer overflow-hidden p-6 flex flex-col md:flex-row items-center ${detection.detection_type === 'stranger' ? 'border-red-400 bg-gradient-to-r from-red-50 via-white to-white' : 'border-emerald-400 bg-gradient-to-r from-emerald-50 via-white to-white'}`}
+                    style={{ minHeight: 110 }}
+                    onClick={async () => {
+                      try {
+                        setLoadingDetail(true);
+                        const detail = await detectionService.getDetection(detection.id);
+                        setSelectedDetection(detail);
+                        setShowImageDialog(true);
+                      } catch (err) {
+                        toast.error('Failed to load detection details');
+                      } finally {
+                        setLoadingDetail(false);
+                      }
                     }}
                   >
-                    {/* Detection Image */}
-                    <div className="flex-shrink-0">
-                      <Avatar className="h-12 w-12 border-2 border-white shadow-lg">
-                        <AvatarImage 
-                          src={detection.image_url} 
-                          alt="Detection"
-                          onError={(e) => {
-                            console.warn('Failed to load detection image:', detection.image_url);
-                          }}
-                        />
-                        <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
-                          <Camera className="h-6 w-6" />
-                        </AvatarFallback>
-                      </Avatar>
-                    </div>
-
-                    {/* Detection Info */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <h3 className="text-sm font-semibold text-gray-900 truncate">
-                          {detection.detection_type === 'stranger' 
-                            ? '🚫 Unknown Person' 
-                            : `👤 ${detection.person_name}`
-                          }
-                        </h3>
-                        <Badge 
-                          variant={detection.detection_type === 'stranger' ? 'destructive' : 'default'}
-                          className="text-xs"
-                        >
-                          <Target className="h-3 w-3 mr-1" />
-                          {formatConfidence(detection.confidence)}
-                        </Badge>
-                        {detection.similarity_score && (
+                    <div className="flex-1 flex flex-col md:flex-row md:items-center md:space-x-6 w-full">
+                      <div className="flex flex-col flex-1 min-w-0">
+                        <div className="flex items-center space-x-3 mb-1">
+                          <span className={`font-bold text-lg truncate ${detection.detection_type === 'stranger' ? 'text-red-700' : 'text-emerald-700'}`}>{detection.detection_type === 'stranger' ? 'Unknown Person' : detection.person_name || 'Known Person'}</span>
+                          <span className="text-xs text-gray-400">#{detection.id.slice(0, 8)}</span>
+                          <Badge variant={detection.detection_type === 'stranger' ? 'destructive' : 'default'} className={`ml-2 px-2 py-1 text-xs ${detection.detection_type === 'stranger' ? 'bg-red-100 text-red-700 border-red-300' : 'bg-emerald-100 text-emerald-700 border-emerald-300'}`}>
+                            {detection.detection_type === 'stranger' ? 'Unknown' : 'Known'}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center flex-wrap space-x-3 text-sm text-gray-600 mb-1">
+                          <Camera className="h-4 w-4 mr-1 inline-block" />
+                          <span>{detection.camera_name || 'Unknown Camera'}</span>
+                          {detection.location && <span className="flex items-center"><MapPin className="h-4 w-4 ml-2 mr-1 inline-block" />{detection.location}</span>}
+                          <Clock className="h-4 w-4 ml-2 mr-1 inline-block" />
+                          <span title={new Date(detection.timestamp).toLocaleString()}>{formatTimeAgo(detection.timestamp)}</span>
+                        </div>
+                        <div className="flex items-center flex-wrap space-x-2 mt-1">
                           <Badge variant="secondary" className="text-xs">
-                            <Shield className="h-3 w-3 mr-1" />
-                            {formatConfidence(detection.similarity_score)}
+                            <Target className="h-3 w-3 mr-1" />{formatConfidence(detection.confidence)}
                           </Badge>
-                        )}
-                        {detection.is_alert_sent && (
-                          <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-300">
-                            🔔 Alert Sent
-                          </Badge>
-                        )}
-                      </div>
-
-                      <div className="flex items-center space-x-4 text-sm text-gray-600 flex-wrap">
-                        <div className="flex items-center">
-                          <Camera className="h-4 w-4 mr-1" />
-                          <span className="truncate">{detection.camera_name || 'Unknown Camera'}</span>
-                        </div>
-                        
-                        {detection.location && (
-                          <div className="flex items-center">
-                            <MapPin className="h-4 w-4 mr-1" />
-                            <span className="truncate">{detection.location}</span>
-                          </div>
-                        )}
-                        
-                        <div className="flex items-center">
-                          <Clock className="h-4 w-4 mr-1" />
-                          <span title={new Date(detection.timestamp).toLocaleString()}>
-                            {formatTimeAgo(detection.timestamp)}
-                          </span>
-                        </div>
-
-                        <div className="flex items-center text-xs text-gray-500">
-                          <span>ID: {detection.id.slice(0, 8)}...</span>
+                          {detection.similarity_score && (
+                            <Badge variant="outline" className="text-xs bg-emerald-50 text-emerald-700 border-emerald-200">
+                              <Shield className="h-3 w-3 mr-1" />{formatConfidence(detection.similarity_score)}
+                            </Badge>
+                          )}
+                          {detection.is_alert_sent && (
+                            <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-300">
+                              🔔 Alert Sent
+                            </Badge>
+                          )}
                         </div>
                       </div>
                     </div>
-
                     {/* Actions */}
-                    <div className="flex-shrink-0">
+                    <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button 
                             variant="ghost" 
                             size="sm"
-                            className="opacity-0 group-hover:opacity-100 transition-opacity"
                             onClick={(e) => e.stopPropagation()}
                           >
                             <MoreHorizontal className="h-4 w-4" />
@@ -814,14 +807,22 @@ const DetectionsPage: React.FC = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="bg-white border-gray-200 shadow-xl">
                           <DropdownMenuItem 
-                            onClick={(e) => {
+                            onClick={async (e) => {
                               e.stopPropagation();
-                              setSelectedDetection(detection);
-                              setShowImageDialog(true);
+                              setLoadingDetail(true);
+                              try {
+                                const detail = await detectionService.getDetection(detection.id);
+                                setSelectedDetection(detail);
+                                setShowImageDialog(true);
+                              } catch (err) {
+                                toast.error('Failed to load detection details');
+                              } finally {
+                                setLoadingDetail(false);
+                              }
                             }}
                           >
                             <Eye className="h-4 w-4 mr-2" />
-                            View Details
+                            {loadingDetail ? 'Loading...' : 'View Details'}
                           </DropdownMenuItem>
                           <DropdownMenuItem 
                             onClick={(e) => {
@@ -917,168 +918,150 @@ const DetectionsPage: React.FC = () => {
         </Card>
       </motion.div>
 
-      {/* Enhanced Detection Detail Dialog */}
+
+      {/* Modern Detection Detail Dialog */}
       <Dialog open={showImageDialog} onOpenChange={setShowImageDialog}>
-        <DialogContent className="max-w-4xl bg-white border-gray-200">
-          <DialogHeader>
-            <DialogTitle className="flex items-center space-x-2">
-              <Activity className="h-5 w-5" />
-              <span>Detection Details</span>
-              {selectedDetection && (
-                <Badge 
-                  variant={selectedDetection.detection_type === 'stranger' ? 'destructive' : 'default'}
-                  className="ml-2"
-                >
-                  {selectedDetection.detection_type === 'stranger' ? 'Unknown Person' : 'Known Person'}
-                </Badge>
-              )}
-            </DialogTitle>
-          </DialogHeader>
+        <DialogContent className="max-w-3xl p-0 overflow-hidden rounded-2xl shadow-2xl border-0">
           {selectedDetection && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Enhanced Image Display */}
-              <div className="space-y-4">
-                <div className="aspect-video bg-gray-100 rounded-xl overflow-hidden border border-gray-200 relative">
+            <div className="bg-blue-600 px-8 py-5 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                  <Activity className="h-6 w-6 text-white" />
+                </div>
+                <span className="text-2xl font-bold text-white tracking-wide drop-shadow">Detection Details</span>
+                <span className={`ml-4 px-4 py-1 rounded-full text-sm font-semibold shadow border ${selectedDetection.detection_type === 'stranger' ? 'bg-red-600 border-red-600 text-white' : 'bg-emerald-600 border-emerald-600 text-white'}`}>
+                  {selectedDetection.detection_type === 'stranger' ? 'Unknown Person' : 'Known Person'}
+                </span>
+              </div>
+              <span className="text-white text-xs font-mono opacity-80 bg-black/20 px-3 py-1 rounded-lg">{selectedDetection.id}</span>
+            </div>
+          )}
+          {selectedDetection && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-0 bg-white">
+              {/* Modern Image Display */}
+              <div className="flex flex-col items-center justify-center p-8">
+                <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-lg border border-gray-200 bg-gray-50">
                   <img
-                    src={selectedDetection.image_url}
+                    src={selectedDetection.image_url || `/backend/uploads/detections/${selectedDetection.image_path || ''}`}
                     alt="Detection"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-all duration-300"
                     onError={(e) => {
-                      console.warn('Failed to load detection image in dialog:', selectedDetection.image_url);
+                      e.currentTarget.src = '/no-image.png';
+                      e.currentTarget.style.opacity = '0.3';
                     }}
                   />
                   {/* Overlay with detection info */}
-                  <div className="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
+                  <div className="absolute top-2 left-2 bg-blue-600 text-white px-3 py-1 rounded text-xs font-semibold shadow">
                     {formatConfidence(selectedDetection.confidence)} confidence
                   </div>
                   {selectedDetection.similarity_score && (
-                    <div className="absolute top-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
+                    <div className="absolute top-2 right-2 bg-emerald-600 text-white px-3 py-1 rounded text-xs font-semibold shadow">
                       {formatConfidence(selectedDetection.similarity_score)} similarity
                     </div>
                   )}
+                  <div className="absolute bottom-2 left-2">
+                    <span className={`px-3 py-1 rounded text-xs font-semibold shadow border ${selectedDetection.detection_type === 'stranger' ? 'bg-red-600 border-red-600 text-white' : 'bg-emerald-600 border-emerald-600 text-white'}`}>
+                      {selectedDetection.detection_type === 'stranger' ? 'Unknown' : 'Known'}
+                    </span>
+                  </div>
                 </div>
-
                 {/* Bounding Box Info */}
                 {selectedDetection.bbox && (
-                  <div>
-                    <label className="text-sm font-medium text-gray-600">Bounding Box Coordinates</label>
-                    <div className="mt-1 grid grid-cols-4 gap-2">
-                      <div className="bg-gray-100 p-3 rounded text-center">
-                        <p className="font-medium text-sm text-gray-600">X</p>
-                        <p className="text-lg font-semibold">{Math.round(selectedDetection.bbox[0])}</p>
+                  <div className="mt-6 w-full">
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Bounding Box</label>
+                    <div className="mt-2 grid grid-cols-4 gap-3">
+                      <div className="bg-gray-100 p-3 rounded-xl text-center shadow">
+                        <p className="font-bold text-xs text-gray-600">X</p>
+                        <p className="text-lg font-extrabold text-blue-700">{selectedDetection.bbox[0]}</p>
                       </div>
-                      <div className="bg-gray-100 p-3 rounded text-center">
-                        <p className="font-medium text-sm text-gray-600">Y</p>
-                        <p className="text-lg font-semibold">{Math.round(selectedDetection.bbox[1])}</p>
+                      <div className="bg-gray-100 p-3 rounded-xl text-center shadow">
+                        <p className="font-bold text-xs text-gray-600">Y</p>
+                        <p className="text-lg font-extrabold text-blue-700">{selectedDetection.bbox[1]}</p>
                       </div>
-                      <div className="bg-gray-100 p-3 rounded text-center">
-                        <p className="font-medium text-sm text-gray-600">Width</p>
-                        <p className="text-lg font-semibold">{Math.round(selectedDetection.bbox[2])}</p>
+                      <div className="bg-gray-100 p-3 rounded-xl text-center shadow">
+                        <p className="font-bold text-xs text-gray-600">W</p>
+                        <p className="text-lg font-extrabold text-blue-700">{selectedDetection.bbox[2]}</p>
                       </div>
-                      <div className="bg-gray-100 p-3 rounded text-center">
-                        <p className="font-medium text-sm text-gray-600">Height</p>
-                        <p className="text-lg font-semibold">{Math.round(selectedDetection.bbox[3])}</p>
+                      <div className="bg-gray-100 p-3 rounded-xl text-center shadow">
+                        <p className="font-bold text-xs text-gray-600">H</p>
+                        <p className="text-lg font-extrabold text-blue-700">{selectedDetection.bbox[3]}</p>
                       </div>
                     </div>
                   </div>
                 )}
               </div>
-
-              {/* Enhanced Details Panel */}
-              <div className="space-y-6">
-                <div className="space-y-4">
+              {/* Modern Details Panel */}
+              <div className="p-8 flex flex-col gap-6">
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Detection Type</label>
+                  <div className="mt-2">
+                    <span className={`inline-flex items-center gap-2 px-4 py-1 rounded-full text-sm font-semibold shadow border ${selectedDetection.detection_type === 'stranger' ? 'bg-red-600 border-red-600 text-white' : 'bg-emerald-600 border-emerald-600 text-white'}`}>
+                      {selectedDetection.detection_type === 'stranger' ? <AlertTriangle className="h-4 w-4" /> : <UserCheck className="h-4 w-4" />}
+                      {selectedDetection.detection_type === 'stranger' ? 'Unknown Person' : 'Known Person'}
+                    </span>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
                   <div>
-                    <label className="text-sm font-medium text-gray-600">Detection ID</label>
-                    <p className="mt-1 text-sm font-mono bg-gray-100 p-2 rounded">
-                      {selectedDetection.id}
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Confidence</label>
+                    <p className="mt-2 text-2xl font-extrabold text-blue-600">
+                      {formatConfidence(selectedDetection.confidence)}
                     </p>
                   </div>
-
-                  <div>
-                    <label className="text-sm font-medium text-gray-600">Detection Type</label>
-                    <div className="mt-1">
-                      <Badge 
-                        variant={selectedDetection.detection_type === 'stranger' ? 'destructive' : 'default'}
-                        className="text-sm"
-                      >
-                        {selectedDetection.detection_type === 'stranger' 
-                          ? '🚫 Unknown Person' 
-                          : '👤 Known Person'
-                        }
-                      </Badge>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
+                  {selectedDetection.similarity_score && (
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Confidence Score</label>
-                      <p className="mt-1 text-2xl font-bold text-blue-600">
-                        {formatConfidence(selectedDetection.confidence)}
+                      <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Similarity</label>
+                      <p className="mt-2 text-2xl font-extrabold text-emerald-600">
+                        {formatConfidence(selectedDetection.similarity_score)}
                       </p>
-                    </div>
-
-                    {selectedDetection.similarity_score && (
-                      <div>
-                        <label className="text-sm font-medium text-gray-600">Similarity Score</label>
-                        <p className="mt-1 text-2xl font-bold text-emerald-600">
-                          {formatConfidence(selectedDetection.similarity_score)}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                  
-                  {selectedDetection.person_name && (
-                    <div>
-                      <label className="text-sm font-medium text-gray-600">Person Name</label>
-                      <p className="mt-1 text-lg font-semibold">{selectedDetection.person_name}</p>
-                    </div>
-                  )}
-
-                  <div>
-                    <label className="text-sm font-medium text-gray-600">Camera Information</label>
-                    <div className="mt-1 space-y-1">
-                      <p className="font-medium">{selectedDetection.camera_name || 'Unknown Camera'}</p>
-                      {selectedDetection.location && (
-                        <p className="text-sm text-gray-600 flex items-center">
-                          <MapPin className="h-4 w-4 mr-1" />
-                          {selectedDetection.location}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <label className="text-sm font-medium text-gray-600">Detection Time</label>
-                    <div className="mt-1 space-y-1">
-                      <p className="font-medium">{new Date(selectedDetection.timestamp).toLocaleString()}</p>
-                      <p className="text-sm text-gray-600">{formatTimeAgo(selectedDetection.timestamp)}</p>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <label className="text-sm font-medium text-gray-600">Alert Status</label>
-                    <div className="mt-1">
-                      <Badge 
-                        variant={selectedDetection.is_alert_sent ? 'default' : 'secondary'}
-                        className="text-sm"
-                      >
-                        {selectedDetection.is_alert_sent ? '🔔 Alert Sent' : '🔕 No Alert'}
-                      </Badge>
-                    </div>
-                  </div>
-
-                  {/* Additional metadata if available */}
-                  {selectedDetection.metadata && Object.keys(selectedDetection.metadata).length > 0 && (
-                    <div>
-                      <label className="text-sm font-medium text-gray-600">Additional Information</label>
-                      <div className="mt-1 bg-gray-100 p-3 rounded">
-                        <pre className="text-xs text-gray-800 whitespace-pre-wrap">
-                          {JSON.stringify(selectedDetection.metadata, null, 2)}
-                        </pre>
-                      </div>
                     </div>
                   )}
                 </div>
+                {selectedDetection.person_name && (
+                  <div>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Person Name</label>
+                    <p className="mt-2 text-lg font-bold text-gray-800">{selectedDetection.person_name}</p>
+                  </div>
+                )}
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Camera</label>
+                  <div className="mt-2 space-y-1">
+                    <p className="font-bold text-gray-800">{selectedDetection.camera_name || 'Unknown Camera'}</p>
+                    {selectedDetection.location && (
+                      <p className="text-xs text-gray-500 flex items-center">
+                        <MapPin className="h-4 w-4 mr-1" />
+                        {selectedDetection.location}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Detection Time</label>
+                  <div className="mt-2 space-y-1">
+                    <p className="font-bold text-gray-800">{new Date(selectedDetection.timestamp).toLocaleString()}</p>
+                    <p className="text-xs text-gray-500">{formatTimeAgo(selectedDetection.timestamp)}</p>
+                  </div>
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Alert Status</label>
+                  <div className="mt-2">
+                    <span className={`inline-flex items-center gap-2 px-4 py-1 rounded-full text-sm font-semibold shadow border ${selectedDetection.is_alert_sent ? 'bg-blue-600 border-blue-600 text-white' : 'bg-gray-300 border-gray-400 text-gray-700'}`}>
+                      {selectedDetection.is_alert_sent ? <span className="mr-1">🔔</span> : <span className="mr-1">🔕</span>}
+                      {selectedDetection.is_alert_sent ? 'Alert Sent' : 'No Alert'}
+                    </span>
+                  </div>
+                </div>
+                {/* Additional metadata if available */}
+                {selectedDetection.metadata && Object.keys(selectedDetection.metadata).length > 0 && (
+                  <div>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Additional Information</label>
+                    <div className="mt-2 bg-gray-100 p-4 rounded-xl shadow-inner">
+                      <pre className="text-xs text-gray-800 whitespace-pre-wrap">
+                        {JSON.stringify(selectedDetection.metadata, null, 2)}
+                      </pre>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}

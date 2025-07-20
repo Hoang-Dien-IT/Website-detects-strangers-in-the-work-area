@@ -257,21 +257,25 @@ class DetectionService:
                 cameras_active=0
             )
 
-    async def get_detection_by_id(self, detection_id: str, user_id: str) -> Optional[DetectionLogResponse]:
-        """Lấy detection log theo ID"""
+    async def get_detection_by_id(self, detection_id: str, user_id: str, request=None) -> Optional[DetectionLogResponse]:
+        """Lấy detection log theo ID, trả về image_url đầy đủ domain"""
         try:
             log_data = await self.collection.find_one({
                 "_id": ObjectId(detection_id),
                 "user_id": ObjectId(user_id)
             })
-            
             if not log_data:
                 return None
-            
-            # Get camera name
             camera = await self.db.cameras.find_one({"_id": log_data["camera_id"]})
             camera_name = camera["name"] if camera else "Unknown Camera"
-            
+            # Lấy domain từ request nếu có
+            base_url = ""
+            if request is not None:
+                base_url = str(request.base_url).rstrip("/")
+            image_url = ""
+            if log_data.get("image_path"):
+                rel_path = f"/uploads/detections/{os.path.basename(log_data.get('image_path', ''))}"
+                image_url = f"{base_url}{rel_path}" if base_url else rel_path
             return DetectionLogResponse(
                 id=str(log_data["_id"]),
                 camera_name=camera_name,
@@ -279,12 +283,11 @@ class DetectionService:
                 person_name=log_data.get("person_name"),
                 confidence=log_data["confidence"],
                 similarity_score=log_data.get("similarity_score"),
-                image_url=f"/uploads/detections/{os.path.basename(log_data.get('image_path', ''))}" if log_data.get("image_path") else "",
+                image_url=image_url,
                 bbox=log_data.get("bbox", []),
                 timestamp=log_data["timestamp"],
                 is_alert_sent=log_data.get("is_alert_sent", False)
             )
-            
         except Exception as e:
             print(f"Error getting detection by ID: {e}")
             return None

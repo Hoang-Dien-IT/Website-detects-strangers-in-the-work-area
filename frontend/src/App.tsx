@@ -45,7 +45,7 @@ const PersonFormPage = React.lazy(() => import('@/pages/PersonFormPage'));
 
 // Detection & Monitoring
 const DetectionsPage = React.lazy(() => import('@/pages/DetectionsPage'));
-const DetectionHistoryPage = React.lazy(() => import('@/pages/DetectionHistoryPage'));
+// const DetectionActivityPage = React.lazy(() => import('@/pages/DetectionsPage'));
 const AlertsPage = React.lazy(() => import('@/pages/AlertsPage'));
 const LiveMonitoringPage = React.lazy(() => import('@/pages/LiveMonitoringPage'));
 
@@ -415,7 +415,7 @@ const App: React.FC = () => {
                           } />
                           <Route path="history" element={
                             <Suspense fallback={<LoadingSpinner />}>
-                              <DetectionHistoryPage />
+                              <DetectionsPage />
                             </Suspense>
                           } />
                           <Route path="alerts" element={
@@ -425,7 +425,7 @@ const App: React.FC = () => {
                           } />
                           <Route path="archive" element={
                             <Suspense fallback={<LoadingSpinner />}>
-                              <DetectionHistoryPage />
+                              <DetectionsPage />
                             </Suspense>
                           } />
                         </Route>

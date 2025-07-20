@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -66,6 +67,7 @@ const getStatusBadge = (status: string) => {
   );
 };
 
+
 const DetectionHistoryPage: React.FC = () => {
   const { isConnected, lastMessage } = useWebSocketContext();
   const [detections, setDetections] = useState<Detection[]>([]);
@@ -83,6 +85,55 @@ const DetectionHistoryPage: React.FC = () => {
     known: 0,
     unknown: 0
   });
+  const [selectedDetection, setSelectedDetection] = useState<Detection | null>(null);
+  const [showDetail, setShowDetail] = useState(false);
+  // Xây dựng URL ảnh từ trường image_path hoặc file_name
+  const getDetectionImageUrl = (detection: Detection) => {
+    if (!detection || !detection.image_path) return '';
+    // Nếu image_path đã là URL tuyệt đối hợp lệ thì trả về luôn
+    if (/^https?:\/\//.test(detection.image_path)) return detection.image_path;
+    // Nếu image_path đã chứa '/uploads/detections/' thì chỉ ghép domain
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
+    if (detection.image_path.includes('/uploads/detections/')) {
+      return `${backendUrl}${detection.image_path.startsWith('/') ? '' : '/'}${detection.image_path}`;
+    }
+    // Nếu image_path là tên file hoặc có chứa \ thì chỉ lấy tên file cuối cùng
+    const fileName = detection.image_path.split(/[\\/]/).pop();
+    return `${backendUrl}/uploads/detections/${fileName}`;
+  };
+
+  // Helper functions
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      });
+    } catch (error) {
+      return 'Invalid Date';
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    const statusConfig = {
+      pending: { color: 'bg-yellow-100 text-yellow-800', text: 'Pending' },
+      processed: { color: 'bg-green-100 text-green-800', text: 'Processed' },
+      flagged: { color: 'bg-red-100 text-red-800', text: 'Flagged' },
+    };
+    
+    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
+    
+    return (
+      <Badge className={config.color}>
+        {config.text}
+      </Badge>
+    );
+  };
 
   const loadCameras = async () => {
     try {
@@ -421,12 +472,63 @@ const DetectionHistoryPage: React.FC = () => {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Button variant="ghost" size="sm">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedDetection(detection);
+                          setShowDetail(true);
+                        }}
+                      >
                         <Eye className="h-4 w-4" />
                       </Button>
                     </TableCell>
                   </TableRow>
                 ))}
+      {/* Modal hiển thị chi tiết detection - chỉ render 1 lần ngoài Table */}
+      <Dialog open={showDetail} onOpenChange={setShowDetail}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Detection Details</DialogTitle>
+            <DialogDescription>
+              Thông tin chi tiết sự kiện phát hiện khuôn mặt
+            </DialogDescription>
+          </DialogHeader>
+          {selectedDetection && (
+            <div className="space-y-4">
+              <div className="flex flex-col items-center">
+                <img
+                  src={getDetectionImageUrl(selectedDetection)}
+                  alt="Detected Face"
+                  className="w-48 h-48 object-cover rounded shadow border"
+                  onError={(e) => (e.currentTarget.style.display = 'none')}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="font-semibold">Date & Time:</div>
+                <div>{formatDate(selectedDetection.timestamp)}</div>
+                <div className="font-semibold">Camera:</div>
+                <div>{selectedDetection.camera_name || 'Unknown'}</div>
+                <div className="font-semibold">Person:</div>
+                <div>{selectedDetection.person_name || 'Unknown Person'}</div>
+                <div className="font-semibold">Confidence:</div>
+                <div>{((selectedDetection.confidence || 0) * 100).toFixed(1)}%</div>
+                <div className="font-semibold">Status:</div>
+                <div>
+                  <Badge className={getTypeColor(selectedDetection.detection_type || 'unknown')}>
+                    {getTypeDisplayName(selectedDetection.detection_type || 'unknown')}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowDetail(false)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
               </TableBody>
             </Table>
           )}

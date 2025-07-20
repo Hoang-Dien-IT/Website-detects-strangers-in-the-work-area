@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import Request
 from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
 from ..models.detection_log import DetectionLogCreate, DetectionLogResponse, DetectionStats, DetectionFilter
@@ -42,11 +43,11 @@ async def get_detections(
     try:
         print(f"🔵 Getting detections for user: {current_user.id}")
         print(f"🔵 Filters: camera_id={camera_id}, type={detection_type}, limit={limit}")
-        
+
         # Parse date strings if provided
         start_datetime = None
         end_datetime = None
-        
+
         if start_date:
             try:
                 start_datetime = datetime.fromisoformat(start_date.replace('Z', '+00:00'))
@@ -57,7 +58,7 @@ async def get_detections(
                 end_datetime = datetime.fromisoformat(end_date.replace('Z', '+00:00'))
             except:
                 end_datetime = datetime.fromisoformat(end_date)
-        
+
         # Convert detection_type to proper enum value if provided
         detection_type_enum = None
         if detection_type:
@@ -78,9 +79,24 @@ async def get_detections(
             limit=limit,
             offset=offset
         )
-        
+
         detections = await detection_service.get_user_detections(str(current_user.id), filter_data)
         print(f"✅ Found {len(detections)} detections")
+
+        # Ensure image_url and image_path are always present and correct for frontend
+        for det in detections:
+            # If image_url is missing or empty, try to build from image_path
+            if (not det.get('image_url')) and det.get('image_path'):
+                det['image_url'] = f"/uploads/detections/{det['image_path'].split('/')[-1]}"
+            # If image_path is missing but image_url exists, try to extract filename
+            if (not det.get('image_path')) and det.get('image_url'):
+                det['image_path'] = det['image_url'].split('/')[-1]
+            # If both missing, set to empty string
+            if not det.get('image_url'):
+                det['image_url'] = ''
+            if not det.get('image_path'):
+                det['image_path'] = ''
+
         return detections
     except Exception as e:
         print(f"❌ Error getting detections: {e}")
@@ -133,33 +149,37 @@ async def get_detection_stats_overview(
         }
 
 @router.get("/stats")
-async def get_detection_stats(
-    time_range: str = Query("7d", regex="^(24h|7d|30d|90d)$"),
-    current_user: User = Depends(get_current_active_user)
-):
-    """Lấy thống kê detection tổng quan"""
-    try:
-        return await detection_service.get_detection_stats(str(current_user.id), time_range)
-    except Exception as e:
-        print(f"❌ Error getting detection stats: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/{detection_id}", response_model=DetectionLogResponse)
+
+
+@router.get("/{detection_id}")
 async def get_detection_by_id(
     detection_id: str,
+    request: Request,
     current_user: User = Depends(get_current_active_user)
 ):
-    """Lấy detection log theo ID"""
+    """Lấy detection log theo ID, trả về image_url đầy đủ domain"""
     try:
-        detection = await detection_service.get_detection_by_id(detection_id, str(current_user.id))
+        detection = await detection_service.get_detection_by_id(detection_id, str(current_user.id), request=request)
         if not detection:
             raise HTTPException(status_code=404, detail="Detection not found")
         return detection
     except HTTPException:
         raise
     except Exception as e:
-        print(f"❌ Error getting detection by ID: {e}")
-        raise HTTPException(status_code=500, detail="Failed to get detection")
+        print(f"Error in get_detection_by_id: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+    # """Lấy detection log theo ID"""
+    # try:
+    #     detection = await detection_service.get_detection_by_id(detection_id, str(current_user.id))
+    #     if not detection:
+    #         raise HTTPException(status_code=404, detail="Detection not found")
+    #     return detection
+    # except HTTPException:
+    #     raise
+    # except Exception as e:
+    #     print(f"❌ Error getting detection by ID: {e}")
+    #     raise HTTPException(status_code=500, detail="Failed to get detection")
 
 @router.delete("/{detection_id}")
 async def delete_detection(
