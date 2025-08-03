@@ -7,6 +7,7 @@ import {
   CameraMetadata,
   CameraTestResult 
 } from '@/types/camera.types';
+import { AUTH_CONFIG } from '@/lib/config';
 
 class CameraService {
 
@@ -480,6 +481,64 @@ class CameraService {
     } catch (error: any) {
       console.error('❌ CameraService: Error testing connection:', error);
       throw new Error(error.message || 'Failed to test connection');
+    }
+  }
+
+  // ✅ New methods for face capture functionality
+  async getCameraStreamUrl(id: string): Promise<string> {
+    try {
+      const token = localStorage.getItem(AUTH_CONFIG.TOKEN_KEY);
+      // Use the API base URL directly since it already includes /api
+      const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000/api';
+      return `${baseUrl}/cameras/${id}/capture-stream${token ? `?token=${token}` : ''}`;
+    } catch (error: any) {
+      console.error('❌ CameraService: Error getting camera stream URL:', error);
+      throw new Error(error.message || 'Failed to get camera stream URL');
+    }
+  }
+
+  async captureFrame(id: string): Promise<{ success: boolean; image_data: string; timestamp: string }> {
+    try {
+      console.log('🔵 CameraService: Capturing frame from camera:', id);
+      // Use shorter timeout for camera capture to avoid long waits
+      const response = await apiService.post<{ success: boolean; image_data: string; timestamp: string }>(
+        `/cameras/${id}/capture-frame`, 
+        {}, 
+        { timeout: 5000 } // 5 second timeout instead of 30
+      );
+      console.log('✅ CameraService: Frame captured successfully');
+      return response.data;
+    } catch (error: any) {
+      console.error('❌ CameraService: Error capturing frame:', error);
+      throw new Error(error.message || 'Failed to capture frame');
+    }
+  }
+
+  async testCameraStream(id: string): Promise<{ success: boolean; message: string; camera_id: string; camera_name: string; timestamp?: string }> {
+    try {
+      console.log('🔵 CameraService: Testing camera stream:', id);
+      const response = await apiService.get<{ success: boolean; message: string; camera_id: string; camera_name: string; timestamp?: string }>(`/cameras/${id}/test-stream`);
+      console.log('✅ CameraService: Stream test completed:', response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error('❌ CameraService: Error testing camera stream:', error);
+      throw new Error(error.message || 'Failed to test camera stream');
+    }
+  }
+
+  async cleanupCameraCache(id: string): Promise<{ success: boolean; message: string }> {
+    try {
+      console.log('🔵 CameraService: Cleaning camera cache:', id);
+      const response = await apiService.post<{ success: boolean; message: string }>(
+        `/cameras/${id}/cleanup-cache`, 
+        {}, 
+        { timeout: 3000 }
+      );
+      console.log('✅ CameraService: Camera cache cleaned successfully');
+      return response.data;
+    } catch (error: any) {
+      console.error('❌ CameraService: Error cleaning camera cache:', error);
+      throw new Error(error.message || 'Failed to clean camera cache');
     }
   }
 }

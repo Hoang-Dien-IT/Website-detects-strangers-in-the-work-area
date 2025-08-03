@@ -354,13 +354,20 @@ class PersonService {
   async addFaceImage(id: string, imageBase64: string): Promise<any> {
     try {
       console.log('🔵 PersonService: Adding face image to person:', id);
-      const response = await apiService.post(`/persons/${id}/faces`, {
+      console.log('🔵 PersonService: Image base64 length:', imageBase64.length);
+      console.log('🔵 PersonService: Image base64 preview:', imageBase64.substring(0, 50) + '...');
+      
+      const payload = {
         image_base64: imageBase64
-      });
+      };
+      console.log('🔵 PersonService: Payload:', payload);
+      
+      const response = await apiService.post(`/persons/${id}/faces`, payload);
       console.log('✅ PersonService: Face image added:', response.data);
       return response.data;
     } catch (error: any) {
       console.error('❌ PersonService: Error adding face image:', error);
+      console.error('❌ PersonService: Error details:', error.response?.data);
       throw new Error(error.message || 'Failed to add face image');
     }
   }

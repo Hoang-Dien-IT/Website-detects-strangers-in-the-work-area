@@ -136,6 +136,11 @@ async def add_face_image(
 ):
     """Thêm ảnh khuôn mặt cho person"""
     try:
+        print(f"🔵 Add face image - Person ID: {person_id}")
+        print(f"🔵 Add face image - User ID: {current_user.id}")
+        print(f"🔵 Add face image - Image base64 length: {len(face_data.image_base64)}")
+        print(f"🔵 Add face image - Image base64 preview: {face_data.image_base64[:50]}...")
+        
         result = await person_service.add_face_image(
             person_id, 
             face_data.image_base64, 

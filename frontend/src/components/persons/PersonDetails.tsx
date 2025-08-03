@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -81,14 +81,8 @@ const PersonDetails: React.FC = () => {
   const [processingAction, setProcessingAction] = useState(false);
   const [regeneratingEmbeddings, setRegeneratingEmbeddings] = useState(false);
 
-  useEffect(() => {
-    if (id) {
-      loadPersonDetails();
-    }
-  }, [id]);
-
   // ✅ Updated to use backend endpoint GET /persons/{person_id}
-  const loadPersonDetails = async () => {
+  const loadPersonDetails = useCallback(async () => {
     if (!id) return;
     
     try {
@@ -125,7 +119,14 @@ const PersonDetails: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, navigate]);
+
+  // Load person details when component mounts or id changes
+  useEffect(() => {
+    if (id) {
+      loadPersonDetails();
+    }
+  }, [id, loadPersonDetails]);
 
   const handleEdit = () => {
     navigate(`/persons/${id}/edit`);
@@ -175,7 +176,9 @@ const PersonDetails: React.FC = () => {
   const handleImageAdded = async () => {
     await loadPersonDetails();
     setShowImageUpload(false);
-    toast.success('Face image added successfully');
+    toast.success('Face images uploaded successfully! You can now view them below.', {
+      duration: 3000
+    });
   };
 
   // ✅ Updated to use backend DELETE /persons/{person_id}/faces/{image_index}
@@ -659,29 +662,31 @@ const PersonDetails: React.FC = () => {
 
       {/* ✅ Enhanced Image Upload Dialog */}
       <Dialog open={showImageUpload} onOpenChange={setShowImageUpload}>
-        <DialogContent className="max-w-4xl">
+        <DialogContent className="max-w-[95vw] max-h-[90vh] w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl overflow-hidden">
           <DialogHeader>
             <DialogTitle>Add Face Images</DialogTitle>
             <DialogDescription>
               Upload new face images for {person.name}. Make sure the images clearly show the person's face.
             </DialogDescription>
           </DialogHeader>
-          <FaceImageUpload
-            personId={person.id}
-            personName={person.name}
-            existingImages={person.face_images}
-            onComplete={handleImageAdded}
-            onImageAdded={handleImageAdded}
-            onImageRemoved={() => loadPersonDetails()}
-            allowSkip={false}
-            maxImages={10} // ✅ Backend limit from #backend
-          />
+          <div className="overflow-y-auto max-h-[70vh]">
+            <FaceImageUpload
+              personId={person.id}
+              personName={person.name}
+              existingImages={person.face_images}
+              onComplete={handleImageAdded}
+              onImageAdded={handleImageAdded}
+              onImageRemoved={() => loadPersonDetails()}
+              allowSkip={false}
+              maxImages={10} // ✅ Backend limit from #backend
+            />
+          </div>
         </DialogContent>
       </Dialog>
 
       {/* ✅ Enhanced Image Preview Dialog */}
       <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-[95vw] max-h-[95vh] w-full sm:max-w-2xl">
           <DialogHeader>
             <DialogTitle>Face Image Preview</DialogTitle>
             <DialogDescription>
@@ -689,11 +694,11 @@ const PersonDetails: React.FC = () => {
             </DialogDescription>
           </DialogHeader>
           {selectedImage && (
-            <div className="flex justify-center">
+            <div className="flex justify-center overflow-auto max-h-[70vh]">
               <img
                 src={selectedImage}
                 alt="Face preview"
-                className="max-w-full max-h-96 object-contain rounded-lg shadow-lg border"
+                className="max-w-full max-h-full object-contain rounded-lg shadow-lg border"
                 onError={(e) => {
                   toast.error('Failed to load image');
                   setSelectedImage(null);

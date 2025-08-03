@@ -23,6 +23,14 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
+# ✅ Add middleware to handle large request bodies
+@app.middleware("http")
+async def increase_body_size_limit(request: Request, call_next):
+    # Set max request size to 50MB
+    request.scope["body_size_limit"] = 50 * 1024 * 1024  # 50MB
+    response = await call_next(request)
+    return response
+
 # ✅ Enhanced CORS configuration
 app.add_middleware(
     CORSMiddleware,

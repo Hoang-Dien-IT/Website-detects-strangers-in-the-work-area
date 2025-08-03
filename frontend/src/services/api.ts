@@ -19,6 +19,16 @@ class ApiService {
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
+        
+        // Debug logging for large requests
+        if (config.data && JSON.stringify(config.data).length > 100000) {
+          console.log('🔥 Large request detected:');
+          console.log('URL:', config.url);
+          console.log('Method:', config.method);
+          console.log('Data size:', JSON.stringify(config.data).length);
+          console.log('Headers:', config.headers);
+        }
+        
         return config;
       },
       (error) => {
@@ -30,6 +40,15 @@ class ApiService {
     this.api.interceptors.response.use(
       (response) => response,
       (error) => {
+        // Enhanced error logging for 431
+        if (error.response?.status === 431) {
+          console.error('🔥 431 Error - Request Header Fields Too Large:');
+          console.error('URL:', error.config?.url);
+          console.error('Method:', error.config?.method);
+          console.error('Request headers:', error.config?.headers);
+          console.error('Request data size:', error.config?.data ? JSON.stringify(error.config.data).length : 0);
+        }
+        
         if (error.response?.status === 401) {
           // Clear auth data and redirect to login
           localStorage.removeItem(AUTH_CONFIG.TOKEN_KEY);

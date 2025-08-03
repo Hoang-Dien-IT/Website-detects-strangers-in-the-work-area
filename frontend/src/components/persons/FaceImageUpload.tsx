@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -18,7 +18,10 @@ import {
 } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import { personService } from '@/services/person.service';
+import { cameraService } from '@/services/camera.service';
 import { toast } from 'sonner';
+import CameraCapture from './CameraCapture';
+import { Camera as CameraType } from '@/types/camera.types';
 
 interface FaceImageUploadProps {
   personId: string;
@@ -60,6 +63,29 @@ const FaceImageUpload: React.FC<FaceImageUploadProps> = ({
   const [uploads, setUploads] = useState<UploadState[]>([]);
   const [validating, setValidating] = useState(false);
   const [totalProgress, setTotalProgress] = useState(0);
+  
+  // ✅ New states for camera capture
+  const [uploadMethod, setUploadMethod] = useState<'files' | 'camera'>('files');
+  const [cameras, setCameras] = useState<CameraType[]>([]);
+  const [loadingCameras, setLoadingCameras] = useState(false);
+
+  // ✅ Load cameras when component mounts
+  useEffect(() => {
+    const loadCameras = async () => {
+      try {
+        setLoadingCameras(true);
+        const cameraList = await cameraService.getCameras();
+        setCameras(cameraList.filter(camera => camera.is_active));
+      } catch (error) {
+        console.error('Error loading cameras:', error);
+        toast.error('Failed to load cameras');
+      } finally {
+        setLoadingCameras(false);
+      }
+    };
+
+    loadCameras();
+  }, []);
 
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -221,58 +247,138 @@ const FaceImageUpload: React.FC<FaceImageUploadProps> = ({
   const allUploaded = uploads.length > 0 && uploads.every(u => u.uploaded);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="text-center">
+      <div className="text-center px-2">
         <h3 className="text-lg font-semibold text-gray-900">Add Face Images</h3>
-        <p className="text-gray-600 mt-1">
+        <p className="text-gray-600 mt-1 text-sm">
           Upload clear photos of {personName} for accurate face recognition
         </p>
       </div>
 
-      {/* Guidelines */}
-      <Alert>
-        <Camera className="h-4 w-4" />
-        <AlertDescription>
-          <strong>Photo Guidelines:</strong>
-          <ul className="mt-2 space-y-1 text-sm">
-            <li>• Use clear, well-lit photos with the face clearly visible</li>
-            <li>• Include different angles and expressions for better accuracy</li>
-            <li>• Avoid sunglasses, masks, or heavy shadows</li>
-            <li>• Supported formats: JPEG, PNG, GIF, BMP, WebP (max 10MB each)</li>
-          </ul>
-        </AlertDescription>
-      </Alert>
+      {/* Upload Method Selection */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm">Choose Upload Method</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* File Upload Option */}
+            <Card 
+              className={`cursor-pointer transition-all ${
+                uploadMethod === 'files' 
+                  ? 'ring-2 ring-blue-500 border-blue-500' 
+                  : 'hover:border-gray-400'
+              }`}
+              onClick={() => setUploadMethod('files')}
+            >
+              <CardContent className="p-3 text-center">
+                <FileImage className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 text-blue-500" />
+                <h3 className="font-medium text-sm">Upload from Files</h3>
+                <p className="text-xs sm:text-sm text-gray-600 mt-1">
+                  Select photos from your computer
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Camera Capture Option */}
+            <Card 
+              className={`cursor-pointer transition-all ${
+                uploadMethod === 'camera' 
+                  ? 'ring-2 ring-green-500 border-green-500' 
+                  : 'hover:border-gray-400'
+              } ${
+                loadingCameras || cameras.length === 0 
+                  ? 'opacity-50 cursor-not-allowed' 
+                  : ''
+              }`}
+              onClick={() => {
+                if (!loadingCameras && cameras.length > 0) {
+                  setUploadMethod('camera');
+                }
+              }}
+            >
+              <CardContent className="p-3 text-center">
+                <Camera className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 text-green-500" />
+                <h3 className="font-medium text-sm">Capture from Camera</h3>
+                <p className="text-xs sm:text-sm text-gray-600 mt-1">
+                  {loadingCameras 
+                    ? 'Loading cameras...' 
+                    : cameras.length === 0 
+                      ? 'No cameras available'
+                      : 'Take photos using your cameras'
+                  }
+                </p>
+                {cameras.length > 0 && (
+                  <Badge variant="outline" className="mt-1 text-xs">
+                    {cameras.length} camera{cameras.length > 1 ? 's' : ''} available
+                  </Badge>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Camera Capture Interface */}
+      {uploadMethod === 'camera' && cameras.length > 0 && (
+        <CameraCapture
+          personId={personId}
+          personName={personName}
+          cameras={cameras}
+          onComplete={onComplete}
+          onCancel={() => setUploadMethod('files')}
+          minImages={1}
+          maxImages={maxImages}
+        />
+      )}
+
+      {/* File Upload Interface */}
+      {uploadMethod === 'files' && (
+        <>
+          {/* Guidelines */}
+          <Alert>
+            <FileImage className="h-4 w-4" />
+            <AlertDescription>
+              <strong>Photo Guidelines:</strong>
+              <ul className="mt-2 space-y-1 text-xs sm:text-sm">
+                <li>• Use clear, well-lit photos with the face clearly visible</li>
+                <li>• Include different angles and expressions for better accuracy</li>
+                <li>• Avoid sunglasses, masks, or heavy shadows</li>
+                <li>• Supported formats: JPEG, PNG, GIF, BMP, WebP (max 10MB each)</li>
+              </ul>
+            </AlertDescription>
+          </Alert>
 
       {/* Existing Images */}
       {existingImages.length > 0 && (
         <Card>
-          <CardHeader>
+          <CardHeader className="pb-3">
             <CardTitle className="text-sm">
               Existing Images ({existingImages.length})
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4">
               {existingImages.map((image, index) => (
                 <div key={index} className="relative group">
                   <img
                     src={image.image_url}
                     alt={`${personName} ${index + 1}`}
-                    className="w-full h-24 object-cover rounded-lg border"
+                    className="w-full h-16 sm:h-20 md:h-24 object-cover rounded-lg border"
                   />
                   {image.is_primary && (
-                    <Badge className="absolute top-1 left-1 text-xs bg-green-600">
+                    <Badge className="absolute top-0.5 left-0.5 text-xs bg-green-600 px-1 py-0">
                       Primary
                     </Badge>
                   )}
                   <Button
                     size="sm"
                     variant="destructive"
-                    className="absolute top-1 right-1 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute top-0.5 right-0.5 h-5 w-5 sm:h-6 sm:w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
                     onClick={() => removeExistingImage(index)}
                   >
-                    <X className="h-3 w-3" />
+                    <X className="h-2 w-2 sm:h-3 sm:w-3" />
                   </Button>
                 </div>
               ))}
@@ -283,11 +389,11 @@ const FaceImageUpload: React.FC<FaceImageUploadProps> = ({
 
       {/* Upload Area */}
       <Card>
-        <CardContent className="pt-6">
+        <CardContent className="pt-4 sm:pt-6">
           <div
             {...getRootProps()}
             className={`
-              border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors
+              border-2 border-dashed rounded-lg p-4 sm:p-8 text-center cursor-pointer transition-colors
               ${isDragActive 
                 ? 'border-blue-500 bg-blue-50' 
                 : 'border-gray-300 hover:border-gray-400'
@@ -295,14 +401,14 @@ const FaceImageUpload: React.FC<FaceImageUploadProps> = ({
             `}
           >
             <input {...getInputProps()} />
-            <FileImage className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-lg font-medium text-gray-900 mb-2">
+            <FileImage className="h-8 w-8 sm:h-12 sm:w-12 text-gray-400 mx-auto mb-2 sm:mb-4" />
+            <p className="text-base sm:text-lg font-medium text-gray-900 mb-1 sm:mb-2">
               {isDragActive ? 'Drop images here' : 'Upload Face Images'}
             </p>
-            <p className="text-gray-600 mb-4">
+            <p className="text-sm text-gray-600 mb-2 sm:mb-4">
               Drag and drop images here, or click to select files
             </p>
-            <Button variant="outline">
+            <Button variant="outline" className="text-sm">
               <Plus className="h-4 w-4 mr-2" />
               Select Images
             </Button>
@@ -313,8 +419,8 @@ const FaceImageUpload: React.FC<FaceImageUploadProps> = ({
       {/* Upload Queue */}
       {uploads.length > 0 && (
         <Card>
-          <CardHeader>
-            <div className="flex justify-between items-center">
+          <CardHeader className="pb-3">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
               <CardTitle className="text-sm">
                 Upload Queue ({uploads.length})
               </CardTitle>
@@ -324,20 +430,21 @@ const FaceImageUpload: React.FC<FaceImageUploadProps> = ({
                   variant="outline"
                   onClick={uploadAllImages}
                   disabled={hasUploading || allUploaded}
+                  className="text-xs"
                 >
                   {hasUploading ? (
                     <>
-                      <RefreshCw className="h-3 w-3 mr-2 animate-spin" />
+                      <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
                       Uploading...
                     </>
                   ) : allUploaded ? (
                     <>
-                      <Check className="h-3 w-3 mr-2" />
+                      <Check className="h-3 w-3 mr-1" />
                       All Uploaded
                     </>
                   ) : (
                     <>
-                      <Upload className="h-3 w-3 mr-2" />
+                      <Upload className="h-3 w-3 mr-1" />
                       Upload All
                     </>
                   )}
@@ -354,17 +461,17 @@ const FaceImageUpload: React.FC<FaceImageUploadProps> = ({
             )}
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {uploads.map((upload, index) => (
-                <div key={index} className="flex items-center space-x-4 p-3 border rounded-lg">
+                <div key={index} className="flex items-center space-x-3 p-2 sm:p-3 border rounded-lg">
                   <img
                     src={upload.preview}
                     alt={`Upload ${index + 1}`}
-                    className="w-16 h-16 object-cover rounded"
+                    className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded"
                   />
                   
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm truncate">{upload.file.name}</p>
+                    <p className="font-medium text-xs sm:text-sm truncate">{upload.file.name}</p>
                     <p className="text-xs text-gray-500">
                       {(upload.file.size / 1024 / 1024).toFixed(2)} MB
                     </p>
@@ -386,15 +493,15 @@ const FaceImageUpload: React.FC<FaceImageUploadProps> = ({
                     )}
                   </div>
 
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-1 sm:space-x-2">
                     {upload.uploaded ? (
-                      <Badge variant="default" className="bg-green-600">
-                        <Check className="h-3 w-3 mr-1" />
+                      <Badge variant="default" className="bg-green-600 text-xs">
+                        <Check className="h-2 w-2 sm:h-3 sm:w-3 mr-1" />
                         Uploaded
                       </Badge>
                     ) : upload.uploading ? (
-                      <Badge variant="secondary">
-                        <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
+                      <Badge variant="secondary" className="text-xs">
+                        <RefreshCw className="h-2 w-2 sm:h-3 sm:w-3 mr-1 animate-spin" />
                         Uploading
                       </Badge>
                     ) : (
@@ -402,8 +509,9 @@ const FaceImageUpload: React.FC<FaceImageUploadProps> = ({
                         size="sm"
                         onClick={() => uploadImage(index)}
                         disabled={upload.uploading}
+                        className="text-xs"
                       >
-                        <Upload className="h-3 w-3 mr-1" />
+                        <Upload className="h-2 w-2 sm:h-3 sm:w-3 mr-1" />
                         Upload
                       </Button>
                     )}
@@ -413,6 +521,7 @@ const FaceImageUpload: React.FC<FaceImageUploadProps> = ({
                       variant="ghost"
                       onClick={() => removeUpload(index)}
                       disabled={upload.uploading}
+                      className="p-1"
                     >
                       <Trash2 className="h-3 w-3" />
                     </Button>
@@ -425,44 +534,50 @@ const FaceImageUpload: React.FC<FaceImageUploadProps> = ({
       )}
 
       {/* Actions */}
-      <div className="flex justify-between items-center">
-        <div className="flex space-x-2">
-          {(existingImages.length > 0 || hasUploaded) && (
-            <Button
-              variant="outline"
-              onClick={validateImages}
-              disabled={validating}
-            >
-              {validating ? (
-                <>
-                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                  Validating...
-                </>
-              ) : (
-                <>
-                  <Eye className="h-4 w-4 mr-2" />
-                  Validate Images
-                </>
-              )}
-            </Button>
-          )}
-        </div>
+      {uploadMethod === 'files' && (
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pt-2">
+          <div className="flex flex-wrap gap-2">
+            {(existingImages.length > 0 || hasUploaded) && (
+              <Button
+                variant="outline"
+                onClick={validateImages}
+                disabled={validating}
+                size="sm"
+                className="text-xs"
+              >
+                {validating ? (
+                  <>
+                    <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
+                    Validating...
+                  </>
+                ) : (
+                  <>
+                    <Eye className="h-3 w-3 mr-1" />
+                    Validate Images
+                  </>
+                )}
+              </Button>
+            )}
+          </div>
 
-        <div className="flex space-x-3">
-          {allowSkip && (
-            <Button variant="outline" onClick={onComplete}>
-              Skip for Now
-            </Button>
-          )}
-          
-          {(hasUploaded || existingImages.length > 0) && (
-            <Button onClick={onComplete}>
-              <Check className="h-4 w-4 mr-2" />
-              Complete
-            </Button>
-          )}
+          <div className="flex space-x-2 w-full sm:w-auto">
+            {allowSkip && (
+              <Button variant="outline" onClick={onComplete} size="sm" className="flex-1 sm:flex-none text-xs">
+                Skip for Now
+              </Button>
+            )}
+            
+            {(hasUploaded || existingImages.length > 0) && (
+              <Button onClick={onComplete} size="sm" className="flex-1 sm:flex-none text-xs">
+                <Check className="h-3 w-3 mr-1" />
+                Complete
+              </Button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
+        </>
+      )}
     </div>
   );
 };

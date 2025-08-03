@@ -489,5 +489,217 @@ class CameraService:
         except Exception:
             return False
 
+    def get_raw_camera_stream(self, camera_id: str):
+        """Generator cho raw camera stream (không có detection model)"""
+        import cv2
+        import base64
+        import time
+        
+        cap = None
+        try:
+            # Get camera info - using sync database access
+            from motor.motor_asyncio import AsyncIOMotorClient
+            import pymongo
+            from ..config import get_settings
+            
+            # Use sync connection for streaming
+            settings = get_settings()
+            client = pymongo.MongoClient(settings.mongodb_url)
+            db = client[settings.database_name]
+            collection = db.cameras
+            
+            camera_doc = collection.find_one({"_id": ObjectId(camera_id)})
+            if not camera_doc:
+                print(f"Camera {camera_id} not found")
+                return
+            
+            print(f"🔵 Starting camera stream for: {camera_doc.get('name', camera_id)}")
+            print(f"🔵 Camera type: {camera_doc.get('camera_type')}")
+            
+            # Initialize camera
+            if camera_doc.get("camera_type") == "webcam":
+                print("🔵 Initializing webcam (index 0)")
+                cap = cv2.VideoCapture(0)
+            else:
+                camera_url = camera_doc.get("camera_url", "")
+                print(f"🔵 Connecting to camera URL: {camera_url}")
+                cap = cv2.VideoCapture(camera_url)
+            
+            if not cap.isOpened():
+                print(f"❌ Cannot open camera {camera_id}")
+                # Try with different backends for webcam
+                if camera_doc.get("camera_type") == "webcam":
+                    print("🔄 Trying with DirectShow backend...")
+                    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+                    if not cap.isOpened():
+                        print("❌ Failed to open webcam with DirectShow")
+                        return
+                else:
+                    return
+            
+            # Set resolution if specified
+            stream_settings = camera_doc.get("stream_settings", {})
+            if "resolution" in stream_settings:
+                resolution = stream_settings["resolution"]
+                if "x" in resolution:
+                    try:
+                        width, height = map(int, resolution.split("x"))
+                        cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+                        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+                        print(f"🔵 Set resolution to {width}x{height}")
+                    except ValueError:
+                        print(f"⚠️ Invalid resolution format: {resolution}")
+            
+            # Set FPS
+            cap.set(cv2.CAP_PROP_FPS, 30)
+            
+            print(f"✅ Camera stream started successfully")
+            frame_count = 0
+            error_count = 0
+            max_errors = 10
+            
+            while True:
+                ret, frame = cap.read()
+                if not ret:
+                    error_count += 1
+                    print(f"❌ Failed to read frame {frame_count}, error count: {error_count}")
+                    if error_count >= max_errors:
+                        print(f"❌ Too many errors, stopping stream")
+                        break
+                    time.sleep(0.1)  # Wait a bit before retrying
+                    continue
+                
+                error_count = 0  # Reset error count on successful read
+                frame_count += 1
+                
+                if frame_count % 60 == 0:  # Log every 60 frames (2 seconds at 30fps)
+                    print(f"🔵 Streaming frame {frame_count}")
+                
+                # Resize frame if too large
+                height, width = frame.shape[:2]
+                if width > 1280:
+                    scale = 1280 / width
+                    new_width = 1280
+                    new_height = int(height * scale)
+                    frame = cv2.resize(frame, (new_width, new_height))
+                
+                # Encode frame to JPEG with good quality
+                ret_encode, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 85])
+                if not ret_encode:
+                    print(f"❌ Failed to encode frame {frame_count}")
+                    continue
+                    
+                frame_bytes = buffer.tobytes()
+                
+                # Create multipart response
+                yield (b'--frame\r\n'
+                       b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+                
+                # Control frame rate
+                time.sleep(1/30)  # ~30 FPS
+                
+        except Exception as e:
+            print(f"❌ Error in raw camera stream: {e}")
+            import traceback
+            traceback.print_exc()
+        finally:
+            if cap:
+                cap.release()
+                print(f"🔵 Camera stream stopped for {camera_id}")
+
+    async def capture_raw_frame(self, camera_id: str) -> Dict[str, Any]:
+        """Capture một frame từ camera và trả về base64 - optimized version"""
+        import cv2
+        import base64
+        
+        # Use cached camera connection if available
+        if hasattr(self, '_camera_cache') and camera_id in self._camera_cache:
+            cap = self._camera_cache[camera_id]
+        else:
+            # Initialize new camera connection
+            cap = None
+            try:
+                # Get camera info
+                camera_doc = await self.collection.find_one({"_id": ObjectId(camera_id)})
+                if not camera_doc:
+                    raise ValueError("Camera not found")
+                
+                # Initialize camera
+                if camera_doc.get("camera_type") == "webcam":
+                    cap = cv2.VideoCapture(0)
+                else:
+                    cap = cv2.VideoCapture(camera_doc.get("camera_url", ""))
+                
+                if not cap.isOpened():
+                    raise ValueError("Cannot open camera")
+                
+                # Set optimal properties for fast capture
+                cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)  # Reduce buffer for faster capture
+                cap.set(cv2.CAP_PROP_FPS, 30)  # Set high FPS
+                
+                # Set resolution if specified
+                stream_settings = camera_doc.get("stream_settings", {})
+                if "resolution" in stream_settings:
+                    resolution = stream_settings["resolution"]
+                    if "x" in resolution:
+                        width, height = map(int, resolution.split("x"))
+                        cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+                        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+                
+                # Cache the connection
+                if not hasattr(self, '_camera_cache'):
+                    self._camera_cache = {}
+                self._camera_cache[camera_id] = cap
+                
+            except Exception as e:
+                if cap:
+                    cap.release()
+                raise e
+        
+        try:
+            # Capture frame with timeout
+            ret, frame = cap.read()
+            if not ret:
+                # Try to reconnect if frame capture fails
+                if hasattr(self, '_camera_cache') and camera_id in self._camera_cache:
+                    self._camera_cache[camera_id].release()
+                    del self._camera_cache[camera_id]
+                raise ValueError("Failed to capture frame - camera may be disconnected")
+            
+            # Encode to base64 with lower quality for smaller size
+            encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 60]  # Lower quality for smaller size
+            _, buffer = cv2.imencode('.jpg', frame, encode_param)
+            image_base64 = base64.b64encode(buffer).decode('utf-8')
+            
+            return {
+                "image_base64": image_base64,
+                "timestamp": datetime.utcnow().isoformat(),
+                "camera_id": camera_id
+            }
+            
+        except Exception as e:
+            print(f"Error capturing frame: {e}")
+            # Clear cache on error
+            if hasattr(self, '_camera_cache') and camera_id in self._camera_cache:
+                self._camera_cache[camera_id].release()
+                del self._camera_cache[camera_id]
+            raise e
+
+    def cleanup_camera_cache(self, camera_id: str = None):
+        """Cleanup camera cache connections"""
+        if hasattr(self, '_camera_cache'):
+            if camera_id:
+                # Clean specific camera
+                if camera_id in self._camera_cache:
+                    self._camera_cache[camera_id].release()
+                    del self._camera_cache[camera_id]
+                    print(f"🔵 Cleaned camera cache for {camera_id}")
+            else:
+                # Clean all cameras
+                for cam_id, cap in self._camera_cache.items():
+                    cap.release()
+                self._camera_cache.clear()
+                print("🔵 Cleaned all camera cache")
+
 # Global instance
 camera_service = CameraService()

@@ -756,3 +756,151 @@ async def take_camera_snapshot(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail="Failed to capture snapshot")
+
+@router.get("/{camera_id}/capture-stream")
+async def get_camera_capture_stream(
+    camera_id: str,
+    token: Optional[str] = Query(None),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Lấy camera stream cho việc capture ảnh (không có detection model)"""
+    try:
+        print(f"🔵 Getting camera capture stream for: {camera_id}")
+        
+        # Validate camera ownership
+        camera = await camera_service.get_camera_by_id(camera_id, str(current_user.id))
+        if not camera:
+            raise HTTPException(status_code=404, detail="Camera not found")
+        
+        print(f"✅ Camera found: {camera.name}")
+        
+        # Create generator for raw camera stream
+        def generate_frames():
+            try:
+                return camera_service.get_raw_camera_stream(camera_id)
+            except Exception as e:
+                print(f"❌ Error in stream generator: {e}")
+                # Return empty response on error
+                yield b'--frame\r\nContent-Type: image/jpeg\r\n\r\n\r\n'
+        
+        return StreamingResponse(
+            generate_frames(),
+            media_type="multipart/x-mixed-replace; boundary=frame",
+            headers={
+                "Cache-Control": "no-cache, no-store, must-revalidate",
+                "Pragma": "no-cache",
+                "Expires": "0",
+                "Connection": "keep-alive",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET",
+                "Access-Control-Allow-Headers": "Content-Type, Authorization"
+            }
+        )
+    except HTTPException:
+        raise
+    except ValueError as e:
+        print(f"❌ Validation error: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        print(f"❌ Error getting camera capture stream: {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail="Failed to get camera capture stream")
+
+@router.post("/{camera_id}/capture-frame")
+async def capture_camera_frame(
+    camera_id: str,
+    current_user: User = Depends(get_current_active_user)
+):
+    """Capture một frame từ camera để thêm vào face data"""
+    try:
+        print(f"🔵 Capturing frame from camera: {camera_id}")
+        
+        # Validate camera ownership
+        camera = await camera_service.get_camera_by_id(camera_id, str(current_user.id))
+        if not camera:
+            raise HTTPException(status_code=404, detail="Camera not found")
+        
+        # Capture frame
+        frame_data = await camera_service.capture_raw_frame(camera_id)
+        
+        return {
+            "success": True,
+            "image_data": frame_data["image_base64"],
+            "timestamp": frame_data["timestamp"]
+        }
+    except ValueError as e:
+        print(f"❌ Validation error: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        print(f"❌ Error capturing camera frame: {e}")
+        raise HTTPException(status_code=500, detail="Failed to capture camera frame")
+
+@router.post("/{camera_id}/cleanup-cache")
+async def cleanup_camera_cache(
+    camera_id: str,
+    current_user: User = Depends(get_current_active_user)
+):
+    """Cleanup camera cache để reset connection"""
+    try:
+        print(f"🔵 Cleaning camera cache: {camera_id}")
+        
+        # Validate camera ownership
+        camera = await camera_service.get_camera_by_id(camera_id, str(current_user.id))
+        if not camera:
+            raise HTTPException(status_code=404, detail="Camera not found")
+        
+        # Cleanup cache
+        camera_service.cleanup_camera_cache(camera_id)
+        
+        return {
+            "success": True,
+            "message": "Camera cache cleaned successfully"
+        }
+    except ValueError as e:
+        print(f"❌ Validation error: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        print(f"❌ Error cleaning camera cache: {e}")
+        raise HTTPException(status_code=500, detail="Failed to clean camera cache")
+
+@router.get("/{camera_id}/test-stream")
+async def test_camera_stream(
+    camera_id: str,
+    current_user: User = Depends(get_current_active_user)
+):
+    """Test camera stream connectivity"""
+    try:
+        print(f"🔵 Testing camera stream: {camera_id}")
+        
+        # Validate camera ownership
+        camera = await camera_service.get_camera_by_id(camera_id, str(current_user.id))
+        if not camera:
+            raise HTTPException(status_code=404, detail="Camera not found")
+        
+        # Extract camera name from CameraResponse object
+        camera_name = camera.name if hasattr(camera, 'name') else "Unknown"
+        
+        # Test if we can capture a single frame
+        try:
+            frame_data = await camera_service.capture_raw_frame(camera_id)
+            return {
+                "success": True,
+                "message": "Camera stream is working",
+                "camera_id": camera_id,
+                "camera_name": camera_name,
+                "timestamp": frame_data["timestamp"]
+            }
+        except Exception as e:
+            return {
+                "success": False,
+                "message": f"Camera stream failed: {str(e)}",
+                "camera_id": camera_id,
+                "camera_name": camera_name
+            }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Error testing camera stream: {e}")
+        raise HTTPException(status_code=500, detail="Failed to test camera stream")

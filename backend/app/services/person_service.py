@@ -166,7 +166,7 @@ class PersonService:
                     # ✅ ADD: Include face images for detailed view
                     face_images=[
                         {
-                            "image_url": img,
+                            "image_url": f"data:image/jpeg;base64,{img}" if not img.startswith('data:image/') else img,
                             "created_at": person_data["created_at"].isoformat(),
                             "is_primary": False
                         }
@@ -301,9 +301,20 @@ class PersonService:
     async def add_face_image(self, person_id: str, image_base64: str, user_id: str) -> Dict[str, Any]:
         """Thêm ảnh khuôn mặt cho person với validation và extract embedding"""
         try:
-            # Validate image format
-            if not image_base64.startswith('data:image/'):
-                raise ValueError("Invalid image format")
+            # Handle both formats: with and without data URL prefix
+            if image_base64.startswith('data:image/'):
+                # Format: data:image/jpeg;base64,/9j/4AAQ...
+                if ',' in image_base64:
+                    base64_data = image_base64.split(',')[1]
+                else:
+                    raise ValueError("Invalid data URL format - missing comma separator")
+            else:
+                # Format: /9j/4AAQ... (pure base64)
+                base64_data = image_base64
+            
+            # Validate base64 data
+            if not base64_data.strip():
+                raise ValueError("Empty base64 data")
             
             # Get current person data
             person = await self.get_person_by_id(person_id, user_id)
@@ -323,51 +334,71 @@ class PersonService:
             if len(current_images) >= 10:  # Limit 10 images per person
                 raise ValueError("Maximum number of face images reached (10)")
             
-            # ✅ FIX: Extract face embedding from image
+            # ✅ TEMP FIX: Skip face embedding extraction for now
             try:
-                print(f"🔵 PersonService: Extracting face embedding for person {person_id}")
+                print(f"🔵 PersonService: Processing face image for person {person_id}")
                 
-                # Decode base64 image
-                image_data = base64.b64decode(image_base64.split(',')[1])
+                # Decode base64 image for validation
+                try:
+                    image_data = base64.b64decode(base64_data)
+                    if len(image_data) == 0:
+                        raise ValueError("Decoded image data is empty")
+                except Exception as decode_error:
+                    raise ValueError(f"Failed to decode base64 image: {str(decode_error)}")
+                    
                 print(f"🔵 PersonService: Image decoded, size: {len(image_data)} bytes")
                 
-                # Extract face embedding using face_processor
-                embedding = await face_processor.extract_face_embedding(image_data)
+                # Validate image with OpenCV
+                import cv2
+                import numpy as np
+                nparr = np.frombuffer(image_data, np.uint8)
+                img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
                 
-                if embedding is None:
-                    raise ValueError("No face detected in image or embedding extraction failed")
+                if img is None:
+                    print("❌ PersonService: Failed to decode image with OpenCV")
+                    raise ValueError("Invalid image data - cannot decode with OpenCV")
                 
-                print(f"✅ PersonService: Face embedding extracted successfully, shape: {embedding.shape}")
+                print(f"🔵 PersonService: Image successfully validated, shape: {img.shape}")
                 
-                # Convert numpy array to list for MongoDB storage
-                embedding_list = embedding.tolist()
-                print(f"🔵 PersonService: Embedding converted to list, length: {len(embedding_list)}")
+                # TODO: Re-enable face embedding extraction later
+                # For now, create a dummy embedding or skip it
+                embedding_list = None  # Skip embedding for now
+                
+                print(f"🔵 PersonService: Skipping face embedding extraction (temporary)")
                 
             except Exception as e:
                 print(f"❌ PersonService: Error extracting face embedding: {e}")
                 raise ValueError(f"Failed to extract face embedding: {str(e)}")
             
-            # Add to database with embedding
+            # Add to database with or without embedding
+            update_data = {
+                "$push": {
+                    "face_images": base64_data  # Store the clean base64 data
+                },
+                "$set": {"updated_at": datetime.utcnow()}
+            }
+            
+            # Only add embedding if it was extracted successfully
+            if embedding_list is not None:
+                update_data["$push"]["face_embeddings"] = embedding_list
+                print(f"🔵 PersonService: Adding image with embedding")
+            else:
+                print(f"🔵 PersonService: Adding image without embedding (embedding extraction skipped)")
+            
             result = await self.collection.update_one(
                 {"_id": ObjectId(person_id), "user_id": ObjectId(user_id)},
-                {
-                    "$push": {
-                        "face_images": image_base64,
-                        "face_embeddings": embedding_list  # ✅ Store actual embedding
-                    },
-                    "$set": {"updated_at": datetime.utcnow()}
-                }
+                update_data
             )
             
             if result.modified_count > 0:
-                print(f"✅ PersonService: Face image and embedding added successfully")
+                print(f"✅ PersonService: Face image added successfully")
                 return {
                     "success": True,
-                    "message": "Face image and embedding added successfully",
+                    "message": "Face image added successfully",
                     "image_index": len(current_images),
                     "total_images": len(current_images) + 1,
-                    "embedding_extracted": True,
-                    "embedding_size": len(embedding_list)
+                    "embedding_extracted": embedding_list is not None,
+                    "embedding_size": len(embedding_list) if embedding_list else 0
                 }
             else:
                 raise ValueError("Failed to add face image")
@@ -407,8 +438,47 @@ class PersonService:
                 try:
                     print(f"🔵 PersonService: Processing image {i+1}/{len(face_images)}")
                     
+                    # Skip empty or invalid base64 strings
+                    if not image_base64 or not isinstance(image_base64, str):
+                        print(f"❌ PersonService: Image {i+1} is empty or invalid type")
+                        new_embeddings.append([])
+                        failed_extractions += 1
+                        continue
+                    
+                    # Handle both formats: with and without data URL prefix
+                    if image_base64.startswith('data:image/'):
+                        # Format: data:image/jpeg;base64,/9j/4AAQ...
+                        if ',' in image_base64:
+                            base64_data = image_base64.split(',')[1]
+                        else:
+                            print(f"❌ PersonService: Image {i+1} has invalid data URL format")
+                            new_embeddings.append([])
+                            failed_extractions += 1
+                            continue
+                    else:
+                        # Format: /9j/4AAQ... (pure base64)
+                        base64_data = image_base64
+                    
+                    # Validate base64 data
+                    if not base64_data.strip():
+                        print(f"❌ PersonService: Image {i+1} has empty base64 data")
+                        new_embeddings.append([])
+                        failed_extractions += 1
+                        continue
+                    
                     # Decode base64 image
-                    image_data = base64.b64decode(image_base64.split(',')[1])
+                    try:
+                        image_data = base64.b64decode(base64_data)
+                        if len(image_data) == 0:
+                            print(f"❌ PersonService: Image {i+1} decoded to empty data")
+                            new_embeddings.append([])
+                            failed_extractions += 1
+                            continue
+                    except Exception as decode_error:
+                        print(f"❌ PersonService: Failed to decode base64 for image {i+1}: {decode_error}")
+                        new_embeddings.append([])
+                        failed_extractions += 1
+                        continue
                     
                     # Extract face embedding
                     embedding = await face_processor.extract_face_embedding(image_data)
@@ -641,8 +711,10 @@ class PersonService:
                 # Convert face_images to FaceImageResponse
                 face_images = []
                 for img in result.get("face_images", []):
+                    # Ensure proper data URI format
+                    image_url = f"data:image/jpeg;base64,{img}" if not img.startswith('data:image/') else img
                     face_images.append(FaceImageResponse(
-                        image_url=img,
+                        image_url=image_url,
                         uploaded_at=result.get("created_at", datetime.utcnow())
                     ))
                 

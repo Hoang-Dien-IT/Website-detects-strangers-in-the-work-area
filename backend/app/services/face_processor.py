@@ -81,22 +81,35 @@ class FaceProcessorService:
     def _extract_face_embedding_sync(self, image_data: bytes) -> Optional[np.ndarray]:
         """Trích xuất embedding (sync version)"""
         try:
+            print(f"🔵 FaceProcessor: Starting face embedding extraction, data size: {len(image_data)}")
+            
             # Decode image
             nparr = np.frombuffer(image_data, np.uint8)
             img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
             
             if img is None:
+                print("❌ FaceProcessor: Failed to decode image")
                 return None
+            
+            print(f"🔵 FaceProcessor: Image decoded successfully, shape: {img.shape}")
 
             faces = self.face_app.get(img)
+            print(f"🔵 FaceProcessor: Detected {len(faces)} faces")
+            
             if not faces:
+                print("❌ FaceProcessor: No faces detected in image")
                 return None
 
             # Lấy face có độ tin cậy cao nhất
             face = max(faces, key=lambda x: x.det_score)
+            print(f"✅ FaceProcessor: Selected face with confidence: {face.det_score}")
+            print(f"✅ FaceProcessor: Face embedding shape: {face.embedding.shape}")
+            
             return face.embedding
         except Exception as e:
-            print(f"Error extracting face embedding: {e}")
+            print(f"❌ FaceProcessor: Error extracting face embedding: {e}")
+            import traceback
+            traceback.print_exc()
             return None
 
     async def detect_faces_in_frame(self, frame: np.ndarray) -> List[dict]:
