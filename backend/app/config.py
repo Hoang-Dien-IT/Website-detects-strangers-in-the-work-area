@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     smtp_port: int = 587
     smtp_username: Optional[str] = None
     smtp_password: Optional[str] = None
+    smtp_use_tls: bool = True
     
     # CORS Origins
     cors_origins: str = "http://localhost:3000,http://localhost:3001"
@@ -36,6 +37,10 @@ class Settings(BaseSettings):
     # Notifications
     alert_cooldown_minutes: int = 5
     max_alerts_per_hour: int = 20
+    
+    # Development settings
+    development_mode: bool = False
+    bypass_email_cooldown: bool = False
     
     # Data Retention
     detection_logs_retention_days: int = 30

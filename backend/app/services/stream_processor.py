@@ -1,12 +1,14 @@
 import cv2
 import asyncio
 import numpy as np
+import json
 from typing import Dict, Any, Optional, AsyncGenerator
 from ..models.camera import CameraResponse
 from ..services.face_processor import face_processor
 from ..services.websocket_manager import websocket_manager
 from ..services.detection_tracker import detection_tracker
 from ..services.detection_optimizer_service import DetectionOptimizerService
+from ..services.notification_service import notification_service
 import concurrent.futures
 import time
 import base64
@@ -235,6 +237,9 @@ class StreamProcessor:
                         # Đánh dấu nếu cần lưu detection này
                         detection['should_save'] = should_save
                         detection['detection_type'] = detection_type
+                    
+                    # ===== PHÂN TÍCH KHUNG HÌNH CHO EMAIL NOTIFICATION =====
+                    await self._analyze_frame_for_notifications(camera_id, detections, frame)
                 
                     # Vẽ các khuôn mặt đã phát hiện và nhận dạng giống code mẫu
                     for detection in detections:
@@ -410,7 +415,7 @@ class StreamProcessor:
             }
             
             # Send to all connected clients (you might want to filter by user)
-            await websocket_manager.broadcast_message(alert_message)
+            await websocket_manager.broadcast(json.dumps(alert_message))
             print(f"✅ Detection alert sent via WebSocket: {detection.get('person_name', 'Unknown')}")
             
         except Exception as e:
@@ -673,6 +678,70 @@ class StreamProcessor:
             ascii_text = text.encode('ascii', 'ignore').decode('ascii')
             cv2.putText(frame, ascii_text, position, cv2.FONT_HERSHEY_SIMPLEX, font_scale, color, thickness)
             return frame
+
+    async def _analyze_frame_for_notifications(self, camera_id: str, detections: List[Dict[str, Any]], frame: np.ndarray):
+        """
+        Phân tích khung hình để gửi thông báo email
+        Chỉ gửi thông báo nếu trong khung hình chỉ có người lạ (không có người quen)
+        """
+        try:
+            if not detections:
+                return
+            
+            # Lấy user_id từ database
+            from ..database import get_database
+            from bson import ObjectId
+            
+            db = get_database()
+            camera_data = await db.cameras.find_one({"_id": ObjectId(camera_id)})
+            if not camera_data:
+                print(f"[WARNING] Camera {camera_id} not found in database")
+                return
+                
+            user_id = str(camera_data.get("user_id"))
+            if not user_id:
+                print(f"[WARNING] No user_id found for camera {camera_id}")
+                return
+            
+            # Phân loại các detection trong khung hình hiện tại
+            frame_strangers = []
+            frame_known_persons = []
+            
+            for detection in detections:
+                detection_type = detection.get('detection_type', 'unknown')
+                if detection_type == 'stranger':
+                    frame_strangers.append(detection)
+                elif detection_type == 'known_person':
+                    frame_known_persons.append(detection)
+            
+            # Chỉ xử lý nếu có người lạ trong khung hình
+            if frame_strangers:
+                print(f"🔍 Frame analysis - Strangers: {len(frame_strangers)}, Known: {len(frame_known_persons)}")
+                
+                # Chuyển đổi frame thành bytes để gửi email
+                image_bytes = None
+                try:
+                    # Encode frame as JPEG
+                    success, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 85])
+                    if success:
+                        image_bytes = buffer.tobytes()
+                except Exception as img_error:
+                    print(f"⚠️ Error encoding frame for email: {img_error}")
+                
+                # Gửi thông báo với frame analysis (bao gồm cả stranger và known person detections)
+                await notification_service.send_stranger_alert_with_frame_analysis(
+                    user_id=user_id,
+                    camera_id=camera_id,
+                    all_detections=detections,  # Gửi tất cả detections để phân tích
+                    image_data=image_bytes
+                )
+                
+                print(f"📧 Frame notification analysis completed - {len(frame_strangers)} strangers, {len(frame_known_persons)} known persons")
+            
+        except Exception as e:
+            print(f"[ERROR] Frame notification analysis error: {e}")
+            import traceback
+            traceback.print_exc()
 
 # Global instance
 stream_processor = StreamProcessor()

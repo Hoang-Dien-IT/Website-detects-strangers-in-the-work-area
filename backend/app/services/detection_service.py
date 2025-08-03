@@ -166,27 +166,67 @@ class DetectionService:
             # Process results
             results = []
             async for detection in cursor:
-                # Get camera name
-                camera_id = str(detection.get("camera_id", ""))
-                camera_name = camera_dict.get(camera_id, "Unknown Camera")
-                
-                # Format response
-                detection_response = {
-                    "id": str(detection["_id"]),
-                    "camera_id": camera_id,
-                    "camera_name": camera_name,
-                    "detection_type": detection.get("detection_type", "unknown"),
-                    "person_id": str(detection.get("person_id")) if detection.get("person_id") else None,
-                    "person_name": detection.get("person_name", "Unknown"),
-                    "confidence": detection.get("confidence", 0.0),
-                    "similarity_score": detection.get("similarity_score"),
-                    "image_path": detection.get("image_path", ""),
-                    "image_url": f"/uploads/detections/{os.path.basename(detection.get('image_path', ''))}",
-                    "bbox": detection.get("bbox", [0, 0, 0, 0]),
-                    "timestamp": detection.get("timestamp", datetime.utcnow()),
-                    "is_alert_sent": detection.get("is_alert_sent", False),
-                }
-                results.append(detection_response)
+                try:
+                    # Validate required fields
+                    if not detection.get("_id"):
+                        print(f"⚠️ Skipping detection without _id")
+                        continue
+                        
+                    if not detection.get("camera_id"):
+                        print(f"⚠️ Detection {detection.get('_id')} missing camera_id")
+                        continue
+                    
+                    # Get camera name
+                    camera_id = str(detection.get("camera_id", ""))
+                    camera_name = camera_dict.get(camera_id, "Unknown Camera")
+                    
+                    # Sanitize detection_type để đảm bảo tuân thủ enum
+                    raw_detection_type = detection.get("detection_type", "unknown")
+                    if raw_detection_type == "stranger_only_alert":
+                        # Convert old data format to new format
+                        sanitized_detection_type = "stranger"
+                    elif raw_detection_type in ["known_person", "stranger", "unknown"]:
+                        sanitized_detection_type = raw_detection_type
+                    else:
+                        # Default fallback for invalid data
+                        sanitized_detection_type = "unknown"
+                    
+                    # Build image URL safely
+                    image_path = detection.get("image_path", "")
+                    image_url = ""
+                    if image_path:
+                        filename = os.path.basename(image_path)
+                        if filename:
+                            image_url = f"/uploads/detections/{filename}"
+                    
+                    # Format response
+                    detection_response = {
+                        "id": str(detection["_id"]),
+                        "camera_id": camera_id,
+                        "camera_name": camera_name,
+                        "detection_type": sanitized_detection_type,  # Sử dụng detection_type đã sanitize
+                        "person_id": str(detection.get("person_id")) if detection.get("person_id") else None,
+                        "person_name": detection.get("person_name", "Unknown"),
+                        "confidence": detection.get("confidence", 0.0),
+                        "similarity_score": detection.get("similarity_score"),
+                        "image_path": image_path,
+                        "image_url": image_url,
+                        "bbox": detection.get("bbox", [0, 0, 0, 0]),
+                        "timestamp": detection.get("timestamp", datetime.utcnow()),
+                        "is_alert_sent": detection.get("is_alert_sent", False),
+                    }
+                    results.append(detection_response)
+                    
+                    # Debug logging for first few items
+                    if len(results) <= 3:
+                        print(f"🔍 Detection {len(results)}: ID={detection_response['id']}, "
+                              f"image_path='{detection_response['image_path']}', "
+                              f"image_url='{detection_response['image_url']}', "
+                              f"confidence={detection_response['confidence']}")
+                              
+                except Exception as e:
+                    print(f"⚠️ Error processing detection {detection.get('_id', 'unknown')}: {e}")
+                    continue
             
             print(f"✅ DetectionService: Found {len(results)} detections")
             return results
@@ -260,36 +300,66 @@ class DetectionService:
     async def get_detection_by_id(self, detection_id: str, user_id: str, request=None) -> Optional[DetectionLogResponse]:
         """Lấy detection log theo ID, trả về image_url đầy đủ domain"""
         try:
+            print(f"🔍 Searching for detection ID: {detection_id} for user: {user_id}")
+            
+            # Validate ObjectId format
+            if not ObjectId.is_valid(detection_id):
+                print(f"❌ Invalid ObjectId format: {detection_id}")
+                return None
+                
             log_data = await self.collection.find_one({
                 "_id": ObjectId(detection_id),
                 "user_id": ObjectId(user_id)
             })
+            
             if not log_data:
+                print(f"❌ Detection not found in database: {detection_id}")
                 return None
-            camera = await self.db.cameras.find_one({"_id": log_data["camera_id"]})
+                
+            print(f"✅ Found detection: {detection_id}")
+            
+            # Get camera info safely
+            camera = None
+            try:
+                if log_data.get("camera_id"):
+                    camera = await self.db.cameras.find_one({"_id": log_data["camera_id"]})
+            except Exception as e:
+                print(f"⚠️ Error getting camera info: {e}")
+            
             camera_name = camera["name"] if camera else "Unknown Camera"
+            
             # Lấy domain từ request nếu có
             base_url = ""
             if request is not None:
                 base_url = str(request.base_url).rstrip("/")
+                
+            # Build image URL safely
             image_url = ""
             if log_data.get("image_path"):
                 rel_path = f"/uploads/detections/{os.path.basename(log_data.get('image_path', ''))}"
                 image_url = f"{base_url}{rel_path}" if base_url else rel_path
+                
+            # Validate detection_type
+            detection_type = log_data.get("detection_type", "unknown")
+            if detection_type not in ["known_person", "stranger", "unknown"]:
+                detection_type = "unknown"
+            
             return DetectionLogResponse(
                 id=str(log_data["_id"]),
                 camera_name=camera_name,
-                detection_type=log_data["detection_type"],
+                detection_type=detection_type,
                 person_name=log_data.get("person_name"),
-                confidence=log_data["confidence"],
+                confidence=log_data.get("confidence", 0.0),
                 similarity_score=log_data.get("similarity_score"),
                 image_url=image_url,
                 bbox=log_data.get("bbox", []),
-                timestamp=log_data["timestamp"],
+                timestamp=log_data.get("timestamp", datetime.utcnow()),
                 is_alert_sent=log_data.get("is_alert_sent", False)
             )
         except Exception as e:
-            print(f"Error getting detection by ID: {e}")
+            print(f"❌ Error getting detection by ID: {e}")
+            import traceback
+            traceback.print_exc()
             return None
 
     async def delete_detection(self, detection_id: str, user_id: str) -> bool:
@@ -835,7 +905,7 @@ class DetectionService:
                     "camera_name": camera_name,
                     "detection_type": detection["detection_type"],
                     "person_name": detection.get("person_name", "Unknown"),
-                    "confidence": detection["confidence"],
+                    "confidence": detection.get("confidence", 0.0),
                     "similarity_score": detection.get("similarity_score", 0)
                 })
             

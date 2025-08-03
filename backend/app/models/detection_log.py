@@ -23,12 +23,14 @@ class DetectionLogResponse(BaseModel):
     camera_name: str
     detection_type: DetectionType
     person_name: Optional[str] = None
-    confidence: float
-    similarity_score: Optional[float] = None
+    confidence: float = Field(default=0.0, ge=0.0, le=1.0)
+    similarity_score: Optional[float] = Field(None, ge=0.0, le=1.0)
     image_url: str
-    bbox: List[int]
+    bbox: List[int] = Field(default_factory=list)
     timestamp: datetime
-    is_alert_sent: bool
+    is_alert_sent: bool = False
+    email_sent: bool = False
+    email_sent_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
@@ -65,6 +67,9 @@ class DetectionLog(BaseModel):
     is_alert_sent: bool
     alert_methods: List[str] = []
     metadata: Dict[str, Any] = {}
+    email_sent: bool = False
+    email_sent_at: Optional[datetime] = None
+    has_known_person_in_frame: bool = False
 
     class Config:
         from_attributes = True

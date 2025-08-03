@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
-from .routers import auth, camera, person, admin, detection, stream, websocket, settings, alerts, detection_optimizer, user
+from .routers import auth, camera, person, admin, detection, stream, websocket, settings, alerts, detection_optimizer, user, test_email, notifications
 from .database import startup_db_client, shutdown_db_client
 import logging
 import os
@@ -141,6 +141,14 @@ try:
     # Admin router - LAST
     app.include_router(admin.router, prefix="/api")
     logger.info("✅ Admin router included")
+    
+    # Test email router
+    app.include_router(test_email.router, prefix="/api")
+    logger.info("✅ Test email router included")
+    
+    # Notifications router
+    app.include_router(notifications.router)
+    logger.info("✅ Notifications router included")
     
     logger.info("✅ All routers included successfully")
 except Exception as e:

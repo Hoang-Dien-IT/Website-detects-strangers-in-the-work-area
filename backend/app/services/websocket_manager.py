@@ -43,13 +43,35 @@ class WebSocketManager:
 
     async def send_detection_alert(self, user_id: str, detection_data: Dict[str, Any]):
         """Gửi thông báo phát hiện cho user"""
-        message = {
-            "type": "detection_alert",
-            "data": detection_data,
-            "timestamp": datetime.utcnow().isoformat()
-        }
-        
-        await self.send_personal_message(json.dumps(message), user_id)
+        try:
+            message = {
+                "type": "detection_alert",
+                "data": detection_data,
+                "timestamp": datetime.utcnow().isoformat()
+            }
+            
+            # Try to serialize to catch any remaining datetime issues
+            json_message = json.dumps(message)
+            await self.send_personal_message(json_message, user_id)
+            
+        except (TypeError, ValueError) as e:
+            print(f"[ERROR] JSON serialization error in websocket alert: {e}")
+            print(f"[DEBUG] Detection data keys: {list(detection_data.keys()) if isinstance(detection_data, dict) else 'Not a dict'}")
+            
+            # Send simplified message as fallback
+            fallback_message = {
+                "type": "detection_alert",
+                "data": {
+                    "type": detection_data.get("type", "unknown"),
+                    "title": detection_data.get("title", "Detection Alert"),
+                    "message": detection_data.get("message", "Detection occurred"),
+                    "timestamp": datetime.utcnow().isoformat()
+                },
+                "timestamp": datetime.utcnow().isoformat()
+            }
+            
+            await self.send_personal_message(json.dumps(fallback_message), user_id)
+            raise e
 
     async def broadcast(self, message: str):
         """Broadcast message cho tất cả user"""

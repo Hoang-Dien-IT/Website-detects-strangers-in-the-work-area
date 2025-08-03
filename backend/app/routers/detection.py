@@ -83,8 +83,15 @@ async def get_detections(
         detections = await detection_service.get_user_detections(str(current_user.id), filter_data)
         print(f"✅ Found {len(detections)} detections")
 
+        # Debug: Log first detection details if any
+        if detections:
+            first_det = detections[0]
+            print(f"🔍 First detection: ID={first_det.get('id')}, "
+                  f"image_url='{first_det.get('image_url')}', "
+                  f"confidence={first_det.get('confidence')}")
+
         # Ensure image_url and image_path are always present and correct for frontend
-        for det in detections:
+        for i, det in enumerate(detections):
             # If image_url is missing or empty, try to build from image_path
             if (not det.get('image_url')) and det.get('image_path'):
                 det['image_url'] = f"/uploads/detections/{det['image_path'].split('/')[-1]}"
@@ -96,6 +103,12 @@ async def get_detections(
                 det['image_url'] = ''
             if not det.get('image_path'):
                 det['image_path'] = ''
+                
+            # Debug log for first 3 detections after processing
+            if i < 3:
+                print(f"🔍 Processed detection {i+1}: "
+                      f"image_url='{det.get('image_url')}', "
+                      f"image_path='{det.get('image_path')}'")
 
         return detections
     except Exception as e:
@@ -160,14 +173,19 @@ async def get_detection_by_id(
 ):
     """Lấy detection log theo ID, trả về image_url đầy đủ domain"""
     try:
+        print(f"🔍 Getting detection by ID: {detection_id} for user: {current_user.id}")
         detection = await detection_service.get_detection_by_id(detection_id, str(current_user.id), request=request)
         if not detection:
+            print(f"🔍 404 Not Found: GET /api/detections/{detection_id}")
             raise HTTPException(status_code=404, detail="Detection not found")
+        print(f"✅ Successfully retrieved detection: {detection_id}")
         return detection
     except HTTPException:
         raise
     except Exception as e:
-        print(f"Error in get_detection_by_id: {e}")
+        print(f"❌ Error getting detection by ID: {e}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail="Internal server error")
     # """Lấy detection log theo ID"""
     # try:
