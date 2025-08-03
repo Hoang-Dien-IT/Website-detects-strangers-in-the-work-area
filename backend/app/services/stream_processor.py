@@ -272,7 +272,11 @@ class StreamProcessor:
                             # Get region of interest (face crop)
                             x, y, w, h = detection.get('bbox', [0, 0, 0, 0])
                             face_frame = frame.copy()
-                            await self._send_detection_alert(camera_id, detection, face_frame)
+                            # Chạy background task để không block video stream
+                            detection_task = asyncio.create_task(
+                                self._send_detection_alert(camera_id, detection, face_frame)
+                            )
+                            detection_task.add_done_callback(lambda t: None if not t.exception() else print(f"❌ Detection alert error: {t.exception()}"))
                     
                     # Add detection count overlay
                     detection_count = len(detections)
@@ -415,7 +419,12 @@ class StreamProcessor:
             }
             
             # Send to all connected clients (you might want to filter by user)
-            await websocket_manager.broadcast(json.dumps(alert_message))
+            # Chạy background task để không block video stream
+            websocket_task = asyncio.create_task(
+                websocket_manager.broadcast(json.dumps(alert_message))
+            )
+            # Add error handling for websocket task
+            websocket_task.add_done_callback(lambda t: None if not t.exception() else print(f"❌ WebSocket error: {t.exception()}"))
             print(f"✅ Detection alert sent via WebSocket: {detection.get('person_name', 'Unknown')}")
             
         except Exception as e:
@@ -729,12 +738,17 @@ class StreamProcessor:
                     print(f"⚠️ Error encoding frame for email: {img_error}")
                 
                 # Gửi thông báo với frame analysis (bao gồm cả stranger và known person detections)
-                await notification_service.send_stranger_alert_with_frame_analysis(
-                    user_id=user_id,
-                    camera_id=camera_id,
-                    all_detections=detections,  # Gửi tất cả detections để phân tích
-                    image_data=image_bytes
+                # Chạy background task để không block video stream
+                email_task = asyncio.create_task(
+                    notification_service.send_stranger_alert_with_frame_analysis(
+                        user_id=user_id,
+                        camera_id=camera_id,
+                        all_detections=detections,  # Gửi tất cả detections để phân tích
+                        image_data=image_bytes
+                    )
                 )
+                # Add error handling for background task
+                email_task.add_done_callback(lambda t: print(f"📧 Email task completed: {t.exception() if t.exception() else 'Success'}"))
                 
                 print(f"📧 Frame notification analysis completed - {len(frame_strangers)} strangers, {len(frame_known_persons)} known persons")
             
