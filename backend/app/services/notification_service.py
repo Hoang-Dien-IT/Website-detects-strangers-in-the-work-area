@@ -28,7 +28,16 @@ def serialize_datetime_objects(obj):
 class NotificationService:
     def __init__(self):
         self.settings = get_settings()
-        self.alert_cooldown: Dict[str, datetime] = {}  # Prevent spam alerts
+        self.alert_cooldown: Dict[str, datetime] = {}
+        
+        # Circuit breaker để tránh spam khi SMTP lỗi
+        self.smtp_failures: Dict[str, int] = {}  # Track failures per user
+        self.smtp_blocked_until: Dict[str, datetime] = {}  # Block until time
+        self.max_failures = 3  # Max failures before blocking
+        self.block_duration_minutes = 15  # Block for 15 minutes after max failures
+        
+        # ANTI-SPAM: Lock mechanism để tránh race condition
+        self.email_locks: Dict[str, asyncio.Lock] = {}  # Locks per user+camera  # Prevent spam alerts
         
     async def send_stranger_alert_with_frame_analysis(self, user_id: str, camera_id: str, 
                                                      all_detections: List[Dict[str, Any]], 
@@ -37,6 +46,25 @@ class NotificationService:
         Gửi cảnh báo phát hiện người lạ dựa trên phân tích toàn bộ khung hình
         Chỉ gửi nếu trong khung hình chỉ có người lạ (không có người quen)
         """
+        
+        # ===== ANTI-SPAM LOCK: Ngăn multiple calls cùng lúc =====
+        lock_key = f"{user_id}_{camera_id}_email_lock"
+        if lock_key not in self.email_locks:
+            self.email_locks[lock_key] = asyncio.Lock()
+        
+        # Dùng lock để đảm bảo chỉ 1 email process chạy tại 1 thời điểm
+        async with self.email_locks[lock_key]:
+            print(f"🔒 [EMAIL LOCK] Acquired lock for {user_id}_{camera_id}")
+            
+            try:
+                await self._process_stranger_alert_internal(user_id, camera_id, all_detections, image_data)
+            finally:
+                print(f"🔓 [EMAIL LOCK] Released lock for {user_id}_{camera_id}")
+    
+    async def _process_stranger_alert_internal(self, user_id: str, camera_id: str, 
+                                             all_detections: List[Dict[str, Any]], 
+                                             image_data: bytes = None):
+        """Internal function để xử lý stranger alert (được bảo vệ bởi lock)"""
         try:
             # Phân tích các detection trong khung hình
             stranger_detections = []
@@ -50,24 +78,73 @@ class NotificationService:
             
             # ===== LOGIC MỚI: CHỈ GỬI EMAIL NẾU CHỈ CÓ NGƯỜI LẠ =====
             if stranger_detections and not known_person_detections:
-                print(f"🚨 EMAIL ALERT CONDITION MET: Only strangers detected in frame!")
+                print(f"🚨 [MAIN EMAIL ALERT] Only strangers detected in frame!")
                 print(f"   - Strangers: {len(stranger_detections)}")
                 print(f"   - Known persons: {len(known_person_detections)}")
+                print(f"   - User ID: {user_id}")
+                print(f"   - Camera ID: {camera_id}")
+                print(f"   - Current Time: {datetime.utcnow().strftime('%H:%M:%S')}")
                 
-                # Check cooldown to prevent spam (unless bypassed in development)
-                cooldown_key = f"{user_id}_{camera_id}_stranger_only_email"
-                last_alert = self.alert_cooldown.get(cooldown_key)
+                # ===== HỆ THỐNG EMAIL THÔNG MINH =====
+                # Kiểm tra cooldown thông minh dựa trên:
+                # - Thời gian: 1 phút cơ bản giữa các email
+                # - Mức độ nghiêm trọng: nhiều người lạ = cooldown ngắn hơn
+                
+                cooldown_key = f"{user_id}_{camera_id}_stranger_email"
+                current_time = datetime.utcnow()
+                
+                # Kiểm tra cooldown cơ bản (1 phút)
+                last_alert_time = self.alert_cooldown.get(cooldown_key)
+                basic_cooldown_seconds = 60  # 1 phút
+                
+                # Điều chỉnh cooldown dựa trên số lượng người lạ
+                if len(stranger_detections) >= 3:
+                    basic_cooldown_seconds = 30  # Nhiều người lạ → 30 giây
+                elif len(stranger_detections) == 1:
+                    basic_cooldown_seconds = 60  # 1 người lạ → 1 phút
                 
                 # Check if we should bypass cooldown in development
                 should_bypass_cooldown = (
                     self.settings.bypass_email_cooldown and self.settings.development_mode
-                ) or not last_alert or (datetime.utcnow() - last_alert >= timedelta(seconds=30))
+                )
+                
+                print(f"[EMAIL DEBUG] Settings - bypass: {self.settings.bypass_email_cooldown}, dev_mode: {self.settings.development_mode}")
+                print(f"[EMAIL DEBUG] Cooldown - key: {cooldown_key}, required: {basic_cooldown_seconds}s")
+                
+                # ===== CIRCUIT BREAKER: Kiểm tra SMTP failures =====
+                if not should_bypass_cooldown:
+                    # Check if SMTP is blocked due to repeated failures
+                    block_key = f"{user_id}_smtp_block"
+                    blocked_until = self.smtp_blocked_until.get(block_key)
+                    
+                    if blocked_until and current_time < blocked_until:
+                        remaining_block = (blocked_until - current_time).total_seconds()
+                        print(f"[SMTP BLOCKED] ❌ Email blocked due to repeated failures. Wait {remaining_block:.0f}s")
+                        return
+                    
+                    # Reset block if time passed
+                    if blocked_until and current_time >= blocked_until:
+                        if block_key in self.smtp_blocked_until:
+                            del self.smtp_blocked_until[block_key]
+                        if block_key in self.smtp_failures:
+                            self.smtp_failures[block_key] = 0
+                        print(f"[SMTP UNBLOCKED] ✅ SMTP block cleared for user {user_id}")
                 
                 if not should_bypass_cooldown:
-                    print(f"[EMAIL COOLDOWN] Email alert cooldown active for {cooldown_key}")
-                    return
+                    if last_alert_time and (current_time - last_alert_time < timedelta(seconds=basic_cooldown_seconds)):
+                        remaining_time = timedelta(seconds=basic_cooldown_seconds) - (current_time - last_alert_time)
+                        print(f"[EMAIL COOLDOWN] ❌ BLOCKED - Chờ {remaining_time.total_seconds():.0f}s nữa mới gửi email tiếp")
+                        return
+                    else:
+                        if last_alert_time:
+                            elapsed = (current_time - last_alert_time).total_seconds()
+                            print(f"[EMAIL COOLDOWN] ✅ ALLOWED - {elapsed:.0f}s đã trôi qua (yêu cầu {basic_cooldown_seconds}s)")
+                        else:
+                            print(f"[EMAIL COOLDOWN] ✅ ALLOWED - Chưa có email nào được gửi")
+                else:
+                    print(f"[EMAIL COOLDOWN] ⚠️ BYPASSED - Development mode với bypass enabled")
                 
-                if self.settings.bypass_email_cooldown and self.settings.development_mode:
+                if should_bypass_cooldown:
                     print(f"[DEV MODE] Bypassing email cooldown for testing")
                 
                 # Get camera info
@@ -120,16 +197,43 @@ class NotificationService:
                 
                 # Send email if enabled - ALWAYS FOR STRANGER ONLY
                 email_sent = False
+                email_attempted = False
                 try:
+                    email_attempted = True
                     email_sent = await self._send_stranger_email_with_image(user_id, alert_data, image_data)
                     print(f"🚀 EMAIL SEND RESULT: {email_sent}")
+                    
+                    # ===== CIRCUIT BREAKER: Track success/failure =====
+                    block_key = f"{user_id}_smtp_block"
+                    if email_sent:
+                        # Reset failure count on success
+                        if block_key in self.smtp_failures:
+                            self.smtp_failures[block_key] = 0
+                    else:
+                        # Increment failure count
+                        self.smtp_failures[block_key] = self.smtp_failures.get(block_key, 0) + 1
+                        
+                        # Block if too many failures
+                        if self.smtp_failures[block_key] >= self.max_failures:
+                            self.smtp_blocked_until[block_key] = current_time + timedelta(minutes=self.block_duration_minutes)
+                            print(f"[SMTP CIRCUIT BREAKER] ⚡ User {user_id} blocked for {self.block_duration_minutes} minutes after {self.max_failures} failures")
                     
                     # Update detection log to mark email sent
                     if email_sent and detection_log_id:
                         await self._update_detection_log_email_status(detection_log_id, True)
                         print(f"✅ Detection log updated with email status")
                 except Exception as email_error:
+                    email_attempted = True
                     print(f"❌ EMAIL SEND ERROR: {email_error}")
+                    
+                    # Track SMTP error in circuit breaker
+                    block_key = f"{user_id}_smtp_block"
+                    self.smtp_failures[block_key] = self.smtp_failures.get(block_key, 0) + 1
+                    
+                    if self.smtp_failures[block_key] >= self.max_failures:
+                        self.smtp_blocked_until[block_key] = current_time + timedelta(minutes=self.block_duration_minutes)
+                        print(f"[SMTP CIRCUIT BREAKER] ⚡ User {user_id} blocked for {self.block_duration_minutes} minutes after {self.max_failures} failures")
+                    
                     import traceback
                     traceback.print_exc()
                 
@@ -137,10 +241,22 @@ class NotificationService:
                 if user_settings.get("webhook_url"):
                     await self._send_webhook_alert(user_settings["webhook_url"], alert_data)
                 
-                # Update cooldown only if email was actually sent
-                if email_sent:
-                    self.alert_cooldown[cooldown_key] = datetime.utcnow()
-                    print(f"✅ Email cooldown updated")
+                # ===== QUAN TRỌNG: SET COOLDOWN KHI ĐÃ THỬ GỬI EMAIL =====
+                # Để tránh spam, set cooldown ngay cả khi email thất bại
+                if email_attempted:
+                    self.alert_cooldown[cooldown_key] = current_time
+                    
+                    if not should_bypass_cooldown:
+                        cooldown_info = f"{basic_cooldown_seconds}s"
+                        if len(stranger_detections) >= 3:
+                            cooldown_info += " (nhiều người lạ - ưu tiên cao)"
+                        elif len(stranger_detections) == 1:
+                            cooldown_info += " (1 người lạ - bình thường)"
+                        
+                        result_info = "thành công" if email_sent else "thất bại"
+                        print(f"✅ Email cooldown set: {cooldown_info} - Email {result_info}")
+                    else:
+                        print(f"✅ Email attempted (DEV MODE - không tính cooldown)")
                 
                 print(f"[SUCCESS] Stranger-only email alert processing completed for user {user_id}")
                 
@@ -160,17 +276,12 @@ class NotificationService:
             traceback.print_exc()
         
     async def send_stranger_alert(self, user_id: str, detection_data: Dict[str, Any]):
-        """Gửi cảnh báo phát hiện người lạ"""
+        """Gửi cảnh báo phát hiện người lạ - DEPRECATED: Chỉ gửi WebSocket, không gửi email"""
         try:
-            # Check cooldown to prevent spam
-            cooldown_key = f"{user_id}_{detection_data.get('camera_id', '')}_stranger"
-            last_alert = self.alert_cooldown.get(cooldown_key)
+            # DEPRECATED: Hàm này không còn gửi email để tránh spam
+            # Email được xử lý bởi send_stranger_alert_with_frame_analysis()
             
-            if last_alert and datetime.utcnow() - last_alert < timedelta(minutes=5):
-                print(f"[COOLDOWN] Alert cooldown active for {cooldown_key}")
-                return
-            
-            # Prepare alert data
+            # Prepare alert data for WebSocket only
             alert_data = {
                 "type": "stranger_alert",
                 "severity": "high",
@@ -182,24 +293,13 @@ class NotificationService:
                 "alert_id": f"alert_{int(datetime.utcnow().timestamp())}"
             }
             
-            # Send WebSocket notification (real-time)
+            # Send WebSocket notification only (real-time)
             await websocket_manager.send_detection_alert(user_id, alert_data)
             
-            # Get user notification preferences
-            user_settings = await self._get_user_notification_settings(user_id)
+            # NOTE: Email sending is handled by send_stranger_alert_with_frame_analysis()
+            # which has proper cooldown and frame analysis logic
             
-            # Send email if enabled
-            if user_settings.get("email_alerts", True):
-                await self._send_email_alert(user_id, alert_data)
-            
-            # Send webhook if configured
-            if user_settings.get("webhook_url"):
-                await self._send_webhook_alert(user_settings["webhook_url"], alert_data)
-            
-            # Update cooldown
-            self.alert_cooldown[cooldown_key] = datetime.utcnow()
-            
-            print(f"[SUCCESS] Stranger alert sent for user {user_id}")
+            print(f"[SUCCESS] Stranger WebSocket alert sent for user {user_id} (Email handled separately)")
             
         except Exception as e:
             print(f"[ERROR] Error sending stranger alert: {e}")
@@ -230,6 +330,16 @@ class NotificationService:
 
     async def _send_stranger_email_with_image(self, user_id: str, alert_data: Dict[str, Any], image_data: bytes = None):
         """Gửi email cảnh báo người lạ với hình ảnh đính kèm"""
+        
+        # ===== CRITICAL DEBUG: Tìm ai đang gọi function này =====
+        import traceback
+        caller_info = traceback.extract_stack()[-2]  # Get caller info
+        print(f"🔍 [EMAIL CALL] _send_stranger_email_with_image called from:")
+        print(f"   File: {caller_info.filename}:{caller_info.lineno}")
+        print(f"   Function: {caller_info.name}")
+        print(f"   User: {user_id}")
+        print(f"   Alert Type: {alert_data.get('type', 'unknown')}")
+        
         try:
             user_email = await self._get_user_email(user_id)
             if not user_email:
@@ -446,7 +556,7 @@ class NotificationService:
             
             print(f"🚀 [EMAIL] Sending email via SMTP...")
             
-            # Send email
+            # Send email với timeout ngắn hơn để tránh hang
             await aiosmtplib.send(
                 message,
                 hostname=self.settings.smtp_server,
@@ -454,14 +564,18 @@ class NotificationService:
                 start_tls=True,
                 username=self.settings.smtp_username,
                 password=self.settings.smtp_password,
-                timeout=30
+                timeout=10  # Giảm từ 30s xuống 10s
             )
             
             print(f"✅ [SUCCESS] Email with image sent to {to_email}")
             return True
             
+        except asyncio.TimeoutError:
+            print(f"❌ [TIMEOUT] SMTP timeout after 10s - Server may be busy")
+            return False
         except Exception as e:
             print(f"❌ [ERROR] Error sending email with image: {e}")
+            return False
             import traceback
             traceback.print_exc()
             

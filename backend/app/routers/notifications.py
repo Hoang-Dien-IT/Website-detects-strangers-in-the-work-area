@@ -69,12 +69,14 @@ async def test_stranger_alert(current_user: User = Depends(get_current_user)) ->
             }
         }
         
-        # Send test email
-        email_sent = await notification_service._send_stranger_email_with_image(
-            user_id=str(current_user.id),
-            alert_data=alert_data,
-            image_data=None  # No image for test
-        )
+        # Send test email - DISABLED TO PREVENT SPAM
+        print(f"⚠️ [DISABLED] Test email call disabled to prevent spam")
+        email_sent = False
+        # email_sent = await notification_service._send_stranger_email_with_image(
+        #     user_id=str(current_user.id),
+        #     alert_data=alert_data,
+        #     image_data=None  # No image for test
+        # )
         
         if email_sent:
             return {"success": True, "message": "Test stranger alert email sent successfully"}
@@ -173,12 +175,14 @@ async def force_test_stranger_email(current_user: User = Depends(get_current_use
             }
         }
         
-        # Send test email (cooldown cleared)
-        email_sent = await notification_service._send_stranger_email_with_image(
-            user_id=user_id,
-            alert_data=alert_data,
-            image_data=None
-        )
+        # Send test email (cooldown cleared) - DISABLED TO PREVENT SPAM  
+        print(f"⚠️ [DISABLED] Force test email call disabled to prevent spam")
+        email_sent = False
+        # email_sent = await notification_service._send_stranger_email_with_image(
+        #     user_id=user_id,
+        #     alert_data=alert_data,
+        #     image_data=None
+        # )
         
         # Restore original cooldowns (but not the test one)
         for key, value in old_cooldowns.items():
