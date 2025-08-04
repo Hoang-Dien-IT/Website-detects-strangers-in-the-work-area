@@ -93,15 +93,15 @@ class NotificationService:
                 cooldown_key = f"{user_id}_{camera_id}_stranger_email"
                 current_time = datetime.utcnow()
                 
-                # Kiểm tra cooldown cơ bản (1 phút)
+                # Kiểm tra cooldown cơ bản (30 giây)
                 last_alert_time = self.alert_cooldown.get(cooldown_key)
-                basic_cooldown_seconds = 60  # 1 phút
+                basic_cooldown_seconds = 30  # 1 phút
                 
                 # Điều chỉnh cooldown dựa trên số lượng người lạ
                 if len(stranger_detections) >= 3:
-                    basic_cooldown_seconds = 30  # Nhiều người lạ → 30 giây
+                    basic_cooldown_seconds = 15  # Nhiều người lạ → 15 giây
                 elif len(stranger_detections) == 1:
-                    basic_cooldown_seconds = 60  # 1 người lạ → 1 phút
+                    basic_cooldown_seconds = 30  # 1 người lạ → 30 giây
                 
                 # Check if we should bypass cooldown in development
                 should_bypass_cooldown = (
