@@ -23,7 +23,6 @@ import DashboardLayout from '@/components/dashboard/DashboardLayout';
 const HomePage = React.lazy(() => import('@/pages/HomePage'));
 const FeaturesPage = React.lazy(() => import('@/pages/FeaturesPage'));
 const SolutionsPage = React.lazy(() => import('@/pages/SolutionsPage'));
-const PricingPage = React.lazy(() => import('@/pages/PricingPage'));
 const ContactPage = React.lazy(() => import('@/pages/ContactPage'));
 const AboutPage = React.lazy(() => import('@/pages/AboutPage'));
 const BlogPage = React.lazy(() => import('@/pages/BlogPage'));
@@ -242,11 +241,6 @@ const App: React.FC = () => {
                         <Route path="solutions/:type" element={
                           <Suspense fallback={<AppLoadingFallback />}>
                             <SolutionsPage />
-                          </Suspense>
-                        } />
-                        <Route path="pricing" element={
-                          <Suspense fallback={<AppLoadingFallback />}>
-                            <PricingPage />
                           </Suspense>
                         } />
 

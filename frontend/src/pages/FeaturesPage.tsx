@@ -103,7 +103,7 @@ const FeaturesPage: React.FC = () => {
         "Anti-spoofing protection",
         "Continuous learning and improvement"
       ],
-      gradient: "from-blue-500 to-cyan-500",
+      gradient: "from-teal-500 to-cyan-500",
       category: "ai-detection"
     },
     {
@@ -117,7 +117,7 @@ const FeaturesPage: React.FC = () => {
         "Behavioral pattern recognition",
         "Performance metrics tracking"
       ],
-      gradient: "from-purple-500 to-pink-500",
+      gradient: "from-emerald-500 to-teal-500",
       category: "ai-detection"
     },
     {
@@ -147,7 +147,7 @@ const FeaturesPage: React.FC = () => {
         "HD video quality support",
         "Mobile app monitoring"
       ],
-      gradient: "from-orange-500 to-red-500",
+      gradient: "from-cyan-500 to-emerald-500",
       category: "monitoring"
     },
     {
@@ -161,7 +161,7 @@ const FeaturesPage: React.FC = () => {
         "Escalation procedures",
         "Alert history tracking"
       ],
-      gradient: "from-yellow-500 to-orange-500",
+      gradient: "from-slate-500 to-gray-500",
       category: "monitoring"
     },
     {
@@ -175,7 +175,7 @@ const FeaturesPage: React.FC = () => {
         "Motion-triggered recording",
         "Cloud backup storage"
       ],
-      gradient: "from-indigo-500 to-blue-500",
+      gradient: "from-teal-500 to-emerald-500",
       category: "monitoring"
     },
 
@@ -191,7 +191,7 @@ const FeaturesPage: React.FC = () => {
         "Role-based access control",
         "Audit trail logging"
       ],
-      gradient: "from-red-500 to-pink-500",
+      gradient: "from-emerald-500 to-cyan-500",
       category: "security"
     },
     {
@@ -235,7 +235,7 @@ const FeaturesPage: React.FC = () => {
         "Third-party app connections",
         "Custom integration support"
       ],
-      gradient: "from-blue-600 to-purple-600",
+      gradient: "from-teal-600 to-emerald-600",
       category: "integration"
     },
     {
@@ -249,7 +249,7 @@ const FeaturesPage: React.FC = () => {
         "Biometric authentication",
         "Real-time synchronization"
       ],
-      gradient: "from-green-600 to-blue-600",
+      gradient: "from-emerald-600 to-teal-600",
       category: "integration"
     },
     {
@@ -263,7 +263,7 @@ const FeaturesPage: React.FC = () => {
         "Rate limiting and throttling",
         "Comprehensive documentation"
       ],
-      gradient: "from-purple-600 to-pink-600",
+      gradient: "from-cyan-600 to-emerald-600",
       category: "integration"
     }
   ];
@@ -275,7 +275,7 @@ const FeaturesPage: React.FC = () => {
     : features.filter(feature => feature.category === selectedCategory);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-teal-50 to-emerald-50">
       {/* Hero Section */}
       <section className="py-20 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -285,30 +285,30 @@ const FeaturesPage: React.FC = () => {
             initial="initial"
             animate="animate"
           >
-            <Badge className="bg-blue-50 text-blue-600 border-blue-200 mb-6 px-4 py-2">
-              ✨ Complete Feature Set
+            <Badge className="bg-teal-50 text-teal-600 border-teal-200 mb-6 px-4 py-2">
+              ✨ Bộ tính năng hoàn chỉnh
             </Badge>
             <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
-              Powerful Features for{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Modern Security
+              Tính năng mạnh mẽ cho{" "}
+              <span className="bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">
+                Bảo mật hiện đại
               </span>
             </h1>
             <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto mb-8">
-              Discover comprehensive AI-powered face recognition capabilities designed for 
-              enterprise security, real-time monitoring, and seamless integration.
+              Khám phá các khả năng nhận diện khuôn mặt AI toàn diện được thiết kế cho 
+              bảo mật doanh nghiệp, giám sát thời gian thực và tích hợp liền mạch.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/register">
-                <Button size="lg" className="px-8 py-3 text-lg">
-                  Start Free Trial
+                <Button size="lg" className="px-8 py-3 text-lg bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700">
+                  Bắt đầu miễn phí
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Button variant="outline" size="lg" className="px-8 py-3 text-lg">
+              <Button variant="outline" size="lg" className="px-8 py-3 text-lg border-teal-200 text-teal-700 hover:bg-teal-50">
                 <Play className="mr-2 h-5 w-5" />
-                Watch Demo
+                Xem Demo
               </Button>
             </div>
           </motion.div>
@@ -413,7 +413,7 @@ const FeaturesPage: React.FC = () => {
                     </p>
                     
                     <div className="space-y-2">
-                      <h4 className="font-semibold text-gray-900 mb-3">Key Benefits:</h4>
+                      <h4 className="font-semibold text-gray-900 mb-3">Lợi ích chính:</h4>
                       {feature.benefits.map((benefit, benefitIndex) => (
                         <div key={benefitIndex} className="flex items-center space-x-2">
                           <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
@@ -430,7 +430,7 @@ const FeaturesPage: React.FC = () => {
       </section>
 
       {/* Technical Specifications */}
-      <section className="py-20 bg-gradient-to-r from-gray-900 to-blue-900 text-white">
+      <section className="py-20 bg-gradient-to-r from-slate-900 to-gray-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             className="text-center mb-16"
@@ -440,10 +440,10 @@ const FeaturesPage: React.FC = () => {
             viewport={{ once: true }}
           >
             <h2 className="text-4xl font-bold mb-4">
-              Technical Specifications
+              Thông số kỹ thuật
             </h2>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Built with enterprise-grade technology and industry-leading performance standards
+              Được xây dựng với công nghệ cấp doanh nghiệp và tiêu chuẩn hiệu suất hàng đầu trong ngành
             </p>
           </motion.div>
 
@@ -513,7 +513,7 @@ const FeaturesPage: React.FC = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
+      <section className="py-20 bg-gradient-to-r from-teal-600 to-emerald-600">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             variants={fadeInUp}
@@ -522,23 +522,23 @@ const FeaturesPage: React.FC = () => {
             viewport={{ once: true }}
           >
             <h2 className="text-4xl font-bold text-white mb-6">
-              Ready to Get Started?
+              Sẵn sàng bắt đầu?
             </h2>
             <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-              Join thousands of organizations using SafeFace to enhance their security 
-              with AI-powered face recognition technology.
+              Tham gia cùng hàng nghìn tổ chức đang sử dụng SafeFace để nâng cao bảo mật 
+              của họ với công nghệ nhận diện khuôn mặt AI.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/register">
                 <Button size="lg" variant="secondary" className="px-8 py-3 text-lg">
-                  Start Free Trial
+                  Bắt đầu miễn phí
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
               <Link to="/contact">
-                <Button size="lg" variant="outline" className="px-8 py-3 text-lg border-white text-white hover:bg-white hover:text-blue-600">
-                  Contact Sales
+                <Button size="lg" variant="outline" className="px-8 py-3 text-lg border-white text-white hover:bg-white hover:text-teal-600">
+                  Liên hệ tư vấn
                 </Button>
               </Link>
             </div>

@@ -19,7 +19,6 @@ import {
   MessageCircle,
   Quote,
   Sparkles,
-  Award,
   Lock,
   Cloud,
   BarChart3,
@@ -116,18 +115,6 @@ interface Stat {
   gradient: string;
 }
 
-interface PricingPlan {
-  name: string;
-  price: string;
-  period: string;
-  description: string;
-  features: string[];
-  popular?: boolean;
-  gradient: string;
-  buttonText: string;
-  savings?: string;
-}
-
 interface Testimonial {
   name: string;
   role: string;
@@ -185,13 +172,13 @@ const HomePage: React.FC = () => {
       icon: <Brain className="h-10 w-10" />,
       title: "AI-Powered Recognition",
       description: "Advanced deep learning algorithms with 99.97% accuracy, real-time processing, and adaptive learning capabilities",
-      gradient: "from-blue-600 via-cyan-500 to-teal-400"
+      gradient: "from-teal-600 via-cyan-500 to-emerald-400"
     },
     {
       icon: <ShieldCheck className="h-10 w-10" />,
       title: "Enterprise Security",
       description: "Military-grade encryption, GDPR compliance, zero-trust architecture, and SOC 2 Type II certification",
-      gradient: "from-purple-600 via-pink-500 to-rose-400"
+      gradient: "from-emerald-600 via-teal-500 to-cyan-400"
     },
     {
       icon: <Activity className="h-10 w-10" />,
@@ -203,19 +190,19 @@ const HomePage: React.FC = () => {
       icon: <Cloud className="h-10 w-10" />,
       title: "Cloud-Native Platform",
       description: "Global CDN, auto-scaling infrastructure, multi-region deployment, and 99.99% uptime SLA",
-      gradient: "from-orange-600 via-amber-500 to-yellow-400"
+      gradient: "from-slate-600 via-gray-500 to-stone-400"
     },
     {
       icon: <BarChart3 className="h-10 w-10" />,
       title: "Advanced Analytics",
       description: "Machine learning insights, predictive analytics, custom dashboards, and comprehensive reporting",
-      gradient: "from-indigo-600 via-purple-500 to-pink-400"
+      gradient: "from-cyan-600 via-teal-500 to-emerald-400"
     },
     {
       icon: <Users className="h-10 w-10" />,
       title: "Team Collaboration",
       description: "Role-based access control, workflow automation, team notifications, and audit trails",
-      gradient: "from-pink-600 via-rose-500 to-red-400"
+      gradient: "from-slate-600 via-gray-500 to-zinc-400"
     }
   ];
 
@@ -225,91 +212,28 @@ const HomePage: React.FC = () => {
       label: "Active Users",
       description: "Global enterprises trust SafeFace",
       icon: <Users className="h-8 w-8" />,
-      gradient: "from-blue-600 to-cyan-400"
+      gradient: "from-teal-600 to-cyan-400"
     },
     {
       number: "99.97%",
       label: "Accuracy Rate",
       description: "Industry-leading AI precision",
       icon: <Target className="h-8 w-8" />,
-      gradient: "from-green-600 to-emerald-400"
+      gradient: "from-emerald-600 to-teal-400"
     },
     {
       number: "24/7",
       label: "Support",
       description: "Expert assistance worldwide",
       icon: <Clock className="h-8 w-8" />,
-      gradient: "from-purple-600 to-pink-400"
+      gradient: "from-cyan-600 to-emerald-400"
     },
     {
       number: "1B+",
       label: "Detections",
       description: "Successful face recognitions",
       icon: <Eye className="h-8 w-8" />,
-      gradient: "from-orange-600 to-yellow-400"
-    }
-  ];
-
-  const pricingPlans: PricingPlan[] = [
-    {
-      name: "Starter",
-      price: "Free",
-      period: "forever",
-      description: "Perfect for individuals and small teams getting started with face recognition",
-      features: [
-        "Up to 3 cameras",
-        "100 known persons",
-        "Basic analytics dashboard",
-        "Email support",
-        "Community access",
-        "Mobile app access",
-        "Basic API access"
-      ],
-      gradient: "from-gray-600 to-gray-800",
-      buttonText: "Start Free Today"
-    },
-    {
-      name: "Professional",
-      price: "$49",
-      period: "per month",
-      description: "Ideal for growing businesses with advanced security needs",
-      features: [
-        "Up to 25 cameras",
-        "Unlimited known persons",
-        "Advanced analytics & reports",
-        "Priority support (24/7)",
-        "API & webhook access",
-        "Custom integrations",
-        "Real-time alerts",
-        "Multi-user collaboration",
-        "Advanced face analytics",
-        "Custom branding"
-      ],
-      popular: true,
-      gradient: "from-blue-600 to-purple-600",
-      buttonText: "Start 14-Day Free Trial",
-      savings: "Save 20% annually"
-    },
-    {
-      name: "Enterprise",
-      price: "Custom",
-      period: "pricing",
-      description: "For large organizations requiring maximum security and customization",
-      features: [
-        "Unlimited cameras",
-        "Advanced AI models",
-        "Dedicated account manager",
-        "Custom deployment options",
-        "White-label solutions",
-        "SLA guarantee (99.99%)",
-        "On-premise deployment",
-        "Custom integrations",
-        "Advanced security features",
-        "Compliance support",
-        "Training & onboarding"
-      ],
-      gradient: "from-purple-600 to-pink-600",
-      buttonText: "Contact Sales Team"
+      gradient: "from-slate-600 to-gray-400"
     }
   ];
 
@@ -330,15 +254,15 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-teal-50 to-emerald-50">
 
       {/* Enhanced Hero Section */}
       <section className="relative min-h-screen overflow-hidden">
         {/* Animated Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-blue-400/20 to-purple-400/20 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute top-40 right-10 w-96 h-96 bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          <div className="absolute bottom-20 left-1/4 w-64 h-64 bg-gradient-to-r from-cyan-400/20 to-blue-400/20 rounded-full blur-3xl animate-pulse delay-2000"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-teal-50 to-emerald-100">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-teal-400/20 to-emerald-400/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute top-40 right-10 w-96 h-96 bg-gradient-to-r from-emerald-400/20 to-cyan-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute bottom-20 left-1/4 w-64 h-64 bg-gradient-to-r from-cyan-400/20 to-teal-400/20 rounded-full blur-3xl animate-pulse delay-2000"></div>
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
@@ -357,20 +281,20 @@ const HomePage: React.FC = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <Badge className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 text-blue-700 border border-blue-200/50 backdrop-blur-sm px-6 py-3 text-sm font-medium">
+                  <Badge className="bg-gradient-to-r from-teal-600/10 to-emerald-600/10 text-teal-700 border border-teal-200/50 backdrop-blur-sm px-6 py-3 text-sm font-medium">
                     <Sparkles className="h-4 w-4 mr-2" />
-                    Next-Gen AI Security Platform
+                    Nền tảng bảo mật AI thế hệ mới
                   </Badge>
                 </motion.div>
 
                 {/* Hero Title */}
                 <div className="space-y-6">
                   <h1 className="text-6xl lg:text-7xl xl:text-8xl font-black leading-[0.9] tracking-tight">
-                    <span className="block text-gray-900">Intelligent</span>
-                    <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                      Face Security
+                    <span className="block text-gray-900">Nền tảng</span>
+                    <span className="block bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 bg-clip-text text-transparent">
+                      Bảo mật
                     </span>
-                    <span className="block text-gray-900">Platform</span>
+                    <span className="block text-gray-900">Thông minh</span>
                   </h1>
                   
                   <p className="text-xl lg:text-2xl text-gray-600 leading-relaxed max-w-2xl font-light">
@@ -406,16 +330,16 @@ const HomePage: React.FC = () => {
                 {/* CTA Buttons */}
                 <div className="flex flex-col sm:flex-row gap-6">
                   <motion.div 
-                    whileHover={{ scale: 1.02, boxShadow: "0 25px 50px -12px rgba(59, 130, 246, 0.25)" }}
+                    whileHover={{ scale: 1.02, boxShadow: "0 25px 50px -12px rgba(14, 165, 233, 0.25)" }}
                     whileTap={{ scale: 0.98 }}
                   >
                     <Button 
                       size="lg" 
                       onClick={handleGetStarted}
-                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-12 py-6 text-xl font-semibold rounded-2xl shadow-2xl border-0"
+                      className="bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white px-12 py-6 text-xl font-semibold rounded-2xl shadow-2xl border-0"
                     >
                       <Rocket className="h-6 w-6 mr-3" />
-                      {isAuthenticated ? 'Go to Dashboard' : 'Start Free Trial'}
+                      {isAuthenticated ? 'Đi tới Dashboard' : 'Bắt đầu miễn phí'}
                       <ArrowRight className="h-5 w-5 ml-3" />
                     </Button>
                   </motion.div>
@@ -431,7 +355,7 @@ const HomePage: React.FC = () => {
                       className="border-2 border-gray-300 text-gray-700 hover:bg-gray-50 px-12 py-6 text-xl font-semibold rounded-2xl"
                     >
                       <Play className="h-6 w-6 mr-3" />
-                      Watch Demo
+                      Xem Demo
                     </Button>
                   </motion.div>
                 </div>
@@ -439,9 +363,9 @@ const HomePage: React.FC = () => {
                 {/* Trust Indicators */}
                 <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600 pt-4">
                   {[
-                    { icon: <CheckCircle className="h-5 w-5 text-green-500" />, text: "14-day free trial" },
-                    { icon: <Lock className="h-5 w-5 text-blue-500" />, text: "No credit card required" },
-                    { icon: <Shield className="h-5 w-5 text-purple-500" />, text: "Enterprise security" }
+                    { icon: <CheckCircle className="h-5 w-5 text-green-500" />, text: "Hoàn toàn miễn phí" },
+                    { icon: <Lock className="h-5 w-5 text-teal-500" />, text: "Không cần thẻ tín dụng" },
+                    { icon: <Shield className="h-5 w-5 text-emerald-500" />, text: "Bảo mật doanh nghiệp" }
                   ].map((item, index) => (
                     <div key={index} className="flex items-center space-x-2">
                       {item.icon}
@@ -533,7 +457,7 @@ const HomePage: React.FC = () => {
                 </motion.div>
                 
                 <motion.div 
-                  className="absolute -bottom-6 -left-6 bg-blue-500 text-white p-4 rounded-2xl shadow-xl"
+                  className="absolute -bottom-6 -left-6 bg-teal-500 text-white p-4 rounded-2xl shadow-xl"
                   animate={{ 
                     y: [0, 10, 0],
                     rotate: [0, -5, 0]
@@ -608,19 +532,19 @@ const HomePage: React.FC = () => {
             whileInView="animate"
             viewport={{ once: true }}
           >
-            <Badge className="bg-blue-100/80 text-blue-700 border border-blue-200/50 backdrop-blur-sm mb-6 px-6 py-3 text-sm font-medium">
+            <Badge className="bg-teal-100/80 text-teal-700 border border-teal-200/50 backdrop-blur-sm mb-6 px-6 py-3 text-sm font-medium">
               <Sparkles className="h-4 w-4 mr-2" />
-              Cutting-Edge Features
+              Các tính năng tiên tiến
             </Badge>
             <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight">
-              Everything You Need for{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Complete Security
+              Mọi thứ bạn cần cho{" "}
+              <span className="bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">
+                Bảo mật hoàn hảo
               </span>
             </h2>
             <p className="text-xl lg:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed font-light">
-              Our comprehensive AI-powered platform provides enterprise-grade face recognition, 
-              real-time threat detection, and intelligent analytics for modern security operations.
+              Nền tảng AI toàn diện của chúng tôi cung cấp nhận diện khuôn mặt cấp doanh nghiệp, 
+              phát hiện mối đe dọa theo thời gian thực và phân tích thông minh cho các hoạt động bảo mật hiện đại.
             </p>
           </motion.div>
 
@@ -648,7 +572,7 @@ const HomePage: React.FC = () => {
                       <div className={`w-20 h-20 bg-gradient-to-r ${feature.gradient} rounded-3xl flex items-center justify-center text-white mb-6 group-hover:scale-110 transition-all duration-300`}>
                         {feature.icon}
                       </div>
-                      <CardTitle className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 group-hover:bg-clip-text transition-all duration-300">
+                      <CardTitle className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-teal-600 group-hover:to-emerald-600 group-hover:bg-clip-text transition-all duration-300">
                         {feature.title}
                       </CardTitle>
                     </CardHeader>
@@ -665,137 +589,8 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="pricing" className="py-32 bg-white relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            className="text-center mb-20"
-            variants={fadeInUp}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-          >
-            <Badge className="bg-purple-100/80 text-purple-700 border border-purple-200/50 backdrop-blur-sm mb-6 px-6 py-3 text-sm font-medium">
-              <Award className="h-4 w-4 mr-2" />
-              Transparent Pricing
-            </Badge>
-            <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight">
-              Choose Your{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Perfect Plan
-              </span>
-            </h2>
-            <p className="text-xl lg:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed font-light">
-              Start free and scale as you grow. All plans include our core AI features, 
-              24/7 support, and enterprise-grade security.
-            </p>
-          </motion.div>
-
-          <motion.div 
-            className="grid grid-cols-1 md:grid-cols-3 gap-10"
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-          >
-            {pricingPlans.map((plan, index) => (
-              <motion.div
-                key={index}
-                variants={scaleIn}
-                whileHover={{ y: -15, scale: plan.popular ? 1.02 : 1.05 }}
-                className={`relative ${plan.popular ? 'md:scale-105 z-10' : ''}`}
-              >
-                <Card className={`h-full border-0 shadow-2xl overflow-hidden rounded-3xl bg-white relative ${
-                  plan.popular ? 'ring-4 ring-blue-500/20 shadow-blue-500/10' : ''
-                }`}>
-                  {plan.popular && (
-                    <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-center py-4 text-sm font-bold">
-                      🔥 Most Popular
-                    </div>
-                  )}
-                  
-                  {plan.popular && (
-                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-purple-600"></div>
-                  )}
-                  
-                  <CardHeader className={`text-center relative ${plan.popular ? 'pt-20 pb-8' : 'pt-12 pb-8'}`}>
-                    <div className={`w-20 h-20 bg-gradient-to-r ${plan.gradient} rounded-3xl flex items-center justify-center mx-auto mb-6`}>
-                      <Rocket className="h-10 w-10 text-white" />
-                    </div>
-                    <CardTitle className="text-2xl font-bold text-gray-900 mb-2">
-                      {plan.name}
-                    </CardTitle>
-                    <div className="text-center mb-6">
-                      <span className="text-5xl font-bold text-gray-900">{plan.price}</span>
-                      {plan.price !== 'Free' && plan.price !== 'Custom' && (
-                        <span className="text-gray-600 ml-2">/{plan.period}</span>
-                      )}
-                      {plan.price === 'Free' && (
-                        <span className="text-gray-600 ml-2">{plan.period}</span>
-                      )}
-                      {plan.price === 'Custom' && (
-                        <span className="text-gray-600 ml-2">{plan.period}</span>
-                      )}
-                    </div>
-                    <p className="text-gray-600 text-sm leading-relaxed max-w-sm mx-auto">
-                      {plan.description}
-                    </p>
-                    {plan.savings && (
-                      <Badge className="bg-green-100 text-green-700 mt-4">
-                        {plan.savings}
-                      </Badge>
-                    )}
-                  </CardHeader>
-                  
-                  <CardContent className="pt-0 px-8 pb-12 relative">
-                    <ul className="space-y-4 mb-8">
-                      {plan.features.map((feature, featureIndex) => (
-                        <li key={featureIndex} className="flex items-center space-x-3">
-                          <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                          <span className="text-gray-600">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    
-                    <Button 
-                      className={`w-full py-6 text-lg font-semibold rounded-2xl transition-all duration-300 ${
-                        plan.popular 
-                          ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700' 
-                          : 'bg-gray-900 hover:bg-gray-800'
-                      }`}
-                      onClick={plan.name === 'Enterprise' ? handleContactSales : handleGetStarted}
-                    >
-                      {plan.buttonText}
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          {/* Pricing Footer */}
-          <motion.div 
-            className="text-center mt-16"
-            variants={fadeInUp}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-          >
-            <div className="bg-gradient-to-r from-gray-50 to-blue-50/30 rounded-2xl p-8 backdrop-blur-sm">
-              <p className="text-gray-600 text-lg mb-4">
-                All plans include free SSL, automatic backups, 99.99% uptime SLA, and enterprise-grade security.
-              </p>
-              <p className="text-gray-500">
-                Need a custom solution? <button onClick={handleContactSales} className="text-blue-600 hover:text-blue-700 font-semibold underline">Contact our sales team</button> for personalized pricing.
-              </p>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
       {/* Testimonials Section */}
-      <section className="py-32 bg-gradient-to-br from-gray-50 to-blue-50/30">
+      <section className="py-32 bg-gradient-to-br from-gray-50 to-teal-50/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             className="text-center mb-20"
@@ -805,14 +600,14 @@ const HomePage: React.FC = () => {
             viewport={{ once: true }}
           >
             <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight">
-              Trusted by{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Security Leaders
+              Được tin tưởng bởi{" "}
+              <span className="bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">
+                Các chuyên gia bảo mật
               </span>
             </h2>
             <p className="text-xl lg:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed font-light">
-              Join thousands of organizations worldwide who trust SafeFace 
-              for their mission-critical security operations
+              Tham gia cùng hàng nghìn tổ chức trên toàn thế giới tin tưởng SafeFace 
+              cho các hoạt động bảo mật quan trọng của họ
             </p>
           </motion.div>
 
@@ -824,12 +619,12 @@ const HomePage: React.FC = () => {
             viewport={{ once: true }}
           >
             <Card className="border-0 shadow-3xl bg-white/90 backdrop-blur-xl relative overflow-hidden rounded-3xl">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600"></div>
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600"></div>
               
               <CardContent className="p-16">
                 <div className="flex items-center justify-center mb-12">
-                  <div className="w-24 h-24 bg-gradient-to-r from-blue-100 to-purple-100 rounded-3xl flex items-center justify-center">
-                    <Quote className="h-12 w-12 text-blue-600" />
+                  <div className="w-24 h-24 bg-gradient-to-r from-teal-100 to-emerald-100 rounded-3xl flex items-center justify-center">
+                    <Quote className="h-12 w-12 text-teal-600" />
                   </div>
                 </div>
                 
@@ -886,7 +681,7 @@ const HomePage: React.FC = () => {
                   key={index}
                   className={`w-4 h-4 rounded-full transition-all duration-300 ${
                     index === currentTestimonial 
-                      ? 'bg-blue-600 scale-125' 
+                      ? 'bg-teal-600 scale-125' 
                       : 'bg-gray-300 hover:bg-gray-400'
                   }`}
                   onClick={() => setCurrentTestimonial(index)}
@@ -901,10 +696,23 @@ const HomePage: React.FC = () => {
 
       {/* CTA Section */}
       <section className="py-32 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-600">
-          <div className="absolute top-20 left-20 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-20 w-80 h-80 bg-white/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-slate-700 to-gray-800">
+          <div className="absolute top-20 left-20 w-96 h-96 bg-teal-500/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-20 w-80 h-80 bg-emerald-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-3xl"></div>
+          
+          {/* Geometric patterns */}
+          <div className="absolute top-10 right-10 w-32 h-32 border border-teal-400/20 rounded-2xl rotate-45"></div>
+          <div className="absolute bottom-10 left-10 w-24 h-24 border border-emerald-400/20 rounded-full"></div>
+          
+          {/* Grid pattern overlay */}
+          <div className="absolute inset-0 opacity-5">
+            <div className="w-full h-full" style={{
+              backgroundImage: `linear-gradient(rgba(20, 184, 166, 0.3) 1px, transparent 1px),
+                               linear-gradient(90deg, rgba(20, 184, 166, 0.3) 1px, transparent 1px)`,
+              backgroundSize: '50px 50px'
+            }}></div>
+          </div>
         </div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -917,29 +725,29 @@ const HomePage: React.FC = () => {
           >
             <div className="space-y-8">
               <h2 className="text-5xl lg:text-7xl font-bold text-white leading-tight">
-                Ready to Secure Your 
-                <span className="block bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
-                  Digital Future?
+                Sẵn sàng biến đổi 
+                <span className="block bg-gradient-to-r from-teal-300 via-emerald-300 to-cyan-300 bg-clip-text text-transparent">
+                  Hệ thống bảo mật?
                 </span>
               </h2>
-              <p className="text-xl lg:text-2xl text-blue-100 max-w-4xl mx-auto leading-relaxed font-light">
-                Join 100,000+ organizations using SafeFace to protect what matters most. 
-                Start your free trial today and experience the future of intelligent security.
+              <p className="text-xl lg:text-2xl text-slate-200 max-w-4xl mx-auto leading-relaxed font-light">
+                Tham gia cùng hơn 100,000+ tổ chức đang sử dụng SafeFace để bảo vệ những gì quan trọng nhất. 
+                Bắt đầu ngay hôm nay và trải nghiệm tương lai của bảo mật thông minh.
               </p>
             </div>
             
             <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
               <motion.div 
-                whileHover={{ scale: 1.05, boxShadow: "0 25px 50px -12px rgba(255, 255, 255, 0.25)" }}
+                whileHover={{ scale: 1.05, boxShadow: "0 25px 50px -12px rgba(20, 184, 166, 0.4)" }}
                 whileTap={{ scale: 0.95 }}
               >
                 <Button 
                   size="lg" 
                   onClick={handleGetStarted}
-                  className="bg-white text-blue-600 hover:bg-gray-100 px-12 py-6 text-xl font-semibold rounded-2xl shadow-2xl border-0"
+                  className="bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white px-12 py-6 text-xl font-semibold rounded-2xl shadow-2xl border-0 backdrop-blur-sm"
                 >
                   <Rocket className="h-6 w-6 mr-3" />
-                  Start Free Trial
+                  Bắt đầu miễn phí
                   <ArrowRight className="h-5 w-5 ml-3" />
                 </Button>
               </motion.div>
@@ -955,16 +763,16 @@ const HomePage: React.FC = () => {
                   className="border-2 border-white/30 text-white hover:bg-white/10 backdrop-blur-sm px-12 py-6 text-xl font-semibold rounded-2xl"
                 >
                   <MessageCircle className="h-6 w-6 mr-3" />
-                  Talk to Sales
+                  Liên hệ tư vấn
                 </Button>
               </motion.div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-blue-100 max-w-3xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-slate-200 max-w-3xl mx-auto">
               {[
-                { icon: <CheckCircle className="h-6 w-6" />, text: "14-day free trial" },
-                { icon: <Lock className="h-6 w-6" />, text: "No setup fees" },
-                { icon: <Shield className="h-6 w-6" />, text: "Cancel anytime" }
+                { icon: <CheckCircle className="h-6 w-6" />, text: "Hoàn toàn miễn phí" },
+                { icon: <Lock className="h-6 w-6" />, text: "Không phí cài đặt" },
+                { icon: <Shield className="h-6 w-6" />, text: "Hủy bất cứ lúc nào" }
               ].map((item, index) => (
                 <motion.div 
                   key={index}
@@ -973,7 +781,9 @@ const HomePage: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 + index * 0.1 }}
                 >
-                  {item.icon}
+                  <div className="text-teal-400">
+                    {item.icon}
+                  </div>
                   <span>{item.text}</span>
                 </motion.div>
               ))}
@@ -985,11 +795,11 @@ const HomePage: React.FC = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 1 }}
             >
-              <p className="text-blue-200 mb-6 text-lg">Trusted by industry leaders</p>
+              <p className="text-slate-300 mb-6 text-lg">Được tin tưởng bởi các doanh nghiệp hàng đầu</p>
               <div className="flex justify-center items-center space-x-12 opacity-60">
-                <div className="text-white/40 text-lg font-semibold">Enterprise+</div>
+                <div className="text-white/40 text-lg font-semibold">Doanh nghiệp+</div>
                 <div className="text-white/40 text-lg font-semibold">Fortune 500</div>
-                <div className="text-white/40 text-lg font-semibold">Global Security</div>
+                <div className="text-white/40 text-lg font-semibold">Bảo mật toàn cầu</div>
               </div>
             </motion.div>
           </motion.div>

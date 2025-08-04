@@ -77,7 +77,6 @@ const NotFoundPage: React.FC = () => {
     { label: 'Home', icon: <Home className="h-4 w-4" />, path: '/' },
     { label: 'Features', icon: <Star className="h-4 w-4" />, path: '/features' },
     { label: 'Solutions', icon: <Layers className="h-4 w-4" />, path: '/solutions' },
-    { label: 'Pricing', icon: <DollarSign className="h-4 w-4" />, path: '/pricing' },
     { label: 'Contact', icon: <Phone className="h-4 w-4" />, path: '/contact' },
     { label: 'Sign In', icon: <LogIn className="h-4 w-4" />, path: '/login' },
     { label: 'Help', icon: <HelpCircle className="h-4 w-4" />, path: '/help' }
@@ -95,7 +94,6 @@ const NotFoundPage: React.FC = () => {
   //   { label: 'Home', icon: <Home className="h-4 w-4" />, path: '/' },
   //   { label: 'Features', icon: <Star className="h-4 w-4" />, path: '/features' },
   //   { label: 'Solutions', icon: <Layers className="h-4 w-4" />, path: '/solutions' },
-  //   { label: 'Pricing', icon: <DollarSign className="h-4 w-4" />, path: '/pricing' },
   //   { label: 'Contact', icon: <Phone className="h-4 w-4" />, path: '/contact' },
   //   { label: 'Sign In', icon: <LogIn className="h-4 w-4" />, path: '/login' },
   //   { label: 'Help', icon: <HelpCircle className="h-4 w-4" />, path: '/help' }

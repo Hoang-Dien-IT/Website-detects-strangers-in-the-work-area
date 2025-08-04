@@ -35,7 +35,6 @@ const PublicLayout: React.FC = () => {
         { label: 'Healthcare', href: '/solutions/healthcare' }
       ]
     },
-    { label: 'Pricing', href: 'pricing' },
     { label: 'Resources', href: 'resources',
       dropdown: [
         { label: 'Documentation', href: '/docs' },
@@ -52,7 +51,7 @@ const PublicLayout: React.FC = () => {
       {/* Header */}
       <header className="bg-white/95 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
         {/* Top Bar */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2">
+        <div className="bg-gradient-to-r from-teal-600 to-emerald-600 text-white py-2">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center space-x-6">
@@ -67,13 +66,13 @@ const PublicLayout: React.FC = () => {
               </div>
               <div className="hidden md:flex items-center space-x-4">
                 <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
-                  🚀 Free 14-day trial available
+                  🚀 Hoàn toàn miễn phí
                 </Badge>
                 <div className="flex items-center space-x-2">
-                  <Facebook className="h-4 w-4 hover:text-blue-200 cursor-pointer" />
-                  <Twitter className="h-4 w-4 hover:text-blue-200 cursor-pointer" />
-                  <Linkedin className="h-4 w-4 hover:text-blue-200 cursor-pointer" />
-                  <Youtube className="h-4 w-4 hover:text-blue-200 cursor-pointer" />
+                  <Facebook className="h-4 w-4 hover:text-teal-200 cursor-pointer" />
+                  <Twitter className="h-4 w-4 hover:text-teal-200 cursor-pointer" />
+                  <Linkedin className="h-4 w-4 hover:text-teal-200 cursor-pointer" />
+                  <Youtube className="h-4 w-4 hover:text-teal-200 cursor-pointer" />
                 </div>
               </div>
             </div>
@@ -85,11 +84,11 @@ const PublicLayout: React.FC = () => {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-r from-teal-600 to-emerald-600 rounded-xl flex items-center justify-center">
                 <Shield className="h-6 w-6 text-white" />
               </div>
               <div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <span className="text-2xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">
                   SafeFace
                 </span>
                 <div className="text-xs text-gray-500">AI Security Platform</div>
@@ -102,7 +101,7 @@ const PublicLayout: React.FC = () => {
                 <div key={item.label} className="relative group">
                   <a
                     href={item.href}
-                    className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                    className="flex items-center space-x-1 text-gray-700 hover:text-teal-600 font-medium transition-colors"
                   >
                     <span>{item.label}</span>
                     {item.dropdown && <ChevronDown className="h-4 w-4" />}
@@ -116,7 +115,7 @@ const PublicLayout: React.FC = () => {
                           <a
                             key={dropdownItem.label}
                             href={dropdownItem.href}
-                            className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md transition-colors"
+                            className="block px-4 py-2 text-gray-700 hover:bg-teal-50 hover:text-teal-600 rounded-md transition-colors"
                           >
                             {dropdownItem.label}
                           </a>
@@ -131,13 +130,13 @@ const PublicLayout: React.FC = () => {
             {/* CTA Buttons */}
             <div className="hidden lg:flex items-center space-x-4">
               <Link to="/login">
-                <Button variant="ghost" className="text-gray-700 hover:text-blue-600">
-                  Sign In
+                <Button variant="ghost" className="text-gray-700 hover:text-teal-600">
+                  Đăng nhập
                 </Button>
               </Link>
               <Link to="/register">
-                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-                  Get Started Free
+                <Button className="bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700">
+                  Bắt đầu miễn phí
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
@@ -163,7 +162,7 @@ const PublicLayout: React.FC = () => {
                 <div key={item.label}>
                   <a
                     href={item.href}
-                    className="block py-2 text-gray-700 hover:text-blue-600 font-medium"
+                    className="block py-2 text-gray-700 hover:text-teal-600 font-medium"
                   >
                     {item.label}
                   </a>
@@ -173,7 +172,7 @@ const PublicLayout: React.FC = () => {
                         <a
                           key={dropdownItem.label}
                           href={dropdownItem.href}
-                          className="block py-1 text-sm text-gray-600 hover:text-blue-600"
+                          className="block py-1 text-sm text-gray-600 hover:text-teal-600"
                         >
                           {dropdownItem.label}
                         </a>
@@ -185,12 +184,12 @@ const PublicLayout: React.FC = () => {
               <div className="pt-4 border-t border-gray-200 space-y-2">
                 <Link to="/login" className="block">
                   <Button variant="outline" className="w-full">
-                    Sign In
+                    Đăng nhập
                   </Button>
                 </Link>
                 <Link to="/register" className="block">
-                  <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600">
-                    Get Started Free
+                  <Button className="w-full bg-gradient-to-r from-teal-600 to-emerald-600">
+                    Bắt đầu miễn phí
                   </Button>
                 </Link>
               </div>
@@ -205,14 +204,14 @@ const PublicLayout: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white">
+      <footer className="bg-slate-900 text-white">
         {/* Main Footer */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
             {/* Company Info */}
             <div className="lg:col-span-2">
               <div className="flex items-center space-x-2 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-r from-teal-600 to-emerald-600 rounded-xl flex items-center justify-center">
                   <Shield className="h-6 w-6 text-white" />
                 </div>
                 <div>
@@ -221,8 +220,8 @@ const PublicLayout: React.FC = () => {
                 </div>
               </div>
               <p className="text-gray-400 leading-relaxed mb-6 max-w-md">
-                Next-generation AI-powered face recognition security platform trusted by 
-                organizations worldwide. Protect what matters most with advanced technology.
+                Nền tảng bảo mật nhận diện khuôn mặt AI thế hệ mới được tin tưởng bởi 
+                các tổ chức trên toàn thế giới. Bảo vệ những gì quan trọng nhất với công nghệ tiên tiến.
               </p>
               
               {/* Trust Badges */}
@@ -241,54 +240,53 @@ const PublicLayout: React.FC = () => {
               <div className="space-y-2 text-sm text-gray-400">
                 <div className="flex items-center space-x-2">
                   <MapPin className="h-4 w-4" />
-                  <span>San Francisco, CA 94105</span>
+                  <span>Hà Nội, Việt Nam</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Phone className="h-4 w-4" />
-                  <span>+1 (555) 123-4567</span>
+                  <span>+84 (024) 123-4567</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Mail className="h-4 w-4" />
-                  <span>support@safeface.ai</span>
+                  <span>support@safeface.vn</span>
                 </div>
               </div>
             </div>
 
             {/* Product Links */}
             <div>
-              <h3 className="font-semibold text-lg mb-4">Product</h3>
+              <h3 className="font-semibold text-lg mb-4">Sản phẩm</h3>
               <ul className="space-y-3 text-gray-400">
-                <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
-                <li><a href="#pricing" className="hover:text-white transition-colors">Pricing</a></li>
-                <li><a href="/api-docs" className="hover:text-white transition-colors">API</a></li>
-                <li><a href="/integrations" className="hover:text-white transition-colors">Integrations</a></li>
-                <li><a href="/security" className="hover:text-white transition-colors">Security</a></li>
-                <li><a href="/changelog" className="hover:text-white transition-colors">Changelog</a></li>
+                <li><a href="#features" className="hover:text-teal-400 transition-colors">Tính năng</a></li>
+                <li><a href="/api-docs" className="hover:text-teal-400 transition-colors">API</a></li>
+                <li><a href="/integrations" className="hover:text-teal-400 transition-colors">Tích hợp</a></li>
+                <li><a href="/security" className="hover:text-teal-400 transition-colors">Bảo mật</a></li>
+                <li><a href="/changelog" className="hover:text-teal-400 transition-colors">Cập nhật</a></li>
               </ul>
             </div>
 
             {/* Solutions Links */}
             <div>
-              <h3 className="font-semibold text-lg mb-4">Solutions</h3>
+              <h3 className="font-semibold text-lg mb-4">Giải pháp</h3>
               <ul className="space-y-3 text-gray-400">
-                <li><a href="/solutions/enterprise" className="hover:text-white transition-colors">Enterprise</a></li>
-                <li><a href="/solutions/small-business" className="hover:text-white transition-colors">Small Business</a></li>
-                <li><a href="/solutions/education" className="hover:text-white transition-colors">Education</a></li>
-                <li><a href="/solutions/healthcare" className="hover:text-white transition-colors">Healthcare</a></li>
-                <li><a href="/solutions/retail" className="hover:text-white transition-colors">Retail</a></li>
+                <li><a href="/solutions/enterprise" className="hover:text-teal-400 transition-colors">Doanh nghiệp</a></li>
+                <li><a href="/solutions/small-business" className="hover:text-teal-400 transition-colors">Doanh nghiệp nhỏ</a></li>
+                <li><a href="/solutions/education" className="hover:text-teal-400 transition-colors">Giáo dục</a></li>
+                <li><a href="/solutions/healthcare" className="hover:text-teal-400 transition-colors">Y tế</a></li>
+                <li><a href="/solutions/retail" className="hover:text-teal-400 transition-colors">Bán lẻ</a></li>
               </ul>
             </div>
 
             {/* Support Links */}
             <div>
-              <h3 className="font-semibold text-lg mb-4">Support</h3>
+              <h3 className="font-semibold text-lg mb-4">Hỗ trợ</h3>
               <ul className="space-y-3 text-gray-400">
-                <li><a href="/help" className="hover:text-white transition-colors">Help Center</a></li>
-                <li><a href="/docs" className="hover:text-white transition-colors">Documentation</a></li>
-                <li><a href="/contact" className="hover:text-white transition-colors">Contact Us</a></li>
-                <li><a href="/status" className="hover:text-white transition-colors">System Status</a></li>
-                <li><a href="/community" className="hover:text-white transition-colors">Community</a></li>
-                <li><a href="/training" className="hover:text-white transition-colors">Training</a></li>
+                <li><a href="/help" className="hover:text-teal-400 transition-colors">Trung tâm trợ giúp</a></li>
+                <li><a href="/docs" className="hover:text-teal-400 transition-colors">Tài liệu</a></li>
+                <li><a href="/contact" className="hover:text-teal-400 transition-colors">Liên hệ</a></li>
+                <li><a href="/status" className="hover:text-teal-400 transition-colors">Trạng thái hệ thống</a></li>
+                <li><a href="/community" className="hover:text-teal-400 transition-colors">Cộng đồng</a></li>
+                <li><a href="/training" className="hover:text-teal-400 transition-colors">Đào tạo</a></li>
               </ul>
             </div>
           </div>
@@ -300,30 +298,30 @@ const PublicLayout: React.FC = () => {
             <div className="flex flex-col md:flex-row justify-between items-center">
               <div className="flex items-center space-x-6 mb-4 md:mb-0">
                 <p className="text-gray-400 text-sm">
-                  © 2024 SafeFace AI Technologies. All rights reserved.
+                  © 2025 SafeFace AI Technologies. Tất cả quyền được bảo lưu.
                 </p>
                 <div className="flex items-center space-x-4 text-sm text-gray-400">
-                  <a href="/privacy" className="hover:text-white transition-colors">Privacy Policy</a>
-                  <a href="/terms" className="hover:text-white transition-colors">Terms of Service</a>
-                  <a href="/cookies" className="hover:text-white transition-colors">Cookie Policy</a>
+                  <a href="/privacy" className="hover:text-teal-400 transition-colors">Chính sách bảo mật</a>
+                  <a href="/terms" className="hover:text-teal-400 transition-colors">Điều khoản dịch vụ</a>
+                  <a href="/cookies" className="hover:text-teal-400 transition-colors">Chính sách Cookie</a>
                 </div>
               </div>
 
               {/* Social Links */}
               <div className="flex items-center space-x-4">
-                <a href="https://facebook.com/safeface" className="text-gray-400 hover:text-blue-400 transition-colors">
+                <a href="https://facebook.com/safeface" className="text-gray-400 hover:text-teal-400 transition-colors">
                   <Facebook className="h-5 w-5" />
                 </a>
-                <a href="https://twitter.com/safeface" className="text-gray-400 hover:text-blue-400 transition-colors">
+                <a href="https://twitter.com/safeface" className="text-gray-400 hover:text-teal-400 transition-colors">
                   <Twitter className="h-5 w-5" />
                 </a>
-                <a href="https://linkedin.com/company/safeface" className="text-gray-400 hover:text-blue-400 transition-colors">
+                <a href="https://linkedin.com/company/safeface" className="text-gray-400 hover:text-teal-400 transition-colors">
                   <Linkedin className="h-5 w-5" />
                 </a>
-                <a href="https://youtube.com/safeface" className="text-gray-400 hover:text-blue-400 transition-colors">
+                <a href="https://youtube.com/safeface" className="text-gray-400 hover:text-teal-400 transition-colors">
                   <Youtube className="h-5 w-5" />
                 </a>
-                <a href="https://instagram.com/safeface" className="text-gray-400 hover:text-blue-400 transition-colors">
+                <a href="https://instagram.com/safeface" className="text-gray-400 hover:text-teal-400 transition-colors">
                   <Instagram className="h-5 w-5" />
                 </a>
               </div>
