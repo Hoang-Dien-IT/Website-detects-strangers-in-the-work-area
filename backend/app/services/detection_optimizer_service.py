@@ -190,10 +190,11 @@ class DetectionOptimizerService:
         """Lưu detection vào database"""
         try:
             # Prepare detection document for database
+            detection_type = detection_data.get('detection_type', 'stranger')
             detection_doc = {
                 "user_id": ObjectId(detection_data.get('user_id')),
                 "camera_id": ObjectId(detection_data.get('camera_id')),
-                "detection_type": detection_data.get('detection_type', 'stranger'),
+                "detection_type": detection_type,
                 "person_id": ObjectId(detection_data.get('person_id')) if detection_data.get('person_id') else None,
                 "person_name": detection_data.get('person_name', 'Unknown'),
                 "confidence": detection_data.get('confidence', 0),
@@ -201,8 +202,13 @@ class DetectionOptimizerService:
                 "image_path": detection_data.get('image_path', ''),
                 "bbox": detection_data.get('bbox', [0, 0, 0, 0]),
                 "timestamp": datetime.utcnow(),
-                "is_alert_sent": detection_data.get('is_alert_sent', False),
+                "is_alert_sent": detection_type in ["stranger", "unknown"],  # ✅ FIXED: True for alerts, False for known persons
+                "alert_sent": detection_type in ["stranger", "unknown"],  # ✅ FIXED: Compatibility field
                 "alert_methods": detection_data.get('alert_methods', []),
+                "metadata": {
+                    "created_by": "detection_optimizer_service",
+                    "detection_source": "optimized_detection"
+                },
                 "notes": detection_data.get('notes', '')
             }
             

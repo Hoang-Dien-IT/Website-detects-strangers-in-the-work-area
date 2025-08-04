@@ -534,6 +534,7 @@ class StreamProcessor:
                 f.write(img_encoded.tobytes())
                 
             # Create database entry
+            detection_type = detection.get("detection_type", "unknown")
             detection_doc = {
                 "user_id": ObjectId(user_id),
                 "camera_id": ObjectId(camera_id),
@@ -545,9 +546,13 @@ class StreamProcessor:
                 "image_path": image_path,
                 "bbox": detection.get("bbox", [0, 0, 0, 0]),
                 "timestamp": datetime.utcnow(),
-                "is_alert_sent": True,
-                "alert_methods": ["websocket"],
-                "metadata": {}
+                "is_alert_sent": detection_type in ["stranger", "unknown"],  # ✅ FIXED: True for alerts, False for known persons
+                "alert_sent": detection_type in ["stranger", "unknown"],  # ✅ FIXED: Compatibility field
+                "alert_methods": ["websocket"] if detection_type in ["stranger", "unknown"] else [],
+                "metadata": {
+                    "created_by": "stream_processor",
+                    "detection_source": "live_stream"
+                }
             }
             
             # Insert to database

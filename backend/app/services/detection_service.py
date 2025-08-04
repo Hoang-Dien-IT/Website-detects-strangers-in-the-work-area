@@ -51,9 +51,13 @@ class DetectionService:
                 "image_base64": detection_data.image_base64,  # Keep for quick access
                 "bbox": detection_data.bbox,
                 "timestamp": datetime.utcnow(),
-                "is_alert_sent": False,
-                "alert_methods": [],
-                "metadata": {}
+                "is_alert_sent": detection_data.detection_type == "stranger",  # ✅ FIXED: True for strangers, False for known persons
+                "alert_sent": detection_data.detection_type == "stranger",  # ✅ FIXED: Compatibility field
+                "alert_methods": ["websocket"] if detection_data.detection_type == "stranger" else [],
+                "metadata": {
+                    "created_by": "detection_service",
+                    "detection_source": "manual_detection"
+                }
             }
             
             # Insert to database

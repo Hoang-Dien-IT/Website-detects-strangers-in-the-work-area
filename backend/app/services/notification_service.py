@@ -972,12 +972,19 @@ class NotificationService:
                 "detection_type": "stranger",
                 "timestamp": datetime.utcnow(),
                 "alert_sent": True,
+                "is_alert_sent": True,  # ✅ CRITICAL: Always set this to True for stranger detections
                 "confidence_scores": [d.get('confidence', 0) for d in detections],
                 "avg_confidence": sum(d.get('confidence', 0) for d in detections) / len(detections) if detections else 0,
                 "alert_type": "stranger_only_alert",
                 "has_known_person_in_frame": has_known_person,
                 "email_sent": not has_known_person,  # Chỉ gửi email nếu không có người quen
-                "email_sent_at": datetime.utcnow() if not has_known_person else None
+                "email_sent_at": datetime.utcnow() if not has_known_person else None,
+                "alert_methods": ["websocket", "email", "system"],
+                "metadata": {
+                    "created_by": "notification_service",
+                    "alert_reason": "stranger_only_detection",
+                    "frame_analysis": True
+                }
             }
             
             result = await db.detection_logs.insert_one(detection_log)
