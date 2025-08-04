@@ -430,44 +430,21 @@ class NotificationService:
                         </div>
                         
                         <div class="detail-section">
-                            <div class="detail-title">📍 Thông tin hệ thống thực tế:</div>
+                            <div class="detail-title">📍 Thông tin hệ thống:</div>
                             <div class="detail-content">
                                 <p><strong>📹 Camera:</strong> {camera_name}</p>
                                 {f"<p><strong>� Vị trí:</strong> {camera_location}</p>" if camera_location else ""}
-                                <p><strong>🆔 ID Camera:</strong> {camera_info.get('id', 'N/A')}</p>
                                 <p><strong>�🕒 Thời gian phát hiện:</strong> {formatted_time}</p>
                                 <p><strong>👥 Tổng số người lạ:</strong> {stranger_count}</p>
                                 <p><strong>✅ Số người quen:</strong> {known_person_count}</p>
                                 <p><strong>🎯 Độ tin cậy trung bình:</strong> {avg_confidence:.1f}%</p>
-                                <p><strong>🔢 ID Cảnh báo:</strong> {alert_id}</p>
                                 <p><strong>📊 Loại camera:</strong> {camera_info.get('camera_type', 'Không xác định')}</p>
                             </div>
                         </div>
-                        
-                        {f'''
-                        <div class="detail-section">
-                            <div class="detail-title">🔍 Chi tiết phát hiện từng người lạ (Dữ liệu thực):</div>
-                            <div class="detail-content">
-                                <pre style="background-color: #ffffff; padding: 10px; border: 1px solid #dee2e6; border-radius: 5px; font-size: 13px;">{stranger_details}</pre>
-                            </div>
-                        </div>
-                        ''' if stranger_details else ''}
-                        
-                        <div class="detail-section">
-                            <div class="detail-title">📊 Thống kê hệ thống (24h qua):</div>
-                            <div class="detail-content">
-                                <p><strong>🎯 Tổng số detection:</strong> {len(alert_data.get('detections', []))}</p>
-                                <p><strong>⚠️ Mức độ nghiêm trọng:</strong> {alert_data.get('severity', 'N/A').upper()}</p>
-                                <p><strong>🔔 Loại cảnh báo:</strong> {alert_data.get('type', 'N/A')}</p>
-                                <p><strong>🕐 Timestamp hệ thống:</strong> {alert_data.get('timestamp', 'N/A')}</p>
-                                <p><strong>🆔 Log ID:</strong> {alert_data.get('detection_log_id', 'N/A')}</p>
-                                {f"<p><strong>📝 Mô tả camera:</strong> {camera_info.get('description', 'Không có')}</p>" if camera_info.get('description') else ""}
-                            </div>
-                        </div>
-                        
+                                             
                         {f'''
                         <div class="detail-section" style="background-color: #e3f2fd;">
-                            <div class="detail-title">📈 Thống kê hệ thống thực tế (24h qua):</div>
+                            <div class="detail-title">📈 Thống kê hệ thống (24h qua):</div>
                             <div class="detail-content">
                                 <p><strong>🔍 Tổng detection 24h:</strong> {alert_data.get('system_stats', {}).get('total_detections_24h', 'N/A')}</p>
                                 <p><strong>🚨 Cảnh báo người lạ 24h:</strong> {alert_data.get('system_stats', {}).get('stranger_alerts_24h', 'N/A')}</p>
