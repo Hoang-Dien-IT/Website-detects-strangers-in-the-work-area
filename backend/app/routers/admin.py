@@ -97,7 +97,7 @@ async def toggle_admin_role(
             detail=f"Failed to update admin role: {str(e)}"
         )
 
-@router.get("/system/health")
+@router.get("/health")
 async def get_system_health(
     current_admin: User = Depends(get_admin_user)
 ) -> Dict[str, Any]:
@@ -111,13 +111,20 @@ async def get_system_health(
             detail=f"Failed to get system health: {str(e)}"
         )
 
-@router.get("/system/logs")
+@router.get("/logs")
 async def get_system_logs(
     limit: int = 100,
     current_admin: User = Depends(get_admin_user)
 ) -> List[Dict[str, Any]]:
     """Lấy system logs"""
-    return await admin_service.get_system_logs(limit)
+    try:
+        return await admin_service.get_system_logs(limit)
+    except Exception as e:
+        print(f"Error getting system logs: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to get system logs: {str(e)}"
+        )
 
 @router.get("/users/{user_id}/details")
 async def get_user_details(

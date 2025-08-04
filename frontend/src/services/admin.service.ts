@@ -55,7 +55,10 @@ class AdminService {
   async getDashboardStats(): Promise<DashboardStats> {
     try {
       console.log('🔵 AdminService: Getting dashboard stats...');
+      console.log('🔵 AdminService: Making request to /admin/dashboard...');
+      
       const response = await apiService.get<DashboardStats>('/admin/dashboard');
+      console.log('✅ AdminService: Dashboard API response status:', response.status);
       console.log('✅ AdminService: Got dashboard stats:', response.data);
       
       // ✅ Ensure all required fields are present with defaults
@@ -204,7 +207,7 @@ class AdminService {
   async getUserDetails(userId: string): Promise<UserDetails> {
     try {
       console.log('🔵 AdminService: Getting user details:', userId);
-      const response = await apiService.get<any>(`/admin/users/${userId}`);
+      const response = await apiService.get<any>(`/admin/users/${userId}/details`);
       console.log('✅ AdminService: Got user details:', response.data);
       
       // ✅ FIX: Transform response to match expected UserDetails interface
@@ -327,7 +330,7 @@ class AdminService {
   async toggleUserStatus(userId: string, isActive: boolean): Promise<void> {
     try {
       console.log('🔵 AdminService: Toggling user status:', userId, isActive);
-      await apiService.put(`/admin/users/${userId}/status`, { is_active: isActive });
+      await apiService.post(`/admin/users/${userId}/toggle-status`, { is_active: isActive });
       console.log('✅ AdminService: User status toggled');
     } catch (error: any) {
       console.error('❌ AdminService: Error toggling user status:', error);
@@ -339,7 +342,7 @@ class AdminService {
   async toggleAdminRole(userId: string, isAdmin: boolean): Promise<void> {
     try {
       console.log('🔵 AdminService: Toggling admin role:', userId, isAdmin);
-      await apiService.put(`/admin/users/${userId}/admin`, { is_admin: isAdmin });
+      await apiService.post(`/admin/users/${userId}/toggle-admin`, { is_admin: isAdmin });
       console.log('✅ AdminService: Admin role toggled');
     } catch (error: any) {
       console.error('❌ AdminService: Error toggling admin role:', error);

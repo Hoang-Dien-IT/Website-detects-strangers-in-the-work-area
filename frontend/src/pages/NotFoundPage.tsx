@@ -37,7 +37,7 @@ const NotFoundPage: React.FC = () => {
   const handleGoHome = () => {
     if (isAuthenticated) {
       if (user?.is_admin) {
-        navigate('/app/admin'); // ✅ Admin dashboard
+        navigate('/admin'); // ✅ Admin dashboard
       } else {
         navigate('/app/dashboard'); // ✅ User dashboard
       }

@@ -498,59 +498,56 @@ const App: React.FC = () => {
                           } />
                         </Route>
 
-                        {/* User Profile */}
-                        <Route path="profile" element={
-                          <Suspense fallback={<LoadingSpinner />}>
-                            <ProfilePage />
-                          </Suspense>
-                        } />
+                      {/* User Profile */}
+                      <Route path="profile" element={
+                        <Suspense fallback={<LoadingSpinner />}>
+                          <ProfilePage />
+                        </Suspense>
+                      } />
+                    </Route>
 
-                        {/* Admin Panel - Requires Admin Role */}
-                        <Route path="admin/*" element={
-                          <AdminRoute>
-                            <Suspense fallback={<LoadingSpinner />}>
-                              <Routes>
-                                <Route index element={<AdminPage />} />
-                                <Route path="dashboard" element={<AdminPage />} />
-                                <Route path="users" element={<AdminPage />} />
-                                <Route path="system" element={<AdminPage />} />
-                                <Route path="monitoring" element={<AdminPage />} />
-                                <Route path="logs" element={<AdminPage />} />
-                                <Route path="backup" element={<AdminPage />} />
-                                <Route path="maintenance" element={<AdminPage />} />
-                                <Route path="bulk-actions" element={<AdminPage />} />
-                              </Routes>
-                            </Suspense>
-                          </AdminRoute>
-                        } />
-                      </Route>
+                    {/* ✅ Protected Dashboard Routes - Sử dụng DashboardLayout */}
+                    <Route path="/" element={
+                      <ProtectedRoute>
+                        <DashboardLayout />
+                      </ProtectedRoute>
+                    }>
+                      <Route path="dashboard" element={<DashboardPage />} />
+                      <Route path="cameras" element={<CamerasPage />} />
+                      <Route path="cameras/new" element={<CameraFormPage/>} />
+                      <Route path="cameras/:id" element={<CameraDetailPage />} />
+                      {/* <Route path="cameras/:id/edit" element={<EditCameraPage />} /> */}
+                      <Route path="persons" element={<PersonsPage />} />
+                      <Route path="persons/new" element={<PersonFormPage />} />
+                      <Route path="persons/:id" element={<PersonDetailPage />} />
+                      <Route path="persons/:id/edit" element={
+                        <Suspense fallback={<LoadingSpinner />}>
+                          <PersonFormPage />
+                        </Suspense>
+                      } />
 
-                      {/* ✅ Protected Dashboard Routes - Sử dụng DashboardLayout */}
-                      <Route path="/" element={
-                        <ProtectedRoute>
-                          <DashboardLayout />
-                        </ProtectedRoute>
-                      }>
-                        <Route path="dashboard" element={<DashboardPage />} />
-                        <Route path="cameras" element={<CamerasPage />} />
-                        <Route path="cameras/new" element={<CameraFormPage/>} />
-                        <Route path="cameras/:id" element={<CameraDetailPage />} />
-                        {/* <Route path="cameras/:id/edit" element={<EditCameraPage />} /> */}
-                        <Route path="persons" element={<PersonsPage />} />
-                        <Route path="persons/new" element={<PersonFormPage />} />
-                        <Route path="persons/:id" element={<PersonDetailPage />} />
-                        <Route path="persons/:id/edit" element={
-                          <Suspense fallback={<LoadingSpinner />}>
-                            <PersonFormPage />
-                          </Suspense>
-                        } />
+                      <Route path="detections" element={<DetectionsPage />} />
+                      <Route path="analytics" element={<AnalyticsPage />} />
+                      <Route path="settings" element={<SettingsPage />} />
+                      <Route path="live-monitoring" element={<LiveMonitoringPage />} />
+                      {/* <Route path="search" element={<SearchPage />} /> */}
+                    </Route>
 
-                        <Route path="detections" element={<DetectionsPage />} />
-                        <Route path="analytics" element={<AnalyticsPage />} />
-                        <Route path="settings" element={<SettingsPage />} />
-                        <Route path="live-monitoring" element={<LiveMonitoringPage />} />
-                        {/* <Route path="search" element={<SearchPage />} /> */}
-                      </Route>
+                    {/* ✅ Admin Panel - Independent, no sidebar */}
+                    <Route path="/admin" element={
+                      <AdminRoute>
+                        <Suspense fallback={<LoadingSpinner />}>
+                          <AdminPage />
+                        </Suspense>
+                      </AdminRoute>
+                    } />
+                    <Route path="/admin/*" element={
+                      <AdminRoute>
+                        <Suspense fallback={<LoadingSpinner />}>
+                          <AdminPage />
+                        </Suspense>
+                      </AdminRoute>
+                    } />
 
                       {/* ===== ERROR HANDLING ===== */}
                       <Route path="/404" element={

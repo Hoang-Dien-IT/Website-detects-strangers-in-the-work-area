@@ -36,6 +36,9 @@ import {
   FileText,
   Calendar,
   Scan,
+  Crown,
+  Monitor,
+  Database,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -189,35 +192,35 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
     }
   ];
 
-  // const adminMenuItems: MenuItem[] = user?.is_admin ? [
-  //   {
-  //     title: 'Admin Panel',
-  //     icon: Crown,
-  //     path: '/app/admin',
-  //     subItems: [
-  //       {
-  //         title: 'User Management',
-  //         icon: Users,
-  //         path: '/app/admin/users',
-  //       },
-  //       {
-  //         title: 'System Monitor',
-  //         icon: Monitor,
-  //         path: '/app/admin/monitoring',
-  //       },
-  //       {
-  //         title: 'System Logs',
-  //         icon: FileText,
-  //         path: '/app/admin/logs',
-  //       },
-  //       {
-  //         title: 'Backup & Restore',
-  //         icon: Database,
-  //         path: '/app/admin/backup',
-  //       }
-  //     ]
-  //   }
-  // ] : [];
+  const adminMenuItems: MenuItem[] = user?.is_admin ? [
+    {
+      title: 'Admin Panel',
+      icon: Crown,
+      path: '/admin',
+      subItems: [
+        {
+          title: 'User Management',
+          icon: Users,
+          path: '/admin/users',
+        },
+        {
+          title: 'System Monitor',
+          icon: Monitor,
+          path: '/admin/monitoring',
+        },
+        {
+          title: 'System Logs',
+          icon: FileText,
+          path: '/admin/logs',
+        },
+        {
+          title: 'Backup & Restore',
+          icon: Database,
+          path: '/admin/backup',
+        }
+      ]
+    }
+  ] : [];
 
   const isActive = (path: string): boolean => {
     if (path === '/dashboard') {
@@ -486,6 +489,115 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
                 </div>
               );
             })}
+
+            {/* ✅ Admin Menu Items */}
+            {adminMenuItems.length > 0 && (
+              <>
+                {!collapsed && (
+                  <p className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-4 px-2 pt-4">
+                    Administration
+                  </p>
+                )}
+                {adminMenuItems.map((item) => {
+                  const Icon = item.icon;
+                  const active = isActive(item.path);
+                  const expanded = isExpanded(item.title);
+                  const hasSubItems = item.subItems && item.subItems.length > 0;
+                  
+                  return (
+                    <div key={item.title}>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              className={cn(
+                                "w-full justify-start transition-all duration-300 shadow-sm nav-item",
+                                collapsed ? "px-3" : "px-4",
+                                active && "nav-item active"
+                              )}
+                              style={active ? {
+                                background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
+                                color: 'white',
+                                borderColor: '#dc2626',
+                                boxShadow: '0 8px 25px -8px rgba(220, 38, 38, 0.5)'
+                              } : {
+                                color: '#475569',
+                                background: 'transparent',
+                                border: '1px solid transparent'
+                              }}
+                              onClick={() => {
+                                if (hasSubItems && !collapsed) {
+                                  toggleExpanded(item.title);
+                                } else {
+                                  handleNavigation(item.path);
+                                }
+                              }}
+                            >
+                              <Icon className={cn("mr-3", collapsed ? "w-5 h-5" : "w-5 h-5")} />
+                              {!collapsed && (
+                                <>
+                                  <span className="font-medium">{item.title}</span>
+                                  {hasSubItems && (
+                                    <ChevronDown className={cn(
+                                      "ml-auto w-4 h-4 transition-transform duration-200",
+                                      expanded && "rotate-180"
+                                    )} />
+                                  )}
+                                </>
+                              )}
+                            </Button>
+                          </TooltipTrigger>
+                          {collapsed && (
+                            <TooltipContent side="right">
+                              <p>{item.title}</p>
+                            </TooltipContent>
+                          )}
+                        </Tooltip>
+                      </TooltipProvider>
+                      
+                      {hasSubItems && expanded && !collapsed && (
+                        <div className="ml-6 mt-2 space-y-1">
+                          {item.subItems!.map((subItem) => {
+                            const SubIcon = subItem.icon;
+                            const subActive = location.pathname === subItem.path || 
+                                             (subItem.path.includes('?') && location.pathname + location.search === subItem.path);
+                            
+                            return (
+                              <Button
+                                key={subItem.path}
+                                variant="ghost"
+                                size="sm"
+                                className={cn(
+                                  "w-full justify-start text-sm transition-all duration-200",
+                                  subActive && "bg-red-50 text-red-700 border-l-2 border-red-500"
+                                )}
+                                style={subActive ? {
+                                  background: 'linear-gradient(135deg, #fef2f2 0%, #fecaca 100%)',
+                                  color: '#b91c1c',
+                                  borderLeft: '3px solid #dc2626'
+                                } : {
+                                  color: '#64748b'
+                                }}
+                                onClick={() => handleNavigation(subItem.path)}
+                              >
+                                <SubIcon className="w-4 h-4 mr-3" />
+                                <span className="font-medium">{subItem.title}</span>
+                                {subItem.badge && (
+                                  <Badge variant="secondary" className="ml-auto text-xs">
+                                    {subItem.badge}
+                                  </Badge>
+                                )}
+                              </Button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </>
+            )}
           </div>
         </div>
       </ScrollArea>

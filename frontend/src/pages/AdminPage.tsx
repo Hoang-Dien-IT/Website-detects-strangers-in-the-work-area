@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,10 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Users,
-  Settings,
   Activity,
-  Database,
-  Server,
   UserCheck,
   UserX,
   Shield,
@@ -25,9 +23,6 @@ import {
   RefreshCw,
   Calendar,
   TrendingUp,
-  HardDrive,
-  Cpu,
-  MemoryStick,
   Monitor,
   BarChart3,
   FileText,
@@ -66,6 +61,7 @@ import {
 // ✅ Import unified types from admin.types.ts instead of defining local ones
 import { DashboardStats, SystemHealth, SystemLog, UserWithStats } from '@/types/admin.types';
 import { adminService } from '@/services/admin.service';
+import AdminLayout from '@/components/admin/AdminLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
@@ -82,6 +78,8 @@ import { UserDetails } from '@/types/admin.types';
 
 const AdminPage: React.FC = () => {
   const { user } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -100,9 +98,37 @@ const AdminPage: React.FC = () => {
     user: null
   });
 
+  // ✅ Handle tab change with navigation
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    if (value === 'dashboard') {
+      navigate('/admin');
+    } else {
+      navigate(`/admin/${value}`);
+    }
+  };
+
+  // ✅ Set active tab based on URL
+  useEffect(() => {
+    const path = location.pathname;
+    if (path.includes('/users')) {
+      setActiveTab('users');
+    } else if (path.includes('/monitoring')) {
+      setActiveTab('monitoring');
+    } else if (path.includes('/logs')) {
+      setActiveTab('logs');
+    } else {
+      setActiveTab('dashboard');
+    }
+  }, [location.pathname]);
+
   // ✅ Enhanced data loading with proper error handling and type transformation
-  const loadAdminData = useCallback(async (isRefresh = false) => {
+  const loadAdminData = async (isRefresh = false) => {
     try {
+      console.log('🔵 AdminPage: Starting loadAdminData, isRefresh:', isRefresh);
+      console.log('🔵 AdminPage: Current user:', user);
+      console.log('🔵 AdminPage: adminService available:', !!adminService);
+      
       if (!isRefresh) {
         setLoading(true);
       } else {
@@ -111,33 +137,53 @@ const AdminPage: React.FC = () => {
 
       console.log('🔵 AdminPage: Loading dashboard data...');
       
-      // Load dashboard stats
+      // Load dashboard stats - Admin chỉ quản lý người dùng
       try {
+        console.log('🔵 AdminPage: Calling adminService.getDashboardStats()...');
         const statsResponse = await adminService.getDashboardStats();
-        console.log('✅ AdminPage: Dashboard stats loaded:', statsResponse);
-        setStats(statsResponse);
+        console.log('✅ AdminPage: Dashboard stats loaded successfully:', statsResponse);
+        
+        // ✅ Admin chỉ quan tâm đến thống kê người dùng và tài nguyên của họ
+        const adminStats = {
+          ...statsResponse,
+          // Giữ nguyên dữ liệu gốc nhưng admin chỉ hiển thị thống kê tổng quan
+          total_users: statsResponse.total_users || 0,
+          active_users: statsResponse.active_users || 0,
+          admin_users: statsResponse.admin_users || 0,
+          // Tổng camera của tất cả người dùng
+          total_cameras: statsResponse.total_cameras || 0,
+          active_cameras: statsResponse.active_cameras || 0,
+          // Tổng known persons của tất cả người dùng  
+          total_persons: statsResponse.total_persons || 0,
+          active_persons: statsResponse.active_persons || 0,
+          // Tổng detections của tất cả người dùng
+          total_detections: statsResponse.total_detections || 0,
+          known_person_detections: statsResponse.known_person_detections || 0,
+          stranger_detections: statsResponse.stranger_detections || 0,
+        };
+        
+        console.log('✅ AdminPage: Processed admin stats:', adminStats);
+        setStats(adminStats);
       } catch (error: any) {
         console.error('❌ AdminPage: Error loading dashboard stats:', error);
-        if (!stats) {
-          setStats({
-            total_users: 0,
-            active_users: 0,
-            admin_users: 0,
-            total_cameras: 0,
-            active_cameras: 0,
-            streaming_cameras: 0,
-            total_persons: 0,
-            active_persons: 0,
-            total_detections: 0,
-            stranger_detections: 0,
-            known_person_detections: 0,
-            today_detections: 0,
-            this_week_detections: 0,
-            recent_activity: [],
-            system_status: 'error',
-            last_updated: new Date().toISOString()
-          });
-        }
+        setStats({
+          total_users: 0,
+          active_users: 0,
+          admin_users: 0,
+          total_cameras: 0,
+          active_cameras: 0,
+          streaming_cameras: 0,
+          total_persons: 0,
+          active_persons: 0,
+          total_detections: 0,
+          stranger_detections: 0,
+          known_person_detections: 0,
+          today_detections: 0,
+          this_week_detections: 0,
+          recent_activity: [],
+          system_status: 'error',
+          last_updated: new Date().toISOString()
+        });
       }
 
       // Load system health
@@ -147,21 +193,19 @@ const AdminPage: React.FC = () => {
         setHealth(healthResponse);
       } catch (error: any) {
         console.error('❌ AdminPage: Error loading system health:', error);
-        if (!health) {
-          setHealth({
-            database: 'error',
-            face_recognition: 'error',
-            websocket: 'error',
-            uptime: 0,
-            system: {
-              memory: { total: 0, available: 0, used: 0, percent: 0 },
-              cpu: { percent: 0 },
-              disk: { total: 0, used: 0, free: 0, percent: 0 }
-            },
-            // ✅ FIX: Use correct property name
-            last_check: new Date().toISOString()
-          });
-        }
+        setHealth({
+          database: 'error',
+          face_recognition: 'error',
+          websocket: 'error',
+          uptime: 0,
+          system: {
+            memory: { total: 0, available: 0, used: 0, percent: 0 },
+            cpu: { percent: 0 },
+            disk: { total: 0, used: 0, free: 0, percent: 0 }
+          },
+          // ✅ FIX: Use correct property name
+          last_check: new Date().toISOString()
+        });
       }
 
       // ✅ FIX: Load users and transform to UserWithStats
@@ -248,24 +292,32 @@ const AdminPage: React.FC = () => {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [stats, health, users, logs]);
+  };
 
   useEffect(() => {
+    console.log('🔍 AdminPage useEffect triggered - user:', user);
+    console.log('🔍 AdminPage useEffect - user.is_admin:', user?.is_admin);
+    
     if (user?.is_admin) {
+      console.log('✅ User is admin, loading admin data...');
       loadAdminData();
+    } else {
+      console.log('❌ User is not admin or user is null');
     }
-  }, [user, loadAdminData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.is_admin]); // ✅ FIX: Only depend on user admin status
 
-  // ✅ Auto refresh every 30 seconds
+  // ✅ Auto refresh every 5 minutes (instead of 30 seconds to reduce server load)
   useEffect(() => {
     if (!user?.is_admin) return;
     
     const interval = setInterval(() => {
       loadAdminData(true);
-    }, 30000);
+    }, 300000); // 5 minutes instead of 30 seconds
     
     return () => clearInterval(interval);
-  }, [user, loadAdminData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.is_admin]); // ✅ FIX: Only depend on admin status
 
   // ✅ Enhanced user filtering
   const filteredUsers = users.filter(user =>
@@ -451,14 +503,6 @@ const AdminPage: React.FC = () => {
   };
 
   // ✅ Helper functions
-  const formatBytes = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
-
   const formatUptime = (uptime: string | number) => {
     if (typeof uptime === 'string') return uptime;
     
@@ -470,38 +514,6 @@ const AdminPage: React.FC = () => {
     if (days > 0) return `${days}d ${hours}h ${minutes}m`;
     if (hours > 0) return `${hours}h ${minutes}m`;
     return `${minutes}m`;
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status?.toLowerCase()) {
-      case 'healthy':
-      case 'online':
-        return 'text-green-600';
-      case 'warning':
-        return 'text-yellow-600';
-      case 'error':
-      case 'offline':
-      case 'unhealthy':
-        return 'text-red-600';
-      default:
-        return 'text-gray-600';
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status?.toLowerCase()) {
-      case 'healthy':
-      case 'online':
-        return <CheckCircle className="w-4 h-4 text-green-600" />;
-      case 'warning':
-        return <AlertTriangle className="w-4 h-4 text-yellow-600" />;
-      case 'error':
-      case 'offline':
-      case 'unhealthy':
-        return <XCircle className="w-4 h-4 text-red-600" />;
-      default:
-        return <div className="w-4 h-4 bg-gray-400 rounded-full" />;
-    }
   };
 
   // ✅ Enhanced progress bar component
@@ -539,195 +551,330 @@ const AdminPage: React.FC = () => {
   // ✅ Loading state
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <LoadingSpinner size="lg" />
-          <p className="mt-4 text-gray-600">Loading admin panel...</p>
+      <AdminLayout>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <LoadingSpinner size="lg" />
+            <p className="mt-4 text-gray-600">Loading admin panel...</p>
+          </div>
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* ✅ Enhanced Header */}
+    <AdminLayout>
+      <div className="space-y-6">
+      {/* ✅ Enhanced Modern Header with Gradient Background */}
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0"
+        className="relative overflow-hidden bg-gradient-to-br from-purple-600 via-pink-600 to-rose-700 rounded-3xl p-8 text-white shadow-2xl"
       >
-        <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-gray-700 bg-clip-text text-transparent">
-            System Administration
-          </h1>
-          <p className="text-gray-600 mt-1">
-            Manage users, monitor system health, and configure settings
-          </p>
-          <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
-            <span>Last updated: {new Date().toLocaleTimeString()}</span>
-            <span>•</span>
-            <span>{users.length} total users</span>
-            <span>•</span>
-            <span>{stats?.total_cameras || 0} cameras</span>
-          </div>
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-black/10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                            radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                            radial-gradient(circle at 40% 40%, rgba(255,255,255,0.05) 0%, transparent 50%)`
+          }} />
         </div>
         
-        <div className="flex items-center space-x-4">
-          {/* System Status Indicator */}
-          {health && (
-            <div className="flex items-center space-x-2">
-              {health.database === 'healthy' && health.face_recognition === 'healthy' ? (
-                <CheckCircle className="h-5 w-5 text-green-500" />
-              ) : (
-                <AlertTriangle className="h-5 w-5 text-red-500" />
-              )}
-              <span className={`text-sm font-medium ${
-                health.database === 'healthy' && health.face_recognition === 'healthy' 
-                  ? 'text-green-600' 
-                  : 'text-red-600'
-              }`}>
-                {health.database === 'healthy' && health.face_recognition === 'healthy' 
-                  ? 'System Healthy' 
-                  : 'System Issues'
-                }
-              </span>
+        <div className="relative flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-6 sm:space-y-0">
+          <div className="flex-1">
+            <div className="flex items-center space-x-4 mb-4">
+              <div className="p-3 bg-white/20 rounded-2xl backdrop-blur-sm">
+                <Shield className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold text-white mb-2">
+                  SafeFace Admin Panel
+                </h1>
+                <div className="flex items-center space-x-2">
+                  <div className="px-3 py-1 bg-white/20 rounded-full backdrop-blur-sm">
+                    <span className="text-sm font-medium">System Admin</span>
+                  </div>
+                  <div className="px-3 py-1 bg-white/20 rounded-full backdrop-blur-sm">
+                    <span className="text-sm font-medium">Administrator</span>
+                  </div>
+                </div>
+              </div>
             </div>
-          )}
+            
+            <p className="text-blue-100 text-lg mb-4 leading-relaxed">
+              User Account Management & System Overview
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <div className="flex items-center space-x-3 p-3 bg-white/10 rounded-xl backdrop-blur-sm">
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <Calendar className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <div className="text-blue-100">Last updated</div>
+                  <div className="font-semibold">{new Date().toLocaleTimeString()}</div>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-3 p-3 bg-white/10 rounded-xl backdrop-blur-sm">
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <Users className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <div className="text-blue-100">Total user accounts</div>
+                  <div className="font-semibold">{users.length} users</div>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-3 p-3 bg-white/10 rounded-xl backdrop-blur-sm">
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <Camera className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <div className="text-blue-100">Total user cameras</div>
+                  <div className="font-semibold">{stats?.total_cameras || 0} cameras</div>
+                </div>
+              </div>
+            </div>
+          </div>
           
-          <Button 
-            onClick={handleRefresh} 
-            variant="outline"
-            disabled={refreshing}
-            className="shadow-sm"
-          >
-            <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-            {refreshing ? 'Refreshing...' : 'Refresh'}
-          </Button>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
-                <Download className="w-4 h-4 mr-2" />
-                Export
+          {/* Modern Control Panel */}
+          <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
+            {/* System Status Indicator */}
+            {health && (
+              <motion.div 
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="flex items-center space-x-3 px-4 py-3 bg-white/20 rounded-2xl backdrop-blur-sm"
+              >
+                <div className={`p-2 rounded-full ${
+                  health.database === 'healthy' && health.face_recognition === 'healthy' 
+                    ? 'bg-green-500/20' 
+                    : 'bg-red-500/20'
+                }`}>
+                  {health.database === 'healthy' && health.face_recognition === 'healthy' ? (
+                    <CheckCircle className="h-5 w-5 text-green-300" />
+                  ) : (
+                    <AlertTriangle className="h-5 w-5 text-red-300" />
+                  )}
+                </div>
+                <div>
+                  <div className="text-xs text-blue-200">System Status</div>
+                  <div className="font-semibold text-sm">
+                    {health.database === 'healthy' && health.face_recognition === 'healthy' 
+                      ? 'All Systems Healthy' 
+                      : 'Issues Detected'
+                    }
+                  </div>
+                </div>
+              </motion.div>
+            )}
+            
+            <div className="flex items-center space-x-3">
+              <Button 
+                onClick={handleRefresh} 
+                variant="secondary"
+                disabled={refreshing}
+                className="bg-white/20 hover:bg-white/30 border-white/20 text-white backdrop-blur-sm transition-all duration-300 hover:scale-105"
+              >
+                <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+                {refreshing ? 'Refreshing...' : 'Refresh'}
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => handleExportData('users')}>
-                <Users className="h-4 w-4 mr-2" />
-                Export Users
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleExportData('logs')}>
-                <Activity className="h-4 w-4 mr-2" />
-                Export Logs
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleExportData('stats')}>
-                <TrendingUp className="h-4 w-4 mr-2" />
-                Export Statistics
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="secondary" className="bg-white/20 hover:bg-white/30 border-white/20 text-white backdrop-blur-sm transition-all duration-300 hover:scale-105">
+                    <Download className="w-4 h-4 mr-2" />
+                    Export
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-white/95 backdrop-blur-sm">
+                  <DropdownMenuItem onClick={() => handleExportData('users')}>
+                    <Users className="h-4 w-4 mr-2" />
+                    Export Users
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleExportData('logs')}>
+                    <Activity className="h-4 w-4 mr-2" />
+                    Export Logs
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleExportData('stats')}>
+                    <TrendingUp className="h-4 w-4 mr-2" />
+                    Export Statistics
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
         </div>
       </motion.div>
 
-      {/* Quick Stats */}
+      {/* Enhanced Modern Quick Stats */}
       {stats && (
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
         >
-          {/* Total Users */}
-          <Card className="shadow-sm hover:shadow-md transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Total Users</p>
-                  <p className="text-3xl font-bold text-blue-900">{stats.total_users}</p>
-                  <div className="flex items-center space-x-2 text-xs mt-1">
-                    <Badge variant="outline" className="bg-green-100 text-green-800 border-green-300">
-                      {stats.active_users} active
-                    </Badge>
-                    <Badge variant="outline" className="bg-purple-100 text-purple-800 border-purple-300">
-                      {stats.admin_users || 0} admin
-                    </Badge>
+          {/* Total Accounts - Blue Theme */}
+          <motion.div
+            whileHover={{ scale: 1.02, y: -5 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <Card className="relative overflow-hidden bg-gradient-to-br from-purple-50 to-purple-100 border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-400 to-purple-600 rounded-bl-full opacity-20" />
+              <CardContent className="p-6 relative">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-2">
+                      <div className="p-2 bg-purple-500/20 rounded-lg">
+                        <Users className="h-5 w-5 text-purple-600" />
+                      </div>
+                      <p className="text-sm font-semibold text-purple-700">Total Accounts</p>
+                    </div>
+                    <p className="text-3xl font-bold text-purple-900">{stats.total_users}</p>
+                    <div className="flex items-center space-x-2">
+                      <Badge variant="secondary" className="bg-green-100 text-green-800 border-0 px-2 py-1">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mr-1" />
+                        {stats.active_users} active
+                      </Badge>
+                      <Badge variant="secondary" className="bg-gray-100 text-gray-800 border-0 px-2 py-1">
+                        <div className="w-2 h-2 bg-gray-500 rounded-full mr-1" />
+                        {stats.total_users - stats.active_users} inactive
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-purple-500/20 rounded-full blur-lg" />
+                    <div className="relative p-4 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-lg">
+                      <Users className="h-8 w-8 text-white" />
+                    </div>
                   </div>
                 </div>
-                <div className="p-3 bg-blue-100 rounded-full shadow-lg">
-                  <Users className="h-6 w-6 text-blue-700" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </motion.div>
 
-          {/* Total Cameras */}
-          <Card className="shadow-sm hover:shadow-md transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Total Cameras</p>
-                  <p className="text-3xl font-bold text-green-900">{stats.total_cameras}</p>
-                  <div className="flex items-center space-x-2 text-xs mt-1">
-                    <Badge variant="outline" className="bg-green-100 text-green-800 border-green-300">
-                      {stats.active_cameras} online
-                    </Badge>
-                    <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-300">
-                      {stats.streaming_cameras || 0} streaming
-                    </Badge>
+          {/* Active Users - Green Theme */}
+          <motion.div
+            whileHover={{ scale: 1.02, y: -5 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <Card className="relative overflow-hidden bg-gradient-to-br from-green-50 to-green-100 border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-bl-full opacity-20" />
+              <CardContent className="p-6 relative">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-2">
+                      <div className="p-2 bg-green-500/20 rounded-lg">
+                        <UserCheck className="h-5 w-5 text-green-600" />
+                      </div>
+                      <p className="text-sm font-semibold text-green-700">Active Users</p>
+                    </div>
+                    <p className="text-3xl font-bold text-green-900">{stats.active_users}</p>
+                    <div className="flex items-center space-x-2">
+                      <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-0 px-2 py-1">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full mr-1" />
+                        {Math.round((stats.active_users / stats.total_users) * 100) || 0}% of total
+                      </Badge>
+                      <Badge variant="secondary" className="bg-green-100 text-green-800 border-0 px-2 py-1">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mr-1" />
+                        online
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-green-500/20 rounded-full blur-lg" />
+                    <div className="relative p-4 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl shadow-lg">
+                      <UserCheck className="h-8 w-8 text-white" />
+                    </div>
                   </div>
                 </div>
-                <div className="p-3 bg-green-100 rounded-full shadow-lg">
-                  <Camera className="h-6 w-6 text-green-700" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </motion.div>
 
-          {/* Total Persons */}
-          <Card className="shadow-sm hover:shadow-md transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Known Persons</p>
-                  <p className="text-3xl font-bold text-purple-900">{stats.total_persons}</p>
-                  <div className="flex items-center space-x-2 text-xs mt-1">
-                    <Badge variant="outline" className="bg-green-100 text-green-800 border-green-300">
-                      {stats.active_persons || 0} active
-                    </Badge>
+          {/* Admin Users - Purple Theme */}
+          <motion.div
+            whileHover={{ scale: 1.02, y: -5 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <Card className="relative overflow-hidden bg-gradient-to-br from-purple-50 to-purple-100 border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-400 to-purple-600 rounded-bl-full opacity-20" />
+              <CardContent className="p-6 relative">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-2">
+                      <div className="p-2 bg-purple-500/20 rounded-lg">
+                        <Shield className="h-5 w-5 text-purple-600" />
+                      </div>
+                      <p className="text-sm font-semibold text-purple-700">Admin Users</p>
+                    </div>
+                    <p className="text-3xl font-bold text-purple-900">{stats.admin_users || 0}</p>
+                    <div className="flex items-center space-x-2">
+                      <Badge variant="secondary" className="bg-purple-100 text-purple-800 border-0 px-2 py-1">
+                        <div className="w-2 h-2 bg-purple-500 rounded-full mr-1" />
+                        {Math.round(((stats.admin_users || 0) / stats.total_users) * 100) || 0}% of total
+                      </Badge>
+                      <Badge variant="secondary" className="bg-red-100 text-red-800 border-0 px-2 py-1">
+                        <div className="w-2 h-2 bg-red-500 rounded-full mr-1" />
+                        privileged
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-purple-500/20 rounded-full blur-lg" />
+                    <div className="relative p-4 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-lg">
+                      <Shield className="h-8 w-8 text-white" />
+                    </div>
                   </div>
                 </div>
-                <div className="p-3 bg-purple-100 rounded-full shadow-lg">
-                  <UserCheck className="h-6 w-6 text-purple-700" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </motion.div>
 
-          {/* Total Detections */}
-          <Card className="shadow-sm hover:shadow-md transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Total Detections</p>
-                  <p className="text-3xl font-bold text-orange-900">{stats.total_detections}</p>
-                  <div className="flex items-center space-x-2 text-xs mt-1">
-                    <Badge variant="outline" className="bg-green-100 text-green-800 border-green-300">
-                      {stats.known_person_detections} known
-                    </Badge>
-                    <Badge variant="outline" className="bg-red-100 text-red-800 border-red-300">
-                      {stats.stranger_detections} unknown
-                    </Badge>
+          {/* User Cameras - Orange Theme */}
+          <motion.div
+            whileHover={{ scale: 1.02, y: -5 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <Card className="relative overflow-hidden bg-gradient-to-br from-orange-50 to-orange-100 border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-orange-400 to-orange-600 rounded-bl-full opacity-20" />
+              <CardContent className="p-6 relative">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-2">
+                      <div className="p-2 bg-orange-500/20 rounded-lg">
+                        <Camera className="h-5 w-5 text-orange-600" />
+                      </div>
+                      <p className="text-sm font-semibold text-orange-700">User Cameras</p>
+                    </div>
+                    <p className="text-3xl font-bold text-orange-900">{stats.total_cameras}</p>
+                    <div className="flex items-center space-x-2">
+                      <Badge variant="secondary" className="bg-green-100 text-green-800 border-0 px-2 py-1">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mr-1" />
+                        {stats.active_cameras} online
+                      </Badge>
+                      <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-0 px-2 py-1">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full mr-1" />
+                        {stats.streaming_cameras || 0} streaming
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-orange-500/20 rounded-full blur-lg" />
+                    <div className="relative p-4 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl shadow-lg">
+                      <Camera className="h-8 w-8 text-white" />
+                    </div>
                   </div>
                 </div>
-                <div className="p-3 bg-orange-100 rounded-full shadow-lg">
-                  <Eye className="h-6 w-6 text-orange-700" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </motion.div>
         </motion.div>
       )}
 
-      {/* System Health Alert */}
+      {/* System Health Alert - For Admin User Management */}
       {health && (health.database !== 'healthy' || health.face_recognition !== 'healthy') && (
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
@@ -736,102 +883,323 @@ const AdminPage: React.FC = () => {
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              System health issues detected. Please check the system monitoring tab for details.
+              System health issues detected. This may affect user data and account management. Please check the monitoring tab for details.
             </AlertDescription>
           </Alert>
         </motion.div>
       )}
 
-      {/* Main Content Tabs */}
+      {/* Enhanced Modern Tabs */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
+        transition={{ delay: 0.3 }}
       >
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="dashboard" className="flex items-center space-x-2">
-              <BarChart3 className="h-4 w-4" />
-              <span>Dashboard</span>
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-8">
+          <TabsList className="grid w-full grid-cols-4 bg-white/50 backdrop-blur-sm p-2 rounded-2xl border-0 shadow-lg">
+            <TabsTrigger 
+              value="dashboard" 
+              className="flex items-center space-x-2 rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-md transition-all duration-300 hover:scale-105"
+            >
+              <div className="p-1.5 bg-blue-100 rounded-lg">
+                <BarChart3 className="h-4 w-4 text-blue-600" />
+              </div>
+              <span className="font-medium">Dashboard</span>
             </TabsTrigger>
-            <TabsTrigger value="users" className="flex items-center space-x-2">
-              <Users className="h-4 w-4" />
-              <span>Users</span>
+            <TabsTrigger 
+              value="users" 
+              className="flex items-center space-x-2 rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-md transition-all duration-300 hover:scale-105"
+            >
+              <div className="p-1.5 bg-green-100 rounded-lg">
+                <Users className="h-4 w-4 text-green-600" />
+              </div>
+              <span className="font-medium">Users</span>
             </TabsTrigger>
-            <TabsTrigger value="monitoring" className="flex items-center space-x-2">
-              <Monitor className="h-4 w-4" />
-              <span>Monitoring</span>
+            <TabsTrigger 
+              value="monitoring" 
+              className="flex items-center space-x-2 rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-md transition-all duration-300 hover:scale-105"
+            >
+              <div className="p-1.5 bg-purple-100 rounded-lg">
+                <Monitor className="h-4 w-4 text-purple-600" />
+              </div>
+              <span className="font-medium">Monitoring</span>
             </TabsTrigger>
-            <TabsTrigger value="logs" className="flex items-center space-x-2">
-              <FileText className="h-4 w-4" />
-              <span>Logs</span>
+            <TabsTrigger 
+              value="logs" 
+              className="flex items-center space-x-2 rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-md transition-all duration-300 hover:scale-105"
+            >
+              <div className="p-1.5 bg-orange-100 rounded-lg">
+                <FileText className="h-4 w-4 text-orange-600" />
+              </div>
+              <span className="font-medium">Logs</span>
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="dashboard" className="space-y-6">
-            {/* ✅ Enhanced Recent Activity based on #backend */}
+          <TabsContent value="dashboard" className="space-y-8">
+            {/* ✅ Enhanced Recent Activity focused on User Management */}
             {stats?.recent_activity && stats.recent_activity.length > 0 && (
-              <Card>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+              >
+                <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="p-3 bg-gradient-to-br from-green-500 to-blue-600 rounded-2xl shadow-lg">
+                          <Activity className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-bold text-gray-900">Recent User Activities</h3>
+                          <p className="text-sm text-gray-500">Latest user account and system events</p>
+                        </div>
+                      </div>
+                      <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                        {stats.recent_activity.length} events
+                      </Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {stats.recent_activity.slice(0, 5).map((activity, index) => (
+                        <motion.div 
+                          key={`activity-${index}-${activity.timestamp}`}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                          className="group relative"
+                        >
+                          <div className="flex items-start space-x-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
+                            {/* Activity Icon */}
+                            <div className="flex-shrink-0">
+                              <div className="p-2 bg-gradient-to-br from-blue-100 to-green-100 rounded-xl">
+                                {activity.type.toLowerCase().includes('user') ? (
+                                  <Users className="w-5 h-5 text-blue-600" />
+                                ) : activity.type.toLowerCase().includes('login') ? (
+                                  <Shield className="w-5 h-5 text-green-600" />
+                                ) : (
+                                  <Calendar className="w-5 h-5 text-purple-600" />
+                                )}
+                              </div>
+                            </div>
+                            
+                            {/* Activity Content */}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between mb-2">
+                                <h4 className="text-sm font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+                                  {activity.type}
+                                </h4>
+                                <div className="flex items-center space-x-2">
+                                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                                  <span className="text-xs text-gray-500 font-medium">
+                                    {new Date(activity.timestamp).toLocaleTimeString()}
+                                  </span>
+                                </div>
+                              </div>
+                              <p className="text-sm text-gray-600 leading-relaxed">
+                                {activity.description}
+                              </p>
+                              <div className="mt-2 text-xs text-gray-400">
+                                {new Date(activity.timestamp).toLocaleDateString('vi-VN', {
+                                  weekday: 'long',
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric'
+                                })}
+                              </div>
+                            </div>
+                            
+                            {/* Activity Type Badge */}
+                            <div className="flex-shrink-0">
+                              <Badge 
+                                variant="outline" 
+                                className={`text-xs ${
+                                  activity.type.toLowerCase().includes('user') 
+                                    ? 'bg-blue-50 text-blue-700 border-blue-200'
+                                    : activity.type.toLowerCase().includes('login')
+                                    ? 'bg-green-50 text-green-700 border-green-200'
+                                    : 'bg-purple-50 text-purple-700 border-purple-200'
+                                }`}
+                              >
+                                {activity.type.toLowerCase().includes('user') ? 'User' : 
+                                 activity.type.toLowerCase().includes('login') ? 'Auth' : 'System'}
+                              </Badge>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                    
+                    {/* View More Button */}
+                    {stats.recent_activity.length > 5 && (
+                      <div className="mt-6 text-center">
+                        <Button variant="outline" className="bg-gradient-to-r from-blue-50 to-green-50 hover:from-blue-100 hover:to-green-100 border-blue-200">
+                          <Activity className="w-4 h-4 mr-2" />
+                          View All Activities ({stats.recent_activity.length})
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
+            
+            {/* User Management Quick Actions Panel */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50">
                 <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Activity className="w-5 h-5 text-gray-700" />
-                    <span>Recent Activity</span>
+                  <CardTitle className="flex items-center space-x-3">
+                    <div className="p-3 bg-gradient-to-br from-pink-500 to-rose-600 rounded-2xl shadow-lg">
+                      <Users className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900">User Management Actions</h3>
+                      <p className="text-sm text-gray-500">Quick access to user administration tasks</p>
+                    </div>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    {stats.recent_activity.slice(0, 5).map((activity, index) => (
-                      <div key={`activity-${index}-${activity.timestamp}`} className="flex items-center space-x-3 p-3 bg-gray-50 rounded">
-                        <Calendar className="w-4 h-4 text-gray-400" />
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900">{activity.type}</p>
-                          <p className="text-xs text-gray-600">{activity.description}</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Button 
+                      variant="outline" 
+                      className="h-20 bg-gradient-to-br from-pink-50 to-pink-100 hover:from-pink-100 hover:to-pink-200 border-pink-200 transition-all duration-300 hover:scale-105"
+                      onClick={() => setActiveTab('users')}
+                    >
+                      <div className="flex flex-col items-center space-y-3">
+                        <div className="p-2 bg-pink-500/20 rounded-lg">
+                          <Users className="w-8 h-8 text-pink-600" />
                         </div>
-                        <span className="text-xs text-gray-500">
-                          {new Date(activity.timestamp).toLocaleTimeString()}
-                        </span>
+                        <div className="text-center">
+                          <div className="text-sm font-medium text-pink-700">Manage User Accounts</div>
+                          <div className="text-xs text-pink-600">View, edit, activate/deactivate users</div>
+                        </div>
                       </div>
-                    ))}
+                    </Button>
+                    
+                    <Button 
+                      variant="outline" 
+                      className="h-20 bg-gradient-to-br from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 border-green-200 transition-all duration-300 hover:scale-105"
+                      onClick={() => setActiveTab('monitoring')}
+                    >
+                      <div className="flex flex-col items-center space-y-3">
+                        <div className="p-2 bg-green-500/20 rounded-lg">
+                          <Monitor className="w-8 h-8 text-green-600" />
+                        </div>
+                        <div className="text-center">
+                          <div className="text-sm font-medium text-green-700">System Overview</div>
+                          <div className="text-xs text-green-600">Monitor system health & resources</div>
+                        </div>
+                      </div>
+                    </Button>
+                  </div>
+                  
+                  {/* User Statistics Summary */}
+                  <div className="mt-6 pt-6 border-t border-gray-100">
+                    <h4 className="text-sm font-semibold text-gray-700 mb-4">User Account Summary</h4>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="text-center p-3 bg-blue-50 rounded-xl">
+                        <div className="text-2xl font-bold text-blue-600">{users.length}</div>
+                        <div className="text-xs text-blue-700 font-medium">Total Accounts</div>
+                      </div>
+                      <div className="text-center p-3 bg-green-50 rounded-xl">
+                        <div className="text-2xl font-bold text-green-600">
+                          {users.filter(u => u.is_active).length}
+                        </div>
+                        <div className="text-xs text-green-700 font-medium">Active Users</div>
+                      </div>
+                      <div className="text-center p-3 bg-purple-50 rounded-xl">
+                        <div className="text-2xl font-bold text-purple-600">
+                          {users.filter(u => u.is_admin).length}
+                        </div>
+                        <div className="text-xs text-purple-700 font-medium">Admin Users</div>
+                      </div>
+                      <div className="text-center p-3 bg-orange-50 rounded-xl">
+                        <div className="text-2xl font-bold text-orange-600">
+                          {stats?.total_cameras || 0}
+                        </div>
+                        <div className="text-xs text-orange-700 font-medium">User Cameras</div>
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
-            )}
+            </motion.div>
           </TabsContent>
 
-          <TabsContent value="users" className="space-y-6">
-            <div className="space-y-4">
-              {/* Enhanced Search and Filters */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <div className="relative flex-1 max-w-md">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <Input
-                    placeholder="Search users by name, username, email, or department..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                  />
+          <TabsContent value="users" className="space-y-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-6"
+            >
+              {/* Enhanced Modern Search and Filters */}
+              <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between space-y-4 lg:space-y-0 lg:space-x-6">
+                <div className="flex-1 max-w-2xl">
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <Search className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <Input
+                      placeholder="Search users by name, username, email, or department..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-12 pr-4 py-3 bg-white border-0 shadow-lg rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    />
+                    {searchTerm && (
+                      <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setSearchTerm('')}
+                          className="h-6 w-6 p-0 hover:bg-gray-100 rounded-full"
+                        >
+                          <XCircle className="h-4 w-4 text-gray-400" />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center space-x-4 text-sm text-gray-600">
-                  <span>{filteredUsers.length} of {users.length} users</span>
-                  <Badge variant="outline">
-                    {users.filter(u => u.is_active).length} active
-                  </Badge>
-                  <Badge variant="outline">
-                    {users.filter(u => u.is_admin).length} admins
-                  </Badge>
+                
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-3 text-sm bg-white rounded-2xl px-6 py-3 shadow-lg">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                      <span className="text-gray-700 font-medium">{filteredUsers.length} of {users.length} users</span>
+                    </div>
+                    <div className="w-px h-4 bg-gray-300" />
+                    <Badge variant="secondary" className="bg-green-100 text-green-800 border-0">
+                      {users.filter(u => u.is_active).length} active
+                    </Badge>
+                    <Badge variant="secondary" className="bg-purple-100 text-purple-800 border-0">
+                      {users.filter(u => u.is_admin).length} admins
+                    </Badge>
+                  </div>
                 </div>
               </div>
 
-              {/* Enhanced Users List */}
-              <Card>
-                <CardHeader>
+              {/* Enhanced Modern Users List */}
+              <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50">
+                <CardHeader className="pb-6">
                   <CardTitle className="flex items-center justify-between">
-                    <span>Users Management</span>
+                    <div className="flex items-center space-x-3">
+                      <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl shadow-lg">
+                        <Users className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-gray-900">Users Management</h3>
+                        <p className="text-sm text-gray-500">Manage user accounts and permissions</p>
+                      </div>
+                    </div>
                     <Button 
                       variant="outline" 
-                      size="sm"
                       onClick={() => loadAdminData(true)}
                       disabled={refreshing}
+                      className="bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 border-blue-200 transition-all duration-300"
                     >
                       <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
                       Refresh
@@ -841,287 +1209,658 @@ const AdminPage: React.FC = () => {
                 <CardContent>
                   <div className="space-y-4">
                     {filteredUsers.length > 0 ? (
-                      filteredUsers.map((user) => (
-                        <div key={user.id} className="flex items-center space-x-4 p-4 border rounded-lg hover:bg-gray-50 transition-colors">
-                          <Avatar className="h-12 w-12">
-                            <AvatarImage src={user.avatar_url} alt={user.full_name} />
-                            <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-500 text-white">
-                              {user.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center space-x-2 mb-1">
-                              <p className="font-medium text-gray-900 truncate">{user.full_name}</p>
-                              <Badge variant={user.is_active ? "default" : "secondary"}>
-                                {user.is_active ? 'Active' : 'Inactive'}
-                              </Badge>
-                              {user.is_admin && (
-                                <Badge variant="destructive">Admin</Badge>
-                              )}
+                      filteredUsers.map((user, index) => (
+                        <motion.div
+                          key={user.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.05 }}
+                          className="group"
+                        >
+                          <div className="flex items-center space-x-6 p-6 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+                            {/* Enhanced Avatar */}
+                            <div className="relative">
+                              <Avatar className="h-16 w-16 ring-4 ring-white shadow-lg">
+                                <AvatarImage src={user.avatar_url} alt={user.full_name} />
+                                <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-purple-500 text-white text-lg font-bold">
+                                  {user.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>
+                              {/* Status Indicator */}
+                              <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-3 border-white ${
+                                user.is_active ? 'bg-green-500' : 'bg-gray-400'
+                              }`} />
                             </div>
-                            <p className="text-sm text-gray-600 truncate">@{user.username} • {user.email}</p>
-                            <div className="flex items-center space-x-4 mt-2">
-                              <p className="text-xs text-gray-500">
-                                <Calendar className="w-3 h-3 inline mr-1" />
-                                Joined: {new Date(user.created_at).toLocaleDateString()}
-                              </p>
-                              {user.department && (
-                                <p className="text-xs text-gray-500">
-                                  Department: {user.department}
-                                </p>
-                              )}
-                              {user.last_login && (
-                                <p className="text-xs text-gray-500">
-                                  Last login: {new Date(user.last_login).toLocaleDateString()}
-                                </p>
-                              )}
-                            </div>
-                            {user.stats && (
-                              <div className="flex items-center space-x-4 mt-1">
-                                <p className="text-xs text-blue-600">
-                                  🔧 {user.stats.devices_count || 0} devices
-                                </p>
-                                <p className="text-xs text-green-600">
-                                  🔑 {user.stats.permissions_count || 0} permissions
-                                </p>
-                                <p className="text-xs text-purple-600">
-                                  📊 {user.stats.total_logins || 0} total logins
-                                </p>
+                            
+                            {/* User Info */}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center space-x-3 mb-2">
+                                <h4 className="text-lg font-bold text-gray-900 truncate group-hover:text-purple-600 transition-colors">
+                                  {user.full_name}
+                                </h4>
+                                <div className="flex items-center space-x-2">
+                                  <Badge variant={user.is_active ? "default" : "secondary"} className={`${
+                                    user.is_active 
+                                      ? 'bg-green-100 text-green-800 border-green-200' 
+                                      : 'bg-gray-100 text-gray-600 border-gray-200'
+                                  } transition-all duration-300`}>
+                                    {user.is_active ? 'Active' : 'Inactive'}
+                                  </Badge>
+                                  {user.is_admin && (
+                                    <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0">
+                                      Admin
+                                    </Badge>
+                                  )}
+                                </div>
                               </div>
-                            )}
-                          </div>
-                          
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="sm">
-                                <MoreVertical className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => handleViewUserDetails(user)}>
-                                <Eye className="h-4 w-4 mr-2" />
-                                View Details
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleToggleUserStatus(user)}>
-                                {user.is_active ? (
-                                  <>
-                                    <UserX className="h-4 w-4 mr-2" />
-                                    Deactivate User
-                                  </>
-                                ) : (
-                                  <>
-                                    <UserCheck className="h-4 w-4 mr-2" />
-                                    Activate User
-                                  </>
+                              
+                              <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
+                                <span className="flex items-center space-x-1">
+                                  <span className="font-medium">@{user.username}</span>
+                                </span>
+                                <span className="text-gray-400">•</span>
+                                <span className="flex items-center space-x-1">
+                                  <span>{user.email}</span>
+                                </span>
+                              </div>
+                              
+                              {/* User Details Grid */}
+                              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+                                <div className="flex items-center space-x-2 p-2 bg-blue-50 rounded-lg">
+                                  <Calendar className="w-3 h-3 text-blue-600" />
+                                  <div>
+                                    <div className="text-blue-600 font-medium">Joined</div>
+                                    <div className="text-gray-700">{new Date(user.created_at).toLocaleDateString()}</div>
+                                  </div>
+                                </div>
+                                
+                                {user.department && (
+                                  <div className="flex items-center space-x-2 p-2 bg-green-50 rounded-lg">
+                                    <div className="w-3 h-3 bg-green-600 rounded-full" />
+                                    <div>
+                                      <div className="text-green-600 font-medium">Department</div>
+                                      <div className="text-gray-700">{user.department}</div>
+                                    </div>
+                                  </div>
                                 )}
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleToggleAdminRole(user)}>
-                                <Shield className="h-4 w-4 mr-2" />
-                                {user.is_admin ? 'Remove Admin' : 'Make Admin'}
-                              </DropdownMenuItem>
-                              <DropdownMenuItem 
-                                onClick={() => setDeleteDialog({ open: true, user })}
-                                className="text-red-600"
-                              >
-                                <Trash2 className="h-4 w-4 mr-2" />
-                                Delete User
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
+                                
+                                {user.last_login && (
+                                  <div className="flex items-center space-x-2 p-2 bg-purple-50 rounded-lg">
+                                    <Activity className="w-3 h-3 text-purple-600" />
+                                    <div>
+                                      <div className="text-purple-600 font-medium">Last login</div>
+                                      <div className="text-gray-700">{new Date(user.last_login).toLocaleDateString()}</div>
+                                    </div>
+                                  </div>
+                                )}
+                                
+                                {user.stats && (
+                                  <div className="flex items-center space-x-2 p-2 bg-orange-50 rounded-lg">
+                                    <TrendingUp className="w-3 h-3 text-orange-600" />
+                                    <div>
+                                      <div className="text-orange-600 font-medium">Stats</div>
+                                      <div className="text-gray-700">{user.stats.total_logins || 0} logins</div>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            
+                            {/* Action Menu */}
+                            <div className="flex-shrink-0">
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button 
+                                    variant="ghost" 
+                                    size="sm"
+                                    className="h-10 w-10 rounded-full hover:bg-gray-100 transition-all duration-300 hover:scale-110"
+                                  >
+                                    <MoreVertical className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-48 bg-white/95 backdrop-blur-sm">
+                                  <DropdownMenuItem onClick={() => handleViewUserDetails(user)} className="hover:bg-blue-50">
+                                    <Eye className="h-4 w-4 mr-2 text-blue-600" />
+                                    View Details
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleToggleUserStatus(user)} className="hover:bg-green-50">
+                                    {user.is_active ? (
+                                      <>
+                                        <UserX className="h-4 w-4 mr-2 text-red-600" />
+                                        Deactivate User
+                                      </>
+                                    ) : (
+                                      <>
+                                        <UserCheck className="h-4 w-4 mr-2 text-green-600" />
+                                        Activate User
+                                      </>
+                                    )}
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleToggleAdminRole(user)} className="hover:bg-purple-50">
+                                    <Shield className="h-4 w-4 mr-2 text-purple-600" />
+                                    {user.is_admin ? 'Remove Admin' : 'Make Admin'}
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem 
+                                    onClick={() => setDeleteDialog({ open: true, user })}
+                                    className="text-red-600 hover:bg-red-50"
+                                  >
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    Delete User
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
+                          </div>
+                        </motion.div>
                       ))
                     ) : (
-                      <div className="text-center py-12">
-                        <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                        <h3 className="text-lg font-medium text-gray-900 mb-2">No users found</h3>
-                        {searchTerm ? (
-                          <p className="text-gray-500">
-                            No users match your search criteria "<strong>{searchTerm}</strong>"
-                          </p>
-                        ) : (
-                          <p className="text-gray-500">No users have been created yet</p>
-                        )}
-                      </div>
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-center py-16"
+                      >
+                        <div className="relative">
+                          <div className="absolute inset-0 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full blur-xl opacity-50" />
+                          <div className="relative p-8 bg-white rounded-2xl shadow-lg max-w-md mx-auto">
+                            <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">No users found</h3>
+                            {searchTerm ? (
+                              <div className="space-y-3">
+                                <p className="text-gray-500">
+                                  No users match your search criteria "<strong className="text-gray-700">{searchTerm}</strong>"
+                                </p>
+                                <Button 
+                                  variant="outline" 
+                                  onClick={() => setSearchTerm('')}
+                                  className="bg-blue-50 hover:bg-blue-100 border-blue-200"
+                                >
+                                  Clear Search
+                                </Button>
+                              </div>
+                            ) : (
+                              <p className="text-gray-500">No users have been created yet</p>
+                            )}
+                          </div>
+                        </div>
+                      </motion.div>
                     )}
                   </div>
                 </CardContent>
               </Card>
-            </div>
+            </motion.div>
           </TabsContent>
 
-          <TabsContent value="monitoring" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Activity className="h-5 w-5" />
-                  <span>System Monitoring</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* System Health */}
+          <TabsContent value="monitoring" className="space-y-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="grid grid-cols-1 lg:grid-cols-2 gap-8"
+            >
+              {/* System Health Status */}
+              <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50">
+                <CardHeader className="pb-6">
+                  <CardTitle className="flex items-center space-x-3">
+                    <div className="p-3 bg-gradient-to-br from-green-500 to-blue-600 rounded-2xl shadow-lg">
+                      <Activity className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900">System Health</h3>
+                      <p className="text-sm text-gray-500">Core system components status</p>
+                    </div>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
                   {health && (
                     <div className="space-y-4">
-                      <h3 className="text-lg font-semibold">System Health</h3>
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between p-3 border rounded">
-                          <span className="font-medium">Database</span>
-                          <Badge variant={health.database === 'healthy' ? 'default' : 'destructive'}>
-                            {health.database}
+                      {/* Database Status */}
+                      <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.1 }}
+                        className="group"
+                      >
+                        <div className="flex items-center justify-between p-4 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300">
+                          <div className="flex items-center space-x-4">
+                            <div className={`p-3 rounded-xl ${
+                              health.database === 'healthy' 
+                                ? 'bg-green-100' 
+                                : 'bg-red-100'
+                            }`}>
+                              <div className={`w-4 h-4 rounded-full ${
+                                health.database === 'healthy' 
+                                  ? 'bg-green-500' 
+                                  : 'bg-red-500'
+                              }`} />
+                            </div>
+                            <div>
+                              <h4 className="font-semibold text-gray-900">Database Connection</h4>
+                              <p className="text-sm text-gray-600">PostgreSQL database status</p>
+                            </div>
+                          </div>
+                          <Badge 
+                            variant={health.database === 'healthy' ? 'default' : 'destructive'}
+                            className={`${
+                              health.database === 'healthy' 
+                                ? 'bg-green-100 text-green-800 border-green-200' 
+                                : 'bg-red-100 text-red-800 border-red-200'
+                            } transition-all duration-300`}
+                          >
+                            {health.database === 'healthy' ? 'Healthy' : 'Error'}
                           </Badge>
                         </div>
-                        <div className="flex items-center justify-between p-3 border rounded">
-                          <span className="font-medium">Face Recognition</span>
-                          <Badge variant={health.face_recognition === 'healthy' ? 'default' : 'destructive'}>
-                            {health.face_recognition}
-                          </Badge>
-                        </div>
-                        <div className="flex items-center justify-between p-3 border rounded">
-                          <span className="font-medium">WebSocket</span>
-                          <Badge variant={health.websocket === 'healthy' ? 'default' : 'destructive'}>
-                            {health.websocket || 'Unknown'}
-                          </Badge>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                      </motion.div>
 
-                  {/* System Resources */}
-                  {health?.system && (
-                    <div className="space-y-4">
-                      <h3 className="text-lg font-semibold">System Resources</h3>
-                      <div className="space-y-3">
-                        <div>
-                          <div className="flex justify-between text-sm mb-1">
-                            <span>CPU Usage</span>
-                            <span>{health.system.cpu.percent}%</span>
+                      {/* Face Recognition Status */}
+                      <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="group"
+                      >
+                        <div className="flex items-center justify-between p-4 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300">
+                          <div className="flex items-center space-x-4">
+                            <div className={`p-3 rounded-xl ${
+                              health.face_recognition === 'healthy' 
+                                ? 'bg-green-100' 
+                                : 'bg-red-100'
+                            }`}>
+                              <div className={`w-4 h-4 rounded-full ${
+                                health.face_recognition === 'healthy' 
+                                  ? 'bg-green-500' 
+                                  : 'bg-red-500'
+                              }`} />
+                            </div>
+                            <div>
+                              <h4 className="font-semibold text-gray-900">Face Recognition AI</h4>
+                              <p className="text-sm text-gray-600">Deep learning model status</p>
+                            </div>
                           </div>
-                          <ProgressBar value={health.system.cpu.percent} max={100} />
+                          <Badge 
+                            variant={health.face_recognition === 'healthy' ? 'default' : 'destructive'}
+                            className={`${
+                              health.face_recognition === 'healthy' 
+                                ? 'bg-green-100 text-green-800 border-green-200' 
+                                : 'bg-red-100 text-red-800 border-red-200'
+                            } transition-all duration-300`}
+                          >
+                            {health.face_recognition === 'healthy' ? 'Healthy' : 'Error'}
+                          </Badge>
                         </div>
-                        
-                        <div>
-                          <div className="flex justify-between text-sm mb-1">
-                            <span>Memory Usage</span>
-                            <span>{health.system.memory.percent}%</span>
+                      </motion.div>
+
+                      {/* WebSocket Status */}
+                      <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.3 }}
+                        className="group"
+                      >
+                        <div className="flex items-center justify-between p-4 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300">
+                          <div className="flex items-center space-x-4">
+                            <div className={`p-3 rounded-xl ${
+                              health.websocket === 'healthy' 
+                                ? 'bg-green-100' 
+                                : 'bg-red-100'
+                            }`}>
+                              <div className={`w-4 h-4 rounded-full ${
+                                health.websocket === 'healthy' 
+                                  ? 'bg-green-500' 
+                                  : 'bg-red-500'
+                              }`} />
+                            </div>
+                            <div>
+                              <h4 className="font-semibold text-gray-900">WebSocket Connection</h4>
+                              <p className="text-sm text-gray-600">Real-time communication</p>
+                            </div>
                           </div>
-                          <ProgressBar value={health.system.memory.percent} max={100} />
+                          <Badge 
+                            variant={health.websocket === 'healthy' ? 'default' : 'destructive'}
+                            className={`${
+                              health.websocket === 'healthy' 
+                                ? 'bg-green-100 text-green-800 border-green-200' 
+                                : 'bg-red-100 text-red-800 border-red-200'
+                            } transition-all duration-300`}
+                          >
+                            {health.websocket === 'healthy' ? 'Healthy' : 'Unknown'}
+                          </Badge>
                         </div>
-                        
-                        <div>
-                          <div className="flex justify-between text-sm mb-1">
-                            <span>Disk Usage</span>
-                            <span>{health.system.disk.percent}%</span>
-                          </div>
-                          <ProgressBar value={health.system.disk.percent} max={100} />
-                        </div>
-                        
-                        <div className="text-sm">
-                          {/* ✅ FIX: Access uptime from correct location based on #backend */}
-                          <span className="font-medium">Uptime:</span> {formatUptime(health.uptime)}
-                        </div>
-                      </div>
+                      </motion.div>
                     </div>
                   )}
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+
+              {/* System Resources */}
+              <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50">
+                <CardHeader className="pb-6">
+                  <CardTitle className="flex items-center space-x-3">
+                    <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl shadow-lg">
+                      <Monitor className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900">System Resources</h3>
+                      <p className="text-sm text-gray-500">Server performance metrics</p>
+                    </div>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {health?.system && (
+                    <div className="space-y-6">
+                      {/* CPU Usage */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                        className="space-y-3"
+                      >
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center space-x-3">
+                            <div className="p-2 bg-blue-100 rounded-lg">
+                              <div className="w-4 h-4 bg-blue-500 rounded" />
+                            </div>
+                            <span className="font-semibold text-gray-900">CPU Usage</span>
+                          </div>
+                          <span className="text-lg font-bold text-gray-900">
+                            {health.system.cpu.percent.toFixed(1)}%
+                          </span>
+                        </div>
+                        <ProgressBar 
+                          value={health.system.cpu.percent} 
+                          max={100} 
+                          color="bg-blue-500" 
+                        />
+                      </motion.div>
+                      
+                      {/* Memory Usage */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="space-y-3"
+                      >
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center space-x-3">
+                            <div className="p-2 bg-green-100 rounded-lg">
+                              <div className="w-4 h-4 bg-green-500 rounded" />
+                            </div>
+                            <span className="font-semibold text-gray-900">Memory Usage</span>
+                          </div>
+                          <span className="text-lg font-bold text-gray-900">
+                            {health.system.memory.percent.toFixed(1)}%
+                          </span>
+                        </div>
+                        <ProgressBar 
+                          value={health.system.memory.percent} 
+                          max={100} 
+                          color="bg-green-500" 
+                        />
+                        <div className="text-xs text-gray-600">
+                          {(health.system.memory.used / (1024**3)).toFixed(1)} GB / {(health.system.memory.total / (1024**3)).toFixed(1)} GB
+                        </div>
+                      </motion.div>
+                      
+                      {/* Disk Usage */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 }}
+                        className="space-y-3"
+                      >
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center space-x-3">
+                            <div className="p-2 bg-purple-100 rounded-lg">
+                              <div className="w-4 h-4 bg-purple-500 rounded" />
+                            </div>
+                            <span className="font-semibold text-gray-900">Disk Usage</span>
+                          </div>
+                          <span className="text-lg font-bold text-gray-900">
+                            {health.system.disk.percent.toFixed(1)}%
+                          </span>
+                        </div>
+                        <ProgressBar 
+                          value={health.system.disk.percent} 
+                          max={100} 
+                          color="bg-purple-500" 
+                        />
+                        <div className="text-xs text-gray-600">
+                          {(health.system.disk.used / (1024**3)).toFixed(1)} GB / {(health.system.disk.total / (1024**3)).toFixed(1)} GB
+                        </div>
+                      </motion.div>
+                      
+                      {/* System Uptime */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4 }}
+                        className="p-4 bg-gradient-to-r from-rose-50 to-pink-50 rounded-2xl border border-gray-100"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <div className="p-2 bg-gradient-to-br from-rose-500 to-pink-500 rounded-lg">
+                              <TrendingUp className="w-4 h-4 text-white" />
+                            </div>
+                            <span className="font-semibold text-gray-900">System Uptime</span>
+                          </div>
+                          <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-600 to-pink-600">
+                            {formatUptime(health.uptime)}
+                          </span>
+                        </div>
+                      </motion.div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </motion.div>
           </TabsContent>
 
-          <TabsContent value="logs" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Activity className="w-5 h-5" />
-                    <span>System Logs</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Badge variant="outline">
-                      {logs.length} entries
-                    </Badge>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => loadAdminData(true)}
-                      disabled={refreshing}
-                    >
-                      <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-                      Refresh
-                    </Button>
-                  </div>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 max-h-96 overflow-y-auto">
-                  {logs.length > 0 ? (
-                    logs.map((log, index) => (
-                      <div key={log.id || index} className="group hover:bg-gray-50 transition-colors">
-                        <div className="text-sm font-mono p-4 border-l-4 border-blue-400 bg-white rounded-r border border-l-4">
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center space-x-2">
-                              <span className="text-gray-500 font-medium">
-                                {new Date(log.timestamp).toLocaleString()}
-                              </span>
-                              <Badge variant="outline" className="text-xs">
-                                {log.level || 'INFO'}
-                              </Badge>
-                              {log.category && (
-                                <Badge variant="outline" className="text-xs">
-                                  {log.category}
-                                </Badge>
-                              )}
-                            </div>
-                            <div className="text-xs text-gray-400">
-                              #{(log.id || '').slice(-6)}
-                            </div>
-                          </div>
-                          <div className="text-gray-800 space-y-1">
-                            <div className="font-medium">
-                              {log.message || 'No message'}
-                            </div>
-                            {log.user_id && (
-                              <div className="flex items-center space-x-2">
-                                <span className="font-medium text-blue-600">User ID:</span>
-                                <span>{log.user_id}</span>
-                              </div>
-                            )}
-                            {log.camera_id && (
-                              <div className="flex items-center space-x-2">
-                                <span className="font-medium text-green-600">Camera ID:</span>
-                                <span>{log.camera_id}</span>
-                              </div>
-                            )}
-                            {log.ip_address && (
-                              <div className="flex items-center space-x-2">
-                                <span className="font-medium text-orange-600">IP:</span>
-                                <span>{log.ip_address}</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
+          <TabsContent value="logs" className="space-y-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50">
+                <CardHeader className="pb-6">
+                  <CardTitle className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="p-3 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl shadow-lg">
+                        <Activity className="w-6 h-6 text-white" />
                       </div>
-                    ))
-                  ) : (
-                    <div className="text-center py-12">
-                      <Activity className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">No logs available</h3>
-                      <p className="text-gray-500 mb-4">
-                        System logs will appear here when available
-                      </p>
+                      <div>
+                        <h3 className="text-xl font-bold text-gray-900">System Logs</h3>
+                        <p className="text-sm text-gray-500">Real-time system events and activities</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 px-3 py-1">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full mr-2 animate-pulse" />
+                        {logs.length} entries
+                      </Badge>
                       <Button 
                         variant="outline" 
                         onClick={() => loadAdminData(true)}
                         disabled={refreshing}
+                        className="bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 border-blue-200 transition-all duration-300"
                       >
                         <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-                        Refresh Logs
+                        Refresh
                       </Button>
                     </div>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3 max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                    {logs.length > 0 ? (
+                      logs.map((log, index) => (
+                        <motion.div 
+                          key={log.id || index}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.05 }}
+                          className="group relative"
+                        >
+                          <div className="relative overflow-hidden bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-[1.01]">
+                            {/* Log Level Indicator */}
+                            <div className={`absolute left-0 top-0 bottom-0 w-1 ${
+                              log.level === 'error' ? 'bg-red-500' :
+                              log.level === 'warning' ? 'bg-yellow-500' :
+                              log.level === 'info' ? 'bg-blue-500' :
+                              'bg-gray-400'
+                            }`} />
+                            
+                            <div className="p-6 pl-8">
+                              {/* Log Header */}
+                              <div className="flex items-center justify-between mb-3">
+                                <div className="flex items-center space-x-3">
+                                  <div className={`p-2 rounded-lg ${
+                                    log.level === 'error' ? 'bg-red-100' :
+                                    log.level === 'warning' ? 'bg-yellow-100' :
+                                    log.level === 'info' ? 'bg-blue-100' :
+                                    'bg-gray-100'
+                                  }`}>
+                                    <div className={`w-3 h-3 rounded-full ${
+                                      log.level === 'error' ? 'bg-red-500' :
+                                      log.level === 'warning' ? 'bg-yellow-500' :
+                                      log.level === 'info' ? 'bg-blue-500' :
+                                      'bg-gray-400'
+                                    }`} />
+                                  </div>
+                                  <div>
+                                    <span className="text-sm font-medium text-gray-500">
+                                      {new Date(log.timestamp).toLocaleString('vi-VN')}
+                                    </span>
+                                    <div className="flex items-center space-x-2 mt-1">
+                                      <Badge 
+                                        variant="outline" 
+                                        className={`text-xs ${
+                                          log.level === 'error' ? 'bg-red-50 text-red-700 border-red-200' :
+                                          log.level === 'warning' ? 'bg-yellow-50 text-yellow-700 border-yellow-200' :
+                                          log.level === 'info' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                                          'bg-gray-50 text-gray-700 border-gray-200'
+                                        }`}
+                                      >
+                                        {(log.level || 'INFO').toUpperCase()}
+                                      </Badge>
+                                      {log.category && (
+                                        <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">
+                                          {log.category}
+                                        </Badge>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="text-xs text-gray-400 font-mono">
+                                  ID: {(log.id || '').slice(-8)}
+                                </div>
+                              </div>
+                              
+                              {/* Log Message */}
+                              <div className="space-y-3">
+                                <div className="text-gray-800 font-medium leading-relaxed">
+                                  {log.message || 'No message available'}
+                                </div>
+                                
+                                {/* Log Details */}
+                                {(log.user_id || log.camera_id || log.ip_address) && (
+                                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-3 border-t border-gray-100">
+                                    {log.user_id && (
+                                      <div className="flex items-center space-x-2 p-2 bg-blue-50 rounded-lg">
+                                        <UserCheck className="w-4 h-4 text-blue-600" />
+                                        <div>
+                                          <div className="text-xs text-blue-600 font-medium">User ID</div>
+                                          <div className="text-sm text-gray-700 font-mono">{log.user_id}</div>
+                                        </div>
+                                      </div>
+                                    )}
+                                    
+                                    {log.camera_id && (
+                                      <div className="flex items-center space-x-2 p-2 bg-green-50 rounded-lg">
+                                        <Camera className="w-4 h-4 text-green-600" />
+                                        <div>
+                                          <div className="text-xs text-green-600 font-medium">Camera ID</div>
+                                          <div className="text-sm text-gray-700 font-mono">{log.camera_id}</div>
+                                        </div>
+                                      </div>
+                                    )}
+                                    
+                                    {log.ip_address && (
+                                      <div className="flex items-center space-x-2 p-2 bg-orange-50 rounded-lg">
+                                        <Monitor className="w-4 h-4 text-orange-600" />
+                                        <div>
+                                          <div className="text-xs text-orange-600 font-medium">IP Address</div>
+                                          <div className="text-sm text-gray-700 font-mono">{log.ip_address}</div>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))
+                    ) : (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-center py-16"
+                      >
+                        <div className="relative">
+                          <div className="absolute inset-0 bg-gradient-to-r from-orange-100 to-red-100 rounded-full blur-xl opacity-50" />
+                          <div className="relative p-8 bg-white rounded-2xl shadow-lg max-w-md mx-auto">
+                            <Activity className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">No logs available</h3>
+                            <p className="text-gray-500 mb-6">
+                              System logs will appear here when events occur
+                            </p>
+                            <Button 
+                              variant="outline" 
+                              onClick={() => loadAdminData(true)}
+                              disabled={refreshing}
+                              className="bg-gradient-to-r from-orange-50 to-red-50 hover:from-orange-100 hover:to-red-100 border-orange-200"
+                            >
+                              <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+                              Refresh Logs
+                            </Button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </div>
+                  
+                  {/* Log Stats */}
+                  {logs.length > 0 && (
+                    <div className="mt-6 pt-6 border-t border-gray-100">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="text-center p-3 bg-red-50 rounded-xl">
+                          <div className="text-2xl font-bold text-red-600">
+                            {logs.filter(l => l.level === 'error').length}
+                          </div>
+                          <div className="text-xs text-red-700 font-medium">Errors</div>
+                        </div>
+                        <div className="text-center p-3 bg-yellow-50 rounded-xl">
+                          <div className="text-2xl font-bold text-yellow-600">
+                            {logs.filter(l => l.level === 'warning').length}
+                          </div>
+                          <div className="text-xs text-yellow-700 font-medium">Warnings</div>
+                        </div>
+                        <div className="text-center p-3 bg-blue-50 rounded-xl">
+                          <div className="text-2xl font-bold text-blue-600">
+                            {logs.filter(l => l.level === 'info').length}
+                          </div>
+                          <div className="text-xs text-blue-700 font-medium">Info</div>
+                        </div>
+                        <div className="text-center p-3 bg-green-50 rounded-xl">
+                          <div className="text-2xl font-bold text-green-600">
+                            {logs.length}
+                          </div>
+                          <div className="text-xs text-green-700 font-medium">Total</div>
+                        </div>
+                      </div>
+                    </div>
                   )}
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </motion.div>
           </TabsContent>
         </Tabs>
       </motion.div>
@@ -1301,7 +2040,8 @@ const AdminPage: React.FC = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+      </div>
+    </AdminLayout>
   );
 };
 

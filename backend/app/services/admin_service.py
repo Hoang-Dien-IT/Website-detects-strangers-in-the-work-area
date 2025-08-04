@@ -39,6 +39,25 @@ class AdminService:
         })
         
         return {
+            # ✅ Flat structure for frontend compatibility
+            "total_users": total_users,
+            "active_users": active_users,
+            "admin_users": admin_users,
+            "total_cameras": total_cameras,
+            "active_cameras": active_cameras,
+            "streaming_cameras": 0,  # Will be calculated later
+            "total_persons": total_persons,
+            "active_persons": total_persons,  # Same as total for now
+            "total_detections": await db.detection_logs.count_documents({}),
+            "stranger_detections": await db.detection_logs.count_documents({"person_type": "stranger"}),
+            "known_person_detections": await db.detection_logs.count_documents({"person_type": "known"}),
+            "today_detections": today_detections,
+            "this_week_detections": week_detections,
+            "recent_activity": [],  # Will add later
+            "system_status": "healthy",
+            "last_updated": datetime.utcnow().isoformat(),
+            
+            # ✅ Keep legacy nested structure for backward compatibility
             "users": {
                 "total": total_users,
                 "active": active_users,
@@ -54,8 +73,7 @@ class AdminService:
             "detections": {
                 "today": today_detections,
                 "this_week": week_detections
-            },
-            "system_status": "healthy"
+            }
         }
     
     async def get_all_users(self) -> List[Dict[str, Any]]:
@@ -110,36 +128,62 @@ class AdminService:
         try:
             await db.command("ping")
             db_status = "healthy"
-        except:
+        except Exception as e:
+            print(f"Database health check failed: {e}")
             db_status = "unhealthy"
         
         # System resources
-        memory = psutil.virtual_memory()
-        cpu_percent = psutil.cpu_percent()
-        disk = psutil.disk_usage('/')
-        
-        return {
-            "database": db_status,
-            "face_recognition": "healthy",
-            "system": {
-                "memory": {
-                    "total": memory.total,
-                    "available": memory.available,
-                    "used": memory.used,
-                    "percent": memory.percent
+        try:
+            memory = psutil.virtual_memory()
+            cpu_percent = psutil.cpu_percent(interval=1)
+            
+            # Fix disk usage for Windows
+            try:
+                if os.name == 'nt':  # Windows
+                    disk = psutil.disk_usage('C:')
+                else:
+                    disk = psutil.disk_usage('/')
+            except:
+                # Fallback if disk check fails
+                disk = type('obj', (object,), {'total': 0, 'used': 0, 'free': 0})()
+            
+            return {
+                "database": db_status,
+                "face_recognition": "healthy",
+                "system": {
+                    "memory": {
+                        "total": memory.total,
+                        "available": memory.available,
+                        "used": memory.used,
+                        "percent": memory.percent
+                    },
+                    "cpu": {
+                        "percent": cpu_percent
+                    },
+                    "disk": {
+                        "total": disk.total,
+                        "used": disk.used,
+                        "free": disk.free,
+                        "percent": (disk.used / disk.total) * 100 if disk.total > 0 else 0
+                    }
                 },
-                "cpu": {
-                    "percent": cpu_percent
+                "uptime": "System running normally",
+                "timestamp": datetime.utcnow().isoformat()
+            }
+        except Exception as e:
+            print(f"System health check failed: {e}")
+            return {
+                "database": db_status,
+                "face_recognition": "unknown",
+                "system": {
+                    "memory": {"error": "Unable to fetch"},
+                    "cpu": {"error": "Unable to fetch"},
+                    "disk": {"error": "Unable to fetch"}
                 },
-                "disk": {
-                    "total": disk.total,
-                    "used": disk.used,
-                    "free": disk.free,
-                    "percent": (disk.used / disk.total) * 100
-                }
-            },
-            "uptime": "System running normally"
-        }
+                "uptime": "Unknown",
+                "timestamp": datetime.utcnow().isoformat(),
+                "error": str(e)
+            }
     
     async def toggle_user_status(self, user_id: str, is_active: bool) -> bool:
         """Kích hoạt/Vô hiệu hóa user"""
@@ -176,25 +220,40 @@ class AdminService:
         db = self.db
         logs = []
         
-        async for log_data in db.detection_logs.find().sort("timestamp", -1).limit(limit):
-            # Get camera name
-            camera_data = await db.cameras.find_one({"_id": log_data["camera_id"]})
-            camera_name = camera_data["name"] if camera_data else "Unknown Camera"
-            
-            # Get user info
-            user_data = await db.users.find_one({"_id": log_data["user_id"]})
-            username = user_data["username"] if user_data else "Unknown User"
-            
-            logs.append({
-                "id": str(log_data["_id"]),
-                "timestamp": log_data["timestamp"],
-                "type": "detection",
-                "username": username,
-                "camera_name": camera_name,
-                "detection_type": log_data["detection_type"],
-                "person_name": log_data.get("person_name", "Unknown"),
-                "confidence": log_data["confidence"]
-            })
+        try:
+            async for log_data in db.detection_logs.find().sort("timestamp", -1).limit(limit):
+                try:
+                    # Get camera name safely
+                    camera_data = None
+                    if "camera_id" in log_data:
+                        camera_data = await db.cameras.find_one({"_id": log_data["camera_id"]})
+                    camera_name = camera_data["name"] if camera_data else "Unknown Camera"
+                    
+                    # Get user info safely
+                    user_data = None
+                    if "user_id" in log_data:
+                        user_data = await db.users.find_one({"_id": log_data["user_id"]})
+                    username = user_data["username"] if user_data else "Unknown User"
+                    
+                    logs.append({
+                        "id": str(log_data["_id"]),
+                        "timestamp": log_data.get("timestamp", datetime.utcnow()),
+                        "type": "detection",
+                        "username": username,
+                        "camera_name": camera_name,
+                        "detection_type": log_data.get("detection_type", "unknown"),
+                        "person_name": log_data.get("person_name", "Unknown"),
+                        "confidence": log_data.get("confidence", 0.0)  # Use .get() with default value
+                    })
+                except Exception as e:
+                    # Skip invalid log entries but continue processing
+                    print(f"Warning: Skipping invalid log entry {log_data.get('_id', 'unknown')}: {e}")
+                    continue
+                    
+        except Exception as e:
+            print(f"Error getting system logs: {e}")
+            # Return empty logs instead of crashing
+            return []
         
         return logs
 

@@ -539,7 +539,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
               <span>Recent Face Recognition Activities</span>
             </div>
             {recentActions.length > 3 && (
-              <Button variant="outline" size="sm" onClick={() => navigate('/admin/activity-log')}>
+              <Button variant="outline" size="sm" onClick={() => navigate('/admin/logs')}>
                 View All
               </Button>
             )}
@@ -580,7 +580,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
           
           {recentActions.length > 0 && (
             <div className="mt-4 pt-4 border-t">
-              <Button variant="outline" size="sm" className="w-full" onClick={() => navigate('/admin/activity-log')}>
+              <Button variant="outline" size="sm" className="w-full" onClick={() => navigate('/admin/logs')}>
                 <History className="h-4 w-4 mr-2" />
                 View Complete Activity Log
               </Button>

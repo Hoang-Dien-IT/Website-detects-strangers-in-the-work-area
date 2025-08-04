@@ -55,7 +55,7 @@ const LoginPage: React.FC = () => {
         navigate(from, { replace: true });
       } else {
         if (user.is_admin) {
-          navigate('/app/admin', { replace: true });
+          navigate('/admin', { replace: true });
         } else {
           navigate('/app/dashboard', { replace: true });
         }
@@ -126,7 +126,7 @@ const LoginPage: React.FC = () => {
           navigate(from, { replace: true });
         } else {
           if (response?.user?.is_admin) {
-            navigate('/app/admin', { replace: true });
+            navigate('/admin', { replace: true });
           } else {
             navigate('/app/dashboard', { replace: true });
           }
