@@ -22,10 +22,10 @@ import DashboardLayout from '@/components/dashboard/DashboardLayout';
 // ===== PUBLIC PAGES =====
 const HomePage = React.lazy(() => import('@/pages/HomePage'));
 const FeaturesPage = React.lazy(() => import('@/pages/FeaturesPage'));
-const SolutionsPage = React.lazy(() => import('@/pages/SolutionsPage'));
+// const SolutionsPage = React.lazy(() => import('@/pages/SolutionsPage'));
 const ContactPage = React.lazy(() => import('@/pages/ContactPage'));
 const AboutPage = React.lazy(() => import('@/pages/AboutPage'));
-const BlogPage = React.lazy(() => import('@/pages/BlogPage'));
+// const BlogPage = React.lazy(() => import('@/pages/BlogPage'));
 const LoginPage = React.lazy(() => import('@/pages/LoginPage'));
 const RegisterPage = React.lazy(() => import('@/pages/RegisterPage'));
 
@@ -66,7 +66,7 @@ const ProfilePage = React.lazy(() => import('@/pages/ProfilePage'));
 const AdminPage = React.lazy(() => import('@/pages/AdminPage'));
 
 // Utility Pages
-const HelpPage = React.lazy(() => import('@/pages/HelpPage'));
+// const HelpPage = React.lazy(() => import('@/pages/HelpPage'));
 const NotFoundPage = React.lazy(() => import('@/pages/NotFoundPage'));
 const UnauthorizedPage = React.lazy(() => import('@/pages/UnauthorizedPage'));
 
@@ -233,7 +233,7 @@ const App: React.FC = () => {
                             <FeaturesPage />
                           </Suspense>
                         } />
-                        <Route path="solutions" element={
+                        {/* <Route path="solutions" element={
                           <Suspense fallback={<AppLoadingFallback />}>
                             <SolutionsPage />
                           </Suspense>
@@ -242,7 +242,7 @@ const App: React.FC = () => {
                           <Suspense fallback={<AppLoadingFallback />}>
                             <SolutionsPage />
                           </Suspense>
-                        } />
+                        } /> */}
 
                         {/* Company Pages */}
                         <Route path="about" element={
@@ -257,19 +257,19 @@ const App: React.FC = () => {
                         } />
 
                         {/* Resources */}
-                        <Route path="blog" element={
+                        {/* <Route path="blog" element={
                           <Suspense fallback={<AppLoadingFallback />}>
                             <BlogPage />
                           </Suspense>
-                        } />
-                        <Route path="help" element={
+                        } /> */}
+                        {/* <Route path="help" element={
                           <Suspense fallback={<AppLoadingFallback />}>
                             <HelpPage />
                           </Suspense>
-                        } />
+                        } /> */}
 
                         {/* Support Pages */}
-                        <Route path="docs" element={
+                        {/* <Route path="docs" element={
                           <Suspense fallback={<AppLoadingFallback />}>
                             <HelpPage />
                           </Suspense>
@@ -284,7 +284,7 @@ const App: React.FC = () => {
                           <Suspense fallback={<AppLoadingFallback />}>
                             <HelpPage />
                           </Suspense>
-                        } />
+                        } /> */}
 
                       </Route>
 

@@ -57,47 +57,30 @@ const NotFoundPage: React.FC = () => {
 
   const quickActions = isAuthenticated ? (
     user?.is_admin ? [
-      { label: 'Admin Dashboard', icon: <Crown className="h-4 w-4" />, path: '/app/admin' },
-      { label: 'User Management', icon: <Users className="h-4 w-4" />, path: '/app/admin/users' },
-      { label: 'System Monitor', icon: <Monitor className="h-4 w-4" />, path: '/app/admin/monitoring' },
-      { label: 'System Logs', icon: <FileText className="h-4 w-4" />, path: '/app/admin/logs' },
-      { label: 'User Dashboard', icon: <Home className="h-4 w-4" />, path: '/app/dashboard' },
-      { label: 'Settings', icon: <Settings className="h-4 w-4" />, path: '/app/settings' },
-      { label: 'Help', icon: <HelpCircle className="h-4 w-4" />, path: '/app/help' }
+      { label: 'Trang quản trị', icon: <Crown className="h-4 w-4" />, path: '/app/admin' },
+      { label: 'Quản lý người dùng', icon: <Users className="h-4 w-4" />, path: '/app/admin/users' },
+      { label: 'Giám sát hệ thống', icon: <Monitor className="h-4 w-4" />, path: '/app/admin/monitoring' },
+      { label: 'Nhật ký hệ thống', icon: <FileText className="h-4 w-4" />, path: '/app/admin/logs' },
+      { label: 'Bảng điều khiển người dùng', icon: <Home className="h-4 w-4" />, path: '/app/dashboard' },
+      { label: 'Cài đặt', icon: <Settings className="h-4 w-4" />, path: '/app/settings' },
+      { label: 'Trợ giúp', icon: <HelpCircle className="h-4 w-4" />, path: '/app/help' }
     ] : [
-      { label: 'Dashboard', icon: <Home className="h-4 w-4" />, path: '/app/dashboard' },
-      { label: 'Cameras', icon: <Camera className="h-4 w-4" />, path: '/app/cameras' },
-      { label: 'Known Persons', icon: <Users className="h-4 w-4" />, path: '/app/persons' },
-      { label: 'Detections', icon: <Shield className="h-4 w-4" />, path: '/app/detections' },
-      { label: 'Analytics', icon: <BarChart3 className="h-4 w-4" />, path: '/app/analytics' },
-      { label: 'Settings', icon: <Settings className="h-4 w-4" />, path: '/app/settings' },
-      { label: 'Help', icon: <HelpCircle className="h-4 w-4" />, path: '/app/help' }
+      { label: 'Bảng điều khiển', icon: <Home className="h-4 w-4" />, path: '/app/dashboard' },
+      { label: 'Camera', icon: <Camera className="h-4 w-4" />, path: '/app/cameras' },
+      { label: 'Người đã biết', icon: <Users className="h-4 w-4" />, path: '/app/persons' },
+      { label: 'Nhận diện', icon: <Shield className="h-4 w-4" />, path: '/app/detections' },
+      { label: 'Phân tích', icon: <BarChart3 className="h-4 w-4" />, path: '/app/analytics' },
+      { label: 'Cài đặt', icon: <Settings className="h-4 w-4" />, path: '/app/settings' },
+      { label: 'Trợ giúp', icon: <HelpCircle className="h-4 w-4" />, path: '/app/help' }
     ]
   ) : [
-    { label: 'Home', icon: <Home className="h-4 w-4" />, path: '/' },
-    { label: 'Features', icon: <Star className="h-4 w-4" />, path: '/features' },
-    { label: 'Solutions', icon: <Layers className="h-4 w-4" />, path: '/solutions' },
-    { label: 'Contact', icon: <Phone className="h-4 w-4" />, path: '/contact' },
-    { label: 'Sign In', icon: <LogIn className="h-4 w-4" />, path: '/login' },
-    { label: 'Help', icon: <HelpCircle className="h-4 w-4" />, path: '/help' }
+    { label: 'Trang chủ', icon: <Home className="h-4 w-4" />, path: '/' },
+    { label: 'Tính năng', icon: <Star className="h-4 w-4" />, path: '/features' },
+    { label: 'Liên hệ', icon: <Phone className="h-4 w-4" />, path: '/contact' },
+    { label: 'Đăng nhập', icon: <LogIn className="h-4 w-4" />, path: '/login' },
+    { label: 'Trợ giúp', icon: <HelpCircle className="h-4 w-4" />, path: '/help' }
   ];
   
-  // const quickActions = isAuthenticated ? [
-  //   { label: 'Dashboard', icon: <Home className="h-4 w-4" />, path: '/app/dashboard' },
-  //   { label: 'Cameras', icon: <Camera className="h-4 w-4" />, path: '/app/cameras' },
-  //   { label: 'Known Persons', icon: <Users className="h-4 w-4" />, path: '/app/persons' },
-  //   { label: 'Detections', icon: <Shield className="h-4 w-4" />, path: '/app/detections' },
-  //   { label: 'Analytics', icon: <BarChart3 className="h-4 w-4" />, path: '/app/analytics' },
-  //   { label: 'Settings', icon: <Settings className="h-4 w-4" />, path: '/app/settings' },
-  //   { label: 'Help', icon: <HelpCircle className="h-4 w-4" />, path: '/app/help' }
-  // ] : [
-  //   { label: 'Home', icon: <Home className="h-4 w-4" />, path: '/' },
-  //   { label: 'Features', icon: <Star className="h-4 w-4" />, path: '/features' },
-  //   { label: 'Solutions', icon: <Layers className="h-4 w-4" />, path: '/solutions' },
-  //   { label: 'Contact', icon: <Phone className="h-4 w-4" />, path: '/contact' },
-  //   { label: 'Sign In', icon: <LogIn className="h-4 w-4" />, path: '/login' },
-  //   { label: 'Help', icon: <HelpCircle className="h-4 w-4" />, path: '/help' }
-  // ];
 
   const animationVariants = {
     container: {
@@ -156,12 +139,11 @@ const NotFoundPage: React.FC = () => {
         {/* Error Message */}
         <motion.div variants={animationVariants.item} className="space-y-4">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
-            Oops! Page Not Found
+            Ôi! Không tìm thấy trang
           </h1>
           <p className="text-lg text-gray-600 max-w-md mx-auto">
-            The page you're looking for doesn't exist or has been moved to a different location.
+            Trang bạn đang tìm kiếm không tồn tại hoặc đã được di chuyển sang vị trí khác.
           </p>
-          
           {/* Current path info */}
           <div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
             <MapPin className="h-4 w-4" />
@@ -175,17 +157,15 @@ const NotFoundPage: React.FC = () => {
         <motion.div variants={animationVariants.item} className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button onClick={handleGoHome} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
             <Home className="h-4 w-4 mr-2" />
-            {isAuthenticated ? 'Go to Dashboard' : 'Go to Home'}
+            {isAuthenticated ? 'Về trang chính' : 'Về trang chủ'}
           </Button>
-          
           <Button variant="outline" onClick={handleGoBack}>
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Go Back
+            Quay lại
           </Button>
-          
           <Button variant="outline" onClick={() => window.location.reload()}>
             <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh Page
+            Tải lại trang
           </Button>
         </motion.div>
 
@@ -195,7 +175,7 @@ const NotFoundPage: React.FC = () => {
             <CardHeader>
               <CardTitle className="flex items-center justify-center space-x-2">
                 <Compass className="h-5 w-5 text-blue-600" />
-                <span>Quick Navigation</span>
+                <span>Điều hướng nhanh</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -222,21 +202,18 @@ const NotFoundPage: React.FC = () => {
         <motion.div variants={animationVariants.item} className="bg-white/60 backdrop-blur-sm rounded-lg p-6 border">
           <div className="flex items-center justify-center space-x-2 mb-4">
             <HelpCircle className="h-5 w-5 text-blue-600" />
-            <h3 className="text-lg font-semibold text-gray-900">Need Help?</h3>
+            <h3 className="text-lg font-semibold text-gray-900">Cần trợ giúp?</h3>
           </div>
-          
           <p className="text-gray-600 mb-4">
-            If you believe this is an error, please contact our support team or check our help documentation.
+            Nếu bạn cho rằng đây là lỗi, vui lòng liên hệ đội ngũ hỗ trợ hoặc xem tài liệu trợ giúp của chúng tôi.
           </p>
-          
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button variant="outline" size="sm" onClick={() => navigate('/help')}>
               <Search className="h-4 w-4 mr-2" />
-              Browse Help Articles
+              Xem bài viết trợ giúp
             </Button>
-            
             <Button variant="outline" size="sm" onClick={() => window.location.href = 'mailto:support@safeface.ai'}>
-              Contact Support
+              Liên hệ hỗ trợ
             </Button>
           </div>
         </motion.div>
@@ -245,13 +222,13 @@ const NotFoundPage: React.FC = () => {
         {isAuthenticated && user && (
           <motion.div variants={animationVariants.item}>
             <div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
-              <span>Logged in as</span>
+              <span>Đăng nhập với tư cách</span>
               <Badge variant="outline">
                 {user.full_name || user.username}
               </Badge>
               {user.is_admin && (
                 <Badge variant="default" className="bg-red-600">
-                  Admin
+                  Quản trị viên
                 </Badge>
               )}
             </div>
@@ -260,7 +237,7 @@ const NotFoundPage: React.FC = () => {
 
         {/* Footer */}
         <motion.div variants={animationVariants.item} className="text-xs text-gray-400">
-          <p>© 2024 SafeFace AI Technologies. All rights reserved.</p>
+          <p>© 2024 SafeFace AI Technologies. Đã đăng ký bản quyền.</p>
         </motion.div>
       </motion.div>
     </div>

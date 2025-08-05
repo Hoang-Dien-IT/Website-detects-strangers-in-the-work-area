@@ -24,7 +24,9 @@ import {
   BarChart3,
   ShieldCheck,
   Clock,
-  Activity
+  Activity,
+  Camera,
+  Mail
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion, Variants } from 'framer-motion';
@@ -132,29 +134,29 @@ const HomePage: React.FC = () => {
   
   const testimonials: Testimonial[] = [
     {
-      name: "Sarah Johnson",
-      role: "Chief Security Officer",
-      company: "TechCorp International",
+      name: "Nguyễn Văn An",
+      role: "Trưởng phòng An ninh",
+      company: "Công ty Cổ phần Công nghệ Việt",
       avatar: "/api/placeholder/120/120",
-      content: "SafeFace completely transformed our security infrastructure. The AI accuracy is phenomenal, and we've prevented numerous security incidents. The ROI was evident within weeks of deployment.",
+      content: "SafeFace đã thay đổi hoàn toàn hệ thống bảo mật của chúng tôi. Độ chính xác AI rất ấn tượng, giúp ngăn chặn nhiều sự cố kịp thời. Hiệu quả đầu tư thấy rõ chỉ sau vài tuần triển khai.",
       rating: 5,
       verified: true
     },
     {
-      name: "Michael Chen",
-      role: "IT Director",
-      company: "Global Solutions Inc.",
+      name: "Trần Thị Minh",
+      role: "Giám đốc CNTT",
+      company: "Tập đoàn Giải pháp Toàn cầu",
       avatar: "/api/placeholder/120/120",
-      content: "The implementation was seamless, and the support team exceeded our expectations. We've seen a 400% improvement in response times and significantly reduced false positives.",
+      content: "Việc triển khai rất dễ dàng, đội ngũ hỗ trợ tận tâm và chuyên nghiệp. Thời gian phản hồi cải thiện vượt bậc, giảm thiểu cảnh báo sai rõ rệt.",
       rating: 5,
       verified: true
     },
     {
-      name: "Emma Rodriguez",
-      role: "Operations Manager",
-      company: "SecureBase Systems",
+      name: "Lê Quốc Hùng",
+      role: "Quản lý vận hành",
+      company: "Hệ thống An ninh Việt Nam",
       avatar: "/api/placeholder/120/120",
-      content: "The analytics dashboard provides insights we never had before. The predictive capabilities and real-time monitoring have revolutionized our security operations.",
+      content: "Bảng phân tích của SafeFace mang lại nhiều góc nhìn mới. Khả năng dự đoán và giám sát thời gian thực giúp tối ưu hóa hoạt động bảo mật của doanh nghiệp.",
       rating: 5,
       verified: true
     }
@@ -169,71 +171,71 @@ const HomePage: React.FC = () => {
 
   const features: Feature[] = [
     {
-      icon: <Brain className="h-10 w-10" />,
-      title: "AI-Powered Recognition",
-      description: "Advanced deep learning algorithms with 99.97% accuracy, real-time processing, and adaptive learning capabilities",
-      gradient: "from-teal-600 via-cyan-500 to-emerald-400"
-    },
-    {
-      icon: <ShieldCheck className="h-10 w-10" />,
-      title: "Enterprise Security",
-      description: "Military-grade encryption, GDPR compliance, zero-trust architecture, and SOC 2 Type II certification",
-      gradient: "from-emerald-600 via-teal-500 to-cyan-400"
-    },
-    {
-      icon: <Activity className="h-10 w-10" />,
-      title: "Real-time Monitoring",
-      description: "Sub-millisecond detection, instant alerts, live streaming, and comprehensive threat intelligence",
-      gradient: "from-green-600 via-emerald-500 to-teal-400"
-    },
-    {
-      icon: <Cloud className="h-10 w-10" />,
-      title: "Cloud-Native Platform",
-      description: "Global CDN, auto-scaling infrastructure, multi-region deployment, and 99.99% uptime SLA",
+      icon: <Brain className="h-10 w-10 text-white" />,
+      title: "Nhận diện AI thông minh",
+      description: "Thuật toán học sâu tiên tiến với độ chính xác cao, xử lý thời gian thực và tự động thích nghi.",
       gradient: "from-slate-600 via-gray-500 to-stone-400"
     },
     {
-      icon: <BarChart3 className="h-10 w-10" />,
-      title: "Advanced Analytics",
-      description: "Machine learning insights, predictive analytics, custom dashboards, and comprehensive reporting",
-      gradient: "from-cyan-600 via-teal-500 to-emerald-400"
+      icon: <ShieldCheck className="h-10 w-10 text-white" />,
+      title: "Giải thuật sử dụng",
+      description: "RetinaFace, ArcFace, và so sánh vector để nhận diện chính xác và nhanh chóng.",
+      gradient: "from-slate-600 via-gray-500 to-stone-400"
     },
     {
-      icon: <Users className="h-10 w-10" />,
-      title: "Team Collaboration",
-      description: "Role-based access control, workflow automation, team notifications, and audit trails",
-      gradient: "from-slate-600 via-gray-500 to-zinc-400"
+      icon: <Activity className="h-10 w-10 text-white" />,
+      title: "Giám sát thời gian thực",
+      description: "Phát hiện theo giây, cảnh báo tức thì, phát trực tiếp và phân tích mối đe dọa toàn diện.",
+      gradient: "from-slate-600 via-gray-500 to-stone-400"
+    },
+    {
+      icon: <Camera className="h-10 w-10 text-white" />,
+      title: "Quản lý camera thông minh",
+      description: "Tích hợp và quản lý camera an ninh thuận tiện và đơn giản dễ dàng sử dụng.",
+      gradient: "from-slate-600 via-gray-500 to-stone-400"
+    },
+    {
+      icon: <BarChart3 className="h-10 w-10 text-white" />,
+      title: "Phân tích nâng cao",
+      description: "Phân tích học máy, dự đoán thông minh, bảng điều khiển tuỳ chỉnh và báo cáo toàn diện.",
+      gradient: "from-slate-600 via-gray-500 to-stone-400"
+    },
+    {
+      icon: <Mail className="h-10 w-10 text-white" />,
+      title: "Gửi cảnh báo qua mail",
+      description: "Cảnh báo qua mail với thông tin camera và hình ảnh được nhận diện.",
+      gradient: "from-slate-600 via-gray-500 to-stone-400"
     }
   ];
 
   const stats: Stat[] = [
     {
-      number: "100K+",
-      label: "Active Users",
-      description: "Global enterprises trust SafeFace",
+      number: "Beta",
+      label: "Người dùng hoạt động",
+      description: "Được tin tưởng bởi các doanh nghiệp toàn cầu",
       icon: <Users className="h-8 w-8" />,
-      gradient: "from-teal-600 to-cyan-400"
+      gradient: "from-teal-500 to-emerald-500"
     },
     {
-      number: "99.97%",
-      label: "Accuracy Rate",
-      description: "Industry-leading AI precision",
+      number: "95%+",
+      label: "Tỉ lệ chính xác",
+      description: "Độ chính xác AI hàng đầu ngành",
       icon: <Target className="h-8 w-8" />,
-      gradient: "from-emerald-600 to-teal-400"
+      gradient: "from-emerald-500 to-teal-500"
     },
     {
       number: "24/7",
-      label: "Support",
-      description: "Expert assistance worldwide",
+      label: "Hỗ trợ liên tục",
+      description: "Chuyên gia hỗ trợ toàn cầu 24/7",
       icon: <Clock className="h-8 w-8" />,
-      gradient: "from-cyan-600 to-emerald-400"
+      gradient: "from-cyan-500 to-blue-500"
     },
     {
-      number: "1B+",
-      label: "Detections",
-      description: "Successful face recognitions",
+      number: "500+",
+      label: "Lượt nhận diện",
+      description: "Nhận diện khuôn mặt thành công",
       icon: <Eye className="h-8 w-8" />,
-      gradient: "from-slate-600 to-gray-400"
+      gradient: "from-blue-500 to-cyan-500"
     }
   ];
 
@@ -298,18 +300,17 @@ const HomePage: React.FC = () => {
                   </h1>
                   
                   <p className="text-xl lg:text-2xl text-gray-600 leading-relaxed max-w-2xl font-light">
-                    Protect your organization with military-grade AI face recognition. 
-                    Real-time threat detection, predictive analytics, and enterprise compliance 
-                    in one powerful platform.
+                    Bảo vệ tổ chức của bạn với công nghệ nhận diện khuôn mặt bằng mô hình học sâu.
+                    Phát hiện mối đe dọa theo thời gian thực, gửi cảnh báo tức thì qua email và lưu lịch sử chi tiết quản lý dễ dàng.
                   </p>
                 </div>
 
                 {/* Hero Stats */}
                 <div className="grid grid-cols-3 gap-8 py-6">
                   {[
-                    { value: "99.97%", label: "AI Accuracy", icon: <Target className="h-5 w-5" /> },
-                    { value: "100K+", label: "Users", icon: <Users className="h-5 w-5" /> },
-                    { value: "<100ms", label: "Response", icon: <Zap className="h-5 w-5" /> }
+                    { value: "95%+", label: "Độ chính xác", icon: <Target className="h-5 w-5" /> },
+                    { value: "Beta", label: "Phiên bản", icon: <Users className="h-5 w-5" /> },
+                    { value: "<2s", label: "Phản hồi", icon: <Zap className="h-5 w-5" /> }
                   ].map((stat, index) => (
                     <motion.div
                       key={index}
@@ -408,10 +409,10 @@ const HomePage: React.FC = () => {
                     {/* Quick Stats Grid */}
                     <div className="grid grid-cols-2 gap-4">
                       {[
-                        { label: "Cameras Online", value: "12/12", color: "text-green-600" },
-                        { label: "Known Persons", value: "2,847", color: "text-blue-600" },
-                        { label: "Today's Detections", value: "1,234", color: "text-purple-600" },
-                        { label: "Threats Blocked", value: "0", color: "text-red-600" }
+                        { label: "Camera hoạt động", value: "12/12", color: "text-green-600" },
+                        { label: "Người đã biết", value: "2,847", color: "text-blue-600" },
+                        { label: "Phát hiện hôm nay", value: "1,234", color: "text-purple-600" },
+                        { label: "Mối đe dọa chặn", value: "0", color: "text-red-600" }
                       ].map((item, index) => (
                         <motion.div
                           key={index}
@@ -430,13 +431,13 @@ const HomePage: React.FC = () => {
                     <div className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 backdrop-blur-sm rounded-xl p-5 border border-white/20">
                       <div className="flex items-center justify-between mb-3">
                         <span className="text-sm font-semibold text-gray-700">Live Recognition Accuracy</span>
-                        <span className="text-xl font-bold text-indigo-600">99.97%</span>
+                        <span className="text-xl font-bold text-indigo-600">95%+</span>
                       </div>
                       <div className="w-full bg-indigo-200/50 rounded-full h-3 overflow-hidden">
                         <motion.div 
                           className="bg-gradient-to-r from-indigo-500 to-purple-500 h-full rounded-full"
                           initial={{ width: 0 }}
-                          animate={{ width: '99.97%' }}
+                          animate={{ width: '95%' }}
                           transition={{ duration: 2, delay: 1 }}
                         ></motion.div>
                       </div>
@@ -479,8 +480,8 @@ const HomePage: React.FC = () => {
                       <CheckCircle className="h-5 w-5 text-green-600" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-gray-900">Person Recognized</p>
-                      <p className="text-xs text-gray-600">John Smith • Main Entrance</p>
+                      <p className="text-sm font-semibold text-gray-900">Nhận diện thành công</p>
+                      <p className="text-xs text-gray-600">Nguyễn Hoàng Điển • Camera 1</p>
                     </div>
                   </div>
                 </motion.div>
@@ -490,12 +491,11 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-24 relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-purple-600/5 to-indigo-600/5"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Simple & Clean Stats Section */}
+      <section className="py-20 bg-white/50 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
-            className="grid grid-cols-2 lg:grid-cols-4 gap-8"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
             variants={staggerContainer}
             initial="initial"
             whileInView="animate"
@@ -505,16 +505,29 @@ const HomePage: React.FC = () => {
               <motion.div 
                 key={index}
                 variants={scaleIn}
-                whileHover={{ y: -10, scale: 1.05 }}
-                className="group"
+                whileHover={{ y: -5 }}
+                className="text-center group"
               >
-                <Card className="text-center p-8 bg-white/80 backdrop-blur-xl border-0 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl">
-                  <div className={`w-16 h-16 bg-gradient-to-r ${stat.gradient} rounded-2xl flex items-center justify-center text-white mx-auto mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                <Card className="p-6 bg-white/80 backdrop-blur-sm border border-gray-100 shadow-md hover:shadow-lg transition-all duration-300 rounded-xl">
+                  {/* Simple Icon */}
+                  <div className={`w-12 h-12 bg-gradient-to-r ${stat.gradient} rounded-xl flex items-center justify-center text-white mx-auto mb-4 group-hover:scale-110 transition-transform duration-200`}>
                     {stat.icon}
                   </div>
-                  <div className="text-4xl lg:text-5xl font-bold text-gray-900 mb-2">{stat.number}</div>
-                  <div className="text-lg font-semibold text-gray-700 mb-2">{stat.label}</div>
-                  <div className="text-sm text-gray-500 leading-relaxed">{stat.description}</div>
+                  
+                  {/* Number */}
+                  <div className="text-3xl font-bold text-gray-900 mb-2">
+                    {stat.number}
+                  </div>
+                  
+                  {/* Label */}
+                  <div className="text-lg font-semibold text-gray-700 mb-1">
+                    {stat.label}
+                  </div>
+                  
+                  {/* Description */}
+                  <div className="text-sm text-gray-500">
+                    {stat.description}
+                  </div>
                 </Card>
               </motion.div>
             ))}
@@ -629,21 +642,25 @@ const HomePage: React.FC = () => {
                 </div>
                 
                 <div className="text-center">
-                  <motion.p 
-                    className="text-2xl lg:text-3xl text-gray-700 leading-relaxed mb-12 italic font-light"
-                    key={currentTestimonial}
+                  <motion.div
+                    key={`testimonial-content-${currentTestimonial}`}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.5 }}
+                    className="mb-12"
                   >
-                    "{testimonials[currentTestimonial].content}"
-                  </motion.p>
+                    <p className="text-2xl lg:text-3xl text-gray-700 leading-relaxed italic font-light">
+                      "{testimonials[currentTestimonial].content}"
+                    </p>
+                  </motion.div>
                   
                   <motion.div 
+                    key={`testimonial-author-${currentTestimonial}`}
                     className="flex items-center justify-center space-x-6"
-                    key={currentTestimonial}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
                   >
                     <Avatar className="w-16 h-16">
@@ -655,8 +672,8 @@ const HomePage: React.FC = () => {
                       <div className="text-gray-600">{testimonials[currentTestimonial].role}</div>
                       <div className="text-blue-600 font-semibold">{testimonials[currentTestimonial].company}</div>
                       <div className="flex items-center mt-2">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="h-4 w-4 text-yellow-400 fill-current" />
+                        {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => (
+                          <Star key={`star-${currentTestimonial}-${i}`} className="h-4 w-4 text-yellow-400 fill-current" />
                         ))}
                         {testimonials[currentTestimonial].verified && (
                           <Badge className="ml-2 bg-green-100 text-green-700 text-xs">Verified</Badge>
@@ -664,12 +681,6 @@ const HomePage: React.FC = () => {
                       </div>
                     </div>
                   </motion.div>
-                  
-                  <div className="flex justify-center space-x-1 mt-8">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
-                    ))}
-                  </div>
                 </div>
               </CardContent>
             </Card>

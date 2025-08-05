@@ -13,7 +13,6 @@ import {
   Lock, 
   User, 
   LogIn, 
-  Shield, 
   ArrowLeft,
   Sparkles,
   CheckCircle,
@@ -25,6 +24,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
+import SafeFaceLogo from '@/assets/images/Logo.png';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -189,30 +189,42 @@ const LoginPage: React.FC = () => {
   // Show loading while checking auth status
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-        <div className="text-center space-y-6 max-w-md mx-auto px-6">
-          <div className="flex items-center justify-center space-x-3 mb-6">
-            <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <Shield className="w-7 h-7 text-white" />
+      <div className="min-h-screen bg-white flex items-center justify-center relative overflow-hidden">
+        {/* Custom background for loading */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-0 w-2/3 h-full bg-gradient-to-br from-slate-50 to-gray-100 transform skew-x-12"></div>
+          <div className="absolute top-20 right-20 w-32 h-40 bg-teal-100/40 rounded-full transform rotate-45"></div>
+          <div className="absolute bottom-32 left-32 w-24 h-32 bg-emerald-100/30 rounded-full transform -rotate-12"></div>
+        </div>
+        
+        <div className="text-center space-y-6 max-w-md mx-auto px-6 relative z-10">
+          <div className="flex items-center justify-center space-x-4 mb-6">
+            {/* SafeFace Logo */}
+            <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-lg">
+              <img 
+                src={SafeFaceLogo} 
+                alt="SafeFace Logo" 
+                className="w-full h-full object-contain"
+              />
             </div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold text-gray-900">
               SafeFace
             </h1>
           </div>
 
           <div className="relative">
-            <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto"></div>
+            <div className="w-12 h-12 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin mx-auto"></div>
             <div className="absolute inset-0 animate-ping">
-              <div className="w-12 h-12 border-2 border-blue-400 rounded-full opacity-20 mx-auto"></div>
+              <div className="w-12 h-12 border-2 border-teal-400 rounded-full opacity-20 mx-auto"></div>
             </div>
           </div>
 
           <div className="space-y-2">
             <h3 className="text-lg font-semibold text-gray-900">
-              Checking Authentication
+              Đang kiểm tra xác thực
             </h3>
             <p className="text-gray-600 text-sm leading-relaxed">
-              Please wait while we verify your session...
+              Vui lòng đợi trong khi chúng tôi xác minh phiên của bạn...
             </p>
           </div>
         </div>
@@ -221,62 +233,104 @@ const LoginPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex">
+    <div className="min-h-screen bg-white flex relative overflow-hidden">
+      {/* Custom Background with Organic Shapes */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Asymmetric background sections */}
+        <div className="absolute top-0 left-0 w-2/3 h-full bg-gradient-to-br from-slate-50 to-gray-100 transform skew-x-12"></div>
+        <div className="absolute top-0 right-0 w-1/2 h-2/3 bg-gradient-to-bl from-teal-50 to-emerald-50 transform -skew-y-6"></div>
+        <div className="absolute bottom-0 left-1/4 w-1/3 h-1/2 bg-gradient-to-tr from-cyan-50 to-blue-50 rounded-full transform rotate-12"></div>
+        
+        {/* Organic decorative shapes */}
+        <div className="absolute top-20 left-20 w-32 h-40 bg-teal-100/40 rounded-full transform rotate-45"></div>
+        <div className="absolute top-1/3 right-32 w-24 h-32 bg-emerald-100/30 rounded-full transform -rotate-12"></div>
+        <div className="absolute bottom-32 right-20 w-40 h-24 bg-cyan-100/50 transform skew-x-12 rounded-3xl"></div>
+        <div className="absolute bottom-1/4 left-1/3 w-20 h-20 bg-blue-100/40 rounded-full"></div>
+        
+        {/* Scattered dots pattern */}
+        <div className="absolute top-1/4 left-1/2 w-2 h-2 bg-teal-300 rounded-full"></div>
+        <div className="absolute top-1/2 left-1/4 w-1.5 h-1.5 bg-emerald-300 rounded-full"></div>
+        <div className="absolute bottom-1/3 right-1/3 w-3 h-3 bg-cyan-300 rounded-full"></div>
+        <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-blue-300 rounded-full"></div>
+        
+        {/* Grid pattern overlay */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="h-full w-full" style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, rgb(156, 163, 175) 1px, transparent 0)`,
+            backgroundSize: '40px 40px'
+          }}></div>
+        </div>
+      </div>
       {/* Left Side - Branding */}
       <motion.div 
-        className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 relative overflow-hidden"
+        className="hidden lg:flex lg:w-1/2 relative z-10"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
       >
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative z-10 flex flex-col justify-center p-12 text-white">
-          {/* Logo */}
-          <div className="flex items-center space-x-3 mb-8">
-            <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-              <Shield className="h-7 w-7 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold">SafeFace</h1>
-              <p className="text-blue-100 text-sm">AI Security Platform</p>
+        {/* Custom background for left side */}
+        <div className="absolute inset-0 bg-white rounded-r-[3rem] shadow-2xl">
+          {/* Organic decorative elements */}
+          <div className="absolute top-10 right-10 w-24 h-32 bg-teal-100/30 transform rotate-12 rounded-3xl"></div>
+          <div className="absolute bottom-20 left-10 w-32 h-20 bg-emerald-100/40 transform -rotate-6 rounded-full"></div>
+          <div className="absolute top-1/3 left-1/4 w-16 h-24 bg-cyan-100/20 transform skew-y-12 rounded-2xl"></div>
+          
+          {/* Corner accent */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-teal-100/50 to-transparent rounded-bl-[3rem]"></div>
+          <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-emerald-100/30 to-transparent rounded-tr-[4rem]"></div>
+        </div>
+        
+        <div className="relative z-10 flex flex-col justify-center p-12 w-full">
+          {/* SafeFace Logo Import */}
+          <div className="flex items-center justify-center mb-8">
+            <div className="w-32 h-32 rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-teal-50 to-emerald-50 p-4">
+              <img 
+                src={SafeFaceLogo} 
+                alt="SafeFace Logo" 
+                className="w-full h-full object-contain"
+              />
             </div>
           </div>
 
-          <div className="mb-8">
-            <h2 className="text-4xl font-bold leading-tight mb-4">
-              Welcome Back to the Future of Security
-            </h2>
-            <p className="text-xl text-blue-100 leading-relaxed">
-              Sign in to access your AI-powered face recognition dashboard.
-            </p>
+          {/* Brand Title */}
+          <div className="text-center mb-8">
+            <h1 className="text-5xl font-black text-gray-900 mb-2 tracking-tight">
+              Safe<span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-emerald-600">Face</span>
+            </h1>
+            <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-teal-100 to-emerald-100 rounded-full">
+              <span className="text-teal-700 font-semibold text-sm">🤖 Nhận diện khuôn mặt AI</span>
+            </div>
           </div>
 
-          {/* Features */}
+          {/* Features with new styling */}
           <div className="space-y-6">
             {[
               {
                 icon: <Brain className="h-6 w-6" />,
-                title: "AI-Powered Recognition",
-                description: "99.7% accuracy with advanced machine learning"
+                title: "Nhận diện thông minh",
+                description: "Độ chính xác cao với công nghệ OpenCV",
+                color: "teal"
               },
               {
                 icon: <Zap className="h-6 w-6" />,
-                title: "Real-time Monitoring",
-                description: "Instant alerts and live surveillance feeds"
+                title: "Giám sát thời gian thực",
+                description: "Cảnh báo tức thì và theo dõi trực tiếp",
+                color: "emerald"
               },
               {
                 icon: <Globe className="h-6 w-6" />,
-                title: "Cloud Integration",
-                description: "Access your security system from anywhere"
+                title: "Truy cập từ xa",
+                description: "Quản lý hệ thống từ mọi nơi",
+                color: "cyan"
               }
             ].map((feature, index) => (
-              <div key={index} className="flex items-start space-x-4">
-                <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
+              <div key={index} className="flex items-start space-x-4 group">
+                <div className={`p-3 bg-${feature.color}-100 text-${feature.color}-600 rounded-2xl group-hover:scale-110 transition-transform duration-300 shadow-md`}>
                   {feature.icon}
                 </div>
                 <div>
-                  <h3 className="font-semibold text-lg">{feature.title}</h3>
-                  <p className="text-blue-100">{feature.description}</p>
+                  <h3 className="font-semibold text-lg text-gray-900">{feature.title}</h3>
+                  <p className="text-gray-600">{feature.description}</p>
                 </div>
               </div>
             ))}
@@ -285,67 +339,85 @@ const LoginPage: React.FC = () => {
       </motion.div>
 
       {/* Right Side - Login Form */}
-      <div className="w-full lg:w-1/2 flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6">
+      <div className="w-full lg:w-1/2 flex flex-col relative z-10">
+        {/* Header with asymmetric design */}
+        <div className="flex items-center justify-between p-6 relative">
+          {/* Decorative corner element */}
+          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-teal-100/30 to-transparent rounded-bl-3xl"></div>
+          
           <Button 
             variant="ghost" 
             onClick={() => navigate('/')}
-            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 bg-white/70 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-sm border border-gray-200/50"
           >
             <ArrowLeft className="h-4 w-4" />
-            <span>Back to Home</span>
+            <span>Về trang chủ</span>
           </Button>
           
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center lg:hidden">
-              <Shield className="h-5 w-5 text-white" />
+            {/* Mobile logo with new design */}
+            <div className="w-12 h-12 rounded-xl overflow-hidden shadow-md lg:hidden">
+              <img 
+                src={SafeFaceLogo} 
+                alt="SafeFace Logo" 
+                className="w-full h-full object-contain"
+              />
             </div>
             <span className="font-bold text-gray-900 lg:hidden">SafeFace</span>
           </div>
         </div>
 
         {/* Login Form */}
-        <div className="flex-1 flex items-center justify-center p-6">
+        <div className="flex-1 flex items-center justify-center p-6 relative">
+          {/* Background decoration for form area */}
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute top-1/4 right-10 w-16 h-20 bg-emerald-100/20 transform -rotate-12 rounded-2xl"></div>
+            <div className="absolute bottom-1/3 left-8 w-12 h-16 bg-teal-100/30 transform rotate-45 rounded-full"></div>
+          </div>
+          
           <motion.div 
-            className="w-full max-w-md"
+            className="w-full max-w-md relative z-10"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-sm">
-              <CardHeader className="text-center pb-6">
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl mx-auto mb-4 flex items-center justify-center">
-                  <Lock className="h-8 w-8 text-white" />
+            <Card className="border-0 shadow-2xl bg-white/90 backdrop-blur-sm rounded-3xl overflow-hidden">
+              {/* Card decorative elements */}
+              <div className="absolute top-0 left-0 w-24 h-24 bg-gradient-to-br from-teal-100/40 to-transparent rounded-br-3xl"></div>
+              <div className="absolute bottom-0 right-0 w-20 h-20 bg-gradient-to-tl from-emerald-100/30 to-transparent rounded-tl-3xl"></div>
+              
+              <CardHeader className="text-center pb-6 relative z-10">
+                <div className="w-18 h-18 bg-white rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-lg border border-gray-100">
+                  <Lock className="h-10 w-10 text-teal-600" />
                 </div>
                 <CardTitle className="text-2xl font-bold text-gray-900">
-                  Sign In
+                  Đăng nhập
                 </CardTitle>
                 <p className="text-gray-600 mt-2">
-                  Access your SafeFace security dashboard
+                  Truy cập bảng điều khiển SafeFace của bạn
                 </p>
               </CardHeader>
 
-              <CardContent className="space-y-6">
-                {/* Demo Credentials */}
-                <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 border border-blue-100">
+              <CardContent className="space-y-6 relative z-10">
+                {/* Demo Credentials with new styling */}
+                <div className="bg-white rounded-2xl p-4 border border-teal-100 shadow-sm">
                   <div className="flex items-center space-x-2 mb-3">
-                    <Sparkles className="h-4 w-4 text-blue-600" />
-                    <span className="text-sm font-semibold text-blue-900">Demo Credentials</span>
+                    <Sparkles className="h-4 w-4 text-teal-600" />
+                    <span className="text-sm font-semibold text-teal-900">Tài khoản demo</span>
                   </div>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-3">
                     {demoCredentials.map((demo, index) => (
                       <Button
                         key={index}
                         variant="outline"
                         size="sm"
                         onClick={() => fillDemoCredentials(demo)}
-                        className="text-xs bg-white/50 hover:bg-white border-blue-200 hover:border-blue-300"
+                        className="text-xs bg-teal-50 hover:bg-teal-100 border-teal-200 hover:border-teal-300 rounded-xl"
                       >
-                        <Badge variant="outline" className="mr-1 text-xs">
+                        <Badge variant="outline" className="mr-1 text-xs bg-white border-teal-300 text-teal-700">
                           {demo.role}
                         </Badge>
-                        Try {demo.role}
+                        Thử {demo.role}
                       </Button>
                     ))}
                   </div>
@@ -371,7 +443,7 @@ const LoginPage: React.FC = () => {
                   {/* Username Field */}
                   <div className="space-y-2">
                     <Label htmlFor="username" className="text-sm font-medium text-gray-700">
-                      Username
+                      Tên đăng nhập
                     </Label>
                     <div className="relative">
                       <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -379,13 +451,13 @@ const LoginPage: React.FC = () => {
                         id="username"
                         name="username"
                         type="text"
-                        placeholder="Enter your username"
+                        placeholder="Nhập tên đăng nhập"
                         value={formData.username}
                         onChange={handleInputChange}
-                        className={`pl-10 h-11 ${
+                        className={`pl-10 h-12 rounded-xl border-2 transition-all duration-300 ${
                           errors.username 
                             ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-                            : 'border-gray-200 focus:border-blue-500 focus:ring-blue-500'
+                            : 'border-gray-200 focus:border-teal-500 focus:ring-teal-500'
                         }`}
                         disabled={loading}
                       />
@@ -405,7 +477,7 @@ const LoginPage: React.FC = () => {
                   {/* Password Field */}
                   <div className="space-y-2">
                     <Label htmlFor="password" className="text-sm font-medium text-gray-700">
-                      Password
+                      Mật khẩu
                     </Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -413,13 +485,13 @@ const LoginPage: React.FC = () => {
                         id="password"
                         name="password"
                         type={showPassword ? 'text' : 'password'}
-                        placeholder="Enter your password"
+                        placeholder="Nhập mật khẩu"
                         value={formData.password}
                         onChange={handleInputChange}
-                        className={`pl-10 pr-10 h-11 ${
+                        className={`pl-10 pr-10 h-12 rounded-xl border-2 transition-all duration-300 ${
                           errors.password 
                             ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-                            : 'border-gray-200 focus:border-blue-500 focus:ring-blue-500'
+                            : 'border-gray-200 focus:border-teal-500 focus:ring-teal-500'
                         }`}
                         disabled={loading}
                       />
@@ -450,33 +522,33 @@ const LoginPage: React.FC = () => {
                         type="checkbox" 
                         checked={rememberMe}
                         onChange={(e) => setRememberMe(e.target.checked)}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" 
+                        className="rounded border-gray-300 text-teal-600 focus:ring-teal-500" 
                       />
-                      <span className="text-sm text-gray-600">Remember me</span>
+                      <span className="text-sm text-gray-600">Ghi nhớ đăng nhập</span>
                     </label>
                     <Link 
                       to="/forgot-password" 
-                      className="text-sm text-blue-600 hover:text-blue-800 font-medium hover:underline transition-colors"
+                      className="text-sm text-teal-600 hover:text-teal-800 font-medium hover:underline transition-colors"
                     >
-                      Forgot password?
+                      Quên mật khẩu?
                     </Link>
                   </div>
 
                   {/* Submit Button */}
                   <Button
                     type="submit"
-                    className="w-full h-11 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium"
+                    className="w-full h-12 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
                     disabled={loading}
                   >
                     {loading ? (
                       <div className="flex items-center space-x-2">
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
-                        <span>Signing in...</span>
+                        <span>Đang đăng nhập...</span>
                       </div>
                     ) : (
                       <div className="flex items-center space-x-2">
                         <LogIn className="w-4 h-4" />
-                        <span>Sign In</span>
+                        <span>Đăng nhập</span>
                       </div>
                     )}
                   </Button>
@@ -492,12 +564,12 @@ const LoginPage: React.FC = () => {
                   {/* Sign Up Link */}
                   <div className="text-center">
                     <p className="text-sm text-gray-600">
-                      Don't have an account?{' '}
+                      Chưa có tài khoản?{' '}
                       <Link 
                         to="/register" 
-                        className="text-blue-600 hover:text-blue-800 font-semibold hover:underline transition-colors"
+                        className="text-teal-600 hover:text-teal-800 font-semibold hover:underline transition-colors"
                       >
-                        Create account
+                        Tạo tài khoản mới
                       </Link>
                     </p>
                   </div>
@@ -505,23 +577,29 @@ const LoginPage: React.FC = () => {
               </CardContent>
             </Card>
 
-            {/* Security Badge */}
+            {/* Security Badge with new styling */}
             <motion.div 
               className="text-center mt-6"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1 }}
             >
-              <div className="flex items-center justify-center space-x-2 text-xs text-gray-500">
-                <CheckCircle className="h-3 w-3 text-green-600" />
-                <span>256-bit SSL encrypted</span>
-                <Separator orientation="vertical" className="h-3" />
-                <CheckCircle className="h-3 w-3 text-green-600" />
-                <span>GDPR compliant</span>
+              <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-4 border border-gray-200/50 shadow-sm">
+                <div className="flex items-center justify-center space-x-4 text-xs text-gray-600 mb-2">
+                  <div className="flex items-center space-x-1">
+                    <CheckCircle className="h-3 w-3 text-green-600" />
+                    <span>Mã hóa SSL 256-bit</span>
+                  </div>
+                  <Separator orientation="vertical" className="h-3" />
+                  <div className="flex items-center space-x-1">
+                    <CheckCircle className="h-3 w-3 text-green-600" />
+                    <span>Bảo mật cao</span>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-400">
+                  © 2025 SafeFace AI Technologies. Tất cả quyền được bảo lưu.
+                </p>
               </div>
-              <p className="text-xs text-gray-400 mt-2">
-                © 2024 SafeFace AI Technologies. All rights reserved.
-              </p>
             </motion.div>
           </motion.div>
         </div>

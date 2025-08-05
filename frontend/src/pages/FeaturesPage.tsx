@@ -1,7 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import {
   Shield,
   Eye,
@@ -66,26 +65,26 @@ const FeaturesPage: React.FC = () => {
   const categories: FeatureCategory[] = [
     {
       id: 'ai-detection',
-      title: 'AI Detection',
-      description: 'Advanced machine learning algorithms',
+      title: 'Nhận diện AI',
+      description: 'Thuật toán học máy tiên tiến',
       icon: <Brain className="h-6 w-6" />
     },
     {
       id: 'monitoring',
-      title: 'Real-time Monitoring',
-      description: 'Live surveillance and alerts',
+      title: 'Giám sát thời gian thực',
+      description: 'Giám sát trực tiếp và cảnh báo',
       icon: <Eye className="h-6 w-6" />
     },
     {
       id: 'security',
-      title: 'Enterprise Security',
-      description: 'Bank-grade protection',
+      title: 'Bảo mật doanh nghiệp',
+      description: 'Bảo vệ cấp ngân hàng',
       icon: <Shield className="h-6 w-6" />
     },
     {
       id: 'integration',
-      title: 'Integration',
-      description: 'Seamless platform connectivity',
+      title: 'Tích hợp',
+      description: 'Kết nối nền tảng liền mạch',
       icon: <Globe className="h-6 w-6" />
     }
   ];
@@ -94,176 +93,174 @@ const FeaturesPage: React.FC = () => {
     // AI Detection Features
     {
       icon: <Brain className="h-8 w-8" />,
-      title: "AI-Powered Face Recognition",
-      description: "State-of-the-art deep learning models with 99.7% accuracy for instant face detection and recognition",
+      title: "Nhận diện khuôn mặt",
+      description: "Sử dụng thư viện OpenCV và mô hình học máy để nhận diện khuôn mặt với độ chính xác cao",
       benefits: [
-        "99.7% recognition accuracy",
-        "Sub-second processing speed",
-        "Works in various lighting conditions",
-        "Anti-spoofing protection",
-        "Continuous learning and improvement"
-      ],
-      gradient: "from-teal-500 to-cyan-500",
-      category: "ai-detection"
-    },
-    {
-      icon: <Target className="h-8 w-8" />,
-      title: "Advanced Analytics",
-      description: "Comprehensive analytics and insights to understand patterns and optimize security protocols",
-      benefits: [
-        "Real-time detection analytics",
-        "Historical trend analysis",
-        "Custom reporting dashboard",
-        "Behavioral pattern recognition",
-        "Performance metrics tracking"
+        "Độ chính xác nhận diện ~95%",
+        "Tốc độ xử lý 1-2 giây",
+        "Hoạt động trong điều kiện ánh sáng tốt",
+        "Phát hiện người lạ tự động",
       ],
       gradient: "from-emerald-500 to-teal-500",
       category: "ai-detection"
     },
     {
-      icon: <Activity className="h-8 w-8" />,
-      title: "Smart Detection Zones",
-      description: "Configure custom detection areas and set specific rules for different zones and access levels",
+      icon: <Target className="h-8 w-8" />,
+      title: "Quản lý danh sách người quen",
+      description: "Thêm, sửa, xóa thông tin người quen với khả năng upload ảnh và quản lý thông tin cơ bản",
       benefits: [
-        "Multiple detection zones",
-        "Zone-specific permissions",
-        "Custom alert configurations",
-        "Time-based access control",
-        "Automated zone management"
+        "Thêm người quen từ ảnh upload",
+        "Quản lý thông tin cá nhân",
+        "Chỉnh sửa danh sách dễ dàng",
+        "Lưu trữ ảnh đại diện"
       ],
-      gradient: "from-green-500 to-emerald-500",
+      gradient: "from-teal-500 to-emerald-500",
+      category: "ai-detection"
+    },
+    {
+      icon: <Activity className="h-8 w-8" />,
+      title: "Lịch sử phát hiện",
+      description: "Theo dõi tất cả các lần phát hiện với thời gian, ảnh chụp và thông tin người được nhận diện",
+      benefits: [
+        "Lưu trữ lịch sử phát hiện",
+        "Hiển thị ảnh người được phát hiện",
+        "Ghi nhận thời gian chính xác",
+        "Phân biệt người quen và người lạ",
+        "Xem chi tiết từng lần phát hiện"
+      ],
+      gradient: "from-emerald-600 to-green-500",
       category: "ai-detection"
     },
 
     // Real-time Monitoring Features
     {
       icon: <Eye className="h-8 w-8" />,
-      title: "Live Video Monitoring",
-      description: "Real-time video surveillance with instant face detection overlays and live person identification",
+      title: "Xem camera trực tiếp",
+      description: "Xem video từ camera IP hoặc webcam với giao diện web, hỗ trợ nhiều định dạng camera phổ biến",
       benefits: [
-        "Multi-camera live streaming",
-        "Real-time detection overlays",
-        "Instant person identification",
-        "HD video quality support",
-        "Mobile app monitoring"
+        "Hỗ trợ camera IP (RTSP)",
+        "Tương thích webcam USB",
+        "Giao diện web thân thiện",
+        "Xem trực tiếp qua trình duyệt",
+        "Hỗ trợ độ phân giải HD"
       ],
-      gradient: "from-cyan-500 to-emerald-500",
+      gradient: "from-cyan-500 to-blue-500",
       category: "monitoring"
     },
     {
       icon: <Zap className="h-8 w-8" />,
-      title: "Instant Alerts",
-      description: "Get immediate notifications for unknown persons, security breaches, or system events",
+      title: "Cảnh báo qua email",
+      description: "Gửi email thông báo tự động khi phát hiện người lạ với ảnh đính kèm và thông tin chi tiết",
       benefits: [
-        "Real-time push notifications",
-        "Email and SMS alerts",
-        "Custom alert rules",
-        "Escalation procedures",
-        "Alert history tracking"
+        "Email thông báo tức thì",
+        "Đính kèm ảnh người lạ",
+        "Thông tin thời gian, địa điểm",
+        "Cấu hình email người nhận",
+        "Lịch sử email đã gửi"
       ],
-      gradient: "from-slate-500 to-gray-500",
+      gradient: "from-blue-500 to-cyan-500",
       category: "monitoring"
     },
     {
       icon: <Clock className="h-8 w-8" />,
-      title: "24/7 Monitoring",
-      description: "Continuous surveillance with automated monitoring and intelligent threat detection",
+      title: "Giám sát liên tục",
+      description: "Hệ thống hoạt động 24/7 với khả năng ghi nhận và lưu trữ tất cả các sự kiện phát hiện",
       benefits: [
-        "Round-the-clock monitoring",
-        "Automated threat detection",
-        "Night vision support",
-        "Motion-triggered recording",
-        "Cloud backup storage"
+        "Hoạt động 24/7",
+        "Ghi nhận mọi phát hiện",
+        "Lưu trữ ảnh tự động",
+        "Backup dữ liệu định kỳ",
+        "Khôi phục sau sự cố"
       ],
-      gradient: "from-teal-500 to-emerald-500",
+      gradient: "from-cyan-600 to-blue-600",
       category: "monitoring"
     },
 
     // Security Features
     {
       icon: <Shield className="h-8 w-8" />,
-      title: "Enterprise Security",
-      description: "Bank-level encryption and security protocols to protect your sensitive data and privacy",
+      title: "Bảo mật cơ bản",
+      description: "Hệ thống xác thực người dùng với mã hóa cơ bản để bảo vệ dữ liệu cá nhân",
       benefits: [
-        "End-to-end encryption",
-        "SOC 2 Type II compliance",
-        "GDPR compliant data handling",
-        "Role-based access control",
-        "Audit trail logging"
+        "Đăng nhập bảo mật",
+        "Mã hóa dữ liệu cơ bản",
+        "Phân quyền người dùng",
+        "Lưu trữ ảnh an toàn",
+        "Bảo vệ thông tin cá nhân"
       ],
-      gradient: "from-emerald-500 to-cyan-500",
+      gradient: "from-gray-600 to-slate-600",
       category: "security"
     },
     {
       icon: <Lock className="h-8 w-8" />,
-      title: "Access Control",
-      description: "Advanced user management with role-based permissions and multi-factor authentication",
+      title: "Quản lý người dùng",
+      description: "Hệ thống đăng ký, đăng nhập với vai trò admin và user thông thường",
       benefits: [
-        "Multi-factor authentication",
-        "Role-based permissions",
-        "Single sign-on (SSO)",
-        "Session management",
-        "Password policy enforcement"
+        "Đăng ký tài khoản mới",
+        "Đăng nhập an toàn",
+        "Phân quyền admin/user",
+        "Quản lý profile cá nhân",
+        "Đổi mật khẩu"
       ],
-      gradient: "from-gray-600 to-gray-800",
+      gradient: "from-slate-600 to-gray-700",
       category: "security"
     },
     {
       icon: <Database className="h-8 w-8" />,
-      title: "Secure Data Storage",
-      description: "Encrypted cloud storage with automatic backups and disaster recovery capabilities",
+      title: "Lưu trữ dữ liệu",
+      description: "Cơ sở dữ liệu MySQL lưu trữ thông tin người dùng, ảnh và lịch sử phát hiện",
       benefits: [
-        "Encrypted data storage",
-        "Automatic daily backups",
-        "Disaster recovery plans",
-        "Data retention policies",
-        "Geographic data replication"
+        "Cơ sở dữ liệu MySQL",
+        "Lưu trữ ảnh local",
+        "Backup dữ liệu thủ công",
+        "Quản lý storage",
+        "Tối ưu hiệu năng truy vấn"
       ],
-      gradient: "from-teal-500 to-cyan-500",
+      gradient: "from-gray-500 to-slate-500",
       category: "security"
     },
 
     // Integration Features
     {
       icon: <Globe className="h-8 w-8" />,
-      title: "Cloud Integration",
-      description: "Seamless cloud connectivity with popular platforms and enterprise systems",
+      title: "Giao diện web",
+      description: "Giao diện web responsive được xây dựng với React, có thể truy cập từ mọi thiết bị",
       benefits: [
-        "AWS, Azure, GCP support",
-        "RESTful API access",
-        "Webhook integrations",
-        "Third-party app connections",
-        "Custom integration support"
+        "Giao diện React hiện đại",
+        "Responsive trên mọi thiết bị",
+        "Truy cập qua trình duyệt",
+        "Không cần cài đặt ứng dụng",
+        "Cập nhật tự động"
       ],
-      gradient: "from-teal-600 to-emerald-600",
+      gradient: "from-purple-600 to-indigo-600",
       category: "integration"
     },
     {
       icon: <Smartphone className="h-8 w-8" />,
-      title: "Mobile Applications",
-      description: "Native mobile apps for iOS and Android with full monitoring and management capabilities",
+      title: "Tương thích đa nền tảng",
+      description: "Hỗ trợ truy cập từ máy tính, điện thoại, tablet với giao diện tối ưu cho từng thiết bị",
       benefits: [
-        "Native iOS and Android apps",
-        "Push notification support",
-        "Offline capability",
-        "Biometric authentication",
-        "Real-time synchronization"
+        "Hoạt động trên Windows/Mac/Linux",
+        "Tương thích mobile browser",
+        "Giao diện tối ưu tablet",
+        "Không cần app store",
+        "Cập nhật real-time"
       ],
-      gradient: "from-emerald-600 to-teal-600",
+      gradient: "from-indigo-600 to-purple-600",
       category: "integration"
     },
     {
       icon: <Settings className="h-8 w-8" />,
-      title: "API & Webhooks",
-      description: "Comprehensive REST API and webhook system for custom integrations and automation",
+      title: "API cơ bản",
+      description: "REST API đơn giản để lấy dữ liệu phát hiện và quản lý thông tin người dùng",
       benefits: [
-        "RESTful API with SDKs",
-        "Real-time webhook events",
-        "GraphQL support",
-        "Rate limiting and throttling",
-        "Comprehensive documentation"
+        "REST API cơ bản",
+        "Lấy dữ liệu phát hiện",
+        "Quản lý người dùng qua API",
+        "Authentication token",
+        "Tài liệu API đơn giản"
       ],
-      gradient: "from-cyan-600 to-emerald-600",
+      gradient: "from-purple-500 to-indigo-500",
       category: "integration"
     }
   ];
@@ -275,73 +272,141 @@ const FeaturesPage: React.FC = () => {
     : features.filter(feature => feature.category === selectedCategory);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-teal-50 to-emerald-50">
+    <div className="min-h-screen bg-white">
+      {/* Decorative Background Elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-teal-100/30 to-emerald-100/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/3 -left-20 w-60 h-60 bg-gradient-to-br from-cyan-100/25 to-blue-100/15 rounded-full blur-2xl"></div>
+        <div className="absolute bottom-20 right-1/4 w-72 h-72 bg-gradient-to-br from-emerald-100/20 to-teal-100/10 rounded-full blur-3xl"></div>
+      </div>
+
       {/* Hero Section */}
-      <section className="py-20 lg:py-32">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative py-16 lg:py-24 overflow-hidden">
+        {/* Geometric Pattern Background */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-20 left-20 w-32 h-32 border-2 border-teal-300 rotate-45"></div>
+          <div className="absolute top-40 right-32 w-24 h-24 border-2 border-emerald-300 rotate-12"></div>
+          <div className="absolute bottom-32 left-1/3 w-40 h-40 border-2 border-cyan-300 -rotate-12"></div>
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <motion.div 
-            className="text-center mb-16"
+            className="text-center mb-12"
             variants={fadeInUp}
             initial="initial"
             animate="animate"
           >
-            <Badge className="bg-teal-50 text-teal-600 border-teal-200 mb-6 px-4 py-2">
-              ✨ Bộ tính năng hoàn chỉnh
-            </Badge>
-            <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
-              Tính năng mạnh mẽ cho{" "}
-              <span className="bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">
-                Bảo mật hiện đại
+            <div className="inline-block mb-6">
+              <div className="bg-white border border-teal-200 text-teal-700 rounded-full px-6 py-3 shadow-sm">
+                <span className="font-medium">✨ Bộ tính năng hoàn chỉnh</span>
+              </div>
+            </div>
+            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-6">
+              Hệ thống nhận diện cho{" "}
+              <span className="relative">
+                <span className="bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">
+                  Khu vực làm việc
+                </span>
+                <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-teal-300 to-emerald-300 rounded-full transform -rotate-1"></div>
               </span>
             </h1>
-            <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto mb-8">
-              Khám phá các khả năng nhận diện khuôn mặt AI toàn diện được thiết kế cho 
-              bảo mật doanh nghiệp, giám sát thời gian thực và tích hợp liền mạch.
-            </p>
+            <div className="max-w-4xl mx-auto">
+              <p className="text-lg text-gray-600 leading-relaxed mb-8">
+                Phát hiện người lạ trong khu vực làm việc với công nghệ nhận diện khuôn mặt, 
+                cảnh báo thời gian thực và quản lý truy cập thông minh.
+              </p>
+            </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <Link to="/register">
-                <Button size="lg" className="px-8 py-3 text-lg bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700">
+                <Button size="lg" className="px-10 py-4 text-lg bg-teal-600 hover:bg-teal-700 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
                   Bắt đầu miễn phí
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Button variant="outline" size="lg" className="px-8 py-3 text-lg border-teal-200 text-teal-700 hover:bg-teal-50">
+              <Button variant="ghost" size="lg" className="px-10 py-4 text-lg text-teal-700 border-2 border-teal-200 hover:border-teal-300 hover:bg-teal-50 transform hover:-translate-y-1 transition-all duration-300">
                 <Play className="mr-2 h-5 w-5" />
                 Xem Demo
               </Button>
             </div>
           </motion.div>
 
-          {/* Stats */}
+          {/* Stats Section */}
           <motion.div 
-            className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-20"
+            className="relative mt-16"
             variants={staggerContainer}
             initial="initial"
             animate="animate"
           >
-            {[
-              { number: "99.7%", label: "Recognition Accuracy" },
-              { number: "0.3s", label: "Detection Speed" },
-              { number: "24/7", label: "Monitoring" },
-              { number: "50+", label: "Integrations" }
-            ].map((stat, index) => (
-              <motion.div 
-                key={index}
-                variants={fadeInUp}
-                className="text-center"
-              >
-                <div className="text-3xl font-bold text-blue-600 mb-2">{stat.number}</div>
-                <div className="text-gray-600">{stat.label}</div>
-              </motion.div>
-            ))}
+            {/* Custom Background */}
+            <div className="absolute inset-0 bg-white rounded-3xl shadow-xl transform rotate-1"></div>
+            <div className="relative bg-gradient-to-br from-white to-gray-50 rounded-3xl border border-gray-100 p-8 md:p-16 shadow-2xl">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+                {[
+                  { 
+                    number: "95%", 
+                    label: "Độ chính xác nhận diện",
+                    icon: <Target className="h-8 w-8" />,
+                    color: "from-teal-500 to-teal-600",
+                    bgColor: "bg-teal-50"
+                  },
+                  { 
+                    number: "1-2s", 
+                    label: "Tốc độ phát hiện",
+                    icon: <Zap className="h-8 w-8" />,
+                    color: "from-emerald-500 to-emerald-600",
+                    bgColor: "bg-emerald-50"
+                  },
+                  { 
+                    number: "24/7", 
+                    label: "Giám sát liên tục",
+                    icon: <Eye className="h-8 w-8" />,
+                    color: "from-cyan-500 to-cyan-600",
+                    bgColor: "bg-cyan-50"
+                  },
+                  { 
+                    number: "5+", 
+                    label: "Camera hỗ trợ",
+                    icon: <Camera className="h-8 w-8" />,
+                    color: "from-blue-500 to-blue-600",
+                    bgColor: "bg-blue-50"
+                  }
+                ].map((stat, index) => (
+                  <motion.div 
+                    key={index}
+                    variants={fadeInUp}
+                    className="text-center group"
+                  >
+                    {/* Icon with Custom Design */}
+                    <div className={`relative inline-flex items-center justify-center w-20 h-20 ${stat.bgColor} rounded-2xl mb-4 group-hover:scale-110 transition-all duration-300`}>
+                      <div className={`absolute inset-2 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center text-white shadow-lg`}>
+                        {stat.icon}
+                      </div>
+                    </div>
+                    
+                    {/* Number */}
+                    <div className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
+                      {stat.number}
+                    </div>
+                    
+                    {/* Label */}
+                    <div className="text-gray-600 font-medium text-sm lg:text-base">
+                      {stat.label}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
           </motion.div>
         </div>
       </section>
 
       {/* Category Filter */}
-      <section className="py-12 bg-white/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-16 relative">
+        {/* Diagonal Background */}
+        <div className="absolute inset-0 bg-gradient-to-r from-gray-50 to-white transform -skew-y-1 origin-top-left"></div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <motion.div 
             className="text-center mb-12"
             variants={fadeInUp}
@@ -349,11 +414,12 @@ const FeaturesPage: React.FC = () => {
             whileInView="animate"
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Explore by Category
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+              Khám phá theo danh mục
             </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-full mx-auto mb-4"></div>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Browse our comprehensive feature set organized by functionality
+              Duyệt bộ tính năng toàn diện được tổ chức theo chức năng
             </p>
           </motion.div>
 
@@ -361,19 +427,37 @@ const FeaturesPage: React.FC = () => {
             <Button
               variant={selectedCategory === 'all' ? 'default' : 'outline'}
               onClick={() => setSelectedCategory('all')}
-              className="flex items-center space-x-2"
+              className={`flex items-center space-x-2 px-6 py-3 rounded-xl border-2 transition-all duration-300 ${
+                selectedCategory === 'all' 
+                  ? 'bg-teal-600 hover:bg-teal-700 text-white border-teal-600 shadow-lg transform -translate-y-1' 
+                  : 'border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 hover:-translate-y-1'
+              }`}
             >
               <BarChart3 className="h-4 w-4" />
-              <span>All Features</span>
+              <span>Tất cả tính năng</span>
             </Button>
             {categories.map((category) => (
               <Button
                 key={category.id}
                 variant={selectedCategory === category.id ? 'default' : 'outline'}
                 onClick={() => setSelectedCategory(category.id)}
-                className="flex items-center space-x-2"
+                className={`flex items-center space-x-2 px-6 py-3 rounded-xl border-2 transition-all duration-300 ${
+                  selectedCategory === category.id 
+                    ? (() => {
+                        switch(category.id) {
+                          case 'ai-detection': return 'bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-600 shadow-lg transform -translate-y-1';
+                          case 'monitoring': return 'bg-cyan-600 hover:bg-cyan-700 text-white border-cyan-600 shadow-lg transform -translate-y-1';
+                          case 'security': return 'bg-gray-600 hover:bg-gray-700 text-white border-gray-600 shadow-lg transform -translate-y-1';
+                          case 'integration': return 'bg-purple-600 hover:bg-purple-700 text-white border-purple-600 shadow-lg transform -translate-y-1';
+                          default: return 'bg-teal-600 hover:bg-teal-700 text-white border-teal-600 shadow-lg transform -translate-y-1';
+                        }
+                      })()
+                    : 'border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 hover:-translate-y-1'
+                }`}
               >
-                {category.icon}
+                <span>
+                  {category.icon}
+                </span>
                 <span>{category.title}</span>
               </Button>
             ))}
@@ -382,8 +466,15 @@ const FeaturesPage: React.FC = () => {
       </section>
 
       {/* Features Grid */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 relative">
+        {/* Asymmetric Background */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
+          <div className="absolute top-20 right-10 w-64 h-64 border border-teal-100 rounded-full"></div>
+          <div className="absolute bottom-40 left-20 w-48 h-48 border border-emerald-100 rounded-full"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 border border-cyan-50 rounded-full"></div>
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <motion.div 
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
             variants={staggerContainer}
@@ -395,29 +486,39 @@ const FeaturesPage: React.FC = () => {
               <motion.div
                 key={index}
                 variants={fadeInUp}
-                whileHover={{ y: -5 }}
+                whileHover={{ y: -8, scale: 1.02 }}
                 className="group"
               >
-                <Card className="h-full border-0 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden">
-                  <CardHeader>
-                    <div className={`w-16 h-16 bg-gradient-to-r ${feature.gradient} rounded-2xl flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                      {feature.icon}
+                <Card className="h-full border-0 bg-white shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden relative">
+                  {/* Decorative Corner */}
+                  <div className={`absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl ${feature.gradient} opacity-10 rounded-bl-full`}></div>
+                  
+                  <CardHeader className="relative">
+                    <div className="flex items-start space-x-4">
+                      <div className={`w-14 h-14 bg-gradient-to-r ${feature.gradient} rounded-xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                        {feature.icon}
+                      </div>
+                      <div className="flex-1">
+                        <CardTitle className="text-xl font-bold text-gray-900 leading-tight">
+                          {feature.title}
+                        </CardTitle>
+                      </div>
                     </div>
-                    <CardTitle className="text-xl font-bold text-gray-900">
-                      {feature.title}
-                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-gray-600 leading-relaxed mb-6">
                       {feature.description}
                     </p>
                     
-                    <div className="space-y-2">
-                      <h4 className="font-semibold text-gray-900 mb-3">Lợi ích chính:</h4>
+                    <div className="space-y-3">
+                      <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+                        <div className="w-2 h-2 bg-teal-500 rounded-full mr-2"></div>
+                        Lợi ích chính:
+                      </h4>
                       {feature.benefits.map((benefit, benefitIndex) => (
-                        <div key={benefitIndex} className="flex items-center space-x-2">
-                          <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
-                          <span className="text-sm text-gray-600">{benefit}</span>
+                        <div key={benefitIndex} className="flex items-start space-x-3">
+                          <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
+                          <span className="text-sm text-gray-600 leading-relaxed">{benefit}</span>
                         </div>
                       ))}
                     </div>
@@ -430,8 +531,18 @@ const FeaturesPage: React.FC = () => {
       </section>
 
       {/* Technical Specifications */}
-      <section className="py-20 bg-gradient-to-r from-slate-900 to-gray-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 relative overflow-hidden">
+        {/* Custom Dark Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-slate-800 to-gray-900"></div>
+        
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-1/4 w-32 h-32 border border-gray-700 rounded-lg rotate-45 opacity-20"></div>
+          <div className="absolute bottom-32 right-1/3 w-24 h-24 border border-gray-600 rounded-lg -rotate-12 opacity-30"></div>
+          <div className="absolute top-1/2 right-20 w-40 h-40 border border-gray-700 rounded-lg rotate-12 opacity-15"></div>
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <motion.div 
             className="text-center mb-16"
             variants={fadeInUp}
@@ -439,11 +550,12 @@ const FeaturesPage: React.FC = () => {
             whileInView="animate"
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl font-bold mb-4">
+            <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
               Thông số kỹ thuật
             </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-teal-400 to-emerald-400 rounded-full mx-auto mb-4"></div>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Được xây dựng với công nghệ cấp doanh nghiệp và tiêu chuẩn hiệu suất hàng đầu trong ngành
+              Được xây dựng với công nghệ mã nguồn mở và các thư viện tin cậy cho dự án học tập và nghiên cứu
             </p>
           </motion.div>
 
@@ -451,61 +563,74 @@ const FeaturesPage: React.FC = () => {
             {[
               {
                 icon: <Rocket className="h-8 w-8" />,
-                title: "Performance",
+                title: "Hiệu năng",
                 specs: [
-                  "99.7% accuracy rate",
-                  "0.3s detection speed",
-                  "1M+ faces database",
-                  "Real-time processing"
-                ]
+                  "Độ chính xác ~95%",
+                  "Tốc độ phát hiện 1-2s",
+                  "Hỗ trợ 1000+ ảnh người quen",
+                  "Xử lý video real-time"
+                ],
+                gradient: "from-teal-500 to-emerald-500"
               },
               {
                 icon: <Camera className="h-8 w-8" />,
-                title: "Camera Support",
+                title: "Hỗ trợ camera",
                 specs: [
-                  "IP cameras (RTSP/HTTP)",
-                  "USB/Webcam support",
-                  "4K resolution support",
-                  "Night vision compatible"
-                ]
+                  "Camera IP (RTSP)",
+                  "Webcam USB",
+                  "Độ phân giải HD (720p)",
+                  "Tương thích OpenCV"
+                ],
+                gradient: "from-cyan-500 to-blue-500"
               },
               {
                 icon: <Cloud className="h-8 w-8" />,
-                title: "Infrastructure",
+                title: "Hạ tầng",
                 specs: [
-                  "Cloud & on-premise",
-                  "Auto-scaling",
-                  "99.9% uptime SLA",
-                  "Global CDN"
-                ]
+                  "Triển khai local server",
+                  "Hỗ trợ Linux/Windows",
+                  "MySQL database",
+                  "FastAPI backend"
+                ],
+                gradient: "from-purple-500 to-indigo-500"
               },
               {
                 icon: <Wifi className="h-8 w-8" />,
-                title: "Connectivity",
+                title: "Kết nối",
                 specs: [
-                  "RESTful API",
-                  "WebSocket real-time",
-                  "Webhook events",
-                  "SDK libraries"
-                ]
+                  "REST API",
+                  "WebSocket cho realtime",
+                  "Email notifications",
+                  "Web dashboard"
+                ],
+                gradient: "from-emerald-500 to-teal-500"
               }
             ].map((spec, index) => (
               <motion.div
                 key={index}
                 variants={fadeInUp}
-                className="text-center"
+                className="relative group"
               >
-                <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center text-white mx-auto mb-4">
-                  {spec.icon}
+                {/* Background Card */}
+                <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-gray-700 p-8 h-full hover:bg-white/10 transition-all duration-300 group-hover:border-gray-600">
+                  {/* Icon */}
+                  <div className={`w-16 h-16 bg-gradient-to-r ${spec.gradient} rounded-xl flex items-center justify-center text-white mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                    {spec.icon}
+                  </div>
+                  
+                  {/* Title */}
+                  <h3 className="text-xl font-bold text-white mb-6 text-center">{spec.title}</h3>
+                  
+                  {/* Specs List */}
+                  <ul className="space-y-3">
+                    {spec.specs.map((item, itemIndex) => (
+                      <li key={itemIndex} className="text-gray-300 flex items-start space-x-3">
+                        <div className="w-2 h-2 bg-teal-400 rounded-full mt-2 flex-shrink-0"></div>
+                        <span className="text-sm leading-relaxed">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <h3 className="text-xl font-bold mb-4">{spec.title}</h3>
-                <ul className="space-y-2">
-                  {spec.specs.map((item, itemIndex) => (
-                    <li key={itemIndex} className="text-gray-300">
-                      {item}
-                    </li>
-                  ))}
-                </ul>
               </motion.div>
             ))}
           </div>
@@ -513,34 +638,59 @@ const FeaturesPage: React.FC = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-teal-600 to-emerald-600">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="py-20 relative overflow-hidden">
+        {/* Asymmetric Background */}
+        <div className="absolute inset-0 bg-white"></div>
+        <div className="absolute top-0 left-0 w-full h-2/3 bg-gradient-to-br from-teal-50 to-emerald-50 transform -skew-y-3 origin-top-left"></div>
+        
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
           <motion.div
             variants={fadeInUp}
             initial="initial"
             whileInView="animate"
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl font-bold text-white mb-6">
-              Sẵn sàng bắt đầu?
-            </h2>
-            <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-              Tham gia cùng hàng nghìn tổ chức đang sử dụng SafeFace để nâng cao bảo mật 
-              của họ với công nghệ nhận diện khuôn mặt AI.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/register">
-                <Button size="lg" variant="secondary" className="px-8 py-3 text-lg">
-                  Bắt đầu miễn phí
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-              <Link to="/contact">
-                <Button size="lg" variant="outline" className="px-8 py-3 text-lg border-white text-white hover:bg-white hover:text-teal-600">
-                  Liên hệ tư vấn
-                </Button>
-              </Link>
+            <div className="bg-white rounded-3xl shadow-2xl p-12 lg:p-16 border border-gray-100 transform hover:scale-105 transition-transform duration-300">
+              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
+                Sẵn sàng bắt đầu?
+              </h2>
+              <div className="w-24 h-1 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-full mx-auto mb-6"></div>
+              <p className="text-lg text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+                Thử nghiệm hệ thống nhận diện khuôn mặt SafeFace miễn phí và khám phá 
+                các tính năng phát hiện người lạ trong khu vực làm việc.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                <Link to="/register">
+                  <Button size="lg" className="px-10 py-4 text-lg bg-teal-600 hover:bg-teal-700 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                    Bắt đầu miễn phí
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
+                <Link to="/contact">
+                  <Button size="lg" variant="outline" className="px-10 py-4 text-lg border-2 border-teal-600 text-teal-600 hover:bg-teal-50 transform hover:-translate-y-1 transition-all duration-300">
+                    Liên hệ tư vấn
+                  </Button>
+                </Link>
+              </div>
+              
+              {/* Trust Indicators */}
+              <div className="mt-10 pt-8 border-t border-gray-100">
+                <div className="flex flex-wrap justify-center items-center gap-8 text-gray-500 text-sm">
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="h-4 w-4 text-teal-500" />
+                    <span>Dùng thử miễn phí</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Shield className="h-4 w-4 text-teal-500" />
+                    <span>Mã nguồn mở</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Clock className="h-4 w-4 text-teal-500" />
+                    <span>Hỗ trợ học tập</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </motion.div>
         </div>

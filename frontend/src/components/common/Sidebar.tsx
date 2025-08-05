@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import SafeFaceLogo from '@/assets/images/SafeFace.png';
 import {
   LayoutDashboard,
   Camera,
@@ -277,20 +278,29 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
       >
         <div className="flex items-center justify-between">
           {!collapsed && (
-            <div className="flex items-center space-x-3">
-              <div 
-                className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg"
-                style={{
-                  background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)'
-                }}
-              >
-                <Shield className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold text-slate-900">SafeFace</h2>
-                <p className="text-sm text-slate-600">AI Security Platform</p>
-              </div>
-            </div>
+            <img 
+              src={SafeFaceLogo} 
+              alt="SafeFace Logo" 
+              className="h-32 w-auto object-contain"
+              onError={(e) => {
+                // Fallback to original design if image fails to load
+                e.currentTarget.style.display = 'none';
+                const fallback = document.createElement('div');
+                fallback.className = 'flex items-center space-x-3';
+                fallback.innerHTML = `
+                  <div class="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 1L3 5V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V5L12 1M12 7C13.4 7 14.8 8.6 14.8 10.2V11.2C15.2 11.4 15.5 11.7 15.5 12.3V16.5C15.5 17.1 15.1 17.5 14.5 17.5H9.5C8.9 17.5 8.5 17.1 8.5 16.5V12.3C8.5 11.7 8.8 11.4 9.2 11.2V10.2C9.2 8.6 10.6 7 12 7M12 8.2C11.2 8.2 10.5 8.7 10.5 10.2V11.2H13.5V10.2C13.5 8.7 12.8 8.2 12 8.2Z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 class="text-xl font-bold text-slate-900">SafeFace</h2>
+                    <p class="text-sm text-slate-600">AI Security Platform</p>
+                  </div>
+                `;
+                e.currentTarget.parentNode?.appendChild(fallback);
+              }}
+            />
           )}
           
           <Button

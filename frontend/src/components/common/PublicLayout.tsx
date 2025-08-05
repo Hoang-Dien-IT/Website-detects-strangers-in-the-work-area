@@ -3,7 +3,6 @@ import { Outlet, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
-  Shield,
   Menu,
   X,
   Phone,
@@ -16,34 +15,36 @@ import {
   Instagram,
   ChevronDown,
   Star,
-  ArrowRight
+  ArrowRight,
+  
 } from 'lucide-react';
 import { useState } from 'react';
+import SafeFaceLogo from '@/assets/images/SafeFace.png';
 
 const PublicLayout: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   // const location = useLocation();
 
   const navigationItems = [
-    { label: 'Home', href: '/' },
-    { label: 'Features', href: 'features' },
-    { label: 'Solutions', href: '#solutions', 
-      dropdown: [
-        { label: 'Enterprise Security', href: '/solutions/enterprise' },
-        { label: 'Small Business', href: '/solutions/small-business' },
-        { label: 'Education', href: '/solutions/education' },
-        { label: 'Healthcare', href: '/solutions/healthcare' }
-      ]
-    },
-    { label: 'Resources', href: 'resources',
-      dropdown: [
-        { label: 'Documentation', href: '/docs' },
-        { label: 'API Reference', href: '/api-docs' },
-        { label: 'Help Center', href: '/help' },
-        { label: 'Blog', href: '/blog' }
-      ]
-    },
-    { label: 'Contact', href: 'contact' }
+    { label: 'Trang chủ', href: '/' },
+    { label: 'Tính năng', href: 'features' },
+    // { label: 'Giải pháp', href: '#solutions', 
+    //   dropdown: [
+    //     { label: 'Bảo mật doanh nghiệp', href: '/solutions/enterprise' },
+    //     { label: 'Doanh nghiệp nhỏ', href: '/solutions/small-business' },
+    //     { label: 'Giáo dục', href: '/solutions/education' },
+    //     { label: 'Y tế', href: '/solutions/healthcare' }
+    //   ]
+    // },
+    // { label: 'Tài nguyên', href: 'resources',
+    //   dropdown: [
+    //     { label: 'Tài liệu', href: '/docs' },
+    //     { label: 'Tài liệu API', href: '/api-docs' },
+    //     { label: 'Trung tâm trợ giúp', href: '/help' },
+    //     { label: 'Blog', href: '/blog' }
+    //   ]
+    // },
+    { label: 'Liên hệ', href: 'contact' }
   ];
 
   return (
@@ -57,11 +58,11 @@ const PublicLayout: React.FC = () => {
               <div className="flex items-center space-x-6">
                 <div className="flex items-center space-x-2">
                   <Phone className="h-3 w-3" />
-                  <span>+1 (555) 123-4567</span>
+                  <span>0944779743</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Mail className="h-3 w-3" />
-                  <span>info@safeface.ai</span>
+                  <span>nguyenhoanhdien1x@gmail.com</span>
                 </div>
               </div>
               <div className="hidden md:flex items-center space-x-4">
@@ -84,15 +85,29 @@ const PublicLayout: React.FC = () => {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-r from-teal-600 to-emerald-600 rounded-xl flex items-center justify-center">
-                <Shield className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">
-                  SafeFace
-                </span>
-                <div className="text-xs text-gray-500">AI Security Platform</div>
-              </div>
+              <img 
+                src={SafeFaceLogo} 
+                alt="SafeFace Logo" 
+                className="h-24 w-auto object-contain"
+                onError={(e) => {
+                  // Fallback to original design if image fails to load
+                  e.currentTarget.style.display = 'none';
+                  const fallback = document.createElement('div');
+                  fallback.className = 'flex items-center space-x-2';
+                  fallback.innerHTML = `
+                    <div class="w-10 h-10 bg-gradient-to-r from-teal-600 to-emerald-600 rounded-xl flex items-center justify-center">
+                      <svg class="h-6 w-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 1L3 5V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V5L12 1M12 7C13.4 7 14.8 8.6 14.8 10.2V11.2C15.2 11.4 15.5 11.7 15.5 12.3V16.5C15.5 17.1 15.1 17.5 14.5 17.5H9.5C8.9 17.5 8.5 17.1 8.5 16.5V12.3C8.5 11.7 8.8 11.4 9.2 11.2V10.2C9.2 8.6 10.6 7 12 7M12 8.2C11.2 8.2 10.5 8.7 10.5 10.2V11.2H13.5V10.2C13.5 8.7 12.8 8.2 12 8.2Z"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <span class="text-2xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">SafeFace</span>
+                      <div class="text-xs text-gray-500">Nền tảng bảo mật AI</div>
+                    </div>
+                  `;
+                  e.currentTarget.parentNode?.appendChild(fallback);
+                }}
+              />
             </Link>
 
             {/* Desktop Navigation */}
@@ -104,11 +119,11 @@ const PublicLayout: React.FC = () => {
                     className="flex items-center space-x-1 text-gray-700 hover:text-teal-600 font-medium transition-colors"
                   >
                     <span>{item.label}</span>
-                    {item.dropdown && <ChevronDown className="h-4 w-4" />}
+                    {/* {item.dropdown && <ChevronDown className="h-4 w-4" />} */}
                   </a>
                   
                   {/* Dropdown Menu */}
-                  {item.dropdown && (
+                  {/* {item.dropdown && (
                     <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                       <div className="p-2">
                         {item.dropdown.map((dropdownItem) => (
@@ -122,7 +137,7 @@ const PublicLayout: React.FC = () => {
                         ))}
                       </div>
                     </div>
-                  )}
+                  )} */}
                 </div>
               ))}
             </nav>
@@ -166,7 +181,7 @@ const PublicLayout: React.FC = () => {
                   >
                     {item.label}
                   </a>
-                  {item.dropdown && (
+                  {/* {item.dropdown && (
                     <div className="ml-4 space-y-1">
                       {item.dropdown.map((dropdownItem) => (
                         <a
@@ -178,7 +193,7 @@ const PublicLayout: React.FC = () => {
                         </a>
                       ))}
                     </div>
-                  )}
+                  )} */}
                 </div>
               ))}
               <div className="pt-4 border-t border-gray-200 space-y-2">
@@ -211,19 +226,33 @@ const PublicLayout: React.FC = () => {
             {/* Company Info */}
             <div className="lg:col-span-2">
               <div className="flex items-center space-x-2 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-r from-teal-600 to-emerald-600 rounded-xl flex items-center justify-center">
-                  <Shield className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <span className="text-2xl font-bold">SafeFace</span>
-                  <div className="text-sm text-gray-400">AI Security Platform</div>
-                </div>
+                <img 
+                  src={SafeFaceLogo} 
+                  alt="SafeFace Logo" 
+                  className="h-32 w-auto object-contain"
+                  onError={(e) => {
+                    // Fallback to original design if image fails to load
+                    e.currentTarget.style.display = 'none';
+                    const fallback = document.createElement('div');
+                    fallback.className = 'flex items-center space-x-2';
+                    fallback.innerHTML = `
+                      <div class="w-10 h-10 bg-gradient-to-r from-teal-600 to-emerald-600 rounded-xl flex items-center justify-center">
+                        <svg class="h-6 w-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 1L3 5V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V5L12 1M12 7C13.4 7 14.8 8.6 14.8 10.2V11.2C15.2 11.4 15.5 11.7 15.5 12.3V16.5C15.5 17.1 15.1 17.5 14.5 17.5H9.5C8.9 17.5 8.5 17.1 8.5 16.5V12.3C8.5 11.7 8.8 11.4 9.2 11.2V10.2C9.2 8.6 10.6 7 12 7M12 8.2C11.2 8.2 10.5 8.7 10.5 10.2V11.2H13.5V10.2C13.5 8.7 12.8 8.2 12 8.2Z"/>
+                        </svg>
+                      </div>
+                      <div>
+                        <span class="text-2xl font-bold">SafeFace</span>
+                        <div class="text-sm text-gray-400">Nền tảng bảo mật AI</div>
+                      </div>
+                    `;
+                    e.currentTarget.parentNode?.appendChild(fallback);
+                  }}
+                />
               </div>
               <p className="text-gray-400 leading-relaxed mb-6 max-w-md">
-                Nền tảng bảo mật nhận diện khuôn mặt AI thế hệ mới được tin tưởng bởi 
-                các tổ chức trên toàn thế giới. Bảo vệ những gì quan trọng nhất với công nghệ tiên tiến.
+                Nền tảng bảo mật nhận diện khuôn mặt AI thế hệ mới được tin tưởng bởi các tổ chức trên toàn thế giới. Bảo vệ những gì quan trọng nhất với công nghệ tiên tiến.
               </p>
-              
               {/* Trust Badges */}
               <div className="flex items-center space-x-4 mb-6">
                 <div className="flex items-center space-x-1">
@@ -231,11 +260,10 @@ const PublicLayout: React.FC = () => {
                   <Star className="h-4 w-4 text-yellow-400 fill-current" />
                   <Star className="h-4 w-4 text-yellow-400 fill-current" />
                   <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                  <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                  <span className="text-sm text-gray-400 ml-2">4.9/5 rating</span>
+                  {/* <Star className="h-4 w-4 text-yellow-400 fill-current" /> */}
+                  <span className="text-sm text-gray-400 ml-2">4/5 đánh giá</span>
                 </div>
               </div>
-
               {/* Contact Info */}
               <div className="space-y-2 text-sm text-gray-400">
                 <div className="flex items-center space-x-2">
@@ -252,21 +280,19 @@ const PublicLayout: React.FC = () => {
                 </div>
               </div>
             </div>
-
             {/* Product Links */}
             <div>
               <h3 className="font-semibold text-lg mb-4">Sản phẩm</h3>
               <ul className="space-y-3 text-gray-400">
                 <li><a href="#features" className="hover:text-teal-400 transition-colors">Tính năng</a></li>
-                <li><a href="/api-docs" className="hover:text-teal-400 transition-colors">API</a></li>
+                {/* <li><a href="/api-docs" className="hover:text-teal-400 transition-colors">API</a></li>
                 <li><a href="/integrations" className="hover:text-teal-400 transition-colors">Tích hợp</a></li>
                 <li><a href="/security" className="hover:text-teal-400 transition-colors">Bảo mật</a></li>
-                <li><a href="/changelog" className="hover:text-teal-400 transition-colors">Cập nhật</a></li>
+                <li><a href="/changelog" className="hover:text-teal-400 transition-colors">Cập nhật</a></li> */}
               </ul>
             </div>
-
             {/* Solutions Links */}
-            <div>
+            {/* <div>
               <h3 className="font-semibold text-lg mb-4">Giải pháp</h3>
               <ul className="space-y-3 text-gray-400">
                 <li><a href="/solutions/enterprise" className="hover:text-teal-400 transition-colors">Doanh nghiệp</a></li>
@@ -275,23 +301,21 @@ const PublicLayout: React.FC = () => {
                 <li><a href="/solutions/healthcare" className="hover:text-teal-400 transition-colors">Y tế</a></li>
                 <li><a href="/solutions/retail" className="hover:text-teal-400 transition-colors">Bán lẻ</a></li>
               </ul>
-            </div>
-
+            </div> */}
             {/* Support Links */}
             <div>
               <h3 className="font-semibold text-lg mb-4">Hỗ trợ</h3>
               <ul className="space-y-3 text-gray-400">
-                <li><a href="/help" className="hover:text-teal-400 transition-colors">Trung tâm trợ giúp</a></li>
-                <li><a href="/docs" className="hover:text-teal-400 transition-colors">Tài liệu</a></li>
+                {/* <li><a href="/help" className="hover:text-teal-400 transition-colors">Trung tâm trợ giúp</a></li>
+                <li><a href="/docs" className="hover:text-teal-400 transition-colors">Tài liệu</a></li> */}
                 <li><a href="/contact" className="hover:text-teal-400 transition-colors">Liên hệ</a></li>
-                <li><a href="/status" className="hover:text-teal-400 transition-colors">Trạng thái hệ thống</a></li>
+                {/* <li><a href="/status" className="hover:text-teal-400 transition-colors">Trạng thái hệ thống</a></li>
                 <li><a href="/community" className="hover:text-teal-400 transition-colors">Cộng đồng</a></li>
-                <li><a href="/training" className="hover:text-teal-400 transition-colors">Đào tạo</a></li>
+                <li><a href="/training" className="hover:text-teal-400 transition-colors">Đào tạo</a></li> */}
               </ul>
             </div>
           </div>
         </div>
-
         {/* Bottom Footer */}
         <div className="border-t border-gray-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -306,7 +330,6 @@ const PublicLayout: React.FC = () => {
                   <a href="/cookies" className="hover:text-teal-400 transition-colors">Chính sách Cookie</a>
                 </div>
               </div>
-
               {/* Social Links */}
               <div className="flex items-center space-x-4">
                 <a href="https://facebook.com/safeface" className="text-gray-400 hover:text-teal-400 transition-colors">
