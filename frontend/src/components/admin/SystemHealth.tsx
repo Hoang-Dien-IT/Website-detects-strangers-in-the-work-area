@@ -53,7 +53,7 @@ const SystemHealth: React.FC<SystemHealthProps> = ({ onRefresh }) => {
       onRefresh?.();
     } catch (error) {
       console.error('Error loading health data:', error);
-      toast.error('Failed to load system health');
+      toast.error('Không thể tải dữ liệu sức khỏe hệ thống');
     } finally {
       setLoading(false);
     }
@@ -78,14 +78,14 @@ const SystemHealth: React.FC<SystemHealthProps> = ({ onRefresh }) => {
     switch (status?.toLowerCase()) {
       case 'healthy':
       case 'online':
-        return <Badge className="bg-green-100 text-green-800">Healthy</Badge>;
+        return <Badge className="bg-green-100 text-green-800">Ổn định</Badge>;
       case 'warning':
-        return <Badge className="bg-yellow-100 text-yellow-800">Warning</Badge>;
+        return <Badge className="bg-yellow-100 text-yellow-800">Cảnh báo</Badge>;
       case 'error':
       case 'offline':
-        return <Badge className="bg-red-100 text-red-800">Error</Badge>;
+        return <Badge className="bg-red-100 text-red-800">Lỗi</Badge>;
       default:
-        return <Badge className="bg-gray-100 text-gray-800">Unknown</Badge>;
+        return <Badge className="bg-gray-100 text-gray-800">Không xác định</Badge>;
     }
   };
 
@@ -111,8 +111,8 @@ const SystemHealth: React.FC<SystemHealthProps> = ({ onRefresh }) => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">System Health</h2>
-          <p className="text-gray-600">Monitor system status and performance</p>
+          <h2 className="text-2xl font-bold text-gray-900">Sức khỏe hệ thống</h2>
+          <p className="text-gray-600">Theo dõi trạng thái và hiệu suất hệ thống</p>
         </div>
         <div className="flex space-x-2">
           <Button
@@ -122,21 +122,21 @@ const SystemHealth: React.FC<SystemHealthProps> = ({ onRefresh }) => {
             className={autoRefresh ? 'bg-green-50 border-green-200' : ''}
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${autoRefresh ? 'animate-spin' : ''}`} />
-            Auto Refresh
+            Tự động làm mới
           </Button>
           <Button variant="outline" size="sm" onClick={loadHealthData}>
             <RefreshCw className="w-4 h-4 mr-2" />
-            Refresh
+            Làm mới
           </Button>
         </div>
       </div>
 
-      {/* Service Status */}
+      {/* Trạng thái dịch vụ */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Activity className="h-5 w-5" />
-            <span>Service Status</span>
+            <span>Trạng thái dịch vụ</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -144,7 +144,7 @@ const SystemHealth: React.FC<SystemHealthProps> = ({ onRefresh }) => {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <Database className="h-4 w-4" />
-                <span className="font-medium">Database</span>
+                <span className="font-medium">Cơ sở dữ liệu</span>
               </div>
               <div className="flex items-center space-x-2">
                 {getStatusIcon(health?.database || 'unknown')}
@@ -155,7 +155,7 @@ const SystemHealth: React.FC<SystemHealthProps> = ({ onRefresh }) => {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <Server className="h-4 w-4" />
-                <span className="font-medium">Face Recognition</span>
+                <span className="font-medium">Nhận diện khuôn mặt</span>
               </div>
               <div className="flex items-center space-x-2">
                 {getStatusIcon(health?.face_recognition || 'unknown')}
@@ -177,12 +177,12 @@ const SystemHealth: React.FC<SystemHealthProps> = ({ onRefresh }) => {
         </CardContent>
       </Card>
 
-      {/* System Resources */}
+      {/* Tài nguyên hệ thống */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Server className="h-5 w-5" />
-            <span>System Resources</span>
+            <span>Tài nguyên hệ thống</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -192,7 +192,7 @@ const SystemHealth: React.FC<SystemHealthProps> = ({ onRefresh }) => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Cpu className="h-4 w-4" />
-                  <span className="font-medium">CPU Usage</span>
+                  <span className="font-medium">Sử dụng CPU</span>
                 </div>
                 <span className="text-sm text-gray-600">
                   {health?.system.cpu.percent || 0}%
@@ -212,7 +212,7 @@ const SystemHealth: React.FC<SystemHealthProps> = ({ onRefresh }) => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <MemoryStick className="h-4 w-4" />
-                  <span className="font-medium">Memory Usage</span>
+                  <span className="font-medium">Sử dụng RAM</span>
                 </div>
                 <span className="text-sm text-gray-600">
                   {formatBytes(health?.system.memory.used || 0)} / {formatBytes(health?.system.memory.total || 0)}
@@ -232,7 +232,7 @@ const SystemHealth: React.FC<SystemHealthProps> = ({ onRefresh }) => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <HardDrive className="h-4 w-4" />
-                  <span className="font-medium">Disk Usage</span>
+                  <span className="font-medium">Sử dụng ổ đĩa</span>
                 </div>
                 <span className="text-sm text-gray-600">
                   {formatBytes(health?.system.disk.used || 0)} / {formatBytes(health?.system.disk.total || 0)}
@@ -250,44 +250,44 @@ const SystemHealth: React.FC<SystemHealthProps> = ({ onRefresh }) => {
         </CardContent>
       </Card>
 
-      {/* System Information */}
+      {/* Thông tin hệ thống */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Server className="h-5 w-5" />
-            <span>System Information</span>
+            <span>Thông tin hệ thống</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-sm font-medium">Application Version</span>
+                <span className="text-sm font-medium">Phiên bản ứng dụng</span>
                 <span className="text-sm text-gray-600">v1.0.0</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm font-medium">Environment</span>
-                <span className="text-sm text-gray-600">Production</span>
+                <span className="text-sm font-medium">Môi trường</span>
+                <span className="text-sm text-gray-600">Sản xuất</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm font-medium">Node.js Version</span>
+                <span className="text-sm font-medium">Phiên bản Node.js</span>
                 <span className="text-sm text-gray-600">v18.16.0</span>
               </div>
             </div>
             
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-sm font-medium">System Uptime</span>
-                <span className="text-sm text-gray-600">{health?.uptime || 'Unknown'}</span>
+                <span className="text-sm font-medium">Thời gian hoạt động hệ thống</span>
+                <span className="text-sm text-gray-600">{health?.uptime || 'Không xác định'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm font-medium">Available Memory</span>
+                <span className="text-sm font-medium">Bộ nhớ khả dụng</span>
                 <span className="text-sm text-gray-600">
                   {formatBytes(health?.system.memory.available || 0)}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm font-medium">Free Disk Space</span>
+                <span className="text-sm font-medium">Dung lượng ổ đĩa trống</span>
                 <span className="text-sm text-gray-600">
                   {formatBytes(health?.system.disk.free || 0)}
                 </span>
@@ -297,12 +297,12 @@ const SystemHealth: React.FC<SystemHealthProps> = ({ onRefresh }) => {
         </CardContent>
       </Card>
 
-      {/* Performance Alerts */}
+      {/* Cảnh báo hiệu suất */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <AlertTriangle className="h-5 w-5" />
-            <span>Performance Alerts</span>
+            <span>Cảnh báo hiệu suất</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -311,9 +311,9 @@ const SystemHealth: React.FC<SystemHealthProps> = ({ onRefresh }) => {
               <div className="flex items-center space-x-3 p-3 bg-red-50 border border-red-200 rounded-lg">
                 <AlertTriangle className="h-5 w-5 text-red-600" />
                 <div>
-                  <p className="font-medium text-red-900">High CPU Usage</p>
+                  <p className="font-medium text-red-900">CPU sử dụng cao</p>
                   <p className="text-sm text-red-700">
-                    CPU usage is at {health.system.cpu.percent}%. Consider investigating running processes.
+                    CPU đang sử dụng {health.system.cpu.percent}%. Hãy kiểm tra các tiến trình đang chạy.
                   </p>
                 </div>
               </div>
@@ -323,9 +323,9 @@ const SystemHealth: React.FC<SystemHealthProps> = ({ onRefresh }) => {
               <div className="flex items-center space-x-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <AlertTriangle className="h-5 w-5 text-yellow-600" />
                 <div>
-                  <p className="font-medium text-yellow-900">High Memory Usage</p>
+                  <p className="font-medium text-yellow-900">RAM sử dụng cao</p>
                   <p className="text-sm text-yellow-700">
-                    Memory usage is at {health.system.memory.percent}%. Consider freeing up memory.
+                    RAM đang sử dụng {health.system.memory.percent}%. Hãy giải phóng bộ nhớ.
                   </p>
                 </div>
               </div>
@@ -335,9 +335,9 @@ const SystemHealth: React.FC<SystemHealthProps> = ({ onRefresh }) => {
               <div className="flex items-center space-x-3 p-3 bg-red-50 border border-red-200 rounded-lg">
                 <AlertTriangle className="h-5 w-5 text-red-600" />
                 <div>
-                  <p className="font-medium text-red-900">Low Disk Space</p>
+                  <p className="font-medium text-red-900">Ổ đĩa sắp đầy</p>
                   <p className="text-sm text-red-700">
-                    Disk usage is at {health.system.disk.percent}%. Please free up disk space immediately.
+                    Ổ đĩa đang sử dụng {health.system.disk.percent}%. Vui lòng giải phóng dung lượng ngay.
                   </p>
                 </div>
               </div>
@@ -349,9 +349,9 @@ const SystemHealth: React.FC<SystemHealthProps> = ({ onRefresh }) => {
               <div className="flex items-center space-x-3 p-3 bg-green-50 border border-green-200 rounded-lg">
                 <CheckCircle className="h-5 w-5 text-green-600" />
                 <div>
-                  <p className="font-medium text-green-900">All Systems Normal</p>
+                  <p className="font-medium text-green-900">Tất cả hệ thống bình thường</p>
                   <p className="text-sm text-green-700">
-                    All system resources are operating within normal parameters.
+                    Tất cả tài nguyên hệ thống đang hoạt động trong ngưỡng an toàn.
                   </p>
                 </div>
               </div>
@@ -363,7 +363,7 @@ const SystemHealth: React.FC<SystemHealthProps> = ({ onRefresh }) => {
       {loading && (
         <div className="text-center">
           <RefreshCw className="w-6 h-6 animate-spin mx-auto text-gray-400" />
-          <p className="text-sm text-gray-600 mt-2">Refreshing health data...</p>
+          <p className="text-sm text-gray-600 mt-2">Đang làm mới dữ liệu sức khỏe...</p>
         </div>
       )}
     </div>

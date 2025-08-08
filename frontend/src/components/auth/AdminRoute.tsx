@@ -24,7 +24,7 @@ const AdminRoute: React.FC<AdminRouteProps> = ({ children, fallback }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Show access denied if user is not admin
+  // Hiển thị thông báo từ chối truy cập nếu không phải admin
   if (!user?.is_admin) {
     if (fallback) {
       return <>{fallback}</>;
@@ -39,9 +39,9 @@ const AdminRoute: React.FC<AdminRouteProps> = ({ children, fallback }) => {
               <div className="space-y-3">
                 <Shield className="h-12 w-12 mx-auto text-red-500" />
                 <div>
-                  <h3 className="font-semibold text-lg">Access Denied</h3>
+                  <h3 className="font-semibold text-lg">Từ chối truy cập</h3>
                   <p className="text-sm text-gray-600 mt-1">
-                    You don't have administrator privileges to access this page.
+                    Bạn không có quyền quản trị viên để truy cập trang này.
                   </p>
                 </div>
                 <div className="flex flex-col space-y-2">
@@ -49,7 +49,7 @@ const AdminRoute: React.FC<AdminRouteProps> = ({ children, fallback }) => {
                     onClick={() => window.history.back()}
                     className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
                   >
-                    Go Back
+                    Quay lại
                   </button>
                   <Navigate to="/dashboard" replace />
                 </div>

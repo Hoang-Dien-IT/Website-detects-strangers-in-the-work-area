@@ -121,15 +121,15 @@ const ResetPasswordForm: React.FC = () => {
     const newErrors: Partial<ResetPasswordFormData> = {};
 
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = 'Vui lòng nhập mật khẩu mới';
     } else if (passwordStrength.score < 3) {
-      newErrors.password = 'Password is too weak';
+      newErrors.password = 'Mật khẩu quá yếu';
     }
 
     if (!formData.confirm_password) {
-      newErrors.confirm_password = 'Please confirm your password';
+      newErrors.confirm_password = 'Vui lòng xác nhận mật khẩu mới';
     } else if (formData.password !== formData.confirm_password) {
-      newErrors.confirm_password = 'Passwords do not match';
+      newErrors.confirm_password = 'Mật khẩu không khớp';
     }
 
     setErrors(newErrors);
@@ -145,9 +145,9 @@ const ResetPasswordForm: React.FC = () => {
     try {
       await authService.resetPassword(token, formData.password);
       setResetSuccess(true);
-      toast.success('Password reset successfully');
+      toast.success('Đặt lại mật khẩu thành công');
     } catch (error: any) {
-      toast.error(error.response?.data?.detail || 'Failed to reset password');
+      toast.error(error.response?.data?.detail || 'Đặt lại mật khẩu thất bại');
       if (error.response?.status === 400) {
         setTokenValid(false);
       }
@@ -159,12 +159,12 @@ const ResetPasswordForm: React.FC = () => {
   const getStrengthLabel = (score: number) => {
     switch (score) {
       case 0:
-      case 1: return 'Very Weak';
-      case 2: return 'Weak';
-      case 3: return 'Fair';
-      case 4: return 'Good';
-      case 5: return 'Strong';
-      default: return 'Very Weak';
+      case 1: return 'Rất yếu';
+      case 2: return 'Yếu';
+      case 3: return 'Trung bình';
+      case 4: return 'Tốt';
+      case 5: return 'Mạnh';
+      default: return 'Rất yếu';
     }
   };
 
@@ -181,10 +181,10 @@ const ResetPasswordForm: React.FC = () => {
             </div>
             <div>
               <CardTitle className="text-2xl font-bold text-gray-900">
-                Invalid Reset Link
+                Liên kết đặt lại không hợp lệ
               </CardTitle>
               <CardDescription className="text-gray-600">
-                This password reset link is invalid or has expired
+                Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn
               </CardDescription>
             </div>
           </CardHeader>
@@ -193,7 +193,7 @@ const ResetPasswordForm: React.FC = () => {
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                The password reset link is invalid, expired, or has already been used.
+                Liên kết đặt lại mật khẩu không hợp lệ, đã hết hạn hoặc đã được sử dụng.
               </AlertDescription>
             </Alert>
 
@@ -202,7 +202,7 @@ const ResetPasswordForm: React.FC = () => {
                 onClick={() => navigate('/forgot-password')}
                 className="w-full"
               >
-                Request New Reset Link
+                Yêu cầu liên kết mới
               </Button>
               
               <Button
@@ -211,14 +211,14 @@ const ResetPasswordForm: React.FC = () => {
                 className="w-full"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Login
+                Quay lại đăng nhập
               </Button>
             </div>
 
             <Alert className="bg-blue-50 border-blue-200">
               <AlertCircle className="h-4 w-4 text-blue-600" />
               <AlertDescription className="text-blue-800">
-                Reset links expire after 24 hours for security. Please request a new one if needed.
+                Liên kết đặt lại sẽ hết hạn sau 24 giờ vì lý do bảo mật. Vui lòng yêu cầu liên kết mới nếu cần.
               </AlertDescription>
             </Alert>
           </CardContent>
@@ -240,10 +240,10 @@ const ResetPasswordForm: React.FC = () => {
             </div>
             <div>
               <CardTitle className="text-2xl font-bold text-gray-900">
-                Password Reset Successfully
+                Đặt lại mật khẩu thành công
               </CardTitle>
               <CardDescription className="text-gray-600">
-                Your password has been updated successfully
+                Mật khẩu của bạn đã được cập nhật thành công
               </CardDescription>
             </div>
           </CardHeader>
@@ -252,7 +252,7 @@ const ResetPasswordForm: React.FC = () => {
             <Alert className="bg-green-50 border-green-200">
               <CheckCircle className="h-4 w-4 text-green-600" />
               <AlertDescription className="text-green-800">
-                You can now sign in with your new password.
+                Bạn có thể đăng nhập bằng mật khẩu mới.
               </AlertDescription>
             </Alert>
 
@@ -261,12 +261,12 @@ const ResetPasswordForm: React.FC = () => {
               className="w-full h-11"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Continue to Login
+              Đăng nhập ngay
             </Button>
 
             <div className="text-center">
               <p className="text-sm text-gray-600">
-                For security reasons, please sign in again with your new password.
+                Vì lý do bảo mật, hãy đăng nhập lại bằng mật khẩu mới.
               </p>
             </div>
           </CardContent>
@@ -282,8 +282,8 @@ const ResetPasswordForm: React.FC = () => {
         <Card className="w-full max-w-md shadow-xl border-0">
           <CardContent className="p-8 text-center">
             <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-gray-600">Verifying reset token...</p>
-            <p className="text-sm text-gray-500 mt-2">Please wait while we validate your request.</p>
+            <p className="text-gray-600">Đang xác thực liên kết đặt lại...</p>
+            <p className="text-sm text-gray-500 mt-2">Vui lòng chờ trong giây lát.</p>
           </CardContent>
         </Card>
       </div>
@@ -301,10 +301,10 @@ const ResetPasswordForm: React.FC = () => {
           </div>
           <div>
             <CardTitle className="text-2xl font-bold text-gray-900">
-              Reset Password
+              Đặt lại mật khẩu
             </CardTitle>
             <CardDescription className="text-gray-600">
-              Create a new password for your account
+              Tạo mật khẩu mới cho tài khoản của bạn
             </CardDescription>
           </div>
         </CardHeader>
@@ -313,14 +313,14 @@ const ResetPasswordForm: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* New Password */}
             <div className="space-y-2">
-              <Label htmlFor="password">New Password</Label>
+              <Label htmlFor="password">Mật khẩu mới</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
                   id="password"
                   name="password"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Create a new password"
+                  placeholder="Tạo mật khẩu mới"
                   value={formData.password}
                   onChange={handleChange}
                   disabled={loading}
@@ -359,7 +359,7 @@ const ResetPasswordForm: React.FC = () => {
                   </div>
                   <div className="flex justify-between items-center">
                     <p className="text-sm text-gray-600">
-                      Strength: {getStrengthLabel(passwordStrength.score)}
+                      Độ mạnh: {getStrengthLabel(passwordStrength.score)}
                     </p>
                     <p className="text-xs text-gray-500">
                       {passwordStrength.score}/5
@@ -367,7 +367,7 @@ const ResetPasswordForm: React.FC = () => {
                   </div>
                   {passwordStrength.feedback.length > 0 && passwordStrength.score < 5 && (
                     <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
-                      <p className="font-medium mb-1">Password requirements:</p>
+                      <p className="font-medium mb-1">Yêu cầu mật khẩu:</p>
                       <ul className="list-disc list-inside space-y-0.5">
                         {passwordStrength.feedback.map((item, index) => (
                           <li key={index}>{item}</li>
@@ -388,14 +388,14 @@ const ResetPasswordForm: React.FC = () => {
 
             {/* Confirm Password */}
             <div className="space-y-2">
-              <Label htmlFor="confirm_password">Confirm New Password</Label>
+              <Label htmlFor="confirm_password">Xác nhận mật khẩu mới</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
                   id="confirm_password"
                   name="confirm_password"
                   type={showConfirmPassword ? 'text' : 'password'}
-                  placeholder="Confirm your new password"
+                  placeholder="Xác nhận mật khẩu mới"
                   value={formData.confirm_password}
                   onChange={handleChange}
                   disabled={loading}
@@ -423,12 +423,12 @@ const ResetPasswordForm: React.FC = () => {
                   {formData.password === formData.confirm_password ? (
                     <>
                       <CheckCircle className="h-4 w-4 text-green-600" />
-                      <span className="text-sm text-green-600">Passwords match</span>
+                      <span className="text-sm text-green-600">Mật khẩu khớp</span>
                     </>
                   ) : (
                     <>
                       <AlertCircle className="h-4 w-4 text-red-500" />
-                      <span className="text-sm text-red-500">Passwords do not match</span>
+                      <span className="text-sm text-red-500">Mật khẩu không khớp</span>
                     </>
                   )}
                 </div>
@@ -446,10 +446,10 @@ const ResetPasswordForm: React.FC = () => {
             <Alert className="bg-blue-50 border-blue-200">
               <Shield className="h-4 w-4 text-blue-600" />
               <AlertDescription className="text-blue-800">
-                <strong>Password Requirements:</strong><br />
-                • At least 8 characters long<br />
-                • Contains uppercase and lowercase letters<br />
-                • Includes at least one number and special character
+                <strong>Yêu cầu mật khẩu:</strong><br />
+                • Tối thiểu 8 ký tự<br />
+                • Có chữ hoa và chữ thường<br />
+                • Có ít nhất một số và một ký tự đặc biệt
               </AlertDescription>
             </Alert>
 
@@ -461,12 +461,12 @@ const ResetPasswordForm: React.FC = () => {
               {loading ? (
                 <div className="flex items-center space-x-2">
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Resetting password...</span>
+                  <span>Đang đặt lại mật khẩu...</span>
                 </div>
               ) : (
                 <div className="flex items-center space-x-2">
                   <Lock className="w-4 h-4" />
-                  <span>Reset Password</span>
+                  <span>Đặt lại mật khẩu</span>
                 </div>
               )}
             </Button>
@@ -478,7 +478,7 @@ const ResetPasswordForm: React.FC = () => {
               className="inline-flex items-center text-sm text-blue-600 hover:text-blue-500 transition-colors"
             >
               <ArrowLeft className="w-4 h-4 mr-1" />
-              Back to Login
+              Quay lại đăng nhập
             </Link>
           </div>
 
@@ -486,7 +486,7 @@ const ResetPasswordForm: React.FC = () => {
           <Alert className="mt-4 bg-amber-50 border-amber-200">
             <AlertCircle className="h-4 w-4 text-amber-600" />
             <AlertDescription className="text-amber-800">
-              For your security, this reset link will expire in 24 hours and can only be used once.
+              Vì lý do bảo mật, liên kết này sẽ hết hạn sau 24 giờ và chỉ sử dụng được một lần.
             </AlertDescription>
           </Alert>
         </CardContent>

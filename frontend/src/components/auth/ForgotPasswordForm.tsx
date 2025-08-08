@@ -46,9 +46,9 @@ const ForgotPasswordForm: React.FC = () => {
     const newErrors: Partial<ForgotPasswordFormData> = {};
 
     if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = 'Vui lòng nhập email';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
+      newErrors.email = 'Vui lòng nhập địa chỉ email hợp lệ';
     }
 
     setErrors(newErrors);
@@ -66,9 +66,9 @@ const ForgotPasswordForm: React.FC = () => {
       await authService.forgotPassword(formData.email);
       setEmailSent(true);
       toast.success(
-        'Password reset email sent successfully', 
+        'Gửi email đặt lại mật khẩu thành công', 
         {
-          description: 'Check your inbox and spam folder',
+          description: 'Vui lòng kiểm tra hộp thư đến và thư rác',
           duration: 5000
         }
       );
@@ -89,7 +89,7 @@ const ForgotPasswordForm: React.FC = () => {
       console.error('❌ ForgotPasswordForm: Error sending reset email:', error);
       
       // ✅ FIX: Better error handling
-      let errorMessage = 'Failed to send reset email. Please try again.';
+      let errorMessage = 'Gửi email đặt lại mật khẩu thất bại. Vui lòng thử lại.';
       
       if (error.response?.data?.detail) {
         errorMessage = error.response.data.detail;
@@ -103,7 +103,7 @@ const ForgotPasswordForm: React.FC = () => {
       }
       
       toast.error(errorMessage, {
-        description: 'Please check your email address and try again'
+        description: 'Vui lòng kiểm tra lại địa chỉ email và thử lại'
       });
     } finally {
       setLoading(false);
@@ -116,8 +116,8 @@ const ForgotPasswordForm: React.FC = () => {
     setLoading(true);
     try {
       await authService.forgotPassword(formData.email);
-      toast.success('Reset email sent again', {
-        description: 'Please check your inbox'
+      toast.success('Đã gửi lại email đặt lại mật khẩu', {
+        description: 'Vui lòng kiểm tra hộp thư đến'
       });
       
       // Restart countdown
@@ -134,7 +134,7 @@ const ForgotPasswordForm: React.FC = () => {
       
     } catch (error: any) {
       console.error('❌ ForgotPasswordForm: Error resending email:', error);
-      toast.error('Failed to resend email. Please try again.');
+      toast.error('Gửi lại email thất bại. Vui lòng thử lại.');
     } finally {
       setLoading(false);
     }
@@ -152,10 +152,10 @@ const ForgotPasswordForm: React.FC = () => {
             </div>
             <div>
               <CardTitle className="text-2xl font-bold text-gray-900">
-                Check Your Email
+                Kiểm tra email của bạn
               </CardTitle>
               <CardDescription className="text-gray-600">
-                We've sent a password reset link to your email
+                Chúng tôi đã gửi liên kết đặt lại mật khẩu đến email của bạn
               </CardDescription>
             </div>
           </CardHeader>
@@ -164,18 +164,18 @@ const ForgotPasswordForm: React.FC = () => {
             <Alert className="bg-green-50 border-green-200">
               <Mail className="h-4 w-4 text-green-600" />
               <AlertDescription className="text-green-800">
-                Password reset instructions have been sent to{' '}
+                Hướng dẫn đặt lại mật khẩu đã được gửi tới{' '}
                 <strong>{formData.email}</strong>
               </AlertDescription>
             </Alert>
 
             <div className="text-center space-y-4">
               <p className="text-sm text-gray-600">
-                Didn't receive the email? Check your spam folder or{' '}
+                Không nhận được email? Kiểm tra thư rác hoặc{' '}
                 {countdown > 0 ? (
                   <span className="text-gray-500 flex items-center justify-center gap-1">
                     <Clock className="w-3 h-3" />
-                    wait {countdown}s to resend
+                    vui lòng đợi {countdown}s để gửi lại
                   </span>
                 ) : (
                   <button
@@ -183,7 +183,7 @@ const ForgotPasswordForm: React.FC = () => {
                     disabled={loading}
                     className="text-blue-600 hover:text-blue-500 font-medium transition-colors"
                   >
-                    {loading ? 'Sending...' : 'resend the email'}
+                    {loading ? 'Đang gửi...' : 'gửi lại email'}
                   </button>
                 )}
               </p>
@@ -195,7 +195,7 @@ const ForgotPasswordForm: React.FC = () => {
                   variant="default"
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Login
+                  Quay lại đăng nhập
                 </Button>
                 
                 <Button
@@ -208,7 +208,7 @@ const ForgotPasswordForm: React.FC = () => {
                   }}
                   className="w-full"
                 >
-                  Try Different Email
+                  Thử email khác
                 </Button>
               </div>
             </div>
@@ -217,15 +217,15 @@ const ForgotPasswordForm: React.FC = () => {
             <Alert className="bg-blue-50 border-blue-200">
               <Info className="h-4 w-4 text-blue-600" />
               <AlertDescription className="text-blue-800">
-                <strong>Development Notice:</strong> This is currently a demo. 
-                The reset link functionality will be available when the backend password reset feature is implemented.
+                <strong>Thông báo phát triển:</strong> Đây là bản demo. 
+                Chức năng đặt lại mật khẩu sẽ khả dụng khi backend hoàn thiện.
               </AlertDescription>
             </Alert>
 
             <Alert className="bg-amber-50 border-amber-200">
               <Clock className="h-4 w-4 text-amber-600" />
               <AlertDescription className="text-amber-800">
-                The reset link will expire in 24 hours for security reasons.
+                Liên kết đặt lại mật khẩu sẽ hết hạn sau 24 giờ vì lý do bảo mật.
               </AlertDescription>
             </Alert>
           </CardContent>
@@ -245,10 +245,10 @@ const ForgotPasswordForm: React.FC = () => {
           </div>
           <div>
             <CardTitle className="text-2xl font-bold text-gray-900">
-              Forgot Password?
+              Quên mật khẩu?
             </CardTitle>
             <CardDescription className="text-gray-600">
-              Enter your email address and we'll send you a link to reset your password
+              Nhập địa chỉ email của bạn và chúng tôi sẽ gửi liên kết đặt lại mật khẩu
             </CardDescription>
           </div>
         </CardHeader>
@@ -256,14 +256,14 @@ const ForgotPasswordForm: React.FC = () => {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
+              <Label htmlFor="email">Địa chỉ email</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="Enter your email address"
+                  placeholder="Nhập địa chỉ email của bạn"
                   value={formData.email}
                   onChange={handleChange}
                   disabled={loading}
@@ -286,12 +286,12 @@ const ForgotPasswordForm: React.FC = () => {
               {loading ? (
                 <div className="flex items-center space-x-2">
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Sending...</span>
+                  <span>Đang gửi...</span>
                 </div>
               ) : (
                 <div className="flex items-center space-x-2">
                   <Send className="w-4 h-4" />
-                  <span>Send Reset Link</span>
+                  <span>Gửi liên kết đặt lại</span>
                 </div>
               )}
             </Button>
@@ -303,7 +303,7 @@ const ForgotPasswordForm: React.FC = () => {
               className="inline-flex items-center text-sm text-blue-600 hover:text-blue-500 transition-colors"
             >
               <ArrowLeft className="w-4 h-4 mr-1" />
-              Back to Login
+              Quay lại đăng nhập
             </Link>
           </div>
 
@@ -312,9 +312,9 @@ const ForgotPasswordForm: React.FC = () => {
             <Alert className="bg-blue-50 border-blue-200">
               <AlertCircle className="h-4 w-4 text-blue-600" />
               <AlertDescription className="text-blue-800">
-                If you don't have an account,{' '}
+                Nếu bạn chưa có tài khoản,{' '}
                 <Link to="/register" className="font-medium underline hover:text-blue-600 transition-colors">
-                  sign up here
+                  đăng ký tại đây
                 </Link>
               </AlertDescription>
             </Alert>
@@ -323,8 +323,8 @@ const ForgotPasswordForm: React.FC = () => {
             <Alert className="bg-gray-50 border-gray-200">
               <Info className="h-4 w-4 text-gray-600" />
               <AlertDescription className="text-gray-700 text-xs">
-                <strong>Note:</strong> This feature is currently in development. 
-                For now, please contact an administrator to reset your password.
+                <strong>Lưu ý:</strong> Tính năng này đang được phát triển. 
+                Hiện tại, vui lòng liên hệ quản trị viên để đặt lại mật khẩu.
               </AlertDescription>
             </Alert>
           </div>

@@ -257,18 +257,18 @@ const UserManagement: React.FC<UserManagementProps> = ({
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">User Management</h2>
-          <p className="text-gray-600">Manage system users and their permissions</p>
+          <h2 className="text-2xl font-bold text-gray-900">Quản lý người dùng</h2>
+          <p className="text-gray-600">Quản lý người dùng hệ thống và quyền hạn</p>
         </div>
         
         <div className="flex items-center space-x-2">
           <Button variant="outline" size="sm" onClick={handleExportUsers}>
             <Download className="h-4 w-4 mr-2" />
-            Export
+            Xuất dữ liệu
           </Button>
           <Button variant="outline" size="sm" onClick={onRefresh}>
             <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh
+            Làm mới
           </Button>
           <CreateUserDialog onUserCreated={onRefresh} />
         </div>
@@ -281,7 +281,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
             <div className="flex items-center space-x-2">
               <Users className="h-5 w-5 text-blue-500" />
               <div>
-                <p className="text-sm text-gray-600">Total Users</p>
+                <p className="text-sm text-gray-600">Tổng số người dùng</p>
                 <p className="text-2xl font-bold">{users.length}</p>
               </div>
             </div>
@@ -293,7 +293,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
             <div className="flex items-center space-x-2">
               <UserCheck className="h-5 w-5 text-green-500" />
               <div>
-                <p className="text-sm text-gray-600">Active Users</p>
+                <p className="text-sm text-gray-600">Người dùng hoạt động</p>
                 <p className="text-2xl font-bold">{users.filter(u => u.is_active).length}</p>
               </div>
             </div>
@@ -305,7 +305,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
             <div className="flex items-center space-x-2">
               <Shield className="h-5 w-5 text-purple-500" />
               <div>
-                <p className="text-sm text-gray-600">Administrators</p>
+                <p className="text-sm text-gray-600">Quản trị viên</p>
                 <p className="text-2xl font-bold">{users.filter(u => u.is_admin).length}</p>
               </div>
             </div>
@@ -317,7 +317,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
             <div className="flex items-center space-x-2">
               <Activity className="h-5 w-5 text-orange-500" />
               <div>
-                <p className="text-sm text-gray-600">Recent Logins</p>
+                <p className="text-sm text-gray-600">Đăng nhập gần đây</p>
                 <p className="text-2xl font-bold">
                   {users.filter(u => u.last_login && 
                     (Date.now() - new Date(u.last_login).getTime()) < 7 * 24 * 60 * 60 * 1000
@@ -335,36 +335,36 @@ const UserManagement: React.FC<UserManagementProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
             <CardTitle className="flex items-center space-x-2">
               <Users className="h-5 w-5" />
-              <span>Users ({filteredUsers.length})</span>
+              <span>Người dùng ({filteredUsers.length})</span>
             </CardTitle>
 
             {/* Bulk Actions */}
             {selectedUsers.length > 0 && (
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-600">{selectedUsers.length} selected</span>
+                <span className="text-sm text-gray-600">{selectedUsers.length} đã chọn</span>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="sm">
-                      Bulk Actions
+                      Thao tác hàng loạt
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     <DropdownMenuItem onClick={() => handleBulkAction('activate')}>
                       <UserCheck className="h-4 w-4 mr-2" />
-                      Activate Users
+                      Kích hoạt người dùng
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => handleBulkAction('deactivate')}>
                       <UserX className="h-4 w-4 mr-2" />
-                      Deactivate Users
+                      Vô hiệu hóa người dùng
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => handleBulkAction('make_admin')}>
                       <Shield className="h-4 w-4 mr-2" />
-                      Make Admin
+                      Đặt làm quản trị viên
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => handleBulkAction('remove_admin')}>
                       <ShieldOff className="h-4 w-4 mr-2" />
-                      Remove Admin
+                      Gỡ quyền quản trị viên
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem 
@@ -372,7 +372,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
                       className="text-red-600"
                     >
                       <Trash2 className="h-4 w-4 mr-2" />
-                      Delete Users
+                      Xóa người dùng
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -387,7 +387,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
             <div className="relative flex-1">
               <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
-                placeholder="Search users..."
+                placeholder="Tìm kiếm người dùng..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -396,35 +396,35 @@ const UserManagement: React.FC<UserManagementProps> = ({
             
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-full lg:w-32">
-                <SelectValue placeholder="Status" />
+                <SelectValue placeholder="Trạng thái" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
+                <SelectItem value="all">Tất cả trạng thái</SelectItem>
+                <SelectItem value="active">Hoạt động</SelectItem>
+                <SelectItem value="inactive">Không hoạt động</SelectItem>
               </SelectContent>
             </Select>
 
             <Select value={roleFilter} onValueChange={setRoleFilter}>
               <SelectTrigger className="w-full lg:w-32">
-                <SelectValue placeholder="Role" />
+                <SelectValue placeholder="Vai trò" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Roles</SelectItem>
-                <SelectItem value="admin">Admin</SelectItem>
-                <SelectItem value="user">User</SelectItem>
+                <SelectItem value="all">Tất cả vai trò</SelectItem>
+                <SelectItem value="admin">Quản trị viên</SelectItem>
+                <SelectItem value="user">Người dùng</SelectItem>
               </SelectContent>
             </Select>
 
             <Select value={sortBy} onValueChange={(value) => setSortBy(value as any)}>
               <SelectTrigger className="w-full lg:w-40">
-                <SelectValue placeholder="Sort by" />
+                <SelectValue placeholder="Sắp xếp theo" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="name">Name</SelectItem>
-                <SelectItem value="created_at">Created Date</SelectItem>
-                <SelectItem value="last_login">Last Login</SelectItem>
-                <SelectItem value="login_count">Login Count</SelectItem>
+                <SelectItem value="name">Tên</SelectItem>
+                <SelectItem value="created_at">Ngày tạo</SelectItem>
+                <SelectItem value="last_login">Lần đăng nhập cuối</SelectItem>
+                <SelectItem value="login_count">Số lần đăng nhập</SelectItem>
               </SelectContent>
             </Select>
 
@@ -444,11 +444,11 @@ const UserManagement: React.FC<UserManagementProps> = ({
               onCheckedChange={handleSelectAll}
             />
             <div className="flex-1 grid grid-cols-12 gap-4 text-sm font-medium text-gray-600">
-              <div className="col-span-4">User</div>
-              <div className="col-span-2 hidden md:block">Status</div>
-              <div className="col-span-2 hidden lg:block">Activity</div>
-              <div className="col-span-2 hidden xl:block">Usage</div>
-              <div className="col-span-2">Actions</div>
+              <div className="col-span-4">Người dùng</div>
+              <div className="col-span-2 hidden md:block">Trạng thái</div>
+              <div className="col-span-2 hidden lg:block">Hoạt động</div>
+              <div className="col-span-2 hidden xl:block">Sử dụng</div>
+              <div className="col-span-2">Thao tác</div>
             </div>
           </div>
 
@@ -476,7 +476,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
                         <div className="flex items-center space-x-2">
                           <p className="font-medium text-gray-900 truncate">{user.full_name}</p>
                           {user.is_admin && (
-                            <Badge variant="destructive" className="text-xs">Admin</Badge>
+                            <Badge variant="destructive" className="text-xs">Quản trị viên</Badge>
                           )}
                         </div>
                         <p className="text-sm text-gray-600 truncate">@{user.username}</p>
@@ -487,10 +487,10 @@ const UserManagement: React.FC<UserManagementProps> = ({
                     {/* Status */}
                     <div className="col-span-2 hidden md:flex flex-col justify-center">
                       <Badge variant={user.is_active ? "default" : "secondary"} className="w-fit">
-                        {user.is_active ? 'Active' : 'Inactive'}
+                        {user.is_active ? 'Hoạt động' : 'Không hoạt động'}
                       </Badge>
                       <div className="text-xs text-gray-500 mt-1">
-                        Joined {formatDate(user.created_at)}
+                        Tham gia {formatDate(user.created_at)}
                       </div>
                     </div>
 
@@ -501,15 +501,15 @@ const UserManagement: React.FC<UserManagementProps> = ({
                       </div>
                       <div className="text-xs text-gray-500">
                         {/* ✅ FIX: Handle undefined login_count */}
-                        {user.login_count || 0} total logins
+                        {user.login_count || 0} lần đăng nhập
                       </div>
                     </div>
 
                     {/* Usage */}
                     <div className="col-span-2 hidden xl:flex flex-col justify-center text-xs text-gray-600">
-                      <div>{user.cameras_count || 0} cameras</div>
-                      <div>{user.persons_count || 0} persons</div>
-                      <div>{user.detections_count || 0} detections</div>
+                      <div>{user.cameras_count || 0} camera</div>
+                      <div>{user.persons_count || 0} người</div>
+                      <div>{user.detections_count || 0} phát hiện</div>
                     </div>
 
                     {/* Actions */}
@@ -539,12 +539,12 @@ const UserManagement: React.FC<UserManagementProps> = ({
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => setShowUserDetails(user.id)}>
                             <Eye className="h-4 w-4 mr-2" />
-                            View Details
+                            Xem chi tiết
                           </DropdownMenuItem>
                           
                           <DropdownMenuItem onClick={() => setShowEditUser(user)}>
                             <Edit className="h-4 w-4 mr-2" />
-                            Edit User
+                            Chỉnh sửa người dùng
                           </DropdownMenuItem>
                           
                           <DropdownMenuSeparator />
@@ -553,12 +553,12 @@ const UserManagement: React.FC<UserManagementProps> = ({
                             {user.is_active ? (
                               <>
                                 <UserX className="h-4 w-4 mr-2" />
-                                Deactivate
+                                Vô hiệu hóa
                               </>
                             ) : (
                               <>
                                 <UserCheck className="h-4 w-4 mr-2" />
-                                Activate
+                                Kích hoạt
                               </>
                             )}
                           </DropdownMenuItem>
@@ -567,12 +567,12 @@ const UserManagement: React.FC<UserManagementProps> = ({
                             {user.is_admin ? (
                               <>
                                 <ShieldOff className="h-4 w-4 mr-2" />
-                                Remove Admin
+                                Gỡ quyền quản trị viên
                               </>
                             ) : (
                               <>
                                 <Shield className="h-4 w-4 mr-2" />
-                                Make Admin
+                                Đặt làm quản trị viên
                               </>
                             )}
                           </DropdownMenuItem>
@@ -584,7 +584,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
                             className="text-red-600"
                           >
                             <Trash2 className="h-4 w-4 mr-2" />
-                            Delete User
+                            Xóa người dùng
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -595,11 +595,11 @@ const UserManagement: React.FC<UserManagementProps> = ({
             ) : (
               <div className="text-center py-12">
                 <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No users found</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Không tìm thấy người dùng</h3>
                 <p className="text-gray-600 mb-4">
                   {searchTerm || statusFilter !== 'all' || roleFilter !== 'all'
-                    ? 'Try adjusting your search criteria.'
-                    : 'No users have been registered yet.'}
+                    ? 'Thử điều chỉnh tiêu chí tìm kiếm của bạn.'
+                    : 'Chưa có người dùng nào đăng ký.'}
                 </p>
                 {!searchTerm && statusFilter === 'all' && roleFilter === 'all' && (
                   <CreateUserDialog onUserCreated={onRefresh} />
@@ -614,26 +614,26 @@ const UserManagement: React.FC<UserManagementProps> = ({
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
                 <div>
                   <div className="text-2xl font-bold text-gray-900">{filteredUsers.length}</div>
-                  <div className="text-sm text-gray-600">Showing</div>
+                  <div className="text-sm text-gray-600">Hiển thị</div>
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-green-600">
                     {filteredUsers.filter(u => u.is_active).length}
                   </div>
-                  <div className="text-sm text-gray-600">Active</div>
+                  <div className="text-sm text-gray-600">Hoạt động</div>
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-blue-600">
                     {filteredUsers.filter(u => u.is_admin).length}
                   </div>
-                  <div className="text-sm text-gray-600">Admins</div>
+                  <div className="text-sm text-gray-600">Quản trị viên</div>
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-purple-600">
                     {/* ✅ FIX: Handle undefined login_count in calculation */}
                     {Math.round(filteredUsers.reduce((sum, u) => sum + (u.login_count || 0), 0) / filteredUsers.length) || 0}
                   </div>
-                  <div className="text-sm text-gray-600">Avg. Logins</div>
+                  <div className="text-sm text-gray-600">TB. Đăng nhập</div>
                 </div>
               </div>
             </div>
@@ -701,20 +701,20 @@ const CreateUserDialog: React.FC<{ onUserCreated?: () => void }> = ({ onUserCrea
       <DialogTrigger asChild>
         <Button>
           <Plus className="h-4 w-4 mr-2" />
-          Create User
+          Tạo người dùng
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Create New User</DialogTitle>
+          <DialogTitle>Tạo người dùng mới</DialogTitle>
           <DialogDescription>
-            Add a new user to the system
+            Thêm người dùng mới vào hệ thống
           </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="full_name">Full Name</Label>
+            <Label htmlFor="full_name">Họ và tên</Label>
             <Input
               id="full_name"
               value={formData.full_name}
@@ -724,7 +724,7 @@ const CreateUserDialog: React.FC<{ onUserCreated?: () => void }> = ({ onUserCrea
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="username">Username</Label>
+            <Label htmlFor="username">Tên người dùng</Label>
             <Input
               id="username"
               value={formData.username}
@@ -745,7 +745,7 @@ const CreateUserDialog: React.FC<{ onUserCreated?: () => void }> = ({ onUserCrea
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">Mật khẩu</Label>
             <Input
               id="password"
               type="password"
@@ -761,7 +761,7 @@ const CreateUserDialog: React.FC<{ onUserCreated?: () => void }> = ({ onUserCrea
               checked={formData.is_admin}
               onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_admin: checked as boolean }))}
             />
-            <Label htmlFor="is_admin">Administrator privileges</Label>
+            <Label htmlFor="is_admin">Quyền quản trị viên</Label>
           </div>
 
           <div className="flex space-x-2">
@@ -1030,7 +1030,7 @@ const UserDetailsModal: React.FC<{
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <Camera className="h-5 w-5" />
-                  <span>Cameras ({userDetails.cameras.length})</span>
+                  <span>Camera ({userDetails.cameras.length})</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -1040,11 +1040,11 @@ const UserDetailsModal: React.FC<{
                       <div>
                         <p className="font-medium">{camera.name}</p>
                         <p className="text-sm text-gray-600">
-                          Added {new Date(camera.created_at).toLocaleDateString()}
+                          Thêm ngày {new Date(camera.created_at).toLocaleDateString('vi-VN')}
                         </p>
                       </div>
                       <Badge variant={camera.is_active ? "default" : "secondary"}>
-                        {camera.is_active ? 'Active' : 'Inactive'}
+                        {camera.is_active ? 'Đang hoạt động' : 'Không hoạt động'}
                       </Badge>
                     </div>
                   ))}
@@ -1059,7 +1059,7 @@ const UserDetailsModal: React.FC<{
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <Users className="h-5 w-5" />
-                  <span>Known Persons ({userDetails.persons.length})</span>
+                  <span>Người đã biết ({userDetails.persons.length})</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -1069,12 +1069,12 @@ const UserDetailsModal: React.FC<{
                       <div>
                         <p className="font-medium">{person.name}</p>
                         <p className="text-sm text-gray-600">
-                          Added {new Date(person.created_at).toLocaleDateString()}
+                          Thêm ngày {new Date(person.created_at).toLocaleDateString('vi-VN')}
                         </p>
                       </div>
                       <div className="text-right">
                         <p className="text-sm font-medium">{person.face_images_count}</p>
-                        <p className="text-xs text-gray-500">face images</p>
+                        <p className="text-xs text-gray-500">hình ảnh khuôn mặt</p>
                       </div>
                     </div>
                   ))}
@@ -1089,7 +1089,7 @@ const UserDetailsModal: React.FC<{
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <Calendar className="h-5 w-5" />
-                  <span>Recent Login History</span>
+                  <span>Lịch sử đăng nhập gần đây</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -1098,14 +1098,14 @@ const UserDetailsModal: React.FC<{
                     <div key={index} className="flex justify-between items-center p-3 border rounded-lg">
                       <div>
                         <p className="text-sm font-medium">
-                          {new Date(login.timestamp).toLocaleString()}
+                          {new Date(login.timestamp).toLocaleString('vi-VN')}
                         </p>
                         <p className="text-xs text-gray-600 truncate">
-                          {login.user_agent || 'Unknown browser'}
+                          {login.user_agent || 'Trình duyệt không xác định'}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-xs text-gray-500">{login.ip_address || 'Unknown IP'}</p>
+                        <p className="text-xs text-gray-500">{login.ip_address || 'IP không xác định'}</p>
                       </div>
                     </div>
                   ))}
@@ -1120,9 +1120,9 @@ const UserDetailsModal: React.FC<{
             <Card>
               <CardContent className="text-center py-8">
                 <UserIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No Data Available</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Không có dữ liệu</h3>
                 <p className="text-gray-600">
-                  This user hasn't added any cameras or persons yet.
+                  Người dùng này chưa thêm camera hoặc người nào.
                 </p>
               </CardContent>
             </Card>

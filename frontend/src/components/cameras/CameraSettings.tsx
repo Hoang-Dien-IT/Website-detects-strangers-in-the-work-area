@@ -407,25 +407,28 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
   }
 
   return (
-    <div className={`min-h-screen bg-gray-50 ${className}`}>
+    <div className={`min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 ${className}`}>
       {/* Header */}
-      <header className="bg-white border-b px-6 py-4 sticky top-0 z-10">
+      <header className="bg-gradient-to-r from-white to-slate-50/80 border-b border-slate-200 px-6 py-4 sticky top-0 z-10 backdrop-blur-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate('/cameras')}
+              className="hover:bg-teal-50 hover:text-teal-700"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
+              Quay lại
             </Button>
             
             <div className="flex items-center space-x-3">
-              <Settings className="h-6 w-6 text-blue-600" />
+              <div className="p-2 bg-gradient-to-r from-teal-500 to-emerald-600 rounded-lg">
+                <Settings className="h-6 w-6 text-white" />
+              </div>
               <div>
-                <h1 className="text-xl font-semibold text-gray-900">Camera Settings</h1>
-                <p className="text-sm text-gray-600">{camera.name}</p>
+                <h1 className="text-xl font-semibold text-slate-900">Cài đặt camera</h1>
+                <p className="text-sm text-slate-600">{camera.name}</p>
               </div>
             </div>
           </div>
@@ -436,44 +439,47 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
               size="sm"
               onClick={handleTestConnection}
               disabled={testing}
+              className="border-slate-300 hover:bg-teal-50 hover:border-teal-300"
             >
               {testing ? (
                 <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
               ) : (
                 <TestTube className="w-4 h-4 mr-2" />
               )}
-              Test Connection
+              Kiểm tra kết nối
             </Button>
 
             <Button
               variant="outline"
               size="sm"
               onClick={handleExportSettings}
+              className="border-slate-300 hover:bg-emerald-50 hover:border-emerald-300"
             >
               <Download className="w-4 h-4 mr-2" />
-              Export
+              Xuất cài đặt
             </Button>
 
             <Button
               onClick={handleSaveSettings}
               disabled={saving || !hasChanges}
               size="sm"
+              className="bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white"
             >
               {saving ? (
                 <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
               ) : (
                 <Save className="w-4 h-4 mr-2" />
               )}
-              Save Changes
+              Lưu thay đổi
             </Button>
           </div>
         </div>
 
         {hasChanges && (
-          <Alert className="mt-4">
-            <Info className="h-4 w-4" />
-            <AlertDescription>
-              You have unsaved changes. Don't forget to save your settings.
+          <Alert className="mt-4 border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50">
+            <Info className="h-4 w-4 text-amber-600" />
+            <AlertDescription className="text-amber-800">
+              Bạn có những thay đổi chưa được lưu. Đừng quên lưu cài đặt của mình.
             </AlertDescription>
           </Alert>
         )}
@@ -482,46 +488,48 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
       {/* Main Content */}
       <div className="p-6">
         <Tabs defaultValue="basic" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
-            <TabsTrigger value="basic" className="flex items-center space-x-2">
+          <TabsList className="grid w-full grid-cols-6 bg-white/80 backdrop-blur-sm border border-slate-200">
+            <TabsTrigger value="basic" className="flex items-center space-x-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-50 data-[state=active]:to-emerald-50 data-[state=active]:text-teal-700">
               <Camera className="w-4 h-4" />
-              <span>Basic</span>
+              <span>Cơ bản</span>
             </TabsTrigger>
-            <TabsTrigger value="stream" className="flex items-center space-x-2">
+            <TabsTrigger value="stream" className="flex items-center space-x-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-50 data-[state=active]:to-emerald-50 data-[state=active]:text-teal-700">
               <VideoIcon className="w-4 h-4" />
-              <span>Stream</span>
+              <span>Luồng video</span>
             </TabsTrigger>
-            <TabsTrigger value="detection" className="flex items-center space-x-2">
+            <TabsTrigger value="detection" className="flex items-center space-x-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-50 data-[state=active]:to-emerald-50 data-[state=active]:text-teal-700">
               <Eye className="w-4 h-4" />
-              <span>Detection</span>
+              <span>Phát hiện</span>
             </TabsTrigger>
-            <TabsTrigger value="notifications" className="flex items-center space-x-2">
+            <TabsTrigger value="notifications" className="flex items-center space-x-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-50 data-[state=active]:to-emerald-50 data-[state=active]:text-teal-700">
               <Bell className="w-4 h-4" />
-              <span>Alerts</span>
+              <span>Thông báo</span>
             </TabsTrigger>
-            <TabsTrigger value="recording" className="flex items-center space-x-2">
+            <TabsTrigger value="recording" className="flex items-center space-x-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-50 data-[state=active]:to-emerald-50 data-[state=active]:text-teal-700">
               <RecordIcon className="h-5 w-5" />
-              <span>Recording</span>
+              <span>Ghi hình</span>
             </TabsTrigger>
-            <TabsTrigger value="system" className="flex items-center space-x-2">
+            <TabsTrigger value="system" className="flex items-center space-x-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-50 data-[state=active]:to-emerald-50 data-[state=active]:text-teal-700">
               <Monitor className="w-4 h-4" />
-              <span>System</span>
+              <span>Hệ thống</span>
             </TabsTrigger>
           </TabsList>
 
           {/* Basic Settings */}
           <TabsContent value="basic" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Camera className="h-5 w-5" />
-                  <span>Basic Information</span>
+            <Card className="bg-white/80 backdrop-blur-sm border-slate-200">
+              <CardHeader className="border-b border-slate-100">
+                <CardTitle className="flex items-center space-x-2 text-slate-800">
+                  <div className="p-2 bg-gradient-to-r from-teal-500 to-emerald-600 rounded-lg">
+                    <Camera className="h-5 w-5 text-white" />
+                  </div>
+                  <span>Thông tin cơ bản</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Camera Name</Label>
+                    <Label htmlFor="name" className="text-slate-700 font-medium">Tên camera</Label>
                     <Input
                       id="name"
                       value={basicSettings.name}
@@ -529,12 +537,13 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                         setBasicSettings(prev => ({ ...prev, name: e.target.value }));
                         setHasChanges(true);
                       }}
-                      placeholder="Enter camera name"
+                      placeholder="Nhập tên camera"
+                      className="border-slate-300 focus:border-teal-500 focus:ring-teal-200"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="location">Location</Label>
+                    <Label htmlFor="location" className="text-slate-700 font-medium">Vị trí</Label>
                     <Input
                       id="location"
                       value={basicSettings.location}
@@ -542,13 +551,14 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                         setBasicSettings(prev => ({ ...prev, location: e.target.value }));
                         setHasChanges(true);
                       }}
-                      placeholder="e.g., Front Entrance, Office Lobby"
+                      placeholder="Ví dụ: Lối vào chính, Sảnh văn phòng"
+                      className="border-slate-300 focus:border-teal-500 focus:ring-teal-200"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
+                  <Label htmlFor="description" className="text-slate-700 font-medium">Mô tả</Label>
                   <Textarea
                     id="description"
                     value={basicSettings.description}
@@ -556,14 +566,15 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                       setBasicSettings(prev => ({ ...prev, description: e.target.value }));
                       setHasChanges(true);
                     }}
-                    placeholder="Enter camera description"
+                    placeholder="Nhập mô tả camera"
                     rows={3}
+                    className="border-slate-300 focus:border-teal-500 focus:ring-teal-200 resize-none"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="timezone">Timezone</Label>
+                    <Label htmlFor="timezone" className="text-slate-700 font-medium">Múi giờ</Label>
                     <Select
                       value={basicSettings.timezone}
                       onValueChange={(value) => {
@@ -571,27 +582,28 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                         setHasChanges(true);
                       }}
                     >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select timezone" />
+                      <SelectTrigger className="border-slate-300 focus:border-teal-500">
+                        <SelectValue placeholder="Chọn múi giờ" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-white/95 backdrop-blur-sm">
                         <SelectItem value="UTC">UTC</SelectItem>
-                        <SelectItem value="America/New_York">Eastern Time</SelectItem>
-                        <SelectItem value="America/Chicago">Central Time</SelectItem>
-                        <SelectItem value="America/Denver">Mountain Time</SelectItem>
-                        <SelectItem value="America/Los_Angeles">Pacific Time</SelectItem>
+                        <SelectItem value="Asia/Ho_Chi_Minh">Việt Nam (GMT+7)</SelectItem>
+                        <SelectItem value="America/New_York">Giờ phương Đông</SelectItem>
+                        <SelectItem value="America/Chicago">Giờ miền Trung</SelectItem>
+                        <SelectItem value="America/Denver">Giờ miền Núi</SelectItem>
+                        <SelectItem value="America/Los_Angeles">Giờ Thái Bình Dương</SelectItem>
                         <SelectItem value="Europe/London">London</SelectItem>
                         <SelectItem value="Europe/Paris">Paris</SelectItem>
                         <SelectItem value="Asia/Tokyo">Tokyo</SelectItem>
-                        <SelectItem value="Asia/Shanghai">Shanghai</SelectItem>
+                        <SelectItem value="Asia/Shanghai">Thượng Hải</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-slate-100 rounded-lg border border-slate-200">
                     <div className="space-y-0.5">
-                      <Label>Camera Status</Label>
-                      <p className="text-sm text-gray-600">Enable or disable this camera</p>
+                      <Label className="text-slate-700 font-medium">Trạng thái camera</Label>
+                      <p className="text-sm text-slate-600">Bật hoặc tắt camera này</p>
                     </div>
                     <Switch
                       checked={basicSettings.is_active}
@@ -599,6 +611,7 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                         setBasicSettings(prev => ({ ...prev, is_active: checked }));
                         setHasChanges(true);
                       }}
+                      className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-teal-500 data-[state=checked]:to-emerald-500"
                     />
                   </div>
                 </div>
@@ -610,16 +623,18 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
           <TabsContent value="stream" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Video Settings */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <VideoIcon className="h-5 w-5" />
-                    <span>Video Settings</span>
+              <Card className="bg-white/80 backdrop-blur-sm border-slate-200">
+                <CardHeader className="border-b border-slate-100">
+                  <CardTitle className="flex items-center space-x-2 text-slate-800">
+                    <div className="p-2 bg-gradient-to-r from-cyan-500 to-teal-600 rounded-lg">
+                      <VideoIcon className="h-5 w-5 text-white" />
+                    </div>
+                    <span>Cài đặt video</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-4 p-6">
                   <div className="space-y-2">
-                    <Label>Resolution</Label>
+                    <Label className="text-slate-700 font-medium">Độ phân giải</Label>
                     <Select
                       value={streamSettings.resolution}
                       onValueChange={(value) => {
@@ -627,21 +642,21 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                         setHasChanges(true);
                       }}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="border-slate-300 focus:border-cyan-500">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-white/95 backdrop-blur-sm">
                         <SelectItem value="3840x2160">4K (3840x2160)</SelectItem>
                         <SelectItem value="1920x1080">Full HD (1920x1080)</SelectItem>
                         <SelectItem value="1280x720">HD (1280x720)</SelectItem>
                         <SelectItem value="854x480">SD (854x480)</SelectItem>
-                        <SelectItem value="640x360">Low (640x360)</SelectItem>
+                        <SelectItem value="640x360">Thấp (640x360)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Frame Rate: {streamSettings.fps} FPS</Label>
+                    <Label className="text-slate-700 font-medium">Tốc độ khung hình: {streamSettings.fps} FPS</Label>
                     <Slider
                       value={[streamSettings.fps]}
                       onValueChange={([value]: [number]) => {
@@ -651,16 +666,16 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                       max={60}
                       min={1}
                       step={1}
-                      className="w-full"
+                      className="w-full [&_[role=slider]]:bg-gradient-to-r [&_[role=slider]]:from-cyan-500 [&_[role=slider]]:to-teal-500"
                     />
-                    <div className="flex justify-between text-xs text-gray-500">
+                    <div className="flex justify-between text-xs text-slate-500">
                       <span>1 FPS</span>
                       <span>60 FPS</span>
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Bitrate: {streamSettings.bitrate} Kbps</Label>
+                    <Label className="text-slate-700 font-medium">Bitrate: {streamSettings.bitrate} Kbps</Label>
                     <Slider
                       value={[streamSettings.bitrate]}
                       onValueChange={([value]: [number]) => {
@@ -670,16 +685,16 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                       max={10000}
                       min={500}
                       step={100}
-                      className="w-full"
+                      className="w-full [&_[role=slider]]:bg-gradient-to-r [&_[role=slider]]:from-cyan-500 [&_[role=slider]]:to-teal-500"
                     />
-                    <div className="flex justify-between text-xs text-gray-500">
+                    <div className="flex justify-between text-xs text-slate-500">
                       <span>500 Kbps</span>
                       <span>10 Mbps</span>
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Video Codec</Label>
+                    <Label className="text-slate-700 font-medium">Codec video</Label>
                     <Select
                       value={streamSettings.codec}
                       onValueChange={(value: any) => {
@@ -687,11 +702,11 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                         setHasChanges(true);
                       }}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="border-slate-300 focus:border-cyan-500">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="h264">H.264 (Recommended)</SelectItem>
+                      <SelectContent className="bg-white/95 backdrop-blur-sm">
+                        <SelectItem value="h264">H.264 (Khuyến nghị)</SelectItem>
                         <SelectItem value="h265">H.265/HEVC</SelectItem>
                         <SelectItem value="mjpeg">MJPEG</SelectItem>
                       </SelectContent>
@@ -699,7 +714,7 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Quality Preset</Label>
+                    <Label className="text-slate-700 font-medium">Cài đặt chất lượng</Label>
                     <Select
                       value={streamSettings.quality}
                       onValueChange={(value: any) => {
@@ -707,14 +722,14 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                         setHasChanges(true);
                       }}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="border-slate-300 focus:border-cyan-500">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="auto">Auto</SelectItem>
-                        <SelectItem value="high">High Quality</SelectItem>
-                        <SelectItem value="medium">Medium Quality</SelectItem>
-                        <SelectItem value="low">Low Quality</SelectItem>
+                      <SelectContent className="bg-white/95 backdrop-blur-sm">
+                        <SelectItem value="auto">Tự động</SelectItem>
+                        <SelectItem value="high">Chất lượng cao</SelectItem>
+                        <SelectItem value="medium">Chất lượng trung bình</SelectItem>
+                        <SelectItem value="low">Chất lượng thấp</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -722,18 +737,20 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
               </Card>
 
               {/* Audio Settings */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <AudioWaveform className="h-5 w-5" />
-                    <span>Audio Settings</span>
+              <Card className="bg-white/80 backdrop-blur-sm border-slate-200">
+                <CardHeader className="border-b border-slate-100">
+                  <CardTitle className="flex items-center space-x-2 text-slate-800">
+                    <div className="p-2 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg">
+                      <AudioWaveform className="h-5 w-5 text-white" />
+                    </div>
+                    <span>Cài đặt âm thanh</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center justify-between">
+                <CardContent className="space-y-4 p-6">
+                  <div className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-slate-100 rounded-lg border border-slate-200">
                     <div className="space-y-0.5">
-                      <Label>Enable Audio</Label>
-                      <p className="text-sm text-gray-600">Record audio with video stream</p>
+                      <Label className="text-slate-700 font-medium">Bật âm thanh</Label>
+                      <p className="text-sm text-slate-600">Ghi âm thanh cùng với video</p>
                     </div>
                     <Switch
                       checked={streamSettings.audio_enabled}
@@ -741,12 +758,13 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                         setStreamSettings(prev => ({ ...prev, audio_enabled: checked }));
                         setHasChanges(true);
                       }}
+                      className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-emerald-500 data-[state=checked]:to-teal-500"
                     />
                   </div>
 
                   {streamSettings.audio_enabled && (
                     <div className="space-y-2">
-                      <Label>Audio Bitrate: {streamSettings.audio_bitrate} Kbps</Label>
+                      <Label className="text-slate-700 font-medium">Bitrate âm thanh: {streamSettings.audio_bitrate} Kbps</Label>
                       <Slider
                         value={[streamSettings.audio_bitrate]}
                         onValueChange={([value]: [number]) => {
@@ -756,19 +774,19 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                         max={320}
                         min={64}
                         step={32}
-                        className="w-full"
+                        className="w-full [&_[role=slider]]:bg-gradient-to-r [&_[role=slider]]:from-emerald-500 [&_[role=slider]]:to-teal-500"
                       />
-                      <div className="flex justify-between text-xs text-gray-500">
+                      <div className="flex justify-between text-xs text-slate-500">
                         <span>64 Kbps</span>
                         <span>320 Kbps</span>
                       </div>
                     </div>
                   )}
 
-                  <Alert>
-                    <Info className="h-4 w-4" />
-                    <AlertDescription>
-                      Audio recording may not be legal in all jurisdictions. Please check local laws before enabling.
+                  <Alert className="border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50">
+                    <Info className="h-4 w-4 text-amber-600" />
+                    <AlertDescription className="text-amber-800">
+                      Việc ghi âm có thể không hợp pháp ở tất cả các khu vực pháp lý. Vui lòng kiểm tra luật pháp địa phương trước khi bật.
                     </AlertDescription>
                   </Alert>
                 </CardContent>
@@ -780,18 +798,20 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
           <TabsContent value="detection" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Face Detection */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Eye className="h-5 w-5" />
-                    <span>Face Detection</span>
+              <Card className="bg-white/80 backdrop-blur-sm border-slate-200">
+                <CardHeader className="border-b border-slate-100">
+                  <CardTitle className="flex items-center space-x-2 text-slate-800">
+                    <div className="p-2 bg-gradient-to-r from-teal-500 to-emerald-600 rounded-lg">
+                      <Eye className="h-5 w-5 text-white" />
+                    </div>
+                    <span>Phát hiện khuôn mặt</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center justify-between">
+                <CardContent className="space-y-4 p-6">
+                  <div className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-slate-100 rounded-lg border border-slate-200">
                     <div className="space-y-0.5">
-                      <Label>Enable Detection</Label>
-                      <p className="text-sm text-gray-600">Detect faces in video stream</p>
+                      <Label className="text-slate-700 font-medium">Bật phát hiện</Label>
+                      <p className="text-sm text-slate-600">Phát hiện khuôn mặt trong luồng video</p>
                     </div>
                     <Switch
                       checked={detectionSettings.enabled}
@@ -799,13 +819,14 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                         setDetectionSettings(prev => ({ ...prev, enabled: checked }));
                         setHasChanges(true);
                       }}
+                      className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-teal-500 data-[state=checked]:to-emerald-500"
                     />
                   </div>
 
                   {detectionSettings.enabled && (
                     <>
                       <div className="space-y-2">
-                        <Label>Confidence Threshold: {(detectionSettings.confidence_threshold * 100).toFixed(0)}%</Label>
+                        <Label className="text-slate-700 font-medium">Ngưỡng tin cậy: {(detectionSettings.confidence_threshold * 100).toFixed(0)}%</Label>
                         <Slider
                           value={[detectionSettings.confidence_threshold]}
                           onValueChange={([value]: [number]) => {
@@ -815,13 +836,13 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                           max={1}
                           min={0.1}
                           step={0.05}
-                          className="w-full"
+                          className="w-full [&_[role=slider]]:bg-gradient-to-r [&_[role=slider]]:from-teal-500 [&_[role=slider]]:to-emerald-500"
                         />
-                        <p className="text-xs text-gray-500">Higher values reduce false positives</p>
+                        <p className="text-xs text-slate-500">Giá trị cao hơn giảm phát hiện sai</p>
                       </div>
 
                       <div className="space-y-2">
-                        <Label>Detection Frequency</Label>
+                        <Label className="text-slate-700 font-medium">Tần suất phát hiện</Label>
                         <Select
                           value={detectionSettings.detection_frequency.toString()}
                           onValueChange={(value) => {
@@ -829,26 +850,26 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                             setHasChanges(true);
                           }}
                         >
-                          <SelectTrigger>
+                          <SelectTrigger className="border-slate-300 focus:border-teal-500">
                             <SelectValue />
                           </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="1">Every frame</SelectItem>
-                            <SelectItem value="2">Every 2nd frame</SelectItem>
-                            <SelectItem value="5">Every 5th frame</SelectItem>
-                            <SelectItem value="10">Every 10th frame</SelectItem>
-                            <SelectItem value="30">Every 30th frame</SelectItem>
+                          <SelectContent className="bg-white/95 backdrop-blur-sm">
+                            <SelectItem value="1">Mỗi khung hình</SelectItem>
+                            <SelectItem value="2">Mỗi 2 khung hình</SelectItem>
+                            <SelectItem value="5">Mỗi 5 khung hình</SelectItem>
+                            <SelectItem value="10">Mỗi 10 khung hình</SelectItem>
+                            <SelectItem value="30">Mỗi 30 khung hình</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
 
-                      <Separator />
+                      <Separator className="bg-slate-200" />
 
                       <div className="space-y-3">
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
                           <div className="space-y-0.5">
-                            <Label>Save Unknown Faces</Label>
-                            <p className="text-sm text-gray-600">Store images of unrecognized faces</p>
+                            <Label className="text-slate-700 font-medium">Lưu khuôn mặt lạ</Label>
+                            <p className="text-sm text-slate-600">Lưu trữ hình ảnh của khuôn mặt không nhận diện được</p>
                           </div>
                           <Switch
                             checked={detectionSettings.save_unknown_faces}
@@ -856,13 +877,14 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                               setDetectionSettings(prev => ({ ...prev, save_unknown_faces: checked }));
                               setHasChanges(true);
                             }}
+                            className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-blue-500 data-[state=checked]:to-indigo-500"
                           />
                         </div>
 
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200">
                           <div className="space-y-0.5">
-                            <Label>Blur Unknown Faces</Label>
-                            <p className="text-sm text-gray-600">Blur unrecognized faces in recordings</p>
+                            <Label className="text-slate-700 font-medium">Làm mờ khuôn mặt lạ</Label>
+                            <p className="text-sm text-slate-600">Làm mờ khuôn mặt không nhận diện được trong bản ghi</p>
                           </div>
                           <Switch
                             checked={detectionSettings.blur_unknown_faces}
@@ -870,6 +892,7 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                               setDetectionSettings(prev => ({ ...prev, blur_unknown_faces: checked }));
                               setHasChanges(true);
                             }}
+                            className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-purple-500 data-[state=checked]:to-pink-500"
                           />
                         </div>
                       </div>
@@ -879,28 +902,30 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
               </Card>
 
               {/* Detection Zones */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Target className="h-5 w-5" />
-                    <span>Detection Zones</span>
+              <Card className="bg-white/80 backdrop-blur-sm border-slate-200">
+                <CardHeader className="border-b border-slate-100">
+                  <CardTitle className="flex items-center space-x-2 text-slate-800">
+                    <div className="p-2 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg">
+                      <Target className="h-5 w-5 text-white" />
+                    </div>
+                    <span>Vùng phát hiện</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <Alert>
-                    <Info className="h-4 w-4" />
-                    <AlertDescription>
-                      Configure specific areas for face detection. This feature requires the camera stream to be active.
+                <CardContent className="space-y-4 p-6">
+                  <Alert className="border-blue-200 bg-gradient-to-r from-blue-50 to-cyan-50">
+                    <Info className="h-4 w-4 text-blue-600" />
+                    <AlertDescription className="text-blue-800">
+                      Cấu hình các khu vực cụ thể để phát hiện khuôn mặt. Tính năng này yêu cầu luồng camera phải hoạt động.
                     </AlertDescription>
                   </Alert>
 
                   <div className="space-y-2">
-                    <Label>Active Detection Zones</Label>
+                    <Label className="text-slate-700 font-medium">Vùng phát hiện đang hoạt động</Label>
                     {detectionSettings.detection_zones.length > 0 ? (
                       <div className="space-y-2">
                         {detectionSettings.detection_zones.map((zone) => (
-                          <div key={zone.id} className="flex items-center justify-between p-2 border rounded">
-                            <span className="text-sm">{zone.name}</span>
+                          <div key={zone.id} className="flex items-center justify-between p-3 border border-slate-200 rounded-lg bg-gradient-to-r from-slate-50 to-slate-100">
+                            <span className="text-sm font-medium text-slate-700">{zone.name}</span>
                             <div className="flex items-center space-x-2">
                               <Switch
                                 checked={zone.enabled}
@@ -913,22 +938,23 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                                   }));
                                   setHasChanges(true);
                                 }}
+                                className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-teal-500 data-[state=checked]:to-emerald-500"
                               />
-                              <Button variant="outline" size="sm">
-                                <Trash2 className="w-3 h-3" />
+                              <Button variant="outline" size="sm" className="hover:bg-red-50 hover:border-red-300">
+                                <Trash2 className="w-3 h-3 text-red-500" />
                               </Button>
                             </div>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <p className="text-sm text-gray-500">No detection zones configured</p>
+                      <p className="text-sm text-slate-500 bg-slate-50 p-4 rounded-lg border border-slate-200">Chưa cấu hình vùng phát hiện nào</p>
                     )}
                   </div>
 
-                  <Button variant="outline" className="w-full" disabled>
+                  <Button variant="outline" className="w-full border-slate-300 hover:bg-slate-50" disabled>
                     <Grid3X3 className="w-4 h-4 mr-2" />
-                    Configure Zones (Coming Soon)
+                    Cấu hình vùng (Sắp ra mắt)
                   </Button>
                 </CardContent>
               </Card>
@@ -937,19 +963,21 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
 
           {/* Notification Settings */}
           <TabsContent value="notifications" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Bell className="h-5 w-5" />
-                  <span>Notification Settings</span>
+            <Card className="bg-white/80 backdrop-blur-sm border-slate-200">
+              <CardHeader className="border-b border-slate-100">
+                <CardTitle className="flex items-center space-x-2 text-slate-800">
+                  <div className="p-2 bg-gradient-to-r from-amber-500 to-orange-500 rounded-lg">
+                    <Bell className="h-5 w-5 text-white" />
+                  </div>
+                  <span>Cài đặt thông báo</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-6 p-6">
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-slate-100 rounded-lg border border-slate-200">
                     <div className="space-y-0.5">
-                      <Label>Email Notifications</Label>
-                      <p className="text-sm text-gray-600">Send notifications via email</p>
+                      <Label className="text-slate-700 font-medium">Thông báo email</Label>
+                      <p className="text-sm text-slate-600">Gửi thông báo qua email</p>
                     </div>
                     <Switch
                       checked={notificationSettings.email_notifications}
@@ -957,11 +985,12 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                         setNotificationSettings(prev => ({ ...prev, email_notifications: checked }));
                         setHasChanges(true);
                       }}
+                      className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-amber-500 data-[state=checked]:to-orange-500"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="webhook_url">Webhook URL (Optional)</Label>
+                    <Label htmlFor="webhook_url" className="text-slate-700 font-medium">URL Webhook (tùy chọn)</Label>
                     <Input
                       id="webhook_url"
                       type="url"
@@ -970,13 +999,14 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                         setNotificationSettings(prev => ({ ...prev, webhook_url: e.target.value }));
                         setHasChanges(true);
                       }}
-                      placeholder="https://your-webhook-url.com/notifications"
+                      placeholder="https://webhook-url-cua-ban.com/notifications"
+                      className="border-slate-300 focus:border-amber-500 focus:ring-amber-200"
                     />
-                    <p className="text-xs text-gray-500">HTTP POST requests will be sent to this URL</p>
+                    <p className="text-xs text-slate-500">Yêu cầu HTTP POST sẽ được gửi đến URL này</p>
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Notification Cooldown: {notificationSettings.notification_cooldown}s</Label>
+                    <Label className="text-slate-700 font-medium">Thời gian chờ thông báo: {notificationSettings.notification_cooldown}s</Label>
                     <Slider
                       value={[notificationSettings.notification_cooldown]}
                       onValueChange={([value]: [number]) => {
@@ -986,25 +1016,25 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                       max={3600}
                       min={30}
                       step={30}
-                      className="w-full"
+                      className="w-full [&_[role=slider]]:bg-gradient-to-r [&_[role=slider]]:from-amber-500 [&_[role=slider]]:to-orange-500"
                     />
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>30s</span>
-                      <span>1 hour</span>
+                    <div className="flex justify-between text-xs text-slate-500">
+                      <span>30 giây</span>
+                      <span>1 giờ</span>
                     </div>
                   </div>
                 </div>
 
-                <Separator />
+                <Separator className="bg-slate-200" />
 
                 <div className="space-y-3">
-                  <h4 className="font-medium">Notification Types</h4>
+                  <h4 className="font-medium text-slate-800">Loại thông báo</h4>
                   
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-red-50 to-pink-50 rounded-lg border border-red-200">
                       <div className="space-y-0.5">
-                        <Label>Unknown Face Detected</Label>
-                        <p className="text-sm text-gray-600">Alert when unknown faces are detected</p>
+                        <Label className="text-slate-700 font-medium">Phát hiện khuôn mặt lạ</Label>
+                        <p className="text-sm text-slate-600">Cảnh báo khi phát hiện khuôn mặt lạ</p>
                       </div>
                       <Switch
                         checked={notificationSettings.notify_unknown_faces}
@@ -1012,13 +1042,14 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                           setNotificationSettings(prev => ({ ...prev, notify_unknown_faces: checked }));
                           setHasChanges(true);
                         }}
+                        className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-red-500 data-[state=checked]:to-pink-500"
                       />
                     </div>
 
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
                       <div className="space-y-0.5">
-                        <Label>Known Face Detected</Label>
-                        <p className="text-sm text-gray-600">Alert when known faces are detected</p>
+                        <Label className="text-slate-700 font-medium">Phát hiện khuôn mặt quen</Label>
+                        <p className="text-sm text-slate-600">Cảnh báo khi phát hiện khuôn mặt quen</p>
                       </div>
                       <Switch
                         checked={notificationSettings.notify_known_faces}
@@ -1026,13 +1057,14 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                           setNotificationSettings(prev => ({ ...prev, notify_known_faces: checked }));
                           setHasChanges(true);
                         }}
+                        className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-green-500 data-[state=checked]:to-emerald-500"
                       />
                     </div>
 
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
                       <div className="space-y-0.5">
-                        <Label>System Events</Label>
-                        <p className="text-sm text-gray-600">Alert for system issues and status changes</p>
+                        <Label className="text-slate-700 font-medium">Sự kiện hệ thống</Label>
+                        <p className="text-sm text-slate-600">Cảnh báo về vấn đề hệ thống và thay đổi trạng thái</p>
                       </div>
                       <Switch
                         checked={notificationSettings.notify_system_events}
@@ -1040,6 +1072,7 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                           setNotificationSettings(prev => ({ ...prev, notify_system_events: checked }));
                           setHasChanges(true);
                         }}
+                        className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-blue-500 data-[state=checked]:to-indigo-500"
                       />
                     </div>
                   </div>
@@ -1050,18 +1083,20 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
 
           {/* Recording Settings */}
           <TabsContent value="recording" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <RecordIcon className="h-5 w-5" />
-                  <span>Recording Settings</span>
+            <Card className="bg-white/80 backdrop-blur-sm border-slate-200">
+              <CardHeader className="border-b border-slate-100">
+                <CardTitle className="flex items-center space-x-2 text-slate-800">
+                  <div className="p-2 bg-gradient-to-r from-red-500 to-pink-500 rounded-lg">
+                    <RecordIcon className="h-5 w-5" />
+                  </div>
+                  <span>Cài đặt ghi hình</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="flex items-center justify-between">
+              <CardContent className="space-y-6 p-6">
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-slate-100 rounded-lg border border-slate-200">
                   <div className="space-y-0.5">
-                    <Label>Enable Recording</Label>
-                    <p className="text-sm text-gray-600">Automatically record video footage</p>
+                    <Label className="text-slate-700 font-medium">Bật ghi hình</Label>
+                    <p className="text-sm text-slate-600">Tự động ghi hình video</p>
                   </div>
                   <Switch
                     checked={recordingSettings.enabled}
@@ -1069,16 +1104,17 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                       setRecordingSettings(prev => ({ ...prev, enabled: checked }));
                       setHasChanges(true);
                     }}
+                    className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-red-500 data-[state=checked]:to-pink-500"
                   />
                 </div>
 
                 {recordingSettings.enabled && (
                   <>
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-200">
                         <div className="space-y-0.5">
-                          <Label>Record on Detection</Label>
-                          <p className="text-sm text-gray-600">Only record when faces are detected</p>
+                          <Label className="text-slate-700 font-medium">Ghi khi phát hiện</Label>
+                          <p className="text-sm text-slate-600">Chỉ ghi khi phát hiện khuôn mặt</p>
                         </div>
                         <Switch
                           checked={recordingSettings.record_on_detection}
@@ -1086,11 +1122,12 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                             setRecordingSettings(prev => ({ ...prev, record_on_detection: checked }));
                             setHasChanges(true);
                           }}
+                          className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-blue-500 data-[state=checked]:to-cyan-500"
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <Label>Recording Duration: {recordingSettings.record_duration}s</Label>
+                        <Label className="text-slate-700 font-medium">Thời lượng ghi: {recordingSettings.record_duration}s</Label>
                         <Slider
                           value={[recordingSettings.record_duration]}
                           onValueChange={([value]: [number]) => {
@@ -1100,16 +1137,16 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                           max={300}
                           min={10}
                           step={5}
-                          className="w-full"
+                          className="w-full [&_[role=slider]]:bg-gradient-to-r [&_[role=slider]]:from-red-500 [&_[role=slider]]:to-pink-500"
                         />
-                        <div className="flex justify-between text-xs text-gray-500">
-                          <span>10s</span>
-                          <span>5 min</span>
+                        <div className="flex justify-between text-xs text-slate-500">
+                          <span>10 giây</span>
+                          <span>5 phút</span>
                         </div>
                       </div>
 
                       <div className="space-y-2">
-                        <Label>Storage Retention: {recordingSettings.max_storage_days} days</Label>
+                        <Label className="text-slate-700 font-medium">Lưu trữ: {recordingSettings.max_storage_days} ngày</Label>
                         <Slider
                           value={[recordingSettings.max_storage_days]}
                           onValueChange={([value]: [number]) => {
@@ -1119,16 +1156,16 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                           max={365}
                           min={1}
                           step={1}
-                          className="w-full"
+                          className="w-full [&_[role=slider]]:bg-gradient-to-r [&_[role=slider]]:from-purple-500 [&_[role=slider]]:to-indigo-500"
                         />
-                        <div className="flex justify-between text-xs text-gray-500">
-                          <span>1 day</span>
-                          <span>1 year</span>
+                        <div className="flex justify-between text-xs text-slate-500">
+                          <span>1 ngày</span>
+                          <span>1 năm</span>
                         </div>
                       </div>
 
                       <div className="space-y-2">
-                        <Label>Compression Level: {recordingSettings.compression_level}</Label>
+                        <Label className="text-slate-700 font-medium">Mức nén: {recordingSettings.compression_level}</Label>
                         <Slider
                           value={[recordingSettings.compression_level]}
                           onValueChange={([value]: [number]) => {
@@ -1138,18 +1175,18 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                           max={5}
                           min={1}
                           step={1}
-                          className="w-full"
+                          className="w-full [&_[role=slider]]:bg-gradient-to-r [&_[role=slider]]:from-green-500 [&_[role=slider]]:to-emerald-500"
                         />
-                        <div className="flex justify-between text-xs text-gray-500">
-                          <span>Low (Large files)</span>
-                          <span>High (Small files)</span>
+                        <div className="flex justify-between text-xs text-slate-500">
+                          <span>Thấp (File lớn)</span>
+                          <span>Cao (File nhỏ)</span>
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-lg border border-emerald-200">
                         <div className="space-y-0.5">
-                          <Label>Record Audio</Label>
-                          <p className="text-sm text-gray-600">Include audio in recordings</p>
+                          <Label className="text-slate-700 font-medium">Ghi âm thanh</Label>
+                          <p className="text-sm text-slate-600">Bao gồm âm thanh trong bản ghi</p>
                         </div>
                         <Switch
                           checked={recordingSettings.record_audio}
@@ -1157,6 +1194,7 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                             setRecordingSettings(prev => ({ ...prev, record_audio: checked }));
                             setHasChanges(true);
                           }}
+                          className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-emerald-500 data-[state=checked]:to-teal-500"
                         />
                       </div>
                     </div>
@@ -1170,20 +1208,22 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
           <TabsContent value="system" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* System Status */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Monitor className="h-5 w-5" />
-                    <span>System Status</span>
+              <Card className="bg-white/80 backdrop-blur-sm border-slate-200">
+                <CardHeader className="border-b border-slate-100">
+                  <CardTitle className="flex items-center space-x-2 text-slate-800">
+                    <div className="p-2 bg-gradient-to-r from-slate-600 to-gray-700 rounded-lg">
+                      <Monitor className="h-5 w-5 text-white" />
+                    </div>
+                    <span>Trạng thái hệ thống</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-4 p-6">
                   {systemInfo ? (
                     <>
                       <div className="space-y-3">
                         <div>
                           <div className="flex justify-between items-center mb-1">
-                            <Label className="text-sm">CPU Usage</Label>
+                            <Label className="text-sm text-slate-700">Sử dụng CPU</Label>
                             <span className={`text-sm font-medium ${getStatusColor(systemInfo.cpu_usage, { warning: 70, critical: 90 })}`}>
                               {systemInfo.cpu_usage}%
                             </span>
@@ -1193,7 +1233,7 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
 
                         <div>
                           <div className="flex justify-between items-center mb-1">
-                            <Label className="text-sm">Memory Usage</Label>
+                            <Label className="text-sm text-slate-700">Sử dụng bộ nhớ</Label>
                             <span className={`text-sm font-medium ${getStatusColor(systemInfo.memory_usage, { warning: 80, critical: 95 })}`}>
                               {systemInfo.memory_usage}%
                             </span>
@@ -1203,7 +1243,7 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
 
                         <div>
                           <div className="flex justify-between items-center mb-1">
-                            <Label className="text-sm">Disk Usage</Label>
+                            <Label className="text-sm text-slate-700">Sử dụng ổ đĩa</Label>
                             <span className={`text-sm font-medium ${getStatusColor(systemInfo.disk_usage, { warning: 80, critical: 95 })}`}>
                               {systemInfo.disk_usage}%
                             </span>
@@ -1213,7 +1253,7 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
 
                         <div>
                           <div className="flex justify-between items-center mb-1">
-                            <Label className="text-sm">Temperature</Label>
+                            <Label className="text-sm text-slate-700">Nhiệt độ</Label>
                             <span className={`text-sm font-medium ${getStatusColor(systemInfo.temperature, { warning: 70, critical: 85 })}`}>
                               {systemInfo.temperature}°C
                             </span>
@@ -1222,34 +1262,34 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
                         </div>
                       </div>
 
-                      <Separator />
+                      <Separator className="bg-slate-200" />
 
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
-                          <Label className="text-gray-600">Uptime</Label>
-                          <p className="font-medium">{formatUptime(systemInfo.uptime)}</p>
+                          <Label className="text-slate-600">Thời gian hoạt động</Label>
+                          <p className="font-medium text-slate-800">{formatUptime(systemInfo.uptime)}</p>
                         </div>
                         <div>
-                          <Label className="text-gray-600">Firmware</Label>
-                          <p className="font-medium">{systemInfo.firmware_version}</p>
+                          <Label className="text-slate-600">Phiên bản firmware</Label>
+                          <p className="font-medium text-slate-800">{systemInfo.firmware_version}</p>
                         </div>
                         <div>
-                          <Label className="text-gray-600">Upload Speed</Label>
-                          <p className="font-medium">{formatBytes(systemInfo.network_speed.upload)}/s</p>
+                          <Label className="text-slate-600">Tốc độ tải lên</Label>
+                          <p className="font-medium text-slate-800">{formatBytes(systemInfo.network_speed.upload)}/s</p>
                         </div>
                         <div>
-                          <Label className="text-gray-600">Download Speed</Label>
-                          <p className="font-medium">{formatBytes(systemInfo.network_speed.download)}/s</p>
+                          <Label className="text-slate-600">Tốc độ tải xuống</Label>
+                          <p className="font-medium text-slate-800">{formatBytes(systemInfo.network_speed.download)}/s</p>
                         </div>
                       </div>
                     </>
                   ) : (
                     <div className="text-center py-8">
-                      <Monitor className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                      <p className="text-gray-600">System information not available</p>
-                      <Button variant="outline" size="sm" className="mt-2" onClick={handleTestConnection}>
+                      <Monitor className="w-12 h-12 text-slate-400 mx-auto mb-3" />
+                      <p className="text-slate-600">Thông tin hệ thống không khả dụng</p>
+                      <Button variant="outline" size="sm" className="mt-2 hover:bg-slate-50" onClick={handleTestConnection}>
                         <RefreshCw className="w-4 h-4 mr-2" />
-                        Refresh
+                        Làm mới
                       </Button>
                     </div>
                   )}
@@ -1257,47 +1297,49 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({ className }) => {
               </Card>
 
               {/* Actions */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Settings className="h-5 w-5" />
-                    <span>System Actions</span>
+              <Card className="bg-white/80 backdrop-blur-sm border-slate-200">
+                <CardHeader className="border-b border-slate-100">
+                  <CardTitle className="flex items-center space-x-2 text-slate-800">
+                    <div className="p-2 bg-gradient-to-r from-teal-500 to-emerald-600 rounded-lg">
+                      <Settings className="h-5 w-5 text-white" />
+                    </div>
+                    <span>Hành động hệ thống</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-4 p-6">
                   <div className="space-y-3">
-                    <Button variant="outline" className="w-full justify-start" onClick={handleResetDefaults}>
+                    <Button variant="outline" className="w-full justify-start border-slate-300 hover:bg-slate-50" onClick={handleResetDefaults}>
                       <RotateCcw className="w-4 h-4 mr-2" />
-                      Reset to Defaults
+                      Đặt lại về mặc định
                     </Button>
 
-                    <Button variant="outline" className="w-full justify-start" onClick={handleExportSettings}>
+                    <Button variant="outline" className="w-full justify-start border-slate-300 hover:bg-emerald-50 hover:border-emerald-300" onClick={handleExportSettings}>
                       <Download className="w-4 h-4 mr-2" />
-                      Export Settings
+                      Xuất cài đặt
                     </Button>
 
-                    <Button variant="outline" className="w-full justify-start" disabled>
+                    <Button variant="outline" className="w-full justify-start border-slate-300 hover:bg-blue-50" disabled>
                       <Upload className="w-4 h-4 mr-2" />
-                      Import Settings
+                      Nhập cài đặt
                     </Button>
 
-                    <Separator />
+                    <Separator className="bg-slate-200" />
 
-                    <Button variant="outline" className="w-full justify-start" disabled>
+                    <Button variant="outline" className="w-full justify-start border-slate-300 hover:bg-amber-50" disabled>
                       <RefreshCw className="w-4 h-4 mr-2" />
-                      Restart Camera
+                      Khởi động lại camera
                     </Button>
 
-                    <Button variant="destructive" className="w-full justify-start" disabled>
+                    <Button variant="destructive" className="w-full justify-start hover:bg-red-600" disabled>
                       <Trash2 className="w-4 h-4 mr-2" />
-                      Factory Reset
+                      Khôi phục cài đặt gốc
                     </Button>
                   </div>
 
-                  <Alert className="mt-4">
-                    <AlertTriangle className="h-4 w-4" />
-                    <AlertDescription>
-                      Some actions require physical access to the camera or may cause temporary service interruption.
+                  <Alert className="mt-4 border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50">
+                    <AlertTriangle className="h-4 w-4 text-amber-600" />
+                    <AlertDescription className="text-amber-800">
+                      Một số hành động yêu cầu truy cập vật lý vào camera hoặc có thể gây gián đoạn dịch vụ tạm thời.
                     </AlertDescription>
                   </Alert>
                 </CardContent>

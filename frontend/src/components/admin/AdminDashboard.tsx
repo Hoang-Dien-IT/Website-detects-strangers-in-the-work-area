@@ -64,7 +64,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onRefresh }) => {
       }
       setRefreshing(true);
       
-      console.log('🔵 AdminDashboard: Loading dashboard data...');
+      console.log('🔵 AdminDashboard: Đang tải dữ liệu bảng điều khiển...');
       
       // ✅ Load data from backend services - now types match!
       const [statsResponse, healthResponse] = await Promise.all([
@@ -72,7 +72,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onRefresh }) => {
         adminService.getSystemHealth()
       ]);
 
-      console.log('✅ AdminDashboard: Data loaded successfully', {
+      console.log('✅ AdminDashboard: Đã tải dữ liệu thành công', {
         stats: statsResponse,
         health: healthResponse
       });
@@ -86,16 +86,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onRefresh }) => {
       await generateChartData(statsResponse);
 
       if (!isAutoRefresh) {
-        toast.success('Dashboard data loaded successfully');
+        toast.success('Tải dữ liệu bảng điều khiển thành công');
       }
       
       onRefresh?.();
       
     } catch (error: any) {
-      console.error('❌ AdminDashboard: Error loading dashboard data:', error);
+      console.error('❌ AdminDashboard: Lỗi khi tải dữ liệu bảng điều khiển:', error);
       
       if (!isAutoRefresh) {
-        toast.error(`Failed to load dashboard data: ${error.message || 'Unknown error'}`);
+        toast.error(`Không thể tải dữ liệu bảng điều khiển: ${error.message || 'Lỗi không xác định'}`);
       }
       
       // ✅ Set fallback data with correct types in development
@@ -168,7 +168,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onRefresh }) => {
       
       setChartData(data);
     } catch (error) {
-      console.error('❌ AdminDashboard: Error generating chart data:', error);
+      console.error('❌ AdminDashboard: Lỗi khi tạo dữ liệu biểu đồ:', error);
       setChartData([]);
     }
   };
@@ -211,8 +211,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onRefresh }) => {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 text-lg">Loading admin dashboard...</p>
-          <p className="text-gray-500 text-sm mt-2">Please wait while we fetch the latest data</p>
+          <p className="text-gray-600 text-lg">Đang tải bảng điều khiển quản trị...</p>
+          <p className="text-gray-500 text-sm mt-2">Vui lòng chờ trong khi chúng tôi lấy dữ liệu mới nhất</p>
         </div>
       </div>
     );
@@ -234,8 +234,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onRefresh }) => {
                 <Server className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-                <p className="text-gray-600">System overview and management</p>
+                <h1 className="text-2xl font-bold text-gray-900">Bảng Điều Khiển Quản Trị</h1>
+                <p className="text-gray-600">Tổng quan hệ thống & quản lý</p>
               </div>
             </div>
           </div>
@@ -244,9 +244,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onRefresh }) => {
             <div className="flex items-center space-x-2">
               {getStatusIcon(health?.database || 'unknown')}
               <span className={`text-sm font-medium ${getStatusColor(health?.database || 'unknown')}`}>
-                {health?.database === 'healthy' ? 'System Healthy' 
-                  : health?.database === 'warning' ? 'System Warning'
-                  : 'System Error'
+                {health?.database === 'healthy' ? 'Hệ thống ổn định' 
+                  : health?.database === 'warning' ? 'Cảnh báo hệ thống'
+                  : 'Lỗi hệ thống'
                 }
               </span>
             </div>
@@ -258,7 +258,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onRefresh }) => {
               className="shadow-sm"
             >
               <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-              {refreshing ? 'Refreshing...' : 'Refresh'}
+              {refreshing ? 'Đang làm mới...' : 'Làm mới'}
             </Button>
           </div>
         </div>
@@ -276,14 +276,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onRefresh }) => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-2">
-                <p className="text-sm font-medium text-blue-700">Total Users</p>
+                <p className="text-sm font-medium text-blue-700">Tổng số người dùng</p>
                 <p className="text-3xl font-bold text-blue-900">{stats?.total_users || 0}</p>
                 <div className="flex items-center space-x-2 text-xs">
                   <Badge variant="outline" className="bg-blue-200 text-blue-800 border-blue-300">
-                    {stats?.active_users || 0} active
+                    {stats?.active_users || 0} đang hoạt động
                   </Badge>
                   <Badge variant="outline" className="bg-purple-200 text-purple-800 border-purple-300">
-                    {stats?.admin_users || 0} admins
+                    {stats?.admin_users || 0} quản trị viên
                   </Badge>
                 </div>
               </div>
@@ -299,14 +299,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onRefresh }) => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-2">
-                <p className="text-sm font-medium text-green-700">Cameras</p>
+                <p className="text-sm font-medium text-green-700">Camera</p>
                 <p className="text-3xl font-bold text-green-900">{stats?.total_cameras || 0}</p>
                 <div className="flex items-center space-x-2 text-xs">
                   <Badge variant="outline" className="bg-green-200 text-green-800 border-green-300">
-                    {stats?.active_cameras || 0} active
+                    {stats?.active_cameras || 0} đang hoạt động
                   </Badge>
                   <Badge variant="outline" className="bg-blue-200 text-blue-800 border-blue-300">
-                    {stats?.streaming_cameras || 0} streaming
+                    {stats?.streaming_cameras || 0} đang phát
                   </Badge>
                 </div>
               </div>
@@ -322,11 +322,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onRefresh }) => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-2">
-                <p className="text-sm font-medium text-purple-700">Known Persons</p>
+                <p className="text-sm font-medium text-purple-700">Người đã biết</p>
                 <p className="text-3xl font-bold text-purple-900">{stats?.total_persons || 0}</p>
                 <div className="flex items-center space-x-2 text-xs">
                   <Badge variant="outline" className="bg-purple-200 text-purple-800 border-purple-300">
-                    {stats?.active_persons || 0} active
+                    {stats?.active_persons || 0} đang hoạt động
                   </Badge>
                 </div>
               </div>
@@ -342,14 +342,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onRefresh }) => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-2">
-                <p className="text-sm font-medium text-orange-700">Total Detections</p>
+                <p className="text-sm font-medium text-orange-700">Tổng số phát hiện</p>
                 <p className="text-3xl font-bold text-orange-900">{stats?.total_detections || 0}</p>
                 <div className="flex items-center space-x-2 text-xs">
                   <Badge variant="outline" className="bg-green-200 text-green-800 border-green-300">
-                    {stats?.known_person_detections || 0} known
+                    {stats?.known_person_detections || 0} đã biết
                   </Badge>
                   <Badge variant="outline" className="bg-red-200 text-red-800 border-red-300">
-                    {stats?.stranger_detections || 0} unknown
+                    {stats?.stranger_detections || 0} lạ
                   </Badge>
                 </div>
               </div>
@@ -373,7 +373,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onRefresh }) => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <TrendingUp className="h-5 w-5" />
-                <span>Weekly Activity</span>
+                <span>Hoạt động trong tuần</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -388,14 +388,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onRefresh }) => {
                     dataKey="detections" 
                     stroke="#8884d8" 
                     strokeWidth={2}
-                    name="Detections"
+                    name="Phát hiện"
                   />
                   <Line 
                     type="monotone" 
                     dataKey="users" 
                     stroke="#82ca9d" 
                     strokeWidth={2}
-                    name="Active Users"
+                    name="Người dùng hoạt động"
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -413,7 +413,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onRefresh }) => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Activity className="h-5 w-5" />
-                <span>Detection Types</span>
+                <span>Loại phát hiện</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -427,14 +427,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onRefresh }) => {
                     dataKey="known_detections" 
                     stackId="a" 
                     fill="#10B981" 
-                    name="Known Persons"
+                    name="Người đã biết"
                     radius={[0, 0, 4, 4]}
                   />
                   <Bar 
                     dataKey="stranger_detections" 
                     stackId="a" 
                     fill="#EF4444" 
-                    name="Strangers"
+                    name="Người lạ"
                     radius={[4, 4, 0, 0]}
                   />
                 </BarChart>
@@ -455,17 +455,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onRefresh }) => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Database className="h-5 w-5" />
-                <span>System Health</span>
+                <span>Sức khỏe hệ thống</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Service Status */}
                 <div className="space-y-4">
-                  <h4 className="font-semibold text-gray-700">Services</h4>
+                  <h4 className="font-semibold text-gray-700">Dịch vụ</h4>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm">Database</span>
+                      <span className="text-sm">Cơ sở dữ liệu</span>
                       <div className="flex items-center space-x-2">
                         {getStatusIcon(health.database)}
                         <Badge variant="outline" className={`${getStatusColor(health.database)}`}>
@@ -474,7 +474,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onRefresh }) => {
                       </div>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm">Face Recognition</span>
+                      <span className="text-sm">Nhận diện khuôn mặt</span>
                       <div className="flex items-center space-x-2">
                         {getStatusIcon(health.face_recognition)}
                         <Badge variant="outline" className={`${getStatusColor(health.face_recognition)}`}>
@@ -496,11 +496,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onRefresh }) => {
 
                 {/* System Resources */}
                 <div className="space-y-4">
-                  <h4 className="font-semibold text-gray-700">Resources</h4>
+                  <h4 className="font-semibold text-gray-700">Tài nguyên</h4>
                   <div className="space-y-3">
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span>CPU Usage</span>
+                        <span>Sử dụng CPU</span>
                         <span>{health.system.cpu.percent.toFixed(1)}%</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
@@ -512,7 +512,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onRefresh }) => {
                     </div>
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span>Memory Usage</span>
+                        <span>Sử dụng RAM</span>
                         <span>{health.system.memory.percent.toFixed(1)}%</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
@@ -524,7 +524,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onRefresh }) => {
                     </div>
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span>Disk Usage</span>
+                        <span>Sử dụng ổ đĩa</span>
                         <span>{health.system.disk.percent.toFixed(1)}%</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
@@ -539,23 +539,23 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onRefresh }) => {
 
                 {/* System Info */}
                 <div className="space-y-4">
-                  <h4 className="font-semibold text-gray-700">System Info</h4>
+                  <h4 className="font-semibold text-gray-700">Thông tin hệ thống</h4>
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between">
-                      <span>Uptime</span>
+                      <span>Thời gian hoạt động</span>
                       <span>{Math.floor(health.uptime / 3600)}h {Math.floor((health.uptime % 3600) / 60)}m</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Memory Total</span>
+                      <span>Tổng RAM</span>
                       <span>{(health.system.memory.total / 1024 / 1024 / 1024).toFixed(1)} GB</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Disk Total</span>
+                      <span>Tổng ổ đĩa</span>
                       <span>{(health.system.disk.total / 1024 / 1024 / 1024).toFixed(1)} GB</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Last Check</span>
-                      <span>{new Date(health.last_check).toLocaleTimeString()}</span>
+                      <span>Kiểm tra lần cuối</span>
+                      <span>{new Date(health.last_check).toLocaleTimeString('vi-VN')}</span>
                     </div>
                   </div>
                 </div>

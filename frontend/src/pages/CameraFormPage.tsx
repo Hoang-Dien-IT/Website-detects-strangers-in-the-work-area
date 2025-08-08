@@ -201,35 +201,6 @@ const CameraFormPage: React.FC = () => {
             onCancel={handleCancel}
             loading={loading}
           />
-
-          {/* Debug Info (only in development) */}
-          {process.env.NODE_ENV === 'development' && (
-            <Card className="bg-yellow-50 border-yellow-200">
-              <CardContent className="p-4">
-                <h4 className="font-medium text-yellow-900 mb-2">Debug Information</h4>
-                <div className="text-sm text-yellow-800 space-y-1">
-                  <p><strong>Mode:</strong> {isEdit ? 'Edit' : 'Create'}</p>
-                  <p><strong>Camera ID:</strong> {id || 'N/A'}</p>
-                  <p><strong>Loading:</strong> {loading ? 'Yes' : 'No'}</p>
-                  <p><strong>Save Status:</strong> {saveStatus}</p>
-                  <p><strong>Has Camera Data:</strong> {camera ? 'Yes' : 'No'}</p>
-                  {camera && (
-                    <div className="mt-2 p-2 bg-yellow-100 rounded text-xs">
-                      <p><strong>Camera Type:</strong> {camera.camera_type}</p>
-                      <p><strong>Camera URL:</strong> {camera.camera_url || 'N/A'}</p>
-                      <p><strong>Detection Enabled:</strong> {camera.detection_enabled ? 'Yes' : 'No'}</p>
-                    </div>
-                  )}
-                  <p><strong>Backend Endpoints Used:</strong></p>
-                  <div className="ml-4 space-y-1">
-                    <p>• GET /api/cameras/{'{id}'} - Load camera for edit</p>
-                    <p>• POST /api/cameras - Create new camera</p>
-                    <p>• PUT /api/cameras/{'{id}'} - Update camera</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
         </div>
       </div>
     </div>

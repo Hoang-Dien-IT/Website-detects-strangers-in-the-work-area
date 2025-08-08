@@ -35,7 +35,7 @@ const LoginForm: React.FC = () => {
     e.preventDefault();
     
     if (!formData.username || !formData.password) {
-      setError('Please fill in all fields');
+      setError('Vui lòng điền đầy đủ thông tin');
       return;
     }
 
@@ -52,7 +52,7 @@ const LoginForm: React.FC = () => {
       navigate('/dashboard');
     } catch (error: any) {
       console.error('Login error:', error);
-      const errorMessage = error.response?.data?.detail || 'Login failed. Please try again.';
+      const errorMessage = error.response?.data?.detail || 'Đăng nhập thất bại. Vui lòng thử lại.';
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -62,8 +62,8 @@ const LoginForm: React.FC = () => {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-bold">Sign In</CardTitle>
-        <p className="text-gray-600">Enter your credentials to access your account</p>
+        <CardTitle className="text-2xl font-bold">Đăng nhập</CardTitle>
+        <p className="text-gray-600">Nhập thông tin để truy cập tài khoản của bạn</p>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -75,14 +75,14 @@ const LoginForm: React.FC = () => {
           )}
           
           <div className="space-y-2">
-            <Label htmlFor="username">Username or Email</Label>
+            <Label htmlFor="username">Tên đăng nhập hoặc Email</Label>
             <div className="relative">
               <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
                 id="username"
                 name="username"
                 type="text"
-                placeholder="Enter your username or email"
+                placeholder="Nhập tên đăng nhập hoặc email"
                 value={formData.username}
                 onChange={handleChange}
                 className="pl-10"
@@ -93,14 +93,14 @@ const LoginForm: React.FC = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">Mật khẩu</Label>
             <div className="relative">
               <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
                 id="password"
                 name="password"
                 type={showPassword ? 'text' : 'password'}
-                placeholder="Enter your password"
+                placeholder="Nhập mật khẩu"
                 value={formData.password}
                 onChange={handleChange}
                 className="pl-10 pr-10"
@@ -127,11 +127,11 @@ const LoginForm: React.FC = () => {
                 disabled={isLoading}
               />
               <Label htmlFor="remember" className="text-sm">
-                Remember me
+                Ghi nhớ đăng nhập
               </Label>
             </div>
             <Link to="/forgot-password" className="text-sm text-blue-600 hover:underline">
-              Forgot password?
+              Quên mật khẩu?
             </Link>
           </div>
 
@@ -143,18 +143,18 @@ const LoginForm: React.FC = () => {
             {isLoading ? (
               <>
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                Signing in...
+                Đang đăng nhập...
               </>
             ) : (
-              'Sign In'
+              'Đăng nhập'
             )}
           </Button>
 
           <div className="text-center">
             <span className="text-sm text-gray-600">
-              Don't have an account?{' '}
+              Chưa có tài khoản?{' '}
               <Link to="/register" className="text-blue-600 hover:underline font-medium">
-                Sign up
+                Đăng ký
               </Link>
             </span>
           </div>

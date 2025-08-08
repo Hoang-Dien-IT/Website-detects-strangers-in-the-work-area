@@ -47,7 +47,7 @@ const DetectionTrackingDashboard: React.FC = () => {
       setTrackingData(response.data);
     } catch (error) {
       console.error('Error loading tracking data:', error);
-      toast.error('Failed to load detection tracking data');
+      toast.error('Không thể tải dữ liệu theo dõi phát hiện');
     } finally {
       setLoading(false);
     }
@@ -57,17 +57,17 @@ const DetectionTrackingDashboard: React.FC = () => {
     setRefreshing(true);
     await loadTrackingData();
     setRefreshing(false);
-    toast.success('Tracking data refreshed');
+    toast.success('Đã làm mới dữ liệu theo dõi');
   };
 
   const handleReset = async () => {
     try {
       await apiService.post('/admin/detection-tracking/reset');
-      toast.success('Detection tracking reset successfully');
+      toast.success('Đặt lại theo dõi phát hiện thành công');
       await loadTrackingData();
     } catch (error) {
       console.error('Error resetting tracking:', error);
-      toast.error('Failed to reset detection tracking');
+      toast.error('Không thể đặt lại theo dõi phát hiện');
     }
   };
 
@@ -126,24 +126,28 @@ const DetectionTrackingDashboard: React.FC = () => {
         <div className="flex items-center justify-center h-64">
           <RefreshCw className="h-8 w-8 animate-spin text-blue-500" />
         </div>
+        <div className="text-center mt-4 text-gray-600">Đang tải dữ liệu theo dõi phát hiện...</div>
       </div>
     );
   }
 
   return (
     <div className="container mx-auto p-6 space-y-6">
-      {/* Header */}
+      {/* Tiêu đề */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Detection Tracking</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Theo Dõi Phát Hiện</h1>
           <p className="text-gray-600 mt-2">
-            Real-time monitoring of face detection tracking system
+            Giám sát thời gian thực hệ thống theo dõi nhận diện khuôn mặt
           </p>
         </div>
         <div className="flex items-center space-x-3">
           <Badge className={getStatusColor(trackingData?.system_status || 'idle')}>
             <Activity className="h-3 w-3 mr-1" />
-            {trackingData?.system_status || 'Unknown'}
+            {trackingData?.system_status ?
+              (trackingData.system_status === 'active' ? 'Đang hoạt động' :
+                trackingData.system_status === 'idle' ? 'Nhàn rỗi' : trackingData.system_status)
+              : 'Không xác định'}
           </Badge>
           <Button
             variant="outline"
@@ -151,25 +155,25 @@ const DetectionTrackingDashboard: React.FC = () => {
             disabled={refreshing}
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-            Refresh
+            Làm mới
           </Button>
           <Button
             variant="destructive"
             onClick={handleReset}
           >
             <AlertTriangle className="h-4 w-4 mr-2" />
-            Reset Tracking
+            Đặt lại theo dõi
           </Button>
         </div>
       </div>
 
-      {/* Overview Stats */}
+      {/* Thống kê tổng quan */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Active Presences</p>
+                <p className="text-sm text-gray-600">Tổng số người đang hiện diện</p>
                 <p className="text-2xl font-bold">{trackingData?.total_presences || 0}</p>
               </div>
               <Users className="h-8 w-8 text-blue-500" />
@@ -181,7 +185,7 @@ const DetectionTrackingDashboard: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Cameras with Activity</p>
+                <p className="text-sm text-gray-600">Camera có hoạt động</p>
                 <p className="text-2xl font-bold">{trackingData?.cameras_with_activity || 0}</p>
               </div>
               <Eye className="h-8 w-8 text-green-500" />
@@ -193,9 +197,12 @@ const DetectionTrackingDashboard: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">System Status</p>
+                <p className="text-sm text-gray-600">Trạng thái hệ thống</p>
                 <p className="text-2xl font-bold capitalize">
-                  {trackingData?.system_status || 'Unknown'}
+                  {trackingData?.system_status ?
+                    (trackingData.system_status === 'active' ? 'Đang hoạt động' :
+                      trackingData.system_status === 'idle' ? 'Nhàn rỗi' : trackingData.system_status)
+                    : 'Không xác định'}
                 </p>
               </div>
               <CheckCircle className="h-8 w-8 text-purple-500" />
@@ -204,12 +211,12 @@ const DetectionTrackingDashboard: React.FC = () => {
         </Card>
       </div>
 
-      {/* Camera Details */}
+      {/* Chi tiết Camera */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
             <Eye className="h-5 w-5 mr-2" />
-            Camera Activity Details
+            Chi tiết hoạt động Camera
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -221,7 +228,7 @@ const DetectionTrackingDashboard: React.FC = () => {
                     <CardTitle className="text-lg flex items-center justify-between">
                       <span>{camera.camera_name}</span>
                       <Badge variant="secondary">
-                        {camera.active_presences} present
+                        {camera.active_presences} người hiện diện
                       </Badge>
                     </CardTitle>
                   </CardHeader>
@@ -232,16 +239,17 @@ const DetectionTrackingDashboard: React.FC = () => {
                           <div className="flex items-center justify-between mb-2">
                             <span className="font-medium">{presence.person_name}</span>
                             <Badge className={getDetectionTypeColor(presence.detection_type)}>
-                              {presence.detection_type}
+                              {presence.detection_type === 'known_person' ? 'Đã biết' :
+                                presence.detection_type === 'stranger' ? 'Người lạ' : presence.detection_type}
                             </Badge>
                           </div>
                           <div className="text-sm text-gray-600 space-y-1">
                             <div className="flex items-center">
                               <Clock className="h-3 w-3 mr-1" />
-                              Duration: {formatDuration(presence.duration)}
+                              Thời gian: {formatDuration(presence.duration)}
                             </div>
                             <div>
-                              Detections: {presence.detection_count}
+                              Số lần phát hiện: {presence.detection_count}
                             </div>
                           </div>
                         </div>
@@ -254,8 +262,8 @@ const DetectionTrackingDashboard: React.FC = () => {
           ) : (
             <div className="text-center py-8 text-gray-500">
               <Activity className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-              <p>No active detection tracking found</p>
-              <p className="text-sm">Start camera streaming to see detection tracking</p>
+              <p>Không có dữ liệu theo dõi phát hiện nào đang hoạt động</p>
+              <p className="text-sm">Hãy khởi động camera để xem theo dõi phát hiện</p>
             </div>
           )}
         </CardContent>

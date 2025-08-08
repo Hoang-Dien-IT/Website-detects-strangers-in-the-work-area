@@ -17,7 +17,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
 
-  // Show loading spinner while checking authentication
+  // Hiển thị spinner khi đang kiểm tra xác thực
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -26,17 +26,18 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     );
   }
 
-  // If authentication is required but user is not authenticated
+  // Nếu yêu cầu đăng nhập nhưng người dùng chưa xác thực
   if (requireAuth && !isAuthenticated) {
     return <Navigate to={redirectTo} state={{ from: location }} replace />;
   }
 
-  // If user is authenticated but trying to access auth pages (login/register)
+  // Nếu đã đăng nhập mà truy cập trang đăng nhập/đăng ký thì chuyển hướng về dashboard
   if (!requireAuth && isAuthenticated && (location.pathname === '/login' || location.pathname === '/register')) {
     const from = location.state?.from?.pathname || '/dashboard';
     return <Navigate to={from} replace />;
   }
 
+  // Hiển thị nội dung nếu hợp lệ
   return <>{children}</>;
 };
 

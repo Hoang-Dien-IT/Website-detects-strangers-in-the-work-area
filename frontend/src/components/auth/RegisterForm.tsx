@@ -198,47 +198,47 @@ const RegisterForm: React.FC = () => {
 
     // Username validation
     if (!formData.username.trim()) {
-      newErrors.username = 'Username is required';
+      newErrors.username = 'Vui lòng nhập tên đăng nhập';
     } else if (formData.username.length < 3) {
-      newErrors.username = 'Username must be at least 3 characters';
+      newErrors.username = 'Tên đăng nhập phải có ít nhất 3 ký tự';
     } else if (formData.username.length > 50) {
-      newErrors.username = 'Username must be less than 50 characters';
+      newErrors.username = 'Tên đăng nhập phải nhỏ hơn 50 ký tự';
     } else if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) {
-      newErrors.username = 'Username can only contain letters, numbers, and underscores';
+      newErrors.username = 'Tên đăng nhập chỉ chứa chữ, số và dấu gạch dưới';
     } else if (usernameAvailable === false) {
-      newErrors.username = 'Username is already taken';
+      newErrors.username = 'Tên đăng nhập đã được sử dụng';
     }
 
     // Email validation
     if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = 'Vui lòng nhập email';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
+      newErrors.email = 'Vui lòng nhập địa chỉ email hợp lệ';
     } else if (emailAvailable === false) {
-      newErrors.email = 'Email is already registered';
+      newErrors.email = 'Email đã được đăng ký';
     }
 
     // Full name validation
     if (!formData.full_name.trim()) {
-      newErrors.full_name = 'Full name is required';
+      newErrors.full_name = 'Vui lòng nhập họ và tên';
     } else if (formData.full_name.length < 2) {
-      newErrors.full_name = 'Full name must be at least 2 characters';
+      newErrors.full_name = 'Họ và tên phải có ít nhất 2 ký tự';
     } else if (formData.full_name.length > 100) {
-      newErrors.full_name = 'Full name must be less than 100 characters';
+      newErrors.full_name = 'Họ và tên phải nhỏ hơn 100 ký tự';
     }
 
     // Password validation
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = 'Vui lòng nhập mật khẩu';
     } else if (passwordStrength.score < 3) {
-      newErrors.password = 'Password is too weak. Please strengthen it.';
+      newErrors.password = 'Mật khẩu quá yếu. Vui lòng tăng cường bảo mật.';
     }
 
     // Confirm password validation
     if (!formData.confirm_password) {
-      newErrors.confirm_password = 'Please confirm your password';
+      newErrors.confirm_password = 'Vui lòng xác nhận mật khẩu';
     } else if (formData.password !== formData.confirm_password) {
-      newErrors.confirm_password = 'Passwords do not match';
+      newErrors.confirm_password = 'Mật khẩu không khớp';
     }
 
     setErrors(newErrors);
@@ -252,7 +252,7 @@ const RegisterForm: React.FC = () => {
 
     // Wait for availability checks to complete
     if (checkingUsername || checkingEmail) {
-      toast.info('Please wait for validation to complete');
+      toast.info('Vui lòng chờ kiểm tra hợp lệ hoàn tất');
       return;
     }
 
@@ -273,10 +273,10 @@ const RegisterForm: React.FC = () => {
       
       console.log('✅ RegisterForm: Registration successful');
       toast.success(
-        'Account created successfully!', 
+        'Tạo tài khoản thành công!', 
         {
           duration: 5000,
-          description: 'Welcome to SafeFace! You can now sign in.'
+          description: 'Chào mừng bạn đến với SafeFace! Bạn có thể đăng nhập ngay.'
         }
       );
       
@@ -284,7 +284,7 @@ const RegisterForm: React.FC = () => {
       navigate('/login', { 
         state: { 
           email: formData.email,
-          message: 'Registration successful! Please sign in with your credentials.'
+          message: 'Đăng ký thành công! Vui lòng đăng nhập bằng tài khoản vừa tạo.'
         }
       });
       
@@ -292,7 +292,7 @@ const RegisterForm: React.FC = () => {
       console.error('❌ RegisterForm: Registration failed:', error);
       
       // ✅ FIX: Enhanced error handling based on backend response from #backend
-      let errorMessage = 'Registration failed. Please try again.';
+      let errorMessage = 'Đăng ký thất bại. Vui lòng thử lại.';
       
       if (error.response?.data?.detail) {
         errorMessage = error.response.data.detail;
@@ -300,9 +300,9 @@ const RegisterForm: React.FC = () => {
         // Handle specific backend errors from auth_service.py
         if (errorMessage.includes('already registered')) {
           if (errorMessage.includes('username')) {
-            setErrors({ username: 'This username is already taken' });
+            setErrors({ username: 'Tên đăng nhập đã được sử dụng' });
           } else if (errorMessage.includes('email')) {
-            setErrors({ email: 'This email is already registered' });
+            setErrors({ email: 'Email đã được đăng ký' });
           }
         }
       } else if (error.message) {
@@ -315,7 +315,7 @@ const RegisterForm: React.FC = () => {
       }
       
       toast.error(errorMessage, {
-        description: 'Please check your information and try again'
+        description: 'Vui lòng kiểm tra lại thông tin và thử lại'
       });
     } finally {
       setLoading(false);
@@ -325,12 +325,12 @@ const RegisterForm: React.FC = () => {
   const getStrengthLabel = (score: number) => {
     switch (score) {
       case 0:
-      case 1: return 'Very Weak';
-      case 2: return 'Weak';
-      case 3: return 'Fair';
-      case 4: return 'Good';
-      case 5: return 'Strong';
-      default: return 'Very Weak';
+      case 1: return 'Rất yếu';
+      case 2: return 'Yếu';
+      case 3: return 'Trung bình';
+      case 4: return 'Tốt';
+      case 5: return 'Mạnh';
+      default: return 'Rất yếu';
     }
   };
 
@@ -345,10 +345,10 @@ const RegisterForm: React.FC = () => {
           </div>
           <div>
             <CardTitle className="text-2xl font-bold text-gray-900">
-              Create Account
+              Tạo tài khoản
             </CardTitle>
             <CardDescription className="text-gray-600">
-              Sign up for SafeFace - Face Recognition System
+              Đăng ký tài khoản SafeFace - Hệ thống nhận diện khuôn mặt
             </CardDescription>
           </div>
         </CardHeader>
@@ -357,14 +357,14 @@ const RegisterForm: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Username */}
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">Tên đăng nhập</Label>
               <div className="relative">
                 <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
                   id="username"
                   name="username"
                   type="text"
-                  placeholder="Choose a username"
+                  placeholder="Chọn tên đăng nhập"
                   value={formData.username}
                   onChange={handleChange}
                   disabled={loading}
@@ -393,21 +393,21 @@ const RegisterForm: React.FC = () => {
               {usernameAvailable === true && !errors.username && (
                 <p className="text-sm text-green-500 flex items-center">
                   <CheckCircle className="h-3 w-3 mr-1" />
-                  Username is available
+                  Tên đăng nhập khả dụng
                 </p>
               )}
             </div>
 
             {/* Email */}
             <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
+              <Label htmlFor="email">Địa chỉ email</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder="Nhập email của bạn"
                   value={formData.email}
                   onChange={handleChange}
                   disabled={loading}
@@ -436,21 +436,21 @@ const RegisterForm: React.FC = () => {
               {emailAvailable === true && !errors.email && (
                 <p className="text-sm text-green-500 flex items-center">
                   <CheckCircle className="h-3 w-3 mr-1" />
-                  Email is available
+                  Email khả dụng
                 </p>
               )}
             </div>
 
             {/* Full Name */}
             <div className="space-y-2">
-              <Label htmlFor="full_name">Full Name</Label>
+              <Label htmlFor="full_name">Họ và tên</Label>
               <div className="relative">
                 <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
                   id="full_name"
                   name="full_name"
                   type="text"
-                  placeholder="Enter your full name"
+                  placeholder="Nhập họ và tên"
                   value={formData.full_name}
                   onChange={handleChange}
                   disabled={loading}
@@ -467,14 +467,14 @@ const RegisterForm: React.FC = () => {
 
             {/* Password */}
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Mật khẩu</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
                   id="password"
                   name="password"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Create a password"
+                  placeholder="Tạo mật khẩu"
                   value={formData.password}
                   onChange={handleChange}
                   disabled={loading}
@@ -513,7 +513,7 @@ const RegisterForm: React.FC = () => {
                   </div>
                   <div className="flex justify-between items-center">
                     <p className="text-sm text-gray-600">
-                      Strength: {getStrengthLabel(passwordStrength.score)}
+                      Độ mạnh: {getStrengthLabel(passwordStrength.score)}
                     </p>
                     <p className="text-xs text-gray-500">
                       {passwordStrength.score}/5
@@ -521,7 +521,7 @@ const RegisterForm: React.FC = () => {
                   </div>
                   {passwordStrength.feedback.length > 0 && (
                     <div className="text-xs text-gray-500">
-                      Missing: {passwordStrength.feedback.join(', ')}
+                      Thiếu: {passwordStrength.feedback.join(', ')}
                     </div>
                   )}
                 </div>
@@ -537,14 +537,14 @@ const RegisterForm: React.FC = () => {
 
             {/* Confirm Password */}
             <div className="space-y-2">
-              <Label htmlFor="confirm_password">Confirm Password</Label>
+              <Label htmlFor="confirm_password">Xác nhận mật khẩu</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
                   id="confirm_password"
                   name="confirm_password"
                   type={showConfirmPassword ? 'text' : 'password'}
-                  placeholder="Confirm your password"
+                  placeholder="Xác nhận mật khẩu"
                   value={formData.confirm_password}
                   onChange={handleChange}
                   disabled={loading}
@@ -569,7 +569,7 @@ const RegisterForm: React.FC = () => {
               {formData.confirm_password && formData.password === formData.confirm_password && (
                 <div className="flex items-center space-x-2 text-green-600">
                   <CheckCircle className="h-4 w-4" />
-                  <span className="text-sm">Passwords match</span>
+                  <span className="text-sm">Mật khẩu khớp</span>
                 </div>
               )}
               
@@ -596,12 +596,12 @@ const RegisterForm: React.FC = () => {
               {loading ? (
                 <div className="flex items-center space-x-2">
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Creating account...</span>
+                  <span>Đang tạo tài khoản...</span>
                 </div>
               ) : (
                 <div className="flex items-center space-x-2">
                   <UserPlus className="w-4 h-4" />
-                  <span>Create Account</span>
+                  <span>Tạo tài khoản</span>
                 </div>
               )}
             </Button>
@@ -611,12 +611,12 @@ const RegisterForm: React.FC = () => {
             <Separator />
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
-                Already have an account?{' '}
+                Đã có tài khoản?{' '}
                 <Link
                   to="/login"
                   className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
                 >
-                  Sign in
+                  Đăng nhập
                 </Link>
               </p>
             </div>
@@ -625,8 +625,8 @@ const RegisterForm: React.FC = () => {
             <Alert className="mt-4 bg-blue-50 border-blue-200">
               <Info className="h-4 w-4 text-blue-600" />
               <AlertDescription className="text-blue-800 text-xs">
-                <strong>Note:</strong> Username and email availability checks are currently simulated. 
-                Some usernames like 'admin', 'test', 'demo' are reserved for testing.
+                <strong>Lưu ý:</strong> Việc kiểm tra tên đăng nhập và email hiện chỉ là mô phỏng. 
+                Một số tên như 'admin', 'test', 'demo' được giữ lại cho mục đích thử nghiệm.
               </AlertDescription>
             </Alert>
           </div>

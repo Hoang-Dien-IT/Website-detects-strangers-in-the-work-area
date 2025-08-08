@@ -89,7 +89,7 @@ const SystemLogs: React.FC<SystemLogsProps> = ({ onRefresh }) => {
       }
       setRefreshing(true);
       
-      console.log('🔵 SystemLogs: Loading system logs...');
+      console.log('🔵 SystemLogs: Đang tải nhật ký hệ thống...');
       
       // ✅ Use backend service với proper parameters
       const logsData = await adminService.getSystemLogs(100, levelFilter !== 'all' ? levelFilter : undefined, categoryFilter !== 'all' ? categoryFilter : undefined);
@@ -104,18 +104,18 @@ const SystemLogs: React.FC<SystemLogsProps> = ({ onRefresh }) => {
       setLogs(transformedLogs);
       setLastUpdated(new Date());
       
-      console.log('✅ SystemLogs: Loaded', transformedLogs.length, 'logs');
+      console.log('✅ SystemLogs: Đã tải', transformedLogs.length, 'nhật ký');
       
       if (!isAutoRefresh) {
-        toast.success(`Loaded ${transformedLogs.length} system logs`);
+        toast.success(`Đã tải ${transformedLogs.length} nhật ký hệ thống`);
       }
       
       onRefresh?.();
     } catch (error: any) {
-      console.error('❌ SystemLogs: Error loading logs:', error);
+      console.error('❌ SystemLogs: Lỗi khi tải nhật ký:', error);
       
       if (!isAutoRefresh) {
-        toast.error(`Failed to load system logs: ${error.message || 'Unknown error'}`);
+        toast.error(`Không thể tải nhật ký hệ thống: ${error.message || 'Lỗi không xác định'}`);
       }
       
       // ✅ Set fallback data để tránh crash
@@ -134,7 +134,7 @@ const SystemLogs: React.FC<SystemLogsProps> = ({ onRefresh }) => {
       const filteredLogs = getFilteredLogs();
       
       if (filteredLogs.length === 0) {
-        toast.warning('No logs to export');
+        toast.warning('Không có nhật ký để xuất');
         return;
       }
       
@@ -163,10 +163,10 @@ const SystemLogs: React.FC<SystemLogsProps> = ({ onRefresh }) => {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
       
-      toast.success(`Exported ${filteredLogs.length} logs successfully`);
+      toast.success(`Xuất thành công ${filteredLogs.length} nhật ký`);
     } catch (error) {
       console.error('❌ SystemLogs: Export error:', error);
-      toast.error('Failed to export logs');
+      toast.error('Xuất nhật ký thất bại');
     }
   };
 
@@ -307,10 +307,10 @@ const SystemLogs: React.FC<SystemLogsProps> = ({ onRefresh }) => {
   if (loading && logs.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <LoadingSpinner />
-          <p className="text-gray-600 mt-4">Loading system logs...</p>
-        </div>
+      <div className="text-center">
+        <LoadingSpinner />
+        <p className="text-gray-600 mt-4">Đang tải nhật ký hệ thống...</p>
+      </div>
       </div>
     );
   }
@@ -330,12 +330,12 @@ const SystemLogs: React.FC<SystemLogsProps> = ({ onRefresh }) => {
               <Database className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">System Logs</h2>
-              <p className="text-gray-600">Monitor system activities and events</p>
+              <h2 className="text-2xl font-bold text-gray-900">Nhật ký hệ thống</h2>
+              <p className="text-gray-600">Theo dõi hoạt động và sự kiện hệ thống</p>
             </div>
           </div>
           <p className="text-sm text-gray-500">
-            Last updated: {lastUpdated.toLocaleString()} • {filteredLogs.length} logs
+            Cập nhật lần cuối: {lastUpdated.toLocaleString()} • {filteredLogs.length} nhật ký
           </p>
         </div>
         
@@ -347,7 +347,7 @@ const SystemLogs: React.FC<SystemLogsProps> = ({ onRefresh }) => {
             className={`shadow-sm ${autoRefresh ? 'bg-green-50 border-green-200 text-green-700' : ''}`}
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${autoRefresh ? 'animate-spin' : ''}`} />
-            Auto Refresh
+            Tự động làm mới
           </Button>
           
           <Button 
@@ -358,7 +358,7 @@ const SystemLogs: React.FC<SystemLogsProps> = ({ onRefresh }) => {
             className="shadow-sm"
           >
             <Download className="w-4 h-4 mr-2" />
-            Export CSV
+            Xuất CSV
           </Button>
           
           <Button 
@@ -369,29 +369,29 @@ const SystemLogs: React.FC<SystemLogsProps> = ({ onRefresh }) => {
             className="shadow-sm"
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-            Refresh
+            Làm mới
           </Button>
           
           <Dialog>
             <DialogTrigger asChild>
               <Button variant="destructive" size="sm" className="shadow-sm">
                 <Trash2 className="w-4 h-4 mr-2" />
-                Clear Logs
+                Xóa nhật ký
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Clear System Logs</DialogTitle>
+                <DialogTitle>Xóa toàn bộ nhật ký hệ thống</DialogTitle>
                 <DialogDescription>
-                  Are you sure you want to clear all system logs? This action cannot be undone.
+                  Bạn có chắc chắn muốn xóa tất cả nhật ký hệ thống? Hành động này không thể hoàn tác.
                 </DialogDescription>
               </DialogHeader>
               <div className="flex justify-end space-x-2 mt-4">
                 <Button variant="outline" size="sm">
-                  Cancel
+                  Hủy
                 </Button>
                 <Button variant="destructive" size="sm" onClick={handleClearLogs}>
-                  Clear All Logs
+                  Xóa tất cả nhật ký
                 </Button>
               </div>
             </DialogContent>
@@ -409,7 +409,7 @@ const SystemLogs: React.FC<SystemLogsProps> = ({ onRefresh }) => {
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Filter className="h-5 w-5" />
-              <span>Filters</span>
+              <span>Bộ lọc</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -418,7 +418,7 @@ const SystemLogs: React.FC<SystemLogsProps> = ({ onRefresh }) => {
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
-                  placeholder="Search logs..."
+                  placeholder="Tìm kiếm nhật ký..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -428,30 +428,30 @@ const SystemLogs: React.FC<SystemLogsProps> = ({ onRefresh }) => {
               {/* Level Filter */}
               <Select value={levelFilter} onValueChange={setLevelFilter}>
                 <SelectTrigger>
-                  <SelectValue placeholder="All Levels" />
+                  <SelectValue placeholder="Tất cả mức độ" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Levels</SelectItem>
-                  <SelectItem value="critical">Critical</SelectItem>
-                  <SelectItem value="error">Error</SelectItem>
-                  <SelectItem value="warning">Warning</SelectItem>
-                  <SelectItem value="info">Info</SelectItem>
-                  <SelectItem value="debug">Debug</SelectItem>
+                  <SelectItem value="all">Tất cả mức độ</SelectItem>
+                  <SelectItem value="critical">Nghiêm trọng</SelectItem>
+                  <SelectItem value="error">Lỗi</SelectItem>
+                  <SelectItem value="warning">Cảnh báo</SelectItem>
+                  <SelectItem value="info">Thông tin</SelectItem>
+                  <SelectItem value="debug">Gỡ lỗi</SelectItem>
                 </SelectContent>
               </Select>
 
               {/* Category Filter */}
               <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                 <SelectTrigger>
-                  <SelectValue placeholder="All Categories" />
+                  <SelectValue placeholder="Tất cả danh mục" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="system">System</SelectItem>
-                  <SelectItem value="auth">Authentication</SelectItem>
+                  <SelectItem value="all">Tất cả danh mục</SelectItem>
+                  <SelectItem value="system">Hệ thống</SelectItem>
+                  <SelectItem value="auth">Xác thực</SelectItem>
                   <SelectItem value="camera">Camera</SelectItem>
-                  <SelectItem value="detection">Detection</SelectItem>
-                  <SelectItem value="user">User</SelectItem>
+                  <SelectItem value="detection">Phát hiện</SelectItem>
+                  <SelectItem value="user">Người dùng</SelectItem>
                   <SelectItem value="api">API</SelectItem>
                 </SelectContent>
               </Select>
@@ -466,7 +466,7 @@ const SystemLogs: React.FC<SystemLogsProps> = ({ onRefresh }) => {
                 }}
                 className="w-full"
               >
-                Clear Filters
+                Xóa bộ lọc
               </Button>
             </div>
           </CardContent>
@@ -485,7 +485,7 @@ const SystemLogs: React.FC<SystemLogsProps> = ({ onRefresh }) => {
             <div className="flex items-center space-x-2">
               <XCircle className="h-5 w-5 text-red-500" />
               <div>
-                <p className="text-sm text-red-700 font-medium">Critical</p>
+                <p className="text-sm text-red-700 font-medium">Nghiêm trọng</p>
                 <p className="text-xl font-bold text-red-900">{logs.filter(l => l.level.toLowerCase() === 'critical').length}</p>
               </div>
             </div>
@@ -497,7 +497,7 @@ const SystemLogs: React.FC<SystemLogsProps> = ({ onRefresh }) => {
             <div className="flex items-center space-x-2">
               <XCircle className="h-5 w-5 text-red-500" />
               <div>
-                <p className="text-sm text-red-700 font-medium">Errors</p>
+                <p className="text-sm text-red-700 font-medium">Lỗi</p>
                 <p className="text-xl font-bold text-red-900">{logs.filter(l => l.level.toLowerCase() === 'error').length}</p>
               </div>
             </div>
@@ -509,7 +509,7 @@ const SystemLogs: React.FC<SystemLogsProps> = ({ onRefresh }) => {
             <div className="flex items-center space-x-2">
               <AlertTriangle className="h-5 w-5 text-yellow-500" />
               <div>
-                <p className="text-sm text-yellow-700 font-medium">Warnings</p>
+                <p className="text-sm text-yellow-700 font-medium">Cảnh báo</p>
                 <p className="text-xl font-bold text-yellow-900">{logs.filter(l => l.level.toLowerCase() === 'warning').length}</p>
               </div>
             </div>
@@ -521,7 +521,7 @@ const SystemLogs: React.FC<SystemLogsProps> = ({ onRefresh }) => {
             <div className="flex items-center space-x-2">
               <Info className="h-5 w-5 text-blue-500" />
               <div>
-                <p className="text-sm text-blue-700 font-medium">Info</p>
+                <p className="text-sm text-blue-700 font-medium">Thông tin</p>
                 <p className="text-xl font-bold text-blue-900">{logs.filter(l => l.level.toLowerCase() === 'info').length}</p>
               </div>
             </div>
@@ -533,7 +533,7 @@ const SystemLogs: React.FC<SystemLogsProps> = ({ onRefresh }) => {
             <div className="flex items-center space-x-2">
               <CheckCircle className="h-5 w-5 text-gray-500" />
               <div>
-                <p className="text-sm text-gray-700 font-medium">Debug</p>
+                <p className="text-sm text-gray-700 font-medium">Gỡ lỗi</p>
                 <p className="text-xl font-bold text-gray-900">{logs.filter(l => l.level.toLowerCase() === 'debug').length}</p>
               </div>
             </div>
@@ -545,7 +545,7 @@ const SystemLogs: React.FC<SystemLogsProps> = ({ onRefresh }) => {
             <div className="flex items-center space-x-2">
               <Activity className="h-5 w-5 text-purple-500" />
               <div>
-                <p className="text-sm text-purple-700 font-medium">Total</p>
+                <p className="text-sm text-purple-700 font-medium">Tổng</p>
                 <p className="text-xl font-bold text-purple-900">{filteredLogs.length}</p>
               </div>
             </div>
@@ -562,12 +562,12 @@ const SystemLogs: React.FC<SystemLogsProps> = ({ onRefresh }) => {
         <Card className="border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
-              <span>Recent Logs ({filteredLogs.length})</span>
+              <span>Nhật ký gần đây ({filteredLogs.length})</span>
               <div className="flex items-center space-x-2 text-sm text-gray-500">
                 {refreshing && (
                   <>
                     <RefreshCw className="w-4 h-4 animate-spin" />
-                    <span>Refreshing...</span>
+                    <span>Đang làm mới...</span>
                   </>
                 )}
               </div>
@@ -636,15 +636,15 @@ const SystemLogs: React.FC<SystemLogsProps> = ({ onRefresh }) => {
               ) : (
                 <div className="text-center py-12">
                   <Database className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No logs found</h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Không tìm thấy nhật ký</h3>
                   <p className="text-gray-600 mb-4">
                     {searchTerm || levelFilter !== 'all' || categoryFilter !== 'all'
-                      ? 'Try adjusting your search criteria or filters.'
-                      : 'No system logs available.'}
+                      ? 'Hãy thử thay đổi tiêu chí tìm kiếm hoặc bộ lọc.'
+                      : 'Không có nhật ký hệ thống.'}
                   </p>
                   <Button variant="outline" onClick={() => loadLogs()}>
                     <RefreshCw className="w-4 h-4 mr-2" />
-                    Refresh Logs
+                    Làm mới nhật ký
                   </Button>
                 </div>
               )}
@@ -659,47 +659,47 @@ const SystemLogs: React.FC<SystemLogsProps> = ({ onRefresh }) => {
           <DialogHeader>
             <DialogTitle className="flex items-center space-x-2">
               {selectedLog && getLevelIcon(selectedLog.level)}
-              <span>Log Details</span>
+              <span>Chi tiết nhật ký</span>
             </DialogTitle>
           </DialogHeader>
           {selectedLog && (
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Basic Information</h4>
+                  <h4 className="font-semibold text-gray-900 mb-2">Thông tin cơ bản</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Level:</span>
+                      <span className="text-gray-600">Mức độ:</span>
                       {getLevelBadge(selectedLog.level)}
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Category:</span>
+                      <span className="text-gray-600">Danh mục:</span>
                       {selectedLog.category ? getCategoryBadge(selectedLog.category) : <span className="text-gray-400">N/A</span>}
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Timestamp:</span>
+                      <span className="text-gray-600">Thời gian:</span>
                       <span>{formatTimestamp(selectedLog.timestamp)}</span>
                     </div>
                   </div>
                 </div>
                 
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Context Information</h4>
+                  <h4 className="font-semibold text-gray-900 mb-2">Thông tin liên quan</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">User ID:</span>
+                      <span className="text-gray-600">Mã người dùng:</span>
                       <span className="font-mono text-xs">{selectedLog.user_id || 'N/A'}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Camera ID:</span>
+                      <span className="text-gray-600">Mã camera:</span>
                       <span className="font-mono text-xs">{selectedLog.camera_id || 'N/A'}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">IP Address:</span>
+                      <span className="text-gray-600">Địa chỉ IP:</span>
                       <span className="font-mono text-xs">{selectedLog.ip_address || 'N/A'}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Session ID:</span>
+                      <span className="text-gray-600">Mã phiên:</span>
                       <span className="font-mono text-xs">{selectedLog.session_id || 'N/A'}</span>
                     </div>
                   </div>
@@ -707,7 +707,7 @@ const SystemLogs: React.FC<SystemLogsProps> = ({ onRefresh }) => {
               </div>
               
               <div>
-                <h4 className="font-semibold text-gray-900 mb-2">Message</h4>
+                <h4 className="font-semibold text-gray-900 mb-2">Nội dung</h4>
                 <div className="bg-gray-50 p-4 rounded-lg border">
                   <p className="text-sm text-gray-900">{selectedLog.message}</p>
                 </div>
@@ -715,7 +715,7 @@ const SystemLogs: React.FC<SystemLogsProps> = ({ onRefresh }) => {
               
               {selectedLog.details && (
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Additional Details</h4>
+                <h4 className="font-semibold text-gray-900 mb-2">Chi tiết bổ sung</h4>
                   <div className="bg-gray-50 p-4 rounded-lg border">
                     <pre className="text-sm text-gray-900 whitespace-pre-wrap">
                       {typeof selectedLog.details === 'object' 

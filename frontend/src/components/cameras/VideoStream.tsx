@@ -730,20 +730,20 @@ const VideoStream: React.FC<CameraStreamProps> = ({
     if (!isConnected) return { 
       icon: AlertTriangle, 
       color: 'text-red-500', 
-      text: 'Disconnected',
+      text: 'Mất kết nối',
       bgColor: 'bg-red-100'
     };
     if (isPlaying) return { 
       icon: CheckCircle, 
-      color: 'text-green-500', 
-      text: 'Live',
-      bgColor: 'bg-green-100'
+      color: 'text-emerald-500', 
+      text: 'Trực tiếp',
+      bgColor: 'bg-emerald-100'
     };
     return { 
       icon: Signal, 
-      color: 'text-yellow-500', 
-      text: 'Ready',
-      bgColor: 'bg-yellow-100'
+      color: 'text-cyan-500', 
+      text: 'Sẵn sàng',
+      bgColor: 'bg-cyan-100'
     };
   };
 
@@ -754,20 +754,22 @@ const VideoStream: React.FC<CameraStreamProps> = ({
       {/* Stream Header - Enhanced */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <Camera className="h-5 w-5 text-blue-600" />
+          <div className="p-2 bg-gradient-to-r from-teal-500 to-emerald-600 rounded-lg">
+            <Camera className="h-5 w-5 text-white" />
+          </div>
           <div>
-            <h3 className="font-semibold text-gray-900">{camera.name}</h3>
+            <h3 className="font-semibold text-slate-800">{camera.name}</h3>
             <div className="flex items-center space-x-2">
               <Badge 
                 variant={isPlaying ? "default" : "secondary"} 
-                className={isPlaying ? "bg-red-500 animate-pulse" : ""}
+                className={isPlaying ? "bg-gradient-to-r from-red-500 to-red-600 text-white animate-pulse" : "bg-slate-400"}
               >
-                {isPlaying ? '🔴 Live' : '⚫ Offline'}
+                {isPlaying ? '🔴 Trực tiếp' : '⚫ Ngoại tuyến'}
               </Badge>
               {detectionEnabled && (
-                <Badge variant="outline" className="text-purple-600 border-purple-200">
+                <Badge variant="outline" className="text-emerald-600 border-emerald-300 bg-emerald-50">
                   <Activity className="w-3 h-3 mr-1" />
-                  Detection ON
+                  Nhận diện BẬT
                 </Badge>
               )}
               <div className={`flex items-center space-x-1 px-2 py-1 rounded-md ${connectionStatus.bgColor}`}>
@@ -783,17 +785,17 @@ const VideoStream: React.FC<CameraStreamProps> = ({
         <div className="flex items-center space-x-2">
           {/* Enhanced Stream Stats */}
           {streamStats && (
-            <div className="flex items-center space-x-4 text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded-lg">
+            <div className="flex items-center space-x-4 text-sm text-slate-700 bg-gradient-to-r from-slate-50 to-slate-100 px-3 py-2 rounded-lg border border-slate-200">
               <div className="flex items-center space-x-1">
-                <Users className="h-4 w-4" />
+                <Users className="h-4 w-4 text-teal-600" />
                 <span className="font-medium">{streamStats.viewers}</span>
               </div>
               <div className="flex items-center space-x-1">
-                <Activity className="h-4 w-4" />
+                <Activity className="h-4 w-4 text-emerald-600" />
                 <span className="font-medium">{streamStats.fps} FPS</span>
               </div>
               <div className="flex items-center space-x-1">
-                <Signal className="h-4 w-4" />
+                <Signal className="h-4 w-4 text-cyan-600" />
                 <span className={`font-medium ${getQualityColor(streamStats.quality_score)}`}>
                   {streamStats.quality_score}%
                 </span>
@@ -801,7 +803,7 @@ const VideoStream: React.FC<CameraStreamProps> = ({
               {streamStats.is_recording && (
                 <div className="flex items-center space-x-1 text-red-600">
                   <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                  <span className="font-medium">REC</span>
+                  <span className="font-medium">GHI</span>
                 </div>
               )}
             </div>
@@ -816,7 +818,7 @@ const VideoStream: React.FC<CameraStreamProps> = ({
       </div>
 
       {/* Main Video Container - Enhanced */}
-      <Card className="overflow-hidden shadow-lg">
+      <Card className="overflow-hidden shadow-lg border-slate-200 bg-white/80 backdrop-blur-sm">
         <CardContent className="p-0">
           <div 
             className="relative bg-black" 
@@ -858,10 +860,10 @@ const VideoStream: React.FC<CameraStreamProps> = ({
               <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-20">
                 <div className="text-center text-white">
                   <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-2" />
-                  <p className="text-lg font-medium">Loading stream...</p>
-                  <p className="text-sm opacity-75">Connecting to {camera.name}</p>
+                  <p className="text-lg font-medium">Đang tải luồng video...</p>
+                  <p className="text-sm opacity-75">Kết nối tới {camera.name}</p>
                   {retryCount > 0 && (
-                    <p className="text-xs opacity-50">Retry attempt {retryCount}/{MAX_RETRIES}</p>
+                    <p className="text-xs opacity-50">Thử lại lần {retryCount}/{MAX_RETRIES}</p>
                   )}
                 </div>
               </div>
@@ -872,15 +874,15 @@ const VideoStream: React.FC<CameraStreamProps> = ({
               <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-20">
                 <div className="text-center text-white max-w-md p-6">
                   <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-red-400" />
-                  <h3 className="text-lg font-semibold mb-2">Stream Error</h3>
+                  <h3 className="text-lg font-semibold mb-2">Lỗi luồng video</h3>
                   <p className="mb-4 text-sm opacity-90">{error}</p>
                   <div className="space-y-2">
-                    <Button onClick={handleStartStream} variant="outline" size="sm" className="mr-2">
+                    <Button onClick={handleStartStream} variant="outline" size="sm" className="mr-2 border-white text-white hover:bg-white/20">
                       <RefreshCw className="h-4 w-4 mr-2" />
-                      Retry Stream
+                      Thử lại
                     </Button>
-                    <Button onClick={() => setError(null)} variant="ghost" size="sm">
-                      Dismiss
+                    <Button onClick={() => setError(null)} variant="ghost" size="sm" className="text-white hover:bg-white/20">
+                      Bỏ qua
                     </Button>
                   </div>
                 </div>
@@ -893,9 +895,9 @@ const VideoStream: React.FC<CameraStreamProps> = ({
                 <div className="space-y-1">
                   <div className="font-medium">{streamStats.resolution}</div>
                   <div>{formatBitrate(streamStats.bitrate)}</div>
-                  <div>Latency: {streamStats.latency}ms</div>
+                  <div>Độ trễ: {streamStats.latency}ms</div>
                   {streamStats.bandwidth && (
-                    <div>Bandwidth: {streamStats.bandwidth}</div>
+                    <div>Băng thông: {streamStats.bandwidth}</div>
                   )}
                 </div>
               </div>
@@ -922,14 +924,14 @@ const VideoStream: React.FC<CameraStreamProps> = ({
                     <div className="text-xs text-gray-300 flex items-center justify-between">
                       <span>{new Date(detection.timestamp).toLocaleTimeString()}</span>
                       <span className={`uppercase text-xs ${
-                        detection.detection_type === 'known_person' ? 'text-green-400' : 'text-orange-400'
+                        detection.detection_type === 'known_person' ? 'text-emerald-400' : 'text-orange-400'
                       }`}>
-                        {detection.detection_type.replace('_', ' ')}
+                        {detection.detection_type === 'known_person' ? 'Người quen' : 'Người lạ'}
                       </span>
                     </div>
                     {detection.similarity_score !== undefined && (
                       <div className="text-xs text-gray-400">
-                        Similarity: {(detection.similarity_score * 100).toFixed(1)}%
+                        Độ tương đồng: {(detection.similarity_score * 100).toFixed(1)}%
                       </div>
                     )}
                   </div>
@@ -1050,52 +1052,53 @@ const VideoStream: React.FC<CameraStreamProps> = ({
                           <Settings className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                        <DropdownMenuItem onClick={handleDownloadSnapshot}>
-                          <Download className="h-4 w-4 mr-2" />
-                          Download Snapshot
+                      <DropdownMenuContent className="bg-white/95 backdrop-blur-sm border-slate-200">
+                        <DropdownMenuItem onClick={handleDownloadSnapshot} className="hover:bg-teal-50">
+                          <Download className="h-4 w-4 mr-2 text-teal-600" />
+                          Tải ảnh chụp
                         </DropdownMenuItem>
                         
-                        <DropdownMenuItem onClick={toggleDetection}>
+                        <DropdownMenuItem onClick={toggleDetection} className="hover:bg-emerald-50">
                           {detectionEnabled ? (
                             <>
-                              <EyeOff className="h-4 w-4 mr-2" />
-                              Disable Detection
+                              <EyeOff className="h-4 w-4 mr-2 text-orange-600" />
+                              Tắt nhận diện
                             </>
                           ) : (
                             <>
-                              <Eye className="h-4 w-4 mr-2" />
-                              Enable Detection
+                              <Eye className="h-4 w-4 mr-2 text-emerald-600" />
+                              Bật nhận diện
                             </>
                           )}
                         </DropdownMenuItem>
 
                         <DropdownMenuItem 
                           onClick={() => setShowDetectionOverlay(!showDetectionOverlay)}
+                          className="hover:bg-cyan-50"
                         >
                           {showDetectionOverlay ? (
                             <>
-                              <EyeOff className="h-4 w-4 mr-2" />
-                              Hide Detection Overlay
+                              <EyeOff className="h-4 w-4 mr-2 text-slate-600" />
+                              Ẩn khung phát hiện
                             </>
                           ) : (
                             <>
-                              <Eye className="h-4 w-4 mr-2" />
-                              Show Detection Overlay
+                              <Eye className="h-4 w-4 mr-2 text-cyan-600" />
+                              Hiện khung phát hiện
                             </>
                           )}
                         </DropdownMenuItem>
 
-                        <DropdownMenuSeparator />
+                        <DropdownMenuSeparator className="bg-slate-200" />
                         
                         <div className="px-2 py-2">
-                          <Label className="text-sm">Aspect Ratio</Label>
+                          <Label className="text-sm text-slate-700 font-medium">Tỷ lệ khung hình</Label>
                           <select
                             value={aspectRatio}
                             onChange={(e) => setAspectRatio(e.target.value as any)}
-                            className="w-full mt-1 text-sm border rounded px-2 py-1"
+                            className="w-full mt-1 text-sm border border-slate-300 rounded px-2 py-1 focus:border-teal-500"
                           >
-                            <option value="auto">Auto</option>
+                            <option value="auto">Tự động</option>
                             <option value="16:9">16:9</option>
                             <option value="4:3">4:3</option>
                             <option value="1:1">1:1</option>
@@ -1103,16 +1106,16 @@ const VideoStream: React.FC<CameraStreamProps> = ({
                         </div>
 
                         <div className="px-2 py-2">
-                          <Label className="text-sm">Quality</Label>
+                          <Label className="text-sm text-slate-700 font-medium">Chất lượng</Label>
                           <select
                             value={quality}
                             onChange={(e) => setQuality(e.target.value as any)}
-                            className="w-full mt-1 text-sm border rounded px-2 py-1"
+                            className="w-full mt-1 text-sm border border-slate-300 rounded px-2 py-1 focus:border-teal-500"
                           >
-                            <option value="auto">Auto</option>
-                            <option value="high">High</option>
-                            <option value="medium">Medium</option>
-                            <option value="low">Low</option>
+                            <option value="auto">Tự động</option>
+                            <option value="high">Cao</option>
+                            <option value="medium">Trung bình</option>
+                            <option value="low">Thấp</option>
                           </select>
                         </div>
                       </DropdownMenuContent>
