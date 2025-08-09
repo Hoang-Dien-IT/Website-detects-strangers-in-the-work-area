@@ -72,21 +72,19 @@ const SystemHealth: React.FC<SystemHealthProps> = ({
 
   const getStatusBadge = useMemo(() => (status: string) => {
     const statusMap = {
-      healthy: 'bg-green-100 text-green-800 border-green-200',
-      online: 'bg-green-100 text-green-800 border-green-200',
-      running: 'bg-green-100 text-green-800 border-green-200',
-      active: 'bg-green-100 text-green-800 border-green-200',
+      healthy: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+      online: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+      running: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+      active: 'bg-emerald-100 text-emerald-800 border-emerald-200',
       warning: 'bg-yellow-100 text-yellow-800 border-yellow-200',
       degraded: 'bg-yellow-100 text-yellow-800 border-yellow-200',
       slow: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      error: 'bg-red-100 text-red-800 border-red-200',
-      offline: 'bg-red-100 text-red-800 border-red-200',
-      failed: 'bg-red-100 text-red-800 border-red-200',
-      unhealthy: 'bg-red-100 text-red-800 border-red-200'
+      error: 'bg-rose-100 text-rose-800 border-rose-200',
+      offline: 'bg-rose-100 text-rose-800 border-rose-200',
+      failed: 'bg-rose-100 text-rose-800 border-rose-200',
+      unhealthy: 'bg-rose-100 text-rose-800 border-rose-200'
     };
-
-    const statusClass = statusMap[status?.toLowerCase() as keyof typeof statusMap] || 'bg-gray-100 text-gray-800 border-gray-200';
-    
+    const statusClass = statusMap[status?.toLowerCase() as keyof typeof statusMap] || 'bg-cyan-100 text-cyan-800 border-cyan-200';
     return (
       <Badge variant="outline" className={statusClass}>
         {status || 'Unknown'}

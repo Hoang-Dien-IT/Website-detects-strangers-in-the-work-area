@@ -250,16 +250,16 @@ const FaceImageUpload: React.FC<FaceImageUploadProps> = ({
     <div className="space-y-4 sm:space-y-6">
       {/* Header */}
       <div className="text-center px-2">
-        <h3 className="text-lg font-semibold text-gray-900">Add Face Images</h3>
-        <p className="text-gray-600 mt-1 text-sm">
-          Upload clear photos of {personName} for accurate face recognition
+        <h3 className="text-lg font-semibold text-emerald-800">Thêm Ảnh Khuôn Mặt</h3>
+        <p className="text-black mt-1 text-sm">
+          Tải lên các ảnh rõ nét của <b className="text-black">{personName}</b> để hệ thống nhận diện chính xác hơn.
         </p>
       </div>
 
       {/* Upload Method Selection */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm">Choose Upload Method</CardTitle>
+          <CardTitle className="text-sm text-emerald-800">Chọn Phương Thức Tải Ảnh</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -267,16 +267,16 @@ const FaceImageUpload: React.FC<FaceImageUploadProps> = ({
             <Card 
               className={`cursor-pointer transition-all ${
                 uploadMethod === 'files' 
-                  ? 'ring-2 ring-blue-500 border-blue-500' 
-                  : 'hover:border-gray-400'
+                  ? 'ring-2 ring-cyan-500 border-cyan-500' 
+                  : 'hover:border-cyan-300'
               }`}
               onClick={() => setUploadMethod('files')}
             >
               <CardContent className="p-3 text-center">
-                <FileImage className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 text-blue-500" />
-                <h3 className="font-medium text-sm">Upload from Files</h3>
-                <p className="text-xs sm:text-sm text-gray-600 mt-1">
-                  Select photos from your computer
+                <FileImage className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 text-cyan-600" />
+                <h3 className="font-medium text-sm text-cyan-800">Tải Ảnh Từ Máy Tính</h3>
+                <p className="text-xs sm:text-sm text-black mt-1">
+                  Chọn ảnh từ thiết bị của bạn
                 </p>
               </CardContent>
             </Card>
@@ -285,8 +285,8 @@ const FaceImageUpload: React.FC<FaceImageUploadProps> = ({
             <Card 
               className={`cursor-pointer transition-all ${
                 uploadMethod === 'camera' 
-                  ? 'ring-2 ring-green-500 border-green-500' 
-                  : 'hover:border-gray-400'
+                  ? 'ring-2 ring-emerald-500 border-emerald-500' 
+                  : 'hover:border-emerald-300'
               } ${
                 loadingCameras || cameras.length === 0 
                   ? 'opacity-50 cursor-not-allowed' 
@@ -299,19 +299,19 @@ const FaceImageUpload: React.FC<FaceImageUploadProps> = ({
               }}
             >
               <CardContent className="p-3 text-center">
-                <Camera className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 text-green-500" />
-                <h3 className="font-medium text-sm">Capture from Camera</h3>
-                <p className="text-xs sm:text-sm text-gray-600 mt-1">
+                <Camera className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 text-emerald-600" />
+                <h3 className="font-medium text-sm text-emerald-800">Chụp Ảnh Từ Camera</h3>
+                <p className="text-xs sm:text-sm text-black mt-1">
                   {loadingCameras 
-                    ? 'Loading cameras...' 
+                    ? 'Đang tải danh sách camera...' 
                     : cameras.length === 0 
-                      ? 'No cameras available'
-                      : 'Take photos using your cameras'
+                      ? 'Không tìm thấy camera khả dụng'
+                      : 'Chụp ảnh trực tiếp từ camera thiết bị'
                   }
                 </p>
                 {cameras.length > 0 && (
-                  <Badge variant="outline" className="mt-1 text-xs">
-                    {cameras.length} camera{cameras.length > 1 ? 's' : ''} available
+                  <Badge variant="outline" className="mt-1 text-xs border-emerald-300 text-black">
+                    {cameras.length} camera khả dụng
                   </Badge>
                 )}
               </CardContent>
@@ -337,25 +337,25 @@ const FaceImageUpload: React.FC<FaceImageUploadProps> = ({
       {uploadMethod === 'files' && (
         <>
           {/* Guidelines */}
-          <Alert>
-            <FileImage className="h-4 w-4" />
-            <AlertDescription>
-              <strong>Photo Guidelines:</strong>
-              <ul className="mt-2 space-y-1 text-xs sm:text-sm">
-                <li>• Use clear, well-lit photos with the face clearly visible</li>
-                <li>• Include different angles and expressions for better accuracy</li>
-                <li>• Avoid sunglasses, masks, or heavy shadows</li>
-                <li>• Supported formats: JPEG, PNG, GIF, BMP, WebP (max 10MB each)</li>
+          <Alert className="border-emerald-200 bg-emerald-50">
+            <FileImage className="h-4 w-4 text-emerald-600" />
+            <AlertDescription className="text-black">
+              <strong>Hướng dẫn chọn ảnh:</strong>
+              <ul className="mt-2 space-y-1 text-xs sm:text-sm text-black">
+                <li>• Ảnh rõ nét, đủ sáng, khuôn mặt nhìn rõ</li>
+                <li>• Nên có nhiều góc mặt, biểu cảm khác nhau để tăng độ chính xác</li>
+                <li>• Tránh đeo kính râm, khẩu trang hoặc bóng tối che mặt</li>
+                <li>• Định dạng hỗ trợ: JPEG, PNG, GIF, BMP, WebP (tối đa 10MB/ảnh)</li>
               </ul>
             </AlertDescription>
           </Alert>
 
       {/* Existing Images */}
       {existingImages.length > 0 && (
-        <Card>
+        <Card className="border-teal-200 shadow-sm">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm">
-              Existing Images ({existingImages.length})
+            <CardTitle className="text-sm text-emerald-800">
+              Ảnh Đã Có ({existingImages.length})
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -365,11 +365,11 @@ const FaceImageUpload: React.FC<FaceImageUploadProps> = ({
                   <img
                     src={image.image_url}
                     alt={`${personName} ${index + 1}`}
-                    className="w-full h-16 sm:h-20 md:h-24 object-cover rounded-lg border"
+                    className="w-full h-16 sm:h-20 md:h-24 object-cover rounded-lg border border-teal-200"
                   />
                   {image.is_primary && (
-                    <Badge className="absolute top-0.5 left-0.5 text-xs bg-green-600 px-1 py-0">
-                      Primary
+                    <Badge className="absolute top-0.5 left-0.5 text-xs bg-emerald-600 px-1 py-0">
+                      Ảnh Chính
                     </Badge>
                   )}
                   <Button
@@ -388,29 +388,29 @@ const FaceImageUpload: React.FC<FaceImageUploadProps> = ({
       )}
 
       {/* Upload Area */}
-      <Card>
+      <Card className="border-teal-200 shadow-sm">
         <CardContent className="pt-4 sm:pt-6">
           <div
             {...getRootProps()}
             className={`
               border-2 border-dashed rounded-lg p-4 sm:p-8 text-center cursor-pointer transition-colors
               ${isDragActive 
-                ? 'border-blue-500 bg-blue-50' 
-                : 'border-gray-300 hover:border-gray-400'
+                ? 'border-teal-500 bg-teal-50' 
+                : 'border-teal-200 hover:border-teal-400'
               }
             `}
           >
             <input {...getInputProps()} />
-            <FileImage className="h-8 w-8 sm:h-12 sm:w-12 text-gray-400 mx-auto mb-2 sm:mb-4" />
-            <p className="text-base sm:text-lg font-medium text-gray-900 mb-1 sm:mb-2">
-              {isDragActive ? 'Drop images here' : 'Upload Face Images'}
+            <FileImage className="h-8 w-8 sm:h-12 sm:w-12 text-emerald-400 mx-auto mb-2 sm:mb-4" />
+            <p className="text-base sm:text-lg font-medium text-black mb-1 sm:mb-2">
+              {isDragActive ? 'Kéo thả ảnh vào đây' : 'Tải Ảnh Khuôn Mặt'}
             </p>
-            <p className="text-sm text-gray-600 mb-2 sm:mb-4">
-              Drag and drop images here, or click to select files
+            <p className="text-sm text-black mb-2 sm:mb-4">
+              Kéo thả hoặc bấm để chọn ảnh từ thiết bị
             </p>
-            <Button variant="outline" className="text-sm">
+            <Button variant="outline" className="text-sm border-teal-200 text-black hover:bg-teal-50">
               <Plus className="h-4 w-4 mr-2" />
-              Select Images
+              Chọn Ảnh
             </Button>
           </div>
         </CardContent>
@@ -418,11 +418,11 @@ const FaceImageUpload: React.FC<FaceImageUploadProps> = ({
 
       {/* Upload Queue */}
       {uploads.length > 0 && (
-        <Card>
+        <Card className="border-teal-200 shadow-sm">
           <CardHeader className="pb-3">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-              <CardTitle className="text-sm">
-                Upload Queue ({uploads.length})
+              <CardTitle className="text-sm text-emerald-800">
+                Hàng Chờ Tải Lên ({uploads.length})
               </CardTitle>
               <div className="flex space-x-2">
                 <Button
@@ -430,22 +430,22 @@ const FaceImageUpload: React.FC<FaceImageUploadProps> = ({
                   variant="outline"
                   onClick={uploadAllImages}
                   disabled={hasUploading || allUploaded}
-                  className="text-xs"
+                  className="text-xs border-teal-200 text-black hover:bg-teal-50"
                 >
                   {hasUploading ? (
                     <>
                       <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
-                      Uploading...
+                      Đang tải lên...
                     </>
                   ) : allUploaded ? (
                     <>
                       <Check className="h-3 w-3 mr-1" />
-                      All Uploaded
+                      Đã tải hết
                     </>
                   ) : (
                     <>
                       <Upload className="h-3 w-3 mr-1" />
-                      Upload All
+                      Tải Lên Tất Cả
                     </>
                   )}
                 </Button>
@@ -453,9 +453,9 @@ const FaceImageUpload: React.FC<FaceImageUploadProps> = ({
             </div>
             {hasUploading && (
               <div className="mt-2">
-                <Progress value={totalProgress} className="h-2" />
-                <p className="text-xs text-gray-600 mt-1">
-                  Overall progress: {Math.round(totalProgress)}%
+                <Progress value={totalProgress} className="h-2 bg-emerald-100" />
+                <p className="text-xs text-black mt-1">
+                  Tiến độ tổng: {Math.round(totalProgress)}%
                 </p>
               </div>
             )}
@@ -463,28 +463,25 @@ const FaceImageUpload: React.FC<FaceImageUploadProps> = ({
           <CardContent>
             <div className="space-y-3 sm:space-y-4">
               {uploads.map((upload, index) => (
-                <div key={index} className="flex items-center space-x-3 p-2 sm:p-3 border rounded-lg">
+                <div key={index} className="flex items-center space-x-3 p-2 sm:p-3 border rounded-lg border-teal-100 bg-white">
                   <img
                     src={upload.preview}
                     alt={`Upload ${index + 1}`}
                     className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded"
                   />
-                  
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-xs sm:text-sm truncate">{upload.file.name}</p>
-                    <p className="text-xs text-gray-500">
+                    <p className="font-medium text-xs sm:text-sm truncate text-black">{upload.file.name}</p>
+                    <p className="text-xs text-black">
                       {(upload.file.size / 1024 / 1024).toFixed(2)} MB
                     </p>
-                    
                     {upload.uploading && (
                       <div className="mt-2">
-                        <Progress value={upload.progress} className="h-1" />
-                        <p className="text-xs text-gray-500 mt-1">
-                          {upload.progress}% uploaded
+                        <Progress value={upload.progress} className="h-1 bg-emerald-100" />
+                        <p className="text-xs text-black mt-1">
+                          {upload.progress}% đã tải lên
                         </p>
                       </div>
                     )}
-                    
                     {upload.error && (
                       <p className="text-xs text-red-500 mt-1 flex items-center">
                         <AlertTriangle className="h-3 w-3 mr-1" />
@@ -492,36 +489,34 @@ const FaceImageUpload: React.FC<FaceImageUploadProps> = ({
                       </p>
                     )}
                   </div>
-
                   <div className="flex items-center space-x-1 sm:space-x-2">
                     {upload.uploaded ? (
-                      <Badge variant="default" className="bg-green-600 text-xs">
+                      <Badge variant="default" className="bg-emerald-600 text-xs text-white">
                         <Check className="h-2 w-2 sm:h-3 sm:w-3 mr-1" />
-                        Uploaded
+                        Đã tải lên
                       </Badge>
                     ) : upload.uploading ? (
-                      <Badge variant="secondary" className="text-xs">
+                      <Badge variant="secondary" className="text-xs text-black">
                         <RefreshCw className="h-2 w-2 sm:h-3 sm:w-3 mr-1 animate-spin" />
-                        Uploading
+                        Đang tải lên
                       </Badge>
                     ) : (
                       <Button
                         size="sm"
                         onClick={() => uploadImage(index)}
                         disabled={upload.uploading}
-                        className="text-xs"
+                        className="text-xs text-black"
                       >
                         <Upload className="h-2 w-2 sm:h-3 sm:w-3 mr-1" />
-                        Upload
+                        Tải Lên
                       </Button>
                     )}
-                    
                     <Button
                       size="sm"
                       variant="ghost"
                       onClick={() => removeUpload(index)}
                       disabled={upload.uploading}
-                      className="p-1"
+                      className="p-1 text-black"
                     >
                       <Trash2 className="h-3 w-3" />
                     </Button>
@@ -543,17 +538,17 @@ const FaceImageUpload: React.FC<FaceImageUploadProps> = ({
                 onClick={validateImages}
                 disabled={validating}
                 size="sm"
-                className="text-xs"
+                className="text-xs border-teal-200 text-black hover:bg-teal-50"
               >
                 {validating ? (
                   <>
                     <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
-                    Validating...
+                    Đang kiểm tra...
                   </>
                 ) : (
                   <>
                     <Eye className="h-3 w-3 mr-1" />
-                    Validate Images
+                    Kiểm Tra Ảnh
                   </>
                 )}
               </Button>
@@ -561,16 +556,10 @@ const FaceImageUpload: React.FC<FaceImageUploadProps> = ({
           </div>
 
           <div className="flex space-x-2 w-full sm:w-auto">
-            {allowSkip && (
-              <Button variant="outline" onClick={onComplete} size="sm" className="flex-1 sm:flex-none text-xs">
-                Skip for Now
-              </Button>
-            )}
-            
             {(hasUploaded || existingImages.length > 0) && (
-              <Button onClick={onComplete} size="sm" className="flex-1 sm:flex-none text-xs">
+              <Button onClick={onComplete} size="sm" className="flex-1 sm:flex-none text-xs bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-md">
                 <Check className="h-3 w-3 mr-1" />
-                Complete
+                Hoàn Thành
               </Button>
             )}
           </div>

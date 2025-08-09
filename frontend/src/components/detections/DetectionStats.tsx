@@ -272,34 +272,34 @@ const DetectionStats: React.FC<DetectionStatsProps> = ({
     
     return [
       {
-        title: 'Total Detections',
+        title: 'Tổng lượt nhận diện',
         value: stats.overview.total_detections,
         icon: Eye,
-        color: 'text-blue-600 bg-blue-100',
+        color: 'text-cyan-700 bg-cyan-100',
         change: calculateChangePercentage(stats.overview.total_detections, previousTotal),
         trend: stats.overview.total_detections >= previousTotal ? 'up' : 'down'
       },
       {
-        title: 'Today',
+        title: 'Trong ngày',
         value: stats.time_based.today,
         icon: Clock,
-        color: 'text-green-600 bg-green-100',
+        color: 'text-emerald-700 bg-emerald-100',
         change: calculateChangePercentage(stats.time_based.today, previousToday),
         trend: stats.time_based.today >= previousToday ? 'up' : 'down'
       },
       {
-        title: 'Strangers',
+        title: 'Người lạ',
         value: stats.overview.stranger_detections,
         icon: AlertTriangle,
-        color: 'text-red-600 bg-red-100',
+        color: 'text-rose-700 bg-rose-100',
         change: calculateChangePercentage(stats.overview.stranger_detections, previousStrangers),
         trend: stats.overview.stranger_detections >= previousStrangers ? 'up' : 'down'
       },
       {
-        title: 'Known Persons',
+        title: 'Đã nhận diện',
         value: stats.overview.known_person_detections,
         icon: UserCheck,
-        color: 'text-emerald-600 bg-emerald-100',
+        color: 'text-teal-700 bg-teal-100',
         change: calculateChangePercentage(stats.overview.known_person_detections, previousKnown),
         trend: stats.overview.known_person_detections >= previousKnown ? 'up' : 'down'
       }
@@ -308,18 +308,17 @@ const DetectionStats: React.FC<DetectionStatsProps> = ({
 
   const pieData = useMemo(() => {
     if (!stats) return [];
-    
     return [
-      { 
-        name: 'Strangers', 
-        value: stats.overview.stranger_detections, 
-        color: '#EF4444',
+      {
+        name: 'Người lạ',
+        value: stats.overview.stranger_detections,
+        color: '#f43f5e', // rose-500
         percentage: stats.overview.total_detections > 0 ? (stats.overview.stranger_detections / stats.overview.total_detections * 100).toFixed(1) : '0'
       },
-      { 
-        name: 'Known Persons', 
-        value: stats.overview.known_person_detections, 
-        color: '#10B981',
+      {
+        name: 'Đã nhận diện',
+        value: stats.overview.known_person_detections,
+        color: '#06b6d4', // cyan-500
         percentage: stats.overview.total_detections > 0 ? (stats.overview.known_person_detections / stats.overview.total_detections * 100).toFixed(1) : '0'
       }
     ];
@@ -337,11 +336,11 @@ const DetectionStats: React.FC<DetectionStatsProps> = ({
 
   const getTimeRangeLabel = useCallback(() => {
     switch (timeRange) {
-      case '24h': return 'Last 24 Hours';
-      case '7d': return 'Last 7 Days';
-      case '30d': return 'Last 30 Days';
-      case '90d': return 'Last 90 Days';
-      default: return 'Last 7 Days';
+      case '24h': return '24 giờ qua';
+      case '7d': return '7 ngày qua';
+      case '30d': return '30 ngày qua';
+      case '90d': return '90 ngày qua';
+      default: return '7 ngày qua';
     }
   }, [timeRange]);
 
@@ -366,7 +365,7 @@ const DetectionStats: React.FC<DetectionStatsProps> = ({
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
         
-        toast.success('Statistics exported successfully');
+  toast.success('Xuất thống kê thành công');
         return;
       } catch (exportError) {
         console.warn('⚠️ DetectionStats: Backend export not available, using client-side export');
@@ -397,7 +396,7 @@ const DetectionStats: React.FC<DetectionStatsProps> = ({
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
       
-      toast.success('Statistics exported successfully');
+  toast.success('Xuất thống kê thành công');
     } catch (error: any) {
       console.error('❌ DetectionStats: Export failed:', error);
       toast.error('Failed to export statistics');
@@ -407,7 +406,7 @@ const DetectionStats: React.FC<DetectionStatsProps> = ({
   // ✅ Proper useEffect with stable dependencies
   useEffect(() => {
     loadStats(false);
-  }, [timeRange, cameraId]);
+  }, [timeRange, cameraId, loadStats]);
 
   useEffect(() => {
     if (!autoRefresh) return;
@@ -475,44 +474,45 @@ const DetectionStats: React.FC<DetectionStatsProps> = ({
       <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center space-y-4 lg:space-y-0">
         <div className="space-y-1">
           <div className="flex items-center space-x-3">
-            <h2 className="text-2xl font-bold text-gray-900">Detection Statistics</h2>
-            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+            <h2 className="text-2xl font-bold text-cyan-800">Thống kê nhận diện</h2>
+            <Badge variant="outline" className="bg-cyan-50 text-cyan-700 border-cyan-200">
               {getTimeRangeLabel()}
             </Badge>
           </div>
-          <div className="flex items-center space-x-4 text-sm text-gray-600">
+          <div className="flex items-center space-x-4 text-sm text-cyan-700">
             {lastUpdate && (
               <div className="flex items-center space-x-1">
                 <Clock className="h-3 w-3" />
-                <span>Updated: {lastUpdate.toLocaleTimeString()}</span>
+                <span>Cập nhật: {lastUpdate.toLocaleTimeString()}</span>
               </div>
             )}
             {autoRefresh && (
               <div className="flex items-center space-x-1">
                 <Activity className="h-3 w-3" />
-                <span>Auto-refresh: {refreshInterval / 1000}s</span>
+                <span>Tự động làm mới: {refreshInterval / 1000}s</span>
               </div>
             )}
           </div>
         </div>
-        
         <div className="flex items-center space-x-2">
           <Button
             variant="outline"
             size="sm"
+            className="border-cyan-400 text-cyan-700"
             onClick={exportStats}
           >
             <Download className="w-4 h-4 mr-2" />
-            Export
+            Xuất file
           </Button>
           <Button
             variant="outline"
             size="sm"
+            className="border-cyan-400 text-cyan-700"
             onClick={handleRefresh}
             disabled={refreshing}
           >
             <RefreshCw className={cn("w-4 h-4 mr-2", refreshing && "animate-spin")} />
-            {refreshing ? 'Refreshing...' : 'Refresh'}
+            {refreshing ? 'Đang làm mới...' : 'Làm mới'}
           </Button>
         </div>
       </div>
@@ -526,24 +526,24 @@ const DetectionStats: React.FC<DetectionStatsProps> = ({
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-2">
-                    <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                    <p className="text-3xl font-bold text-gray-900">{formatNumber(stat.value)}</p>
+                    <p className="text-sm font-medium text-cyan-700">{stat.title}</p>
+                    <p className="text-3xl font-bold text-cyan-900">{formatNumber(stat.value)}</p>
                     <div className="flex items-center space-x-1">
                       {stat.trend === 'up' ? (
-                        <TrendingUp className="h-4 w-4 text-green-600" />
+                        <TrendingUp className="h-4 w-4 text-emerald-600" />
                       ) : (
-                        <TrendingDown className="h-4 w-4 text-red-600" />
+                        <TrendingDown className="h-4 w-4 text-rose-600" />
                       )}
                       <span className={cn(
                         "text-sm font-medium",
-                        stat.trend === 'up' ? 'text-green-600' : 'text-red-600'
+                        stat.trend === 'up' ? 'text-emerald-600' : 'text-rose-600'
                       )}>
                         {Math.abs(stat.change)}%
                       </span>
-                      <span className="text-sm text-gray-500">vs previous</span>
+                      <span className="text-sm text-cyan-500">so với trước</span>
                     </div>
                   </div>
-                  <div className={cn("p-3 rounded-full", stat.color)}>
+                  <div className={cn("p-3 rounded-full", stat.color, "shadow-cyan-100/40 shadow-md")}> 
                     <Icon className="h-6 w-6" />
                   </div>
                 </div>
@@ -560,10 +560,10 @@ const DetectionStats: React.FC<DetectionStatsProps> = ({
           <Card className="hover:shadow-md transition-shadow">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
-                <BarChart3 className="h-5 w-5 text-blue-600" />
-                <span>Detection Trend</span>
-                <Badge variant="outline" className="ml-auto">
-                  {chartData.length} data points
+                <BarChart3 className="h-5 w-5 text-cyan-600" />
+                <span>Biểu đồ xu hướng</span>
+                <Badge variant="outline" className="ml-auto bg-cyan-50 text-cyan-700 border-cyan-200">
+                  {chartData.length} mốc dữ liệu
                 </Badge>
               </CardTitle>
             </CardHeader>
@@ -600,7 +600,7 @@ const DetectionStats: React.FC<DetectionStatsProps> = ({
                     }}
                     formatter={(value: any, name: string) => [
                       formatNumber(value),
-                      name === 'strangers' ? 'Strangers' : 'Known Persons'
+                      name === 'strangers' ? 'Người lạ' : 'Đã nhận diện'
                     ]}
                   />
                   <Area
@@ -632,8 +632,8 @@ const DetectionStats: React.FC<DetectionStatsProps> = ({
           <Card className="hover:shadow-md transition-shadow">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
-                <Activity className="h-5 w-5 text-purple-600" />
-                <span>Detection Distribution</span>
+                <Activity className="h-5 w-5 text-emerald-600" />
+                <span>Tỉ lệ loại nhận diện</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -670,7 +670,7 @@ const DetectionStats: React.FC<DetectionStatsProps> = ({
                       className="w-3 h-3 rounded-full" 
                       style={{ backgroundColor: item.color }}
                     ></div>
-                    <span className="text-sm text-gray-600">{item.name}</span>
+                    <span className="text-sm text-cyan-700">{item.name}</span>
                     <Badge variant="outline">{formatNumber(item.value)}</Badge>
                     <span className="text-xs text-gray-500">({item.percentage}%)</span>
                   </div>
@@ -686,10 +686,10 @@ const DetectionStats: React.FC<DetectionStatsProps> = ({
         <Card className="hover:shadow-md transition-shadow">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Clock className="h-5 w-5 text-orange-600" />
-              <span>24-Hour Activity Pattern</span>
-              <Badge variant="outline" className="ml-auto">
-                Peak: {hourlyData.reduce((max, curr) => curr.detections > max.detections ? curr : max, hourlyData[0])?.hour}
+              <Clock className="h-5 w-5 text-cyan-600" />
+              <span>Biểu đồ hoạt động 24h</span>
+              <Badge variant="outline" className="ml-auto bg-cyan-50 text-cyan-700 border-cyan-200">
+                Giờ cao điểm: {hourlyData.reduce((max, curr) => curr.detections > max.detections ? curr : max, hourlyData[0])?.hour}
               </Badge>
             </CardTitle>
           </CardHeader>
@@ -706,12 +706,12 @@ const DetectionStats: React.FC<DetectionStatsProps> = ({
                 <Tooltip 
                   formatter={(value: any, name: string) => [
                     formatNumber(value),
-                    name === 'detections' ? 'Total Detections' :
-                    name === 'strangers' ? 'Strangers' : 'Known Persons'
+                    name === 'detections' ? 'Tổng lượt' :
+                    name === 'strangers' ? 'Người lạ' : 'Đã nhận diện'
                   ]}
                 />
-                <Bar dataKey="strangers" stackId="a" fill="#EF4444" name="strangers" />
-                <Bar dataKey="known_persons" stackId="a" fill="#10B981" name="known_persons" />
+                <Bar dataKey="strangers" stackId="a" fill="#f43f5e" name="Người lạ" />
+                <Bar dataKey="known_persons" stackId="a" fill="#06b6d4" name="Đã nhận diện" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -723,35 +723,35 @@ const DetectionStats: React.FC<DetectionStatsProps> = ({
         <Card className="hover:shadow-md transition-shadow">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Camera className="h-5 w-5 text-green-600" />
-              <span>Top Cameras by Detection Count</span>
-              <Badge variant="outline" className="ml-auto">
-                {stats.top_cameras.length} cameras
+              <Camera className="h-5 w-5 text-emerald-600" />
+              <span>Camera phát hiện nhiều nhất</span>
+              <Badge variant="outline" className="ml-auto bg-cyan-50 text-cyan-700 border-cyan-200">
+                {stats.top_cameras.length} camera
               </Badge>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {stats.top_cameras.slice(0, 5).map((camera, index) => (
-                <div key={camera.camera_id || index} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                <div key={camera.camera_id || index} className="flex items-center justify-between p-4 border rounded-lg hover:bg-cyan-50 transition-colors">
                   <div className="flex items-center space-x-4">
-                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                    <div className="w-10 h-10 bg-gradient-to-r from-cyan-400 to-emerald-400 rounded-full flex items-center justify-center">
                       <span className="text-sm font-bold text-white">#{index + 1}</span>
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">{camera.camera_name}</p>
-                      <div className="flex items-center space-x-4 text-sm text-gray-600">
-                        <span>{formatNumber(camera.detection_count)} total</span>
+                      <p className="font-medium text-cyan-900">{camera.camera_name}</p>
+                      <div className="flex items-center space-x-4 text-sm text-cyan-700">
+                        <span>{formatNumber(camera.detection_count)} lượt</span>
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Badge variant="outline" className="font-mono">
+                    <Badge variant="outline" className="font-mono border-cyan-300 text-cyan-700">
                       {formatNumber(camera.detection_count)}
                     </Badge>
-                    <div className="w-20 bg-gray-200 rounded-full h-2">
+                    <div className="w-20 bg-cyan-100 rounded-full h-2">
                       <div 
-                        className="bg-blue-600 h-2 rounded-full transition-all duration-300" 
+                        className="bg-cyan-500 h-2 rounded-full transition-all duration-300" 
                         style={{ 
                           width: `${Math.min((camera.detection_count / (stats.top_cameras?.[0]?.detection_count || 1)) * 100, 100)}%` 
                         }}

@@ -156,13 +156,13 @@ const PersonCard: React.FC<PersonCardProps> = ({
             </Avatar>
             
             <div className="flex-1 min-w-0">
-              <h3 className="font-medium text-gray-900 truncate">{person.name}</h3>
+              <h3 className="font-medium text-emerald-900 truncate">{person.name}</h3>
               <div className="flex items-center space-x-2 mt-1">
-                <Badge variant={person.is_active ? "default" : "secondary"} className="text-xs">
-                  {person.is_active ? 'Active' : 'Inactive'}
+                <Badge variant={person.is_active ? "default" : "secondary"} className="text-xs text-black">
+                  {person.is_active ? 'Đang hoạt động' : 'Ngưng hoạt động'}
                 </Badge>
-                <span className="text-xs text-gray-500">
-                  {person.face_images_count} {person.face_images_count === 1 ? 'photo' : 'photos'}
+                <span className="text-xs text-black">
+                  {person.face_images_count} ảnh
                 </span>
               </div>
             </div>
@@ -177,23 +177,23 @@ const PersonCard: React.FC<PersonCardProps> = ({
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={handleViewDetails}>
                     <Eye className="h-4 w-4 mr-2" />
-                    View Details
+                    Xem chi tiết
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleEdit}>
                     <Edit className="h-4 w-4 mr-2" />
-                    Edit
+                    Chỉnh sửa
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleToggleStatus}>
                     {person.is_active ? (
                       <>
                         <UserX className="h-4 w-4 mr-2" />
-                        Deactivate
+                        Ngưng hoạt động
                       </>
                     ) : (
                       <>
                         <UserCheck className="h-4 w-4 mr-2" />
-                        Activate
+                        Kích hoạt
                       </>
                     )}
                   </DropdownMenuItem>
@@ -202,7 +202,7 @@ const PersonCard: React.FC<PersonCardProps> = ({
                     className="text-red-600"
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
-                    Delete
+                    Xóa
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -227,17 +227,17 @@ const PersonCard: React.FC<PersonCardProps> = ({
               </Avatar>
               
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-gray-900 truncate">{person.name}</h3>
+                <h3 className="font-semibold text-emerald-900 truncate">{person.name}</h3>
                 <div className="flex items-center space-x-2 mt-1">
-                  <Badge variant={person.is_active ? "default" : "secondary"}>
-                    {person.is_active ? 'Active' : 'Inactive'}
+                  <Badge variant={person.is_active ? "default" : "secondary"} className="text-black">
+                    {person.is_active ? 'Đang hoạt động' : 'Ngưng hoạt động'}
                   </Badge>
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs text-black border-cyan-300">
                     <Image className="h-3 w-3 mr-1" />
-                    {person.face_images_count}
+                    {person.face_images_count} ảnh
                   </Badge>
                   {person.metadata?.access_level && (
-                    <Badge className={`text-xs ${getAccessLevelColor(person.metadata.access_level)}`}>
+                    <Badge className={`text-xs border-cyan-300 text-cyan-800 bg-cyan-100`}>
                       <Shield className="h-3 w-3 mr-1" />
                       {person.metadata.access_level}
                     </Badge>
@@ -292,7 +292,7 @@ const PersonCard: React.FC<PersonCardProps> = ({
         <CardContent className="space-y-4">
           {/* Description */}
           {person.description && (
-            <p className="text-sm text-gray-600 line-clamp-2">
+            <p className="text-sm text-black line-clamp-2">
               {person.description}
             </p>
           )}
@@ -301,38 +301,38 @@ const PersonCard: React.FC<PersonCardProps> = ({
           {person.metadata && (
             <div className="space-y-2">
               {person.metadata.department && (
-                <div className="flex items-center text-xs text-gray-500">
+                <div className="flex items-center text-xs text-black">
                   <Building className="h-3 w-3 mr-2" />
-                  <span className="font-medium">Dept:</span>
+                  <span className="font-medium">Phòng ban:</span>
                   <span className="ml-1">{person.metadata.department}</span>
                 </div>
               )}
               
               {person.metadata.employee_id && (
-                <div className="flex items-center text-xs text-gray-500">
+                <div className="flex items-center text-xs text-black">
                   <BadgeIcon className="h-3 w-3 mr-2" />
-                  <span className="font-medium">ID:</span>
+                  <span className="font-medium">Mã NV:</span>
                   <span className="ml-1">{person.metadata.employee_id}</span>
                 </div>
               )}
 
               {person.metadata.position && (
-                <div className="flex items-center text-xs text-gray-500">
+                <div className="flex items-center text-xs text-black">
                   <User className="h-3 w-3 mr-2" />
-                  <span className="font-medium">Position:</span>
+                  <span className="font-medium">Chức vụ:</span>
                   <span className="ml-1">{person.metadata.position}</span>
                 </div>
               )}
 
               {person.metadata.email && (
-                <div className="flex items-center text-xs text-gray-500">
+                <div className="flex items-center text-xs text-black">
                   <Mail className="h-3 w-3 mr-2" />
                   <span className="truncate">{person.metadata.email}</span>
                 </div>
               )}
 
               {person.metadata.phone && (
-                <div className="flex items-center text-xs text-gray-500">
+                <div className="flex items-center text-xs text-black">
                   <Phone className="h-3 w-3 mr-2" />
                   <span>{person.metadata.phone}</span>
                 </div>
@@ -346,29 +346,29 @@ const PersonCard: React.FC<PersonCardProps> = ({
               size="sm"
               variant="outline"
               onClick={handleViewDetails}
-              className="flex-1"
+              className="flex-1 text-black border-cyan-300 hover:bg-cyan-50"
             >
               <Eye className="w-4 h-4 mr-1" />
-              View
+              Xem
             </Button>
             <Button
               size="sm"
               onClick={handleEdit}
-              className="flex-1"
+              className="flex-1 bg-gradient-to-r from-emerald-500 to-cyan-600 hover:from-emerald-600 hover:to-cyan-700 text-white"
             >
               <Edit className="w-4 h-4 mr-1" />
-              Edit
+              Chỉnh sửa
             </Button>
           </div>
 
           {/* Footer */}
-          <div className="text-xs text-gray-400 pt-2 border-t flex items-center justify-between">
+          <div className="text-xs text-black pt-2 border-t flex items-center justify-between">
             <div className="flex items-center">
               <Calendar className="h-3 w-3 mr-1" />
-              Added {formatDate(person.created_at)}
+              Thêm: {formatDate(person.created_at)}
             </div>
             {person.updated_at && person.updated_at !== person.created_at && (
-              <span>Updated {formatDate(person.updated_at)}</span>
+              <span>Cập nhật: {formatDate(person.updated_at)}</span>
             )}
           </div>
         </CardContent>
@@ -378,15 +378,15 @@ const PersonCard: React.FC<PersonCardProps> = ({
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Person</AlertDialogTitle>
+            <AlertDialogTitle>Xóa hồ sơ</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete "{person.name}"? This action cannot be undone and will remove all associated face images and detection history.
+              Bạn có chắc chắn muốn xóa "{person.name}"? Thao tác này không thể hoàn tác và sẽ xóa toàn bộ ảnh khuôn mặt, lịch sử nhận diện liên quan.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Hủy</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
-              Delete
+              Xóa
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

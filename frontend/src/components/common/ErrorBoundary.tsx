@@ -76,51 +76,49 @@ class ErrorBoundary extends Component<Props, State> {
 
       // Default error UI
       return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-          <Card className="w-full max-w-2xl">
-            <CardHeader className="text-center">
+        <div className="min-h-screen bg-gradient-to-br from-teal-50 to-emerald-50 flex items-center justify-center p-4">
+          <Card className="w-full max-w-2xl border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+            <CardHeader className="text-center border-b border-slate-100 bg-gradient-to-r from-teal-100 to-emerald-50 rounded-t-2xl">
               <div className="flex justify-center mb-4">
-                <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center">
-                  <AlertTriangle className="w-8 h-8 text-red-600" />
+                <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-rose-100 rounded-2xl flex items-center justify-center">
+                  <AlertTriangle className="w-8 h-8 text-amber-500" />
                 </div>
               </div>
-              <CardTitle className="text-2xl font-bold text-gray-900">
-                Oops! Something went wrong
+              <CardTitle className="text-2xl font-bold text-emerald-700">
+                Có lỗi hệ thống
               </CardTitle>
             </CardHeader>
-            
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 bg-white/80 rounded-b-2xl">
               <Alert variant="destructive">
-                <AlertTriangle className="h-4 w-4" />
+                <AlertTriangle className="h-4 w-4 text-amber-500" />
                 <AlertDescription>
-                  An unexpected error occurred while rendering this page. 
-                  This issue has been automatically reported to our team.
+                  Đã xảy ra lỗi khi tải trang này. Vui lòng thử lại hoặc liên hệ quản trị viên nếu sự cố tiếp tục.
                 </AlertDescription>
               </Alert>
 
               {/* Error Details (Development only) */}
               {process.env.NODE_ENV === 'development' && this.state.error && (
-                <div className="bg-gray-100 p-4 rounded-lg">
-                  <h4 className="font-medium text-gray-900 mb-2">Error Details:</h4>
-                  <pre className="text-sm text-red-600 overflow-auto max-h-40">
+                <div className="bg-gradient-to-r from-teal-50 to-emerald-50 p-4 rounded-lg border border-slate-200">
+                  <h4 className="font-medium text-slate-800 mb-2">Chi tiết lỗi kỹ thuật:</h4>
+                  <pre className="text-sm text-rose-600 overflow-auto max-h-40">
                     {this.state.error.message}
                   </pre>
                   {this.state.error.stack && (
                     <details className="mt-2">
-                      <summary className="cursor-pointer text-sm font-medium text-gray-700">
+                      <summary className="cursor-pointer text-sm font-medium text-slate-700">
                         Stack Trace
                       </summary>
-                      <pre className="text-xs text-gray-600 mt-2 overflow-auto max-h-40">
+                      <pre className="text-xs text-slate-600 mt-2 overflow-auto max-h-40">
                         {this.state.error.stack}
                       </pre>
                     </details>
                   )}
                   {this.state.errorInfo?.componentStack && (
                     <details className="mt-2">
-                      <summary className="cursor-pointer text-sm font-medium text-gray-700">
+                      <summary className="cursor-pointer text-sm font-medium text-slate-700">
                         Component Stack
                       </summary>
-                      <pre className="text-xs text-gray-600 mt-2 overflow-auto max-h-40">
+                      <pre className="text-xs text-slate-600 mt-2 overflow-auto max-h-40">
                         {this.state.errorInfo.componentStack}
                       </pre>
                     </details>
@@ -129,31 +127,31 @@ class ErrorBoundary extends Component<Props, State> {
               )}
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex flex-col sm:flex-row gap-3 mt-4">
                 <Button 
                   onClick={this.handleRetry}
-                  className="flex-1"
+                  className="flex-1 bg-gradient-to-r from-teal-500 to-emerald-600 text-white hover:from-teal-600 hover:to-emerald-700 border-0 shadow"
                 >
                   <RefreshCw className="w-4 h-4 mr-2" />
-                  Try Again
+                  Tải lại trang
                 </Button>
                 
                 <Button 
                   variant="outline" 
                   onClick={this.handleGoHome}
-                  className="flex-1"
+                  className="flex-1 border-teal-400 text-teal-700 hover:bg-teal-50"
                 >
                   <Home className="w-4 h-4 mr-2" />
-                  Go Home
+                  Về trang chủ
                 </Button>
 
                 <Button 
                   variant="outline" 
                   onClick={this.handleReportBug}
-                  className="flex-1"
+                  className="flex-1 border-amber-400 text-amber-700 hover:bg-amber-50"
                 >
                   <Bug className="w-4 h-4 mr-2" />
-                  Report Bug
+                  Báo lỗi kỹ thuật
                 </Button>
               </div>
 

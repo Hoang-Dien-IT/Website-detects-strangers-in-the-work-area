@@ -711,7 +711,7 @@ const Header: React.FC<HeaderProps> = ({
                   console.log('Header Avatar URL:', user?.avatar_url, '-> src:', avatarSrc);
                   return <AvatarImage src={avatarSrc || '/default-avatar.png'} alt={user?.full_name} onError={e => (e.currentTarget.src = '/default-avatar.png')} />;
                 })()}
-                <AvatarFallback className="bg-blue-600 text-white">
+                <AvatarFallback className="bg-gradient-to-r from-teal-500 to-emerald-600 text-white">
                   {user?.full_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
                 </AvatarFallback>
               </Avatar>
@@ -721,12 +721,12 @@ const Header: React.FC<HeaderProps> = ({
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>
               <div className="flex flex-col space-y-1">
-                <div className="font-medium">{user?.full_name}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-300">{user?.email}</div>
+                <div className="font-medium text-emerald-700">{user?.full_name}</div>
+                <div className="text-sm text-slate-600 dark:text-slate-300">{user?.email}</div>
                 {user?.is_admin && (
-                  <Badge variant="secondary" className="w-fit text-xs">
-                    <Shield className="h-3 w-3 mr-1" />
-                    Administrator
+                  <Badge variant="secondary" className="w-fit text-xs bg-gradient-to-r from-teal-100 to-emerald-100 text-emerald-700 border-emerald-300">
+                    <Shield className="h-3 w-3 mr-1 text-emerald-600" />
+                    Quản trị viên
                   </Badge>
                 )}
               </div>
@@ -734,39 +734,39 @@ const Header: React.FC<HeaderProps> = ({
             <DropdownMenuSeparator />
             
             <DropdownMenuItem onClick={() => navigate('/app/profile')}>
-              <User className="h-4 w-4 mr-2" />
-              Profile Settings
+              <User className="h-4 w-4 mr-2 text-emerald-600" />
+              Thông tin cá nhân
             </DropdownMenuItem>
             
             <DropdownMenuItem onClick={() => navigate('/app/settings')}>
-              <Settings className="h-4 w-4 mr-2" />
-              Preferences
+              <Settings className="h-4 w-4 mr-2 text-teal-600" />
+              Tuỳ chỉnh giao diện
             </DropdownMenuItem>
             
             <DropdownMenuItem onClick={() => setSearchOpen(true)}>
-              <Keyboard className="h-4 w-4 mr-2" />
-              Keyboard Shortcuts
+              <Keyboard className="h-4 w-4 mr-2 text-cyan-600" />
+              Phím tắt
             </DropdownMenuItem>
             
             <DropdownMenuItem onClick={() => navigate('/app/help')}>
-              <HelpCircle className="h-4 w-4 mr-2" />
-              Help & Support
+              <HelpCircle className="h-4 w-4 mr-2 text-emerald-600" />
+              Trợ giúp & Hỗ trợ
             </DropdownMenuItem>
             
             {user?.is_admin && (
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => navigate('/admin')}>
-                  <Shield className="h-4 w-4 mr-2" />
-                  Admin Panel
+                  <Shield className="h-4 w-4 mr-2 text-emerald-600" />
+                  Quản trị hệ thống
                 </DropdownMenuItem>
               </>
             )}
             
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout} className="text-red-600 dark:text-red-400">
+            <DropdownMenuItem onClick={handleLogout} className="text-rose-600 dark:text-rose-400">
               <LogOut className="h-4 w-4 mr-2" />
-              Sign Out
+              Đăng xuất
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

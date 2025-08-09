@@ -98,81 +98,81 @@ const Layout: React.FC<LayoutProps> = ({ children, className }) => {
   const navigationItems: NavigationItemType[] = [
     {
       id: 'dashboard',
-      label: 'Dashboard',
-      icon: <Home className="h-5 w-5" />,
+      label: 'Tổng quan',
+      icon: <Home className="h-5 w-5 text-teal-600" />,
       href: '/dashboard',
     },
     {
       id: 'cameras',
-      label: 'Cameras',
-      icon: <Camera className="h-5 w-5" />,
+      label: 'Camera',
+      icon: <Camera className="h-5 w-5 text-emerald-600" />,
       href: '/cameras',
       badge: systemStatus.cameras_online > 0 ? systemStatus.cameras_online : undefined,
       subItems: [
-        { id: 'cameras-list', label: 'All Cameras', icon: <Camera className="h-4 w-4" />, href: '/cameras' },
-        { id: 'cameras-add', label: 'Add Camera', icon: <Plus className="h-4 w-4" />, href: '/cameras/new' },
-        { id: 'cameras-streaming', label: 'Live Streams', icon: <Play className="h-4 w-4" />, href: '/cameras/streaming' },
+        { id: 'cameras-list', label: 'Danh sách camera', icon: <Camera className="h-4 w-4 text-emerald-600" />, href: '/cameras' },
+        { id: 'cameras-add', label: 'Thêm camera', icon: <Plus className="h-4 w-4 text-teal-600" />, href: '/cameras/new' },
+        { id: 'cameras-streaming', label: 'Xem trực tiếp', icon: <Play className="h-4 w-4 text-cyan-600" />, href: '/cameras/streaming' },
       ]
     },
     {
       id: 'persons',
-      label: 'Known Persons',
-      icon: <Users className="h-5 w-5" />,
+      label: 'Người đã biết',
+      icon: <Users className="h-5 w-5 text-cyan-600" />,
       href: '/persons',
       subItems: [
-        { id: 'persons-list', label: 'All Persons', icon: <Users className="h-4 w-4" />, href: '/persons' },
-        { id: 'persons-add', label: 'Add Person', icon: <Plus className="h-4 w-4" />, href: '/persons/new' },
-        { id: 'persons-bulk', label: 'Bulk Import', icon: <Upload className="h-4 w-4" />, href: '/persons/bulk-import' },
+        { id: 'persons-list', label: 'Danh sách người', icon: <Users className="h-4 w-4 text-cyan-600" />, href: '/persons' },
+        { id: 'persons-add', label: 'Thêm người', icon: <Plus className="h-4 w-4 text-teal-600" />, href: '/persons/new' },
+        { id: 'persons-bulk', label: 'Nhập khẩu hàng loạt', icon: <Upload className="h-4 w-4 text-emerald-600" />, href: '/persons/bulk-import' },
       ]
     },
     {
       id: 'detections',
-      label: 'Detection Logs',
-      icon: <Eye className="h-5 w-5" />,
+      label: 'Nhật ký nhận diện',
+      icon: <Eye className="h-5 w-5 text-emerald-600" />,
       href: '/detections',
       badge: systemStatus.active_detections > 0 ? systemStatus.active_detections : undefined,
       subItems: [
-        { id: 'detections-recent', label: 'Recent Detections', icon: <Clock className="h-4 w-4" />, href: '/detections' },
-        { id: 'detections-strangers', label: 'Unknown Persons', icon: <AlertTriangle className="h-4 w-4" />, href: '/detections?filter=strangers' },
-        { id: 'detections-known', label: 'Known Persons', icon: <CheckCircle className="h-4 w-4" />, href: '/detections?filter=known' },
+        { id: 'detections-recent', label: 'Nhận diện gần đây', icon: <Clock className="h-4 w-4 text-cyan-600" />, href: '/detections' },
+        { id: 'detections-strangers', label: 'Người lạ', icon: <AlertTriangle className="h-4 w-4 text-amber-500" />, href: '/detections?filter=strangers' },
+        { id: 'detections-known', label: 'Người đã biết', icon: <CheckCircle className="h-4 w-4 text-emerald-600" />, href: '/detections?filter=known' },
       ]
     },
     {
       id: 'analytics',
-      label: 'Analytics',
-      icon: <BarChart3 className="h-5 w-5" />,
+      label: 'Phân tích',
+      icon: <BarChart3 className="h-5 w-5 text-cyan-600" />,
       href: '/analytics',
       subItems: [
-        { id: 'analytics-overview', label: 'Overview', icon: <BarChart3 className="h-4 w-4" />, href: '/analytics' },
-        { id: 'analytics-reports', label: 'Reports', icon: <FileText className="h-4 w-4" />, href: '/analytics/reports' },
-        { id: 'analytics-trends', label: 'Trends', icon: <Activity className="h-4 w-4" />, href: '/analytics/trends' },
-        { id: 'analytics-heatmap', label: 'Heat Maps', icon: <Activity className="h-4 w-4" />, href: '/analytics/heatmap' },
+        { id: 'analytics-overview', label: 'Tổng quan', icon: <BarChart3 className="h-4 w-4 text-cyan-600" />, href: '/analytics' },
+        { id: 'analytics-reports', label: 'Báo cáo', icon: <FileText className="h-4 w-4 text-emerald-600" />, href: '/analytics/reports' },
+        { id: 'analytics-trends', label: 'Xu hướng', icon: <Activity className="h-4 w-4 text-teal-600" />, href: '/analytics/trends' },
+        { id: 'analytics-heatmap', label: 'Bản đồ nhiệt', icon: <Activity className="h-4 w-4 text-amber-500" />, href: '/analytics/heatmap' },
       ]
     },
     {
       id: 'settings',
-      label: 'Settings',
-      icon: <Settings className="h-5 w-5" />,
+      label: 'Cài đặt',
+      icon: <Settings className="h-5 w-5 text-teal-600" />,
       href: '/settings',
       subItems: [
-        { id: 'settings-profile', label: 'Profile', icon: <User className="h-4 w-4" />, href: '/settings/profile' },
-        { id: 'settings-preferences', label: 'Preferences', icon: <Settings className="h-4 w-4" />, href: '/settings/preferences' },
-        { id: 'settings-notifications', label: 'Notifications', icon: <Bell className="h-4 w-4" />, href: '/settings/notifications' },
-        { id: 'settings-security', label: 'Security', icon: <Shield className="h-4 w-4" />, href: '/settings/security' },
+        { id: 'settings-profile', label: 'Hồ sơ cá nhân', icon: <User className="h-4 w-4 text-emerald-600" />, href: '/settings/profile' },
+        { id: 'settings-preferences', label: 'Tuỳ chỉnh', icon: <Settings className="h-4 w-4 text-teal-600" />, href: '/settings/preferences' },
+        { id: 'settings-notifications', label: 'Thông báo', icon: <Bell className="h-4 w-4 text-cyan-600" />, href: '/settings/notifications' },
+        { id: 'settings-security', label: 'Bảo mật', icon: <Shield className="h-4 w-4 text-emerald-600" />, href: '/settings/security' },
       ]
     },
     {
       id: 'admin',
-      label: 'Administration',
-      icon: <Shield className="h-5 w-5" />,
+      label: 'Quản trị',
+      icon: <Shield className="h-5 w-5 text-emerald-600" />,
       href: '/admin',
       permission: 'admin',
       subItems: [
-        { id: 'admin-dashboard', label: 'Admin Dashboard', icon: <Shield className="h-4 w-4" />, href: '/admin' },
-        { id: 'admin-users', label: 'User Management', icon: <Users className="h-4 w-4" />, href: '/admin/users' },
-        { id: 'admin-system', label: 'System Health', icon: <Activity className="h-4 w-4" />, href: '/admin/system' },
-        { id: 'admin-logs', label: 'System Logs', icon: <FileText className="h-4 w-4" />, href: '/admin/logs' },
-        { id: 'admin-backup', label: 'Backup & Restore', icon: <Database className="h-4 w-4" />, href: '/admin/backup' },
+        { id: 'admin-dashboard', label: 'Bảng điều khiển', icon: <Shield className="h-4 w-4 text-emerald-600" />, href: '/admin' },
+        { id: 'admin-users', label: 'Quản lý người dùng', icon: <Users className="h-4 w-4 text-cyan-600" />, href: '/admin/users' },
+        { id: 'admin-system', label: 'Tình trạng hệ thống', icon: <Activity className="h-4 w-4 text-amber-500" />, href: '/admin/system' },
+        { id: 'admin-logs', label: 'Nhật ký hệ thống', icon: <FileText className="h-4 w-4 text-emerald-600" />, href: '/admin/logs' },
+        { id: 'admin-backup', label: 'Sao lưu & Phục hồi', icon: <Database className="h-4 w-4 text-teal-600" />, href: '/admin/backup' },
       ]
     },
   ];
@@ -540,22 +540,22 @@ const NavigationItem: React.FC<NavigationItemProps> = ({ item, collapsed, curren
             size="sm"
             className={cn(
               "w-full justify-center relative",
-              isActive && "bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-700"
+              isActive && "bg-gradient-to-r from-teal-50 to-emerald-50 text-emerald-700 border-emerald-200"
             )}
             onClick={() => navigate(item.href)}
           >
             {item.icon}
             {item.badge && (
               <Badge
-                variant="destructive"
-                className="absolute -top-1 -right-1 h-4 w-4 text-xs p-0 flex items-center justify-center"
+                variant="secondary"
+                className="absolute -top-1 -right-1 h-4 w-4 text-xs p-0 flex items-center justify-center bg-gradient-to-r from-teal-500 to-emerald-500 text-white"
               >
                 {item.badge}
               </Badge>
             )}
           </Button>
         </TooltipTrigger>
-        <TooltipContent side="right">
+        <TooltipContent side="right" className="bg-gradient-to-r from-teal-50 to-emerald-50 text-emerald-700 border-emerald-200">
           <p>{item.label}</p>
         </TooltipContent>
       </Tooltip>
@@ -569,7 +569,7 @@ const NavigationItem: React.FC<NavigationItemProps> = ({ item, collapsed, curren
         size="sm"
         className={cn(
           "w-full justify-start",
-          isActive && "bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-700"
+          isActive && "bg-gradient-to-r from-teal-50 to-emerald-50 text-emerald-700 border-emerald-200"
         )}
         onClick={handleClick}
       >
@@ -580,7 +580,7 @@ const NavigationItem: React.FC<NavigationItemProps> = ({ item, collapsed, curren
         
         <div className="flex items-center space-x-1">
           {item.badge && (
-            <Badge variant="secondary" className="text-xs">
+            <Badge variant="secondary" className="text-xs bg-gradient-to-r from-teal-500 to-emerald-500 text-white">
               {item.badge}
             </Badge>
           )}
@@ -605,7 +605,7 @@ const NavigationItem: React.FC<NavigationItemProps> = ({ item, collapsed, curren
               className={cn(
                 "w-full justify-start text-sm",
                 (currentPath === subItem.href || currentPath.startsWith(subItem.href + '/')) && 
-                "bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-700"
+                "bg-gradient-to-r from-teal-50 to-emerald-50 text-emerald-700 border-emerald-200"
               )}
               onClick={() => navigate(subItem.href)}
             >

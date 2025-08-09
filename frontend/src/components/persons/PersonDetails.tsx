@@ -268,11 +268,11 @@ const PersonDetails: React.FC = () => {
         <Card>
           <CardContent className="text-center py-16">
             <AlertTriangle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Person Not Found</h3>
-            <p className="text-gray-600 mb-6">The person you're looking for doesn't exist or has been deleted.</p>
-            <Button onClick={() => navigate('/persons')}>
+            <h3 className="text-lg font-medium text-emerald-900 mb-2">Không tìm thấy hồ sơ</h3>
+            <p className="text-black mb-6">Hồ sơ bạn tìm kiếm không tồn tại hoặc đã bị xóa.</p>
+            <Button onClick={() => navigate('/persons')} className="text-black border-cyan-300 hover:bg-cyan-50">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Persons
+              Về danh sách hồ sơ
             </Button>
           </CardContent>
         </Card>
@@ -285,43 +285,44 @@ const PersonDetails: React.FC = () => {
       {/* ✅ Enhanced Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="sm" onClick={() => navigate('/persons')}>
+          <Button variant="ghost" size="sm" onClick={() => navigate('/persons')} className="text-cyan-700 hover:text-cyan-900 hover:bg-cyan-50">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Persons
+            Về danh sách hồ sơ
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{person.name}</h1>
-            <p className="text-gray-600">Person details and face images</p>
+            <h1 className="text-2xl font-bold text-emerald-900">{person.name}</h1>
+            <p className="text-black">Thông tin chi tiết và ảnh khuôn mặt</p>
           </div>
         </div>
         <div className="flex items-center space-x-2">
           <Badge 
             variant={person.is_active ? "default" : "secondary"}
-            className="shadow-sm"
+            className="shadow-sm text-black"
           >
-            {person.is_active ? 'Active' : 'Inactive'}
+            {person.is_active ? 'Đang hoạt động' : 'Ngưng hoạt động'}
           </Badge>
           <Button 
             variant="outline" 
             size="sm" 
             onClick={handleToggleStatus}
             disabled={processingAction}
+            className="text-black border-cyan-300 hover:bg-cyan-50"
           >
             {person.is_active ? (
               <>
                 <UserX className="h-4 w-4 mr-2" />
-                Deactivate
+                Ngưng hoạt động
               </>
             ) : (
               <>
                 <UserCheck className="h-4 w-4 mr-2" />
-                Activate
+                Kích hoạt
               </>
             )}
           </Button>
-          <Button variant="outline" size="sm" onClick={handleEdit}>
+          <Button variant="outline" size="sm" onClick={handleEdit} className="text-black border-cyan-300 hover:bg-cyan-50">
             <Edit className="h-4 w-4 mr-2" />
-            Edit
+            Chỉnh sửa
           </Button>
           <Button 
             variant="outline" 
@@ -331,7 +332,7 @@ const PersonDetails: React.FC = () => {
             disabled={processingAction}
           >
             <Trash2 className="h-4 w-4 mr-2" />
-            Delete
+            Xóa
           </Button>
         </div>
       </div>
@@ -342,9 +343,9 @@ const PersonDetails: React.FC = () => {
           {/* Basic Info */}
           <Card className="shadow-sm">
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Shield className="h-5 w-5 text-blue-600" />
-                <span>Person Information</span>
+              <CardTitle className="flex items-center space-x-2 text-emerald-900">
+                <Shield className="h-5 w-5 text-cyan-600" />
+                <span>Thông tin nhân sự</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -360,15 +361,15 @@ const PersonDetails: React.FC = () => {
                   </AvatarFallback>
                 </Avatar>
                 <div className="text-center">
-                  <h3 className="font-semibold text-lg">{person.name}</h3>
+                  <h3 className="font-semibold text-emerald-900 text-lg">{person.name}</h3>
                   <div className="flex items-center justify-center space-x-2 mt-2">
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-xs text-black border-cyan-300">
                       <Image className="h-3 w-3 mr-1" />
-                      {person.face_images_count || 0} images
+                      {person.face_images_count || 0} ảnh
                     </Badge>
                     {person.is_active && (
-                      <Badge className="text-xs bg-green-100 text-green-800 border-green-300">
-                        Active
+                      <Badge className="text-xs bg-emerald-100 text-emerald-800 border-emerald-300">
+                        Đang hoạt động
                       </Badge>
                     )}
                   </div>
@@ -378,8 +379,8 @@ const PersonDetails: React.FC = () => {
               {/* Description */}
               {person.description && (
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Description</label>
-                  <p className="text-gray-900 mt-1 p-3 bg-gray-50 rounded-lg border">
+                  <label className="text-sm font-medium text-black">Mô tả</label>
+                  <p className="text-black mt-1 p-3 bg-gray-50 rounded-lg border">
                     {person.description}
                   </p>
                 </div>
@@ -388,17 +389,17 @@ const PersonDetails: React.FC = () => {
               {/* ✅ Enhanced Timestamps */}
               <div className="grid grid-cols-1 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Created</label>
-                  <div className="flex items-center text-sm text-gray-900 mt-1 p-2 bg-gray-50 rounded border">
-                    <Calendar className="h-4 w-4 mr-2 text-gray-500" />
+                  <label className="text-sm font-medium text-black">Ngày tạo</label>
+                  <div className="flex items-center text-sm text-black mt-1 p-2 bg-gray-50 rounded border">
+                    <Calendar className="h-4 w-4 mr-2 text-cyan-600" />
                     {formatDate(person.created_at)}
                   </div>
                 </div>
                 {person.updated_at && person.updated_at !== person.created_at && (
                   <div>
-                    <label className="text-sm font-medium text-gray-600">Last Updated</label>
-                    <div className="flex items-center text-sm text-gray-900 mt-1 p-2 bg-gray-50 rounded border">
-                      <Calendar className="h-4 w-4 mr-2 text-gray-500" />
+                    <label className="text-sm font-medium text-black">Cập nhật lần cuối</label>
+                    <div className="flex items-center text-sm text-black mt-1 p-2 bg-gray-50 rounded border">
+                      <Calendar className="h-4 w-4 mr-2 text-cyan-600" />
                       {formatDate(person.updated_at)}
                     </div>
                   </div>
@@ -411,17 +412,17 @@ const PersonDetails: React.FC = () => {
           {person.metadata && Object.keys(person.metadata).length > 0 && (
             <Card className="shadow-sm">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <BadgeIcon className="h-5 w-5 text-purple-600" />
-                  <span>Additional Information</span>
+                <CardTitle className="flex items-center space-x-2 text-cyan-800">
+                  <BadgeIcon className="h-5 w-5 text-cyan-600" />
+                  <span>Thông tin bổ sung</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {person.metadata.department && (
                   <div>
-                    <label className="text-sm font-medium text-gray-600">Department</label>
-                    <div className="flex items-center text-sm text-gray-900 mt-1 p-2 bg-gray-50 rounded border">
-                      <Building className="h-4 w-4 mr-2 text-gray-500" />
+                    <label className="text-sm font-medium text-black">Phòng ban</label>
+                    <div className="flex items-center text-sm text-black mt-1 p-2 bg-gray-50 rounded border">
+                      <Building className="h-4 w-4 mr-2 text-cyan-600" />
                       {person.metadata.department}
                     </div>
                   </div>
@@ -429,9 +430,9 @@ const PersonDetails: React.FC = () => {
 
                 {person.metadata.employee_id && (
                   <div>
-                    <label className="text-sm font-medium text-gray-600">Employee ID</label>
-                    <div className="flex items-center text-sm text-gray-900 mt-1 p-2 bg-gray-50 rounded border">
-                      <BadgeIcon className="h-4 w-4 mr-2 text-gray-500" />
+                    <label className="text-sm font-medium text-black">Mã nhân viên</label>
+                    <div className="flex items-center text-sm text-black mt-1 p-2 bg-gray-50 rounded border">
+                      <BadgeIcon className="h-4 w-4 mr-2 text-cyan-600" />
                       {person.metadata.employee_id}
                     </div>
                   </div>
@@ -439,8 +440,8 @@ const PersonDetails: React.FC = () => {
 
                 {person.metadata.position && (
                   <div>
-                    <label className="text-sm font-medium text-gray-600">Position</label>
-                    <p className="text-gray-900 mt-1 p-2 bg-gray-50 rounded border">
+                    <label className="text-sm font-medium text-black">Chức vụ</label>
+                    <p className="text-black mt-1 p-2 bg-gray-50 rounded border">
                       {person.metadata.position}
                     </p>
                   </div>
@@ -448,9 +449,9 @@ const PersonDetails: React.FC = () => {
 
                 {person.metadata.access_level && (
                   <div>
-                    <label className="text-sm font-medium text-gray-600">Access Level</label>
+                    <label className="text-sm font-medium text-black">Phân quyền</label>
                     <div className="mt-1">
-                      <Badge className={`text-xs ${getAccessLevelColor(person.metadata.access_level)}`}>
+                      <Badge className={`text-xs border-cyan-300 text-cyan-800 bg-cyan-100`}>
                         <Shield className="h-3 w-3 mr-1" />
                         {person.metadata.access_level.toUpperCase()}
                       </Badge>
@@ -460,12 +461,12 @@ const PersonDetails: React.FC = () => {
 
                 {person.metadata.email && (
                   <div>
-                    <label className="text-sm font-medium text-gray-600">Email</label>
+                    <label className="text-sm font-medium text-black">Email</label>
                     <div className="flex items-center text-sm mt-1 p-2 bg-gray-50 rounded border">
-                      <Mail className="h-4 w-4 mr-2 text-gray-500" />
+                      <Mail className="h-4 w-4 mr-2 text-cyan-600" />
                       <a 
                         href={`mailto:${person.metadata.email}`} 
-                        className="text-blue-600 hover:underline"
+                        className="text-cyan-700 hover:underline"
                       >
                         {person.metadata.email}
                       </a>
@@ -475,12 +476,12 @@ const PersonDetails: React.FC = () => {
 
                 {person.metadata.phone && (
                   <div>
-                    <label className="text-sm font-medium text-gray-600">Phone</label>
+                    <label className="text-sm font-medium text-black">Số điện thoại</label>
                     <div className="flex items-center text-sm mt-1 p-2 bg-gray-50 rounded border">
-                      <Phone className="h-4 w-4 mr-2 text-gray-500" />
+                      <Phone className="h-4 w-4 mr-2 text-cyan-600" />
                       <a 
                         href={`tel:${person.metadata.phone}`} 
-                        className="text-blue-600 hover:underline"
+                        className="text-cyan-700 hover:underline"
                       >
                         {person.metadata.phone}
                       </a>
@@ -493,10 +494,10 @@ const PersonDetails: React.FC = () => {
                   if (!['department', 'employee_id', 'position', 'access_level', 'email', 'phone'].includes(key)) {
                     return (
                       <div key={key}>
-                        <label className="text-sm font-medium text-gray-600 capitalize">
+                        <label className="text-sm font-medium text-black capitalize">
                           {key.replace(/_/g, ' ')}
                         </label>
-                        <p className="text-gray-900 mt-1 p-2 bg-gray-50 rounded border">
+                        <p className="text-black mt-1 p-2 bg-gray-50 rounded border">
                           {typeof value === 'object' ? JSON.stringify(value) : String(value)}
                         </p>
                       </div>
@@ -515,17 +516,17 @@ const PersonDetails: React.FC = () => {
           <Card className="shadow-sm">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center space-x-2">
-                  <Image className="h-5 w-5 text-green-600" />
-                  <span>Face Images ({person.face_images_count || 0})</span>
+                <CardTitle className="flex items-center space-x-2 text-cyan-800">
+                  <Image className="h-5 w-5 text-cyan-600" />
+                  <span>Ảnh khuôn mặt ({person.face_images_count || 0})</span>
                 </CardTitle>
                 <Button 
                   size="sm" 
                   onClick={() => setShowImageUpload(true)}
-                  className="bg-blue-600 hover:bg-blue-700"
+                  className="bg-gradient-to-r from-emerald-500 to-cyan-600 hover:from-emerald-600 hover:to-cyan-700 text-white"
                 >
                   <Plus className="h-4 w-4 mr-2" />
-                  Add Images
+                  Thêm ảnh
                 </Button>
               </div>
             </CardHeader>
@@ -579,16 +580,16 @@ const PersonDetails: React.FC = () => {
               ) : (
                 <div className="text-center py-12">
                   <Image className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No Face Images</h3>
-                  <p className="text-gray-600 mb-6">
-                    Add face images to enable recognition for this person. You can upload multiple images for better accuracy.
+                  <h3 className="text-lg font-medium text-emerald-900 mb-2">Chưa có ảnh khuôn mặt</h3>
+                  <p className="text-black mb-6">
+                    Thêm ảnh khuôn mặt để hệ thống nhận diện nhân sự này. Nên tải nhiều ảnh để tăng độ chính xác.
                   </p>
                   <Button 
                     onClick={() => setShowImageUpload(true)}
-                    className="bg-blue-600 hover:bg-blue-700"
+                    className="bg-gradient-to-r from-emerald-500 to-cyan-600 hover:from-emerald-600 hover:to-cyan-700 text-white"
                   >
                     <Upload className="w-4 h-4 mr-2" />
-                    Add First Image
+                    Thêm ảnh đầu tiên
                   </Button>
                 </div>
               )}
@@ -599,56 +600,55 @@ const PersonDetails: React.FC = () => {
           {person && (person.face_images_count || 0) > 0 && (
             <Card className="shadow-sm">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Brain className="w-5 h-5 text-purple-600" />
-                  <span>Face Recognition</span>
+                <CardTitle className="flex items-center space-x-2 text-cyan-800">
+                  <Brain className="w-5 h-5 text-cyan-600" />
+                  <span>Nhận diện khuôn mặt</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border">
                   <div className="flex-1">
-                    <h4 className="font-medium text-gray-900 mb-1">Face Embeddings</h4>
-                    <p className="text-sm text-gray-600">
-                      Face embeddings are required for stranger detection and recognition.
+                    <h4 className="font-medium text-emerald-900 mb-1">Dữ liệu nhận diện (embeddings)</h4>
+                    <p className="text-sm text-black">
+                      Embeddings giúp hệ thống nhận diện và phát hiện người lạ.
                     </p>
                     <div className="flex items-center space-x-4 mt-2">
-                      <span className="text-sm">
-                        <span className="font-medium text-blue-600">{person.face_images_count}</span> images uploaded
+                      <span className="text-sm text-black">
+                        <span className="font-medium text-cyan-700">{person.face_images_count}</span> ảnh đã tải lên
                       </span>
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-xs text-black border-cyan-300">
                         <Brain className="h-3 w-3 mr-1" />
-                        Embeddings: Processing required
+                        Embeddings: Cần xử lý
                       </Badge>
                     </div>
                   </div>
                   <Button 
                     onClick={handleRegenerateEmbeddings}
                     disabled={regeneratingEmbeddings}
-                    className="bg-purple-600 hover:bg-purple-700"
+                    className="bg-gradient-to-r from-emerald-500 to-cyan-600 hover:from-emerald-600 hover:to-cyan-700 text-white"
                   >
                     {regeneratingEmbeddings ? (
                       <>
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Processing...
+                        Đang xử lý...
                       </>
                     ) : (
                       <>
                         <Brain className="w-4 w-4 mr-2" />
-                        Generate Embeddings
+                        Tạo dữ liệu nhận diện
                       </>
                     )}
                   </Button>
                 </div>
                 
                 {/* ✅ Info about face recognition */}
-                <div className="text-sm text-gray-600 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                <div className="text-sm text-black bg-yellow-50 border border-yellow-200 rounded-lg p-3">
                   <div className="flex items-start space-x-2">
                     <AlertTriangle className="h-4 w-4 text-yellow-600 mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="font-medium text-yellow-800">Face Recognition Setup</p>
-                      <p className="mt-1">
-                        Click "Generate Embeddings" to process face images for recognition. 
-                        This enables the system to identify this person in camera streams and detect strangers.
+                      <p className="font-medium text-yellow-800">Thiết lập nhận diện khuôn mặt</p>
+                      <p className="mt-1 text-black">
+                        Nhấn "Tạo dữ liệu nhận diện" để hệ thống xử lý ảnh khuôn mặt. Sau khi hoàn tất, hệ thống sẽ nhận diện nhân sự này trên camera và phát hiện người lạ.
                       </p>
                     </div>
                   </div>
@@ -664,9 +664,9 @@ const PersonDetails: React.FC = () => {
       <Dialog open={showImageUpload} onOpenChange={setShowImageUpload}>
         <DialogContent className="max-w-[95vw] max-h-[90vh] w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl overflow-hidden">
           <DialogHeader>
-            <DialogTitle>Add Face Images</DialogTitle>
-            <DialogDescription>
-              Upload new face images for {person.name}. Make sure the images clearly show the person's face.
+            <DialogTitle className="text-cyan-800">Thêm ảnh khuôn mặt</DialogTitle>
+            <DialogDescription className="text-black">
+              Tải lên ảnh khuôn mặt mới cho {person.name}. Đảm bảo ảnh rõ nét, khuôn mặt nhìn rõ.
             </DialogDescription>
           </DialogHeader>
           <div className="overflow-y-auto max-h-[70vh]">
@@ -688,9 +688,9 @@ const PersonDetails: React.FC = () => {
       <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
         <DialogContent className="max-w-[95vw] max-h-[95vh] w-full sm:max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Face Image Preview</DialogTitle>
-            <DialogDescription>
-              Full size view of the face image
+            <DialogTitle className="text-cyan-800">Xem ảnh khuôn mặt</DialogTitle>
+            <DialogDescription className="text-black">
+              Xem ảnh khuôn mặt kích thước lớn
             </DialogDescription>
           </DialogHeader>
           {selectedImage && (
@@ -713,27 +713,27 @@ const PersonDetails: React.FC = () => {
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center space-x-2">
+            <AlertDialogTitle className="flex items-center space-x-2 text-emerald-900">
               <AlertTriangle className="h-5 w-5 text-red-600" />
-              <span>Delete Person</span>
+              <span>Xóa hồ sơ</span>
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-left space-y-2">
+            <AlertDialogDescription className="text-left space-y-2 text-black">
               <p>
-                Are you sure you want to delete <strong>"{person.name}"</strong>?
+                Bạn có chắc chắn muốn xóa <strong>"{person.name}"</strong>?
               </p>
               <p className="text-red-600 font-medium">
-                This action cannot be undone and will:
+                Thao tác này không thể hoàn tác và sẽ:
               </p>
               <ul className="list-disc list-inside space-y-1 text-sm">
-                <li>Remove all associated face images ({person.face_images_count || 0} images)</li>
-                <li>Delete all detection history for this person</li>
-                <li>Remove all metadata and associated data</li>
+                <li>Xóa toàn bộ ảnh khuôn mặt ({person.face_images_count || 0} ảnh)</li>
+                <li>Xóa toàn bộ lịch sử nhận diện liên quan</li>
+                <li>Xóa toàn bộ thông tin bổ sung</li>
               </ul>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={processingAction}>
-              Cancel
+              Hủy
             </AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleDelete} 
@@ -743,10 +743,10 @@ const PersonDetails: React.FC = () => {
               {processingAction ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                  Deleting...
+                  Đang xóa...
                 </>
               ) : (
-                'Delete Person'
+                'Xóa hồ sơ'
               )}
             </AlertDialogAction>
           </AlertDialogFooter>

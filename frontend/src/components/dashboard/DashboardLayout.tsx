@@ -102,19 +102,19 @@ const DashboardLayout: React.FC = () => {
     {
       id: '1',
       type: 'detection',
-      title: '🚨 Stranger Alert',
-      message: 'Unknown person detected at Main Gate',
-      timestamp: new Date(Date.now() - 2 * 60 * 1000), // 2 minutes ago
+      title: '🚨 Phát hiện người lạ',
+      message: 'Phát hiện người lạ tại Cổng chính',
+      timestamp: new Date(Date.now() - 2 * 60 * 1000),
       read: false,
       priority: 'high',
       metadata: {
-        camera_name: 'Main Gate',
+        camera_name: 'Cổng chính',
         camera_id: 'cam_001',
         confidence: 0.94
       },
       actions: [
         {
-          label: 'View',
+          label: 'Xem chi tiết',
           action: () => navigate('/detections/latest'),
           variant: 'default'
         }
@@ -123,18 +123,18 @@ const DashboardLayout: React.FC = () => {
     {
       id: '2',
       type: 'camera',
-      title: '📹 Camera Offline',
-      message: 'Parking Camera disconnected',
-      timestamp: new Date(Date.now() - 15 * 60 * 1000), // 15 minutes ago
+      title: '📹 Camera ngoại tuyến',
+      message: 'Camera bãi xe đã mất kết nối',
+      timestamp: new Date(Date.now() - 15 * 60 * 1000),
       read: false,
       priority: 'high',
       metadata: {
-        camera_name: 'Parking Camera',
+        camera_name: 'Bãi xe',
         camera_id: 'cam_003'
       },
       actions: [
         {
-          label: 'Check',
+          label: 'Kiểm tra',
           action: () => navigate('/cameras/cam_003'),
           variant: 'outline'
         }
@@ -143,9 +143,9 @@ const DashboardLayout: React.FC = () => {
     {
       id: '3',
       type: 'system',
-      title: '⚡ High CPU',
-      message: 'System resources at 85%',
-      timestamp: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
+      title: '⚡ Cảnh báo hệ thống',
+      message: 'Tài nguyên hệ thống đang sử dụng 85%',
+      timestamp: new Date(Date.now() - 30 * 60 * 1000),
       read: true,
       priority: 'medium',
       metadata: {
@@ -241,31 +241,31 @@ const DashboardLayout: React.FC = () => {
   // ✅ Enhanced navigation handlers
   const quickActions: QuickAction[] = [
     {
-      title: 'Add Camera',
+      title: 'Thêm camera',
       icon: Camera,
-      action: () => { navigate('/app/cameras/new'); toast.success('Opening Add Camera'); },
-      color: 'from-blue-500 to-blue-600',
+      action: () => { navigate('/app/cameras/new'); toast.success('Mở giao diện thêm camera'); },
+      color: 'from-teal-500 to-emerald-500',
       shortcut: '⌘+C'
     },
     {
-      title: 'Add Person',
+      title: 'Thêm người',
       icon: Users,
-      action: () => { navigate('/app/persons/new'); toast.success('Opening Add Person'); },
-      color: 'from-emerald-500 to-emerald-600',
+      action: () => { navigate('/app/persons/new'); toast.success('Mở giao diện thêm người'); },
+      color: 'from-emerald-500 to-teal-500',
       shortcut: '⌘+P'
     },
     {
-      title: 'Live Monitor',
+      title: 'Xem trực tiếp',
       icon: Activity,
-      action: () => { navigate('/app/live'); toast.success('Opening Live Monitor'); },
-      color: 'from-purple-500 to-purple-600',
+      action: () => { navigate('/app/live'); toast.success('Mở giám sát trực tiếp'); },
+      color: 'from-cyan-500 to-teal-500',
       shortcut: '⌘+L'
     },
     {
-      title: 'Analytics',
+      title: 'Phân tích',
       icon: BarChart3,
-      action: () => { navigate('/app/analytics'); toast.success('Opening Analytics'); },
-      color: 'from-orange-500 to-orange-600',
+      action: () => { navigate('/app/analytics'); toast.success('Mở giao diện phân tích'); },
+      color: 'from-emerald-400 to-cyan-500',
       shortcut: '⌘+A'
     }
   ];
@@ -312,20 +312,20 @@ const DashboardLayout: React.FC = () => {
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case 'detection': return <Eye className="w-4 h-4 text-purple-600" />;
-      case 'camera': return <Camera className="w-4 h-4 text-blue-600" />;
-      case 'system': return <Settings className="w-4 h-4 text-gray-600" />;
-      case 'security': return <Shield className="w-4 h-4 text-red-600" />;
-      default: return <Bell className="w-4 h-4 text-gray-600" />;
+      case 'detection': return <Eye className="w-4 h-4 text-teal-600" />;
+      case 'camera': return <Camera className="w-4 h-4 text-cyan-600" />;
+      case 'system': return <Settings className="w-4 h-4 text-emerald-600" />;
+      case 'security': return <Shield className="w-4 h-4 text-rose-600" />;
+      default: return <Bell className="w-4 h-4 text-emerald-600" />;
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'critical': return 'border-l-red-500 bg-red-50';
-      case 'high': return 'border-l-orange-500 bg-orange-50';
-      case 'medium': return 'border-l-yellow-500 bg-yellow-50';
-      case 'low': return 'border-l-blue-500 bg-blue-50';
+      case 'critical': return 'border-l-rose-500 bg-rose-50';
+      case 'high': return 'border-l-emerald-500 bg-emerald-50';
+      case 'medium': return 'border-l-cyan-500 bg-cyan-50';
+      case 'low': return 'border-l-teal-500 bg-teal-50';
       default: return 'border-l-gray-500 bg-gray-50';
     }
   };
@@ -336,11 +336,10 @@ const DashboardLayout: React.FC = () => {
     const minutes = Math.floor(diff / 60000);
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
-
-    if (days > 0) return `${days}d ago`;
-    if (hours > 0) return `${hours}h ago`;
-    if (minutes > 0) return `${minutes}m ago`;
-    return 'Just now';
+    if (days > 0) return `${days} ngày trước`;
+    if (hours > 0) return `${hours} giờ trước`;
+    if (minutes > 0) return `${minutes} phút trước`;
+    return 'Vừa xong';
   };
 
   const handleSearch = (query: string) => {
@@ -388,18 +387,18 @@ const DashboardLayout: React.FC = () => {
   const getPageTitle = (): string => {
     const path = location.pathname;
     const titles: Record<string, string> = {
-      '/dashboard': 'Dashboard Overview',
-      '/cameras': 'Camera Management',
-      '/cameras/new': 'Add New Camera',
-      '/cameras/live': 'Live Monitoring',
-      '/persons': 'Person Management',
-      '/persons/new': 'Add New Person',
-      '/detections': 'Detection Logs',
-      '/analytics': 'Analytics & Reports',
-      '/settings': 'System Settings',
-      '/profile': 'User Profile'
+      '/dashboard': 'Tổng quan',
+      '/cameras': 'Quản lý camera',
+      '/cameras/new': 'Thêm camera mới',
+      '/cameras/live': 'Giám sát trực tiếp',
+      '/persons': 'Quản lý người',
+      '/persons/new': 'Thêm người mới',
+      '/detections': 'Lịch sử nhận diện',
+      '/analytics': 'Phân tích & Báo cáo',
+      '/settings': 'Cài đặt hệ thống',
+      '/profile': 'Thông tin cá nhân'
     };
-    return titles[path] || 'SafeFace Platform';
+    return titles[path] || 'SafeFace Nền tảng bảo mật';
   };
 
 
@@ -407,7 +406,7 @@ const DashboardLayout: React.FC = () => {
     <div 
       className="min-h-screen dashboard-layout"
       style={{
-        background: 'linear-gradient(135deg, #f8fafc 0%, #ffffff 30%, #f1f5f9 70%, #e0f2fe 100%)'
+        background: 'linear-gradient(135deg, #e0fdf2 0%, #ccfbf1 30%, #a7f3d0 70%, #99f6e4 100%)'
       }}
     >
       <div className="flex">
@@ -436,9 +435,9 @@ const DashboardLayout: React.FC = () => {
           <header 
             className="border-b backdrop-blur-xl sticky top-0 z-30"
             style={{
-              background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 50%, rgba(224, 242, 254, 0.8) 100%)',
-              borderBottom: '1px solid rgba(226, 232, 240, 0.8)',
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)'
+              background: 'linear-gradient(135deg, rgba(236, 254, 245, 0.95) 0%, rgba(207, 250, 254, 0.9) 50%, rgba(52, 211, 153, 0.8) 100%)',
+              borderBottom: '1px solid #99f6e4',
+              boxShadow: '0 4px 6px -1px rgba(16, 185, 129, 0.08), 0 2px 4px -1px rgba(6, 182, 212, 0.03)'
             }}
           >
             {/* Top Bar */}
@@ -459,7 +458,7 @@ const DashboardLayout: React.FC = () => {
                   {/* Enhanced Title Section */}
                   <div className="space-y-1">
                     <div className="flex items-center space-x-3">
-                      <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-slate-800 bg-clip-text text-transparent">
+                      <h1 className="text-2xl font-bold bg-gradient-to-r from-teal-700 via-emerald-600 to-cyan-600 bg-clip-text text-transparent">
                         {getPageTitle()}
                       </h1>
                       <div className="flex items-center space-x-2">
@@ -467,12 +466,12 @@ const DashboardLayout: React.FC = () => {
                           <Badge 
                             className="shadow-sm border-0 animate-pulse"
                             style={{
-                              background: 'linear-gradient(135deg, #dcfdf7 0%, #a7f3d0 100%)',
+                              background: 'linear-gradient(135deg, #6ee7b7 0%, #14b8a6 100%)',
                               color: '#065f46'
                             }}
                           >
                             <Wifi className="w-3 h-3 mr-1" />
-                            Live
+                            Trực tuyến
                           </Badge>
                         ) : (
                           <Badge 
@@ -483,7 +482,7 @@ const DashboardLayout: React.FC = () => {
                             }}
                           >
                             <WifiOff className="w-3 h-3 mr-1" />
-                            Offline
+                            Ngoại tuyến
                           </Badge>
                         )}
                       </div>
@@ -510,7 +509,7 @@ const DashboardLayout: React.FC = () => {
                   <div className="relative w-full">
                     <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
                     <Input
-                      placeholder="Search anything... (⌘+K)"
+                      placeholder="Tìm kiếm... (⌘+K)"
                       className="pl-12 pr-4 py-3 text-lg border-slate-200/80 rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400/50 shadow-sm transition-all duration-300"
                       style={{
                         background: 'rgba(255, 255, 255, 0.9)',
@@ -543,13 +542,13 @@ const DashboardLayout: React.FC = () => {
                         }}
                       >
                         <Plus className="w-4 h-4 mr-2" />
-                        Quick Add
+                        Thêm nhanh
                         <ChevronDown className="w-3 h-3 ml-2" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-64 p-2">
                       <DropdownMenuLabel className="text-xs font-semibold text-slate-500 uppercase tracking-wider px-2 py-2">
-                        Quick Actions
+                        Hành động nhanh
                       </DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       {quickActions.map((action, index) => {
@@ -588,7 +587,7 @@ const DashboardLayout: React.FC = () => {
                     className="hidden md:flex"
                   >
                     <Activity className="w-4 h-4 mr-2" />
-                    Test WS
+                    Kiểm tra WS
                   </Button>
 
                   {/* System Metrics */}
@@ -665,7 +664,7 @@ const DashboardLayout: React.FC = () => {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
                             <Bell className="w-4 h-4 text-blue-600" />
-                            <h3 className="font-semibold text-slate-900">Alerts</h3>
+                            <h3 className="font-semibold text-emerald-700">Thông báo</h3>
                             {unreadCount > 0 && (
                               <Badge variant="destructive" className="text-xs px-2">
                                 {unreadCount}
@@ -679,7 +678,7 @@ const DashboardLayout: React.FC = () => {
                               onClick={markAllAsRead}
                               className="text-xs px-2 py-1 h-auto text-blue-600 hover:text-blue-700"
                             >
-                              Clear all
+                              Đánh dấu đã đọc
                             </Button>
                           )}
                         </div>
@@ -690,8 +689,8 @@ const DashboardLayout: React.FC = () => {
                         {notifications.length === 0 ? (
                           <div className="p-6 text-center">
                             <CheckCircle className="w-8 h-8 text-emerald-500 mx-auto mb-2" />
-                            <p className="text-slate-600 text-sm font-medium">All Clear!</p>
-                            <p className="text-slate-400 text-xs">No alerts at the moment</p>
+                            <p className="text-emerald-700 text-sm font-medium">Không có cảnh báo nào!</p>
+                            <p className="text-emerald-400 text-xs">Hệ thống đang an toàn</p>
                           </div>
                         ) : (
                           <div className="p-1">
@@ -783,7 +782,7 @@ const DashboardLayout: React.FC = () => {
                           className="w-full text-xs text-slate-600 hover:text-slate-700"
                           onClick={() => navigate('/app/detections')} // ✅ FIXED: Add /app prefix
                         >
-                          View detailed logs
+                          Xem tất cả thông báo
                         </Button>
                         </div>
                       )}
@@ -804,7 +803,7 @@ const DashboardLayout: React.FC = () => {
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>Toggle Fullscreen</p>
+                        <p>Toàn màn hình</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -823,7 +822,7 @@ const DashboardLayout: React.FC = () => {
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>Settings</p>
+                        <p>Cài đặt</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -846,10 +845,10 @@ const DashboardLayout: React.FC = () => {
                         </div>
                         <div className="hidden md:block">
                           <p className="text-sm font-semibold text-slate-900 mb-0.5">
-                            {user?.full_name || user?.username || 'User'}
+                            {user?.full_name || user?.username || 'Người dùng'}
                           </p>
                           <p className="text-xs text-slate-600">
-                            {user?.email || 'user@example.com'}
+                            {user?.email || 'user@email.com'}
                           </p>
                         </div>
                         <ChevronDown className="w-4 h-4 text-slate-400 transition-transform duration-200 hover:rotate-180" />
@@ -905,7 +904,7 @@ const DashboardLayout: React.FC = () => {
                                 color: '#1e40af'
                               }}
                             >
-                              Administrator
+                              Quản trị viên
                             </Badge>
                           </div>
                         </div>
@@ -926,8 +925,8 @@ const DashboardLayout: React.FC = () => {
                             <User className="w-5 h-5 text-slate-600" />
                           </div>
                           <div>
-                            <span className="font-medium text-slate-900">Profile Settings</span>
-                            <p className="text-xs text-slate-500 mt-0.5">Manage your account</p>
+                            <span className="font-medium text-emerald-700">Thông tin cá nhân</span>
+                            <p className="text-xs text-emerald-500 mt-0.5">Quản lý tài khoản</p>
                           </div>
                         </DropdownMenuItem>
                         
@@ -944,8 +943,8 @@ const DashboardLayout: React.FC = () => {
                             <Settings className="w-5 h-5 text-slate-600" />
                           </div>
                           <div>
-                            <span className="font-medium text-slate-900">Preferences</span>
-                            <p className="text-xs text-slate-500 mt-0.5">Customize settings</p>
+                            <span className="font-medium text-emerald-700">Tùy chỉnh</span>
+                            <p className="text-xs text-emerald-500 mt-0.5">Cài đặt cá nhân</p>
                           </div>
                         </DropdownMenuItem>
                         
@@ -962,8 +961,8 @@ const DashboardLayout: React.FC = () => {
                             <HelpCircle className="w-5 h-5 text-slate-600" />
                           </div>
                           <div>
-                            <span className="font-medium text-slate-900">Help & Support</span>
-                            <p className="text-xs text-slate-500 mt-0.5">Get assistance</p>
+                            <span className="font-medium text-emerald-700">Trợ giúp & Hỗ trợ</span>
+                            <p className="text-xs text-emerald-500 mt-0.5">Liên hệ hỗ trợ</p>
                           </div>
                         </DropdownMenuItem>
                       </div>
@@ -984,8 +983,8 @@ const DashboardLayout: React.FC = () => {
                             <LogOut className="w-5 h-5 text-red-600" />
                           </div>
                           <div>
-                            <span className="font-medium text-red-600">Sign Out</span>
-                            <p className="text-xs text-red-400 mt-0.5">End your session</p>
+                            <span className="font-medium text-red-600">Đăng xuất</span>
+                            <p className="text-xs text-red-400 mt-0.5">Kết thúc phiên làm việc</p>
                           </div>
                         </DropdownMenuItem>
                       </div>
@@ -1000,7 +999,7 @@ const DashboardLayout: React.FC = () => {
           <div 
             className="flex-1 min-h-[calc(100vh-80px)] relative"
             style={{
-              background: 'linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%)'
+              background: 'linear-gradient(135deg, #e0fdf2 0%, #ccfbf1 50%, #a7f3d0 100%)'
             }}
           >
             {/* Background Pattern */}

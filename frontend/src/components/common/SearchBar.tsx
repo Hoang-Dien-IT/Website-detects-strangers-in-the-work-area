@@ -75,38 +75,38 @@ interface SearchBarProps {
 
 // Face Recognition specific quick searches
 const FACE_RECOGNITION_QUICK_SEARCHES = [
-  { 
-    id: 'recent-detections', 
-    text: 'Recent detections', 
-    category: 'detection',
-    icon: <Eye className="h-4 w-4" />,
-    preset: true 
+  {
+    id: 'recent-detections',
+    text: 'Phát hiện gần đây',
+    category: 'Nhận diện',
+    icon: <Eye className="h-4 w-4 text-teal-500" />,
+    preset: true
   },
-  { 
-    id: 'unknown-persons', 
-    text: 'Unknown persons', 
-    category: 'detection',
-    icon: <AlertTriangle className="h-4 w-4" />,
-    preset: true 
+  {
+    id: 'unknown-persons',
+    text: 'Người lạ',
+    category: 'Nhận diện',
+    icon: <AlertTriangle className="h-4 w-4 text-emerald-500" />,
+    preset: true
   },
-  { 
-    id: 'offline-cameras', 
-    text: 'Offline cameras', 
-    category: 'camera',
-    icon: <WifiOff className="h-4 w-4" />,
-    preset: true 
+  {
+    id: 'offline-cameras',
+    text: 'Camera ngoại tuyến',
+    category: 'Camera',
+    icon: <WifiOff className="h-4 w-4 text-cyan-500" />,
+    preset: true
   },
-  { 
-    id: 'active-alerts', 
-    text: 'Active alerts', 
-    category: 'detection',
-    icon: <Bell className="h-4 w-4" />,
-    preset: true 
+  {
+    id: 'active-alerts',
+    text: 'Cảnh báo đang hoạt động',
+    category: 'Nhận diện',
+    icon: <Bell className="h-4 w-4 text-teal-400" />,
+    preset: true
   }
 ];
 
 const SearchBar: React.FC<SearchBarProps> = ({
-  placeholder = "Search...",
+  placeholder = "Tìm kiếm...",
   value = "",
   onSearch,
   onClear,
@@ -138,13 +138,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
   // Highlight search matches in text
   const highlightMatch = useCallback((text: string, query: string) => {
     if (!query.trim()) return text;
-    
     const regex = new RegExp(`(${query})`, 'gi');
     const parts = text.split(regex);
-    
     return parts.map((part, index) =>
       regex.test(part) ? (
-        <mark key={index} className="bg-yellow-200 dark:bg-yellow-900 text-gray-900 dark:text-yellow-100 px-0.5 rounded">
+        <mark key={index} className="bg-emerald-200 dark:bg-emerald-900 text-emerald-900 dark:text-emerald-100 px-0.5 rounded">
           {part}
         </mark>
       ) : part
@@ -155,25 +153,25 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const getCategoryIcon = useCallback((category: string) => {
     switch (category.toLowerCase()) {
       case 'camera':
-        return <Camera className="h-4 w-4 text-blue-500" />;
+        return <Camera className="h-4 w-4 text-cyan-500" />;
       case 'person':
       case 'user':
       case 'known_person':
-        return <Users className="h-4 w-4 text-green-500" />;
+        return <Users className="h-4 w-4 text-emerald-500" />;
       case 'detection':
       case 'detection_log':
-        return <Eye className="h-4 w-4 text-purple-500" />;
+        return <Eye className="h-4 w-4 text-teal-500" />;
       case 'unknown':
       case 'stranger':
-        return <AlertTriangle className="h-4 w-4 text-red-500" />;
+        return <AlertTriangle className="h-4 w-4 text-emerald-500" />;
       case 'setting':
       case 'settings':
-        return <Settings className="h-4 w-4 text-gray-500" />;
+        return <Settings className="h-4 w-4 text-gray-400" />;
       case 'alert':
       case 'notification':
-        return <Bell className="h-4 w-4 text-orange-500" />;
+        return <Bell className="h-4 w-4 text-teal-400" />;
       case 'analytics':
-        return <BarChart3 className="h-4 w-4 text-indigo-500" />;
+        return <BarChart3 className="h-4 w-4 text-cyan-500" />;
       default:
         return <Search className="h-4 w-4 text-gray-400" />;
     }
@@ -367,32 +365,32 @@ const SearchBar: React.FC<SearchBarProps> = ({
     <button
       key={suggestion.id}
       className={cn(
-        "w-full px-3 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center space-x-3 border-b border-gray-100 dark:border-gray-700 last:border-b-0",
-        selectedSuggestionIndex === index && "bg-blue-50 dark:bg-blue-900"
+        "w-full px-3 py-2 text-left hover:bg-emerald-50 dark:hover:bg-emerald-900 flex items-center space-x-3 border-b border-emerald-100 dark:border-emerald-700 last:border-b-0",
+        selectedSuggestionIndex === index && "bg-teal-50 dark:bg-teal-900"
       )}
       onClick={() => handleSearch(suggestion.text)}
     >
-      <div className="text-gray-400 dark:text-gray-500">
+  <div className="text-emerald-400 dark:text-emerald-500">
         {suggestion.icon || getCategoryIcon(suggestion.category)}
       </div>
       <div className="flex-1 min-w-0">
-        <div className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+  <div className="text-sm font-medium text-emerald-900 dark:text-emerald-100 truncate">
           {highlightMatch(suggestion.text, query)}
         </div>
-        <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
+        <div className="flex items-center space-x-2 text-xs text-emerald-700 dark:text-emerald-200">
           <span>{suggestion.category}</span>
           {suggestion.confidence && (
             <>
               <span>•</span>
-              <span className="text-green-600 dark:text-green-400">
-                {(suggestion.confidence * 100).toFixed(1)}% match
+              <span className="text-emerald-600 dark:text-emerald-400">
+                {(suggestion.confidence * 100).toFixed(1)}% khớp
               </span>
             </>
           )}
           {suggestion.lastSeen && (
             <>
               <span>•</span>
-              <span>Last seen: {suggestion.lastSeen}</span>
+              <span>Gần nhất: {suggestion.lastSeen}</span>
             </>
           )}
         </div>
@@ -400,9 +398,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
       {suggestion.detectionType && (
         <Badge 
           variant={suggestion.detectionType === 'known' ? 'default' : 'destructive'}
-          className="text-xs"
+          className={cn("text-xs", suggestion.detectionType === 'known' ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white')}
         >
-          {suggestion.detectionType}
+          {suggestion.detectionType === 'known' ? 'Đã biết' : 'Người lạ'}
         </Badge>
       )}
     </button>
@@ -530,13 +528,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
       {/* Dropdown with Suggestions and Recent Searches */}
       {showDropdown && showSuggestions && (
-        <Card className="absolute top-full left-0 right-0 mt-1 z-50 shadow-lg border dark:border-gray-700">
-          <CardContent className="p-0 max-h-80 overflow-y-auto">
+        <Card className="absolute top-full left-0 right-0 mt-1 z-50 shadow-lg border border-emerald-200 dark:border-emerald-700">
+          <CardContent className="p-0 max-h-80 overflow-y-auto bg-white dark:bg-slate-900">
             {/* Suggestions */}
             {filteredSuggestions.length > 0 && (
               <div>
-                <div className="px-3 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider border-b dark:border-gray-700">
-                  Suggestions
+                <div className="px-3 py-2 text-xs font-semibold text-emerald-700 dark:text-emerald-200 uppercase tracking-wider border-b border-emerald-100 dark:border-emerald-700">
+                  Gợi ý tìm kiếm
                 </div>
                 {filteredSuggestions.map((suggestion, index) => 
                   renderSuggestion(suggestion as FaceRecognitionSearchSuggestion, index)
@@ -548,8 +546,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
             {showQuickSearches && query.trim() === "" && (
               <div>
                 {filteredSuggestions.length > 0 && <div className="border-t dark:border-gray-700" />}
-                <div className="px-3 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider border-b dark:border-gray-700">
-                  Quick Searches
+                <div className="px-3 py-2 text-xs font-semibold text-emerald-700 dark:text-emerald-200 uppercase tracking-wider border-b border-emerald-100 dark:border-emerald-700">
+                  Tìm nhanh
                 </div>
                 {FACE_RECOGNITION_QUICK_SEARCHES.map((quickSearch, index) => (
                   <button
@@ -564,10 +562,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
                       {quickSearch.icon}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                      <div className="text-sm font-medium text-emerald-900 dark:text-emerald-100 truncate">
                         {quickSearch.text}
                       </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">{quickSearch.category}</div>
+                      <div className="text-xs text-emerald-700 dark:text-emerald-200">{quickSearch.category}</div>
                     </div>
                   </button>
                 ))}
@@ -580,8 +578,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 {(filteredSuggestions.length > 0 || 
                   (showQuickSearches && FACE_RECOGNITION_QUICK_SEARCHES.length > 0)) && 
                   <div className="border-t dark:border-gray-700" />}
-                <div className="px-3 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider border-b dark:border-gray-700">
-                  Recent Searches
+                <div className="px-3 py-2 text-xs font-semibold text-emerald-700 dark:text-emerald-200 uppercase tracking-wider border-b border-emerald-100 dark:border-emerald-700">
+                  Tìm kiếm gần đây
                 </div>
                 {recentSearches.slice(0, 5).map((recentSearch, index) => {
                   const adjustedIndex = filteredSuggestions.length + 
@@ -598,8 +596,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
                         handleSearch(recentSearch);
                       }}
                     >
-                      <Clock className="h-4 w-4 text-gray-400 dark:text-gray-500" />
-                      <span className="text-sm text-gray-900 dark:text-gray-100 truncate">{recentSearch}</span>
+                      <Clock className="h-4 w-4 text-emerald-400 dark:text-emerald-500" />
+                      <span className="text-sm text-emerald-900 dark:text-emerald-100 truncate">{recentSearch}</span>
                     </button>
                   );
                 })}
@@ -608,19 +606,19 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
             {/* No Results */}
             {filteredSuggestions.length === 0 && recentSearches.length === 0 && query.trim() && (
-              <div className="px-3 py-8 text-center text-gray-500 dark:text-gray-400">
-                <Search className="h-8 w-8 mx-auto mb-2 text-gray-300 dark:text-gray-600" />
-                <p className="text-sm">No suggestions found</p>
-                <p className="text-xs mt-1">Try different keywords or check your spelling</p>
+              <div className="px-3 py-8 text-center text-emerald-700 dark:text-emerald-200">
+                <Search className="h-8 w-8 mx-auto mb-2 text-emerald-200 dark:text-emerald-700" />
+                <p className="text-sm">Không tìm thấy kết quả phù hợp</p>
+                <p className="text-xs mt-1">Hãy thử từ khóa khác hoặc kiểm tra lại chính tả</p>
               </div>
             )}
 
             {/* Empty state for no input */}
             {filteredSuggestions.length === 0 && recentSearches.length === 0 && !query.trim() && !showQuickSearches && (
-              <div className="px-3 py-8 text-center text-gray-500 dark:text-gray-400">
-                <Search className="h-8 w-8 mx-auto mb-2 text-gray-300 dark:text-gray-600" />
-                <p className="text-sm">Start typing to search</p>
-                <p className="text-xs mt-1">Search cameras, persons, detections and more</p>
+              <div className="px-3 py-8 text-center text-emerald-700 dark:text-emerald-200">
+                <Search className="h-8 w-8 mx-auto mb-2 text-emerald-200 dark:text-emerald-700" />
+                <p className="text-sm">Nhập từ khóa để tìm kiếm</p>
+                <p className="text-xs mt-1">Tìm kiếm camera, người, nhận diện và nhiều hơn nữa</p>
               </div>
             )}
           </CardContent>
@@ -637,19 +635,19 @@ export const GlobalSearchBar: React.FC<{
   recentSearches?: string[];
 }> = ({ onSearch, suggestions, recentSearches }) => (
   <SearchBar
-    placeholder="Search cameras, persons, detections..."
+  placeholder="Tìm kiếm camera, người, nhận diện..."
     onSearch={onSearch}
     suggestions={suggestions}
     recentSearches={recentSearches}
     enableVoiceSearch={true}
     showQuickSearches={true}
     availableFilters={[
-      { id: 'camera', label: 'Cameras', value: 'camera', category: 'Content' },
-      { id: 'person', label: 'Known Persons', value: 'person', category: 'Content' },
-      { id: 'detection', label: 'Detections', value: 'detection', category: 'Content' },
-      { id: 'unknown', label: 'Unknown Persons', value: 'unknown', category: 'Detection Type' },
-      { id: 'today', label: 'Today', value: 'today', category: 'Time' },
-      { id: 'this_week', label: 'This Week', value: 'this_week', category: 'Time' }
+      { id: 'camera', label: 'Camera', value: 'camera', category: 'Nội dung' },
+      { id: 'person', label: 'Người đã biết', value: 'person', category: 'Nội dung' },
+      { id: 'detection', label: 'Nhận diện', value: 'detection', category: 'Nội dung' },
+      { id: 'unknown', label: 'Người lạ', value: 'unknown', category: 'Loại nhận diện' },
+      { id: 'today', label: 'Hôm nay', value: 'today', category: 'Thời gian' },
+      { id: 'this_week', label: 'Tuần này', value: 'this_week', category: 'Thời gian' }
     ]}
   />
 );
@@ -659,16 +657,16 @@ export const DetectionSearchBar: React.FC<{
   suggestions?: SearchSuggestion[];
 }> = ({ onSearch, suggestions }) => (
   <SearchBar
-    placeholder="Search detections by person name, camera..."
+  placeholder="Tìm kiếm nhận diện theo tên người, camera..."
     onSearch={onSearch}
     suggestions={suggestions}
     availableFilters={[
-      { id: 'known', label: 'Known Persons', value: 'known', category: 'Detection Type' },
-      { id: 'unknown', label: 'Unknown Persons', value: 'unknown', category: 'Detection Type' },
-      { id: 'high_confidence', label: 'High Confidence', value: 'high_confidence', category: 'Confidence' },
-      { id: 'today', label: 'Today', value: 'today', category: 'Time' },
-      { id: 'yesterday', label: 'Yesterday', value: 'yesterday', category: 'Time' },
-      { id: 'this_week', label: 'This Week', value: 'this_week', category: 'Time' }
+      { id: 'known', label: 'Người đã biết', value: 'known', category: 'Loại nhận diện' },
+      { id: 'unknown', label: 'Người lạ', value: 'unknown', category: 'Loại nhận diện' },
+      { id: 'high_confidence', label: 'Độ chính xác cao', value: 'high_confidence', category: 'Độ tin cậy' },
+      { id: 'today', label: 'Hôm nay', value: 'today', category: 'Thời gian' },
+      { id: 'yesterday', label: 'Hôm qua', value: 'yesterday', category: 'Thời gian' },
+      { id: 'this_week', label: 'Tuần này', value: 'this_week', category: 'Thời gian' }
     ]}
   />
 );
@@ -678,13 +676,13 @@ export const PersonSearchBar: React.FC<{
   suggestions?: SearchSuggestion[];
 }> = ({ onSearch, suggestions }) => (
   <SearchBar
-    placeholder="Search known persons..."
+  placeholder="Tìm kiếm người đã biết..."
     onSearch={onSearch}
     suggestions={suggestions}
     availableFilters={[
-      { id: 'recently_added', label: 'Recently Added', value: 'recently_added', category: 'Time' },
-      { id: 'frequently_detected', label: 'Frequently Detected', value: 'frequently_detected', category: 'Activity' },
-      { id: 'multiple_images', label: 'Multiple Images', value: 'multiple_images', category: 'Data Quality' }
+      { id: 'recently_added', label: 'Thêm gần đây', value: 'recently_added', category: 'Thời gian' },
+      { id: 'frequently_detected', label: 'Phát hiện thường xuyên', value: 'frequently_detected', category: 'Hoạt động' },
+      { id: 'multiple_images', label: 'Nhiều ảnh', value: 'multiple_images', category: 'Chất lượng dữ liệu' }
     ]}
   />
 );
@@ -694,14 +692,14 @@ export const CameraSearchBar: React.FC<{
   suggestions?: SearchSuggestion[];
 }> = ({ onSearch, suggestions }) => (
   <SearchBar
-    placeholder="Search cameras..."
+  placeholder="Tìm kiếm camera..."
     onSearch={onSearch}
     suggestions={suggestions}
     availableFilters={[
-      { id: 'online', label: 'Online', value: 'online', category: 'Status' },
-      { id: 'offline', label: 'Offline', value: 'offline', category: 'Status' },
-      { id: 'streaming', label: 'Streaming', value: 'streaming', category: 'Status' },
-      { id: 'detection_enabled', label: 'Detection Enabled', value: 'detection_enabled', category: 'Features' }
+      { id: 'online', label: 'Đang hoạt động', value: 'online', category: 'Trạng thái' },
+      { id: 'offline', label: 'Ngoại tuyến', value: 'offline', category: 'Trạng thái' },
+      { id: 'streaming', label: 'Đang phát', value: 'streaming', category: 'Trạng thái' },
+      { id: 'detection_enabled', label: 'Bật nhận diện', value: 'detection_enabled', category: 'Tính năng' }
     ]}
   />
 );

@@ -139,11 +139,10 @@ const DetectionList: React.FC<DetectionListProps> = ({
     const now = new Date();
     const detectionTime = new Date(timestamp);
     const diffInMinutes = Math.floor((now.getTime() - detectionTime.getTime()) / (1000 * 60));
-    
-    if (diffInMinutes < 1) return 'Just now';
-    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
-    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
-    return `${Math.floor(diffInMinutes / 1440)}d ago`;
+    if (diffInMinutes < 1) return 'Vừa xong';
+    if (diffInMinutes < 60) return `${diffInMinutes} phút trước`;
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)} giờ trước`;
+    return `${Math.floor(diffInMinutes / 1440)} ngày trước`;
   };
 
   const formatConfidence = (confidence: number) => {
@@ -172,8 +171,8 @@ const DetectionList: React.FC<DetectionListProps> = ({
       <CardHeader>
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center space-y-4 lg:space-y-0">
           <CardTitle className="flex items-center space-x-2">
-            <Eye className="h-5 w-5" />
-            <span>{title} ({pagination.total.toLocaleString()})</span>
+            <Eye className="h-5 w-5 text-cyan-600" />
+            <span className="text-cyan-700 font-bold">{title === 'Detection Logs' ? 'Lịch sử nhận diện' : title} ({pagination.total.toLocaleString()})</span>
           </CardTitle>
           
           <div className="flex items-center space-x-2">
@@ -183,10 +182,11 @@ const DetectionList: React.FC<DetectionListProps> = ({
                   onClick={loadDetections} 
                   variant="outline" 
                   size="sm"
+                  className="border-cyan-400 text-cyan-700"
                   disabled={refreshing}
                 >
                   <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-                  Refresh
+                  Làm mới
                 </Button>
               </>
             )}
@@ -199,10 +199,10 @@ const DetectionList: React.FC<DetectionListProps> = ({
           <div className="relative flex-1">
             <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             <Input
-              placeholder="Search detections..."
+              placeholder="Tìm kiếm nhận diện..."
               value={searchTerm}
               onChange={(e) => handleSearch(e.target.value)}
-              className="pl-10"
+              className="pl-10 border-cyan-300 focus:border-emerald-400"
             />
           </div>
           
@@ -212,12 +212,12 @@ const DetectionList: React.FC<DetectionListProps> = ({
             onValueChange={(value) => handleFilterChange('detection_type', value === 'all_types' ? undefined : value)}
           >
             <SelectTrigger className="lg:w-40">
-              <SelectValue placeholder="All Types" />
+              <SelectValue placeholder="Tất cả loại" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all_types">All Types</SelectItem>
-              <SelectItem value="known_person">Known Persons</SelectItem>
-              <SelectItem value="stranger">Strangers</SelectItem>
+              <SelectItem value="all_types">Tất cả loại</SelectItem>
+              <SelectItem value="known_person">Người đã đăng ký</SelectItem>
+              <SelectItem value="stranger">Người lạ</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -237,8 +237,8 @@ const DetectionList: React.FC<DetectionListProps> = ({
                   {/* Avatar */}
                   <Avatar className="h-12 w-12">
                     <AvatarImage src={detection.image_url} alt="Detection" />
-                    <AvatarFallback className={`${
-                      detection.detection_type === 'stranger' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'
+                    <AvatarFallback className={`$
+                      detection.detection_type === 'stranger' ? 'bg-rose-100 text-rose-600' : 'bg-emerald-100 text-emerald-600'
                     }`}>
                       <DetectionIcon className="h-6 w-6" />
                     </AvatarFallback>
@@ -248,17 +248,17 @@ const DetectionList: React.FC<DetectionListProps> = ({
                   <div className="flex-1 space-y-1 min-w-0">
                     <div className="flex items-center space-x-2 flex-wrap">
                       <p className="font-medium truncate">
-                        {detection.detection_type === 'stranger' ? 'Unknown Person' : detection.person_name}
+                        {detection.detection_type === 'stranger' ? 'Người lạ' : detection.person_name}
                       </p>
                       <Badge variant={getDetectionTypeColor(detection.detection_type)} className="shrink-0">
-                        {detection.detection_type === 'stranger' ? 'Stranger' : 'Known'}
+                        {detection.detection_type === 'stranger' ? 'Người lạ' : 'Đã nhận diện'}
                       </Badge>
-                      <Badge variant="outline" className="shrink-0">
+                      <Badge variant="outline" className="shrink-0 border-emerald-200 text-emerald-700">
                         {formatConfidence(detection.confidence)}
                       </Badge>
                       {detection.similarity_score && (
-                        <Badge variant="secondary" className="shrink-0">
-                          Match: {formatConfidence(detection.similarity_score)}
+                        <Badge variant="secondary" className="shrink-0 bg-cyan-100 text-cyan-700">
+                          Độ trùng: {formatConfidence(detection.similarity_score)}
                         </Badge>
                       )}
                     </div>
@@ -266,7 +266,7 @@ const DetectionList: React.FC<DetectionListProps> = ({
                     <div className="flex items-center space-x-4 text-sm text-gray-600 flex-wrap">
                       <div className="flex items-center shrink-0">
                         <Camera className="h-4 w-4 mr-1" />
-                        <span className="truncate">{detection.camera_name || 'Unknown Camera'}</span>
+                        <span className="truncate">{detection.camera_name || 'Không rõ camera'}</span>
                       </div>
                       
                       <div className="flex items-center shrink-0">
@@ -301,11 +301,11 @@ const DetectionList: React.FC<DetectionListProps> = ({
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => onViewDetails?.(detection)}>
                             <Eye className="h-4 w-4 mr-2" />
-                            View Details
+                            Xem chi tiết
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => window.open(detection.image_url, '_blank')}>
                             <ExternalLink className="h-4 w-4 mr-2" />
-                            Open Image
+                            Mở ảnh lớn
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem 
@@ -313,7 +313,7 @@ const DetectionList: React.FC<DetectionListProps> = ({
                             className="text-red-600"
                           >
                             <Trash2 className="h-4 w-4 mr-2" />
-                            Delete
+                            Xóa
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -324,12 +324,12 @@ const DetectionList: React.FC<DetectionListProps> = ({
             })
           ) : (
             <div className="text-center py-12">
-              <Eye className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No detections found</h3>
-              <p className="text-gray-600">
+              <Eye className="w-16 h-16 text-cyan-300 mx-auto mb-4" />
+              <h3 className="text-lg font-bold text-cyan-700 mb-2">Không có dữ liệu nhận diện</h3>
+              <p className="text-cyan-600">
                 {searchTerm || filters.detection_type
-                  ? 'No detections match your current filters.'
-                  : 'No detections have been recorded yet.'}
+                  ? 'Không có kết quả phù hợp với bộ lọc hiện tại.'
+                  : 'Chưa có dữ liệu nhận diện nào được ghi nhận.'}
               </p>
             </div>
           )}
@@ -338,10 +338,10 @@ const DetectionList: React.FC<DetectionListProps> = ({
         {/* Pagination */}
         {showPagination && pagination.totalPages > 1 && (
           <div className="flex items-center justify-between pt-4 border-t mt-4">
-            <div className="text-sm text-gray-600">
-              Showing {((pagination.currentPage - 1) * (filters.limit ?? 20)) + 1} to{' '}
-              {Math.min(pagination.currentPage * (filters.limit ?? 20), pagination.total)} of{' '}
-              {pagination.total.toLocaleString()} results
+            <div className="text-sm text-cyan-700">
+              Hiển thị {((pagination.currentPage - 1) * (filters.limit ?? 20)) + 1} đến {' '}
+              {Math.min(pagination.currentPage * (filters.limit ?? 20), pagination.total)} trong tổng số {' '}
+              {pagination.total.toLocaleString()} kết quả
             </div>
             
             <div className="flex items-center space-x-2">
@@ -352,7 +352,7 @@ const DetectionList: React.FC<DetectionListProps> = ({
                 disabled={!pagination.hasPrev}
               >
                 <ChevronLeft className="h-4 w-4" />
-                Previous
+                Trước
               </Button>
               
               <div className="flex items-center space-x-1">
@@ -378,7 +378,7 @@ const DetectionList: React.FC<DetectionListProps> = ({
                 onClick={() => handlePageChange(pagination.currentPage + 1)}
                 disabled={!pagination.hasNext}
               >
-                Next
+                Tiếp
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>

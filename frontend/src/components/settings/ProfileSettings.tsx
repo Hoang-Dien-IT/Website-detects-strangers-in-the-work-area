@@ -354,9 +354,9 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
       {/* ✅ Enhanced Profile Picture */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Camera className="h-5 w-5 text-blue-600" />
-            <span>Profile Picture</span>
+          <CardTitle className="flex items-center space-x-2 text-cyan-800">
+            <Camera className="h-5 w-5 text-cyan-600" />
+            <span>Ảnh đại diện</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -402,10 +402,10 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
                   className="bg-blue-50 hover:bg-blue-100 border-blue-200"
                 >
                   <Upload className="h-4 w-4 mr-2" />
-                  {uploading ? 'Uploading...' : 'Change Picture'}
+                  {uploading ? 'Đang tải lên...' : 'Đổi ảnh'}
                 </Button>
-                <p className="text-xs text-gray-500">
-                  JPEG, PNG, WebP up to 5MB
+                <p className="text-xs text-black">
+                  JPEG, PNG, WebP tối đa 5MB
                 </p>
               </div>
             )}
@@ -416,23 +416,23 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
       {/* ✅ Enhanced Basic Information */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <User className="h-5 w-5 text-green-600" />
-            <span>Basic Information</span>
+          <CardTitle className="flex items-center space-x-2 text-emerald-900">
+            <User className="h-5 w-5 text-emerald-600" />
+            <span>Thông tin cơ bản</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Full Name */}
             <div className="space-y-2">
-              <Label htmlFor="full_name">
-                Full Name <span className="text-red-500">*</span>
+              <Label htmlFor="full_name" className="text-black">
+                Họ và tên <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="full_name"
                 value={profileData.full_name}
                 onChange={(e) => handleInputChange('full_name', e.target.value)}
-                placeholder="Enter your full name"
+                placeholder="Nhập họ và tên"
                 className={errors.full_name ? 'border-red-500 focus:border-red-500' : ''}
                 disabled={readonly || loading}
                 maxLength={100}
@@ -447,14 +447,14 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
 
             {/* Username */}
             <div className="space-y-2">
-              <Label htmlFor="username">
-                Username <span className="text-red-500">*</span>
+              <Label htmlFor="username" className="text-black">
+                Tên đăng nhập <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="username"
                 value={profileData.username}
                 onChange={(e) => handleInputChange('username', e.target.value)}
-                placeholder="Enter your username"
+                placeholder="Nhập tên đăng nhập"
                 className={errors.username ? 'border-red-500 focus:border-red-500' : ''}
                 disabled={readonly || loading}
                 maxLength={50}
@@ -469,7 +469,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
 
             {/* Email */}
             <div className="space-y-2">
-              <Label htmlFor="email">
+              <Label htmlFor="email" className="text-black">
                 <Mail className="h-4 w-4 inline mr-1" />
                 Email <span className="text-red-500">*</span>
               </Label>
@@ -478,7 +478,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
                 type="email"
                 value={profileData.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
-                placeholder="Enter your email"
+                placeholder="Nhập email"
                 className={errors.email ? 'border-red-500 focus:border-red-500' : ''}
                 disabled={readonly || loading}
               />
@@ -492,9 +492,9 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
 
             {/* Phone */}
             <div className="space-y-2">
-              <Label htmlFor="phone">
+              <Label htmlFor="phone" className="text-black">
                 <Phone className="h-4 w-4 inline mr-1" />
-                Phone Number
+                Số điện thoại
               </Label>
               <Input
                 id="phone"
@@ -514,39 +514,39 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
 
             {/* Department */}
             <div className="space-y-2">
-              <Label htmlFor="department">
+              <Label htmlFor="department" className="text-black">
                 <Building className="h-4 w-4 inline mr-1" />
-                Department
+                Phòng ban
               </Label>
               <Input
                 id="department"
                 value={profileData.department || ''}
                 onChange={(e) => handleInputChange('department', e.target.value)}
-                placeholder="IT, HR, Marketing..."
+                placeholder="Phòng ban (VD: Kỹ thuật, Marketing...)"
                 disabled={readonly || loading}
               />
             </div>
 
             {/* Location */}
             <div className="space-y-2">
-              <Label htmlFor="location">
+              <Label htmlFor="location" className="text-black">
                 <MapPin className="h-4 w-4 inline mr-1" />
-                Location
+                Địa điểm
               </Label>
               <Input
                 id="location"
                 value={profileData.location || ''}
                 onChange={(e) => handleInputChange('location', e.target.value)}
-                placeholder="Ho Chi Minh City, Vietnam"
+                placeholder="TP. Hồ Chí Minh, Việt Nam"
                 disabled={readonly || loading}
               />
             </div>
 
             {/* Timezone */}
             <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="timezone">
+              <Label htmlFor="timezone" className="text-black">
                 <Globe className="h-4 w-4 inline mr-1" />
-                Timezone
+                Múi giờ
               </Label>
               <select
                 id="timezone"
@@ -569,22 +569,22 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
 
           {/* Bio */}
           <div className="space-y-2">
-            <Label htmlFor="bio">
-              <FileText className="h-4 w-4 inline mr-1" />
-              Bio
-            </Label>
+              <Label htmlFor="bio" className="text-black">
+                <FileText className="h-4 w-4 inline mr-1" />
+                Giới thiệu bản thân
+              </Label>
             <Textarea
               id="bio"
               value={profileData.bio || ''}
               onChange={(e) => handleInputChange('bio', e.target.value)}
-              placeholder="Tell us about yourself..."
+              placeholder="Giới thiệu về bản thân..."
               rows={3}
               disabled={readonly || loading}
               maxLength={500}
               className={errors.bio ? 'border-red-500 focus:border-red-500' : ''}
             />
-            <div className="flex justify-between text-xs text-gray-500">
-              <span>{(profileData.bio || '').length}/500 characters</span>
+            <div className="flex justify-between text-xs text-black">
+              <span>{(profileData.bio || '').length}/500 ký tự</span>
               {errors.bio && (
                 <span className="text-red-500 flex items-center">
                   <AlertTriangle className="h-3 w-3 mr-1" />
@@ -599,46 +599,46 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
       {/* ✅ Enhanced Professional Information */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Briefcase className="h-5 w-5 text-purple-600" />
-            <span>Professional Information</span>
+          <CardTitle className="flex items-center space-x-2 text-cyan-800">
+            <Briefcase className="h-5 w-5 text-cyan-600" />
+            <span>Thông tin nghề nghiệp</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Job Title */}
             <div className="space-y-2">
-              <Label htmlFor="job_title">
+              <Label htmlFor="job_title" className="text-black">
                 <Briefcase className="h-4 w-4 inline mr-1" />
-                Job Title
+                Chức danh
               </Label>
               <Input
                 id="job_title"
                 value={profileData.job_title || ''}
                 onChange={(e) => handleInputChange('job_title', e.target.value)}
-                placeholder="Software Engineer, Manager..."
+                placeholder="VD: Kỹ sư phần mềm, Quản lý..."
                 disabled={readonly || loading}
               />
             </div>
 
             {/* Company */}
             <div className="space-y-2">
-              <Label htmlFor="company">
+              <Label htmlFor="company" className="text-black">
                 <Building className="h-4 w-4 inline mr-1" />
-                Company
+                Công ty
               </Label>
               <Input
                 id="company"
                 value={profileData.company || ''}
                 onChange={(e) => handleInputChange('company', e.target.value)}
-                placeholder="Your Company Name"
+                placeholder="Tên công ty"
                 disabled={readonly || loading}
               />
             </div>
 
             {/* Website */}
             <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="website">
+              <Label htmlFor="website" className="text-black">
                 <Globe className="h-4 w-4 inline mr-1" />
                 Website
               </Label>
@@ -665,62 +665,62 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
       {/* ✅ Enhanced Account Information */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <User className="h-5 w-5 text-gray-600" />
-            <span>Account Information</span>
+          <CardTitle className="flex items-center space-x-2 text-cyan-800">
+            <User className="h-5 w-5 text-cyan-600" />
+            <span>Thông tin tài khoản</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <div className="p-3 bg-gray-50 rounded-lg">
-              <Label className="text-gray-600 font-medium">Account Created</Label>
+              <Label className="text-black font-medium">Ngày tạo tài khoản</Label>
               <div className="flex items-center mt-1">
                 <Calendar className="h-4 w-4 mr-2 text-gray-400" />
-                <span className="text-gray-900">
-                  {user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
+                <span className="text-black">
+                  {user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'Không rõ'}
                 </span>
               </div>
             </div>
             
             <div className="p-3 bg-gray-50 rounded-lg">
-              <Label className="text-gray-600 font-medium">Last Login</Label>
+              <Label className="text-black font-medium">Đăng nhập gần nhất</Label>
               <div className="flex items-center mt-1">
                 <CheckCircle className="h-4 w-4 mr-2 text-green-500" />
-                <span className="text-gray-900">
-                  {user?.last_login ? new Date(user.last_login).toLocaleString() : 'Never'}
+                <span className="text-black">
+                  {user?.last_login ? new Date(user.last_login).toLocaleString() : 'Chưa từng'}
                 </span>
               </div>
             </div>
 
             <div className="p-3 bg-gray-50 rounded-lg">
-              <Label className="text-gray-600 font-medium">Account Status</Label>
+              <Label className="text-black font-medium">Trạng thái tài khoản</Label>
               <div className="flex items-center mt-1">
                 {user?.is_active ? (
                   <>
                     <CheckCircle className="h-4 w-4 mr-2 text-green-500" />
-                    <span className="text-green-600 font-medium">Active</span>
+                    <span className="text-emerald-600 font-medium">Đang hoạt động</span>
                   </>
                 ) : (
                   <>
                     <AlertTriangle className="h-4 w-4 mr-2 text-red-500" />
-                    <span className="text-red-600 font-medium">Inactive</span>
+                    <span className="text-red-600 font-medium">Ngưng hoạt động</span>
                   </>
                 )}
               </div>
             </div>
 
             <div className="p-3 bg-gray-50 rounded-lg">
-              <Label className="text-gray-600 font-medium">Role</Label>
+              <Label className="text-black font-medium">Vai trò</Label>
               <div className="flex items-center mt-1">
                 {user?.is_admin ? (
                   <>
                     <Edit className="h-4 w-4 mr-2 text-purple-500" />
-                    <span className="text-purple-600 font-medium">Administrator</span>
+                    <span className="text-purple-600 font-medium">Quản trị viên</span>
                   </>
                 ) : (
                   <>
                     <User className="h-4 w-4 mr-2 text-blue-500" />
-                    <span className="text-blue-600 font-medium">User</span>
+                    <span className="text-cyan-700 font-medium">Người dùng</span>
                   </>
                 )}
               </div>
@@ -736,7 +736,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
             <Alert className="border-amber-200 bg-amber-50">
               <AlertTriangle className="h-4 w-4 text-amber-600" />
               <AlertDescription className="text-amber-800">
-                You have unsaved changes. Don't forget to save your profile before leaving this page.
+                Bạn có thay đổi chưa lưu. Đừng quên lưu lại trước khi rời trang này.
               </AlertDescription>
             </Alert>
           )}
@@ -747,26 +747,26 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
                 variant="outline"
                 onClick={handleReset}
                 disabled={loading}
-                className="w-full sm:w-auto"
+                className="w-full sm:w-auto text-black border-cyan-300 hover:bg-cyan-50"
               >
-                Reset Changes
+                Đặt lại
               </Button>
             )}
             
             <Button
               onClick={handleSave}
               disabled={loading || !hasChanges}
-              className="min-w-32 w-full sm:w-auto bg-blue-600 hover:bg-blue-700"
+              className="min-w-32 w-full sm:w-auto bg-gradient-to-r from-emerald-500 to-cyan-600 hover:from-emerald-600 hover:to-cyan-700 text-white"
             >
               {loading ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                  Saving...
+                  Đang lưu...
                 </>
               ) : (
                 <>
                   <Save className="h-4 w-4 mr-2" />
-                  Save Changes
+                  Lưu thay đổi
                 </>
               )}
             </Button>

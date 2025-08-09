@@ -72,28 +72,28 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
   // ✅ Enhanced menu structure with dynamic counts
   const menuItems: MenuItem[] = [
     {
-      title: 'Dashboard',
+      title: 'Tổng quan',
       icon: LayoutDashboard,
       path: '/app/dashboard',
     },
     {
-      title: 'Cameras',
+      title: 'Camera',
       icon: Camera,
       path: '/app/cameras',
       badge: counts.isLoading ? '...' : counts.totalCameras.toString(),
       subItems: [
         {
-          title: 'All Cameras',
+          title: 'Tất cả camera',
           icon: Camera,
           path: '/app/cameras',
         },
         {
-          title: 'Add Camera',
+          title: 'Thêm camera',
           icon: Plus,
           path: '/app/cameras/new',
         },
         {
-          title: 'Live Streams',
+          title: 'Xem trực tiếp',
           icon: Video,
           path: '/app/live',
           badge: counts.isLoading ? '...' : counts.activeCameras.toString(),
@@ -101,41 +101,41 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
       ]
     },
     {
-      title: 'Known Persons',
+      title: 'Người đã biết',
       icon: Users,
       path: '/app/persons',
       badge: counts.isLoading ? '...' : counts.totalPersons.toString(),
       subItems: [
         {
-          title: 'All Persons',
+          title: 'Tất cả người',
           icon: Users,
           path: '/app/persons',
         },
         {
-          title: 'Add Person',
+          title: 'Thêm người',
           icon: UserPlus,
           path: '/app/persons/new',
         },
         {
-          title: 'Import Persons',
+          title: 'Nhập danh sách',
           icon: Upload,
           path: '/app/persons/import',
         }
       ]
     },
     {
-      title: 'Detections',
+      title: 'Nhận diện',
       icon: Shield,
       path: '/app/detections',
       badge: counts.isLoading ? '...' : counts.todayDetections.toString(),
       subItems: [
         {
-          title: 'Detection History',
+          title: 'Lịch sử nhận diện',
           icon: Clock,
           path: '/app/detections/history',
         },
         {
-          title: 'Alerts',
+          title: 'Cảnh báo',
           icon: AlertTriangle,
           path: '/app/detections/alerts',
           badge: counts.isLoading ? '...' : counts.unreadAlerts.toString(),
@@ -143,49 +143,49 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
       ]
     },
     {
-      title: 'Analytics',
+      title: 'Phân tích',
       icon: BarChart3,
       path: '/app/analytics',
       subItems: [
         {
-          title: 'Overview',
+          title: 'Tổng quan',
           icon: TrendingUp,
           path: '/app/analytics/overview',
         },
         {
-          title: 'Trends',
+          title: 'Xu hướng',
           icon: LineChart,
           path: '/app/analytics/trends',
         },
         {
-          title: 'Reports',
+          title: 'Báo cáo',
           icon: FileText,
           path: '/app/analytics/reports',
         }
       ]
     },
     {
-      title: 'Settings',
+      title: 'Cài đặt',
       icon: Settings,
       path: '/app/settings',
       subItems: [
         {
-          title: 'General',
+          title: 'Chung',
           icon: Settings,
           path: '/app/settings/general',
         },
         {
-          title: 'Face Recognition',
+          title: 'Nhận diện khuôn mặt',
           icon: Scan,
           path: '/app/settings/face-recognition',
         },
         {
-          title: 'Notifications',
+          title: 'Thông báo',
           icon: Bell,
           path: '/app/settings/notifications',
         },
         {
-          title: 'Security',
+          title: 'Bảo mật',
           icon: Shield,
           path: '/app/settings/security',
         }
@@ -195,27 +195,27 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
 
   const adminMenuItems: MenuItem[] = user?.is_admin ? [
     {
-      title: 'Admin Panel',
+      title: 'Quản trị',
       icon: Crown,
       path: '/admin',
       subItems: [
         {
-          title: 'User Management',
+          title: 'Quản lý người dùng',
           icon: Users,
           path: '/admin/users',
         },
         {
-          title: 'System Monitor',
+          title: 'Giám sát hệ thống',
           icon: Monitor,
           path: '/admin/monitoring',
         },
         {
-          title: 'System Logs',
+          title: 'Nhật ký hệ thống',
           icon: FileText,
           path: '/admin/logs',
         },
         {
-          title: 'Backup & Restore',
+          title: 'Sao lưu & Phục hồi',
           icon: Database,
           path: '/admin/backup',
         }
@@ -262,7 +262,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
         collapsed ? "w-16" : "w-64"
       )}
       style={{
-        background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 20%, #f1f5f9 60%, #e0f2fe 100%)',
+  background: 'linear-gradient(180deg, #e0fdf2 0%, #ccfbf1 40%, #a7f3d0 100%)',
         borderRight: '1px solid #e2e8f0',
         boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
         backdropFilter: 'blur(20px)'
@@ -272,7 +272,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
       <div 
         className="p-4 border-b border-slate-200/80"
         style={{
-          background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #e0f2fe 100%)',
+    background: 'linear-gradient(135deg, #e0fdf2 0%, #ccfbf1 50%, #a7f3d0 100%)',
           borderBottom: '1px solid #e2e8f0'
         }}
       >
@@ -288,14 +288,14 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
                 const fallback = document.createElement('div');
                 fallback.className = 'flex items-center space-x-3';
                 fallback.innerHTML = `
-                  <div class="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)">
+                  <div class="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg" style="background: linear-gradient(135deg, #14b8a6 0%, #10b981 100%)">
                     <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M12 1L3 5V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V5L12 1M12 7C13.4 7 14.8 8.6 14.8 10.2V11.2C15.2 11.4 15.5 11.7 15.5 12.3V16.5C15.5 17.1 15.1 17.5 14.5 17.5H9.5C8.9 17.5 8.5 17.1 8.5 16.5V12.3C8.5 11.7 8.8 11.4 9.2 11.2V10.2C9.2 8.6 10.6 7 12 7M12 8.2C11.2 8.2 10.5 8.7 10.5 10.2V11.2H13.5V10.2C13.5 8.7 12.8 8.2 12 8.2Z"/>
                     </svg>
                   </div>
                   <div>
-                    <h2 class="text-xl font-bold text-slate-900">SafeFace</h2>
-                    <p class="text-sm text-slate-600">AI Security Platform</p>
+                    <h2 class="text-xl font-bold text-emerald-700">SafeFace</h2>
+                    <p class="text-sm text-emerald-500">Nền tảng bảo mật AI</p>
                   </div>
                 `;
                 e.currentTarget.parentNode?.appendChild(fallback);
@@ -326,7 +326,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
         <div className="flex items-center justify-between">
           {!collapsed && (
             <span className="text-sm font-semibold text-slate-700">
-              {isConnected ? 'Connected' : 'Disconnected'}
+              {isConnected ? 'Đã kết nối' : 'Mất kết nối'}
             </span>
           )}
           <div className="flex items-center space-x-1">
@@ -336,7 +336,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
                 {!collapsed && (
                   <Badge className="bg-emerald-100 text-emerald-800 border-emerald-300 text-xs shadow-sm">
                     <Wifi className="w-3 h-3 mr-1" />
-                    Live
+                    Trực tuyến
                   </Badge>
                 )}
               </div>
@@ -346,7 +346,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
                 {!collapsed && (
                   <Badge className="bg-red-100 text-red-800 border-red-300 text-xs shadow-sm">
                     <WifiOff className="w-3 h-3 mr-1" />
-                    Offline
+                    Ngoại tuyến
                   </Badge>
                 )}
               </div>
@@ -366,7 +366,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
           <div className="space-y-1">
             {!collapsed && (
               <p className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-4 px-2">
-                Navigation
+                Điều hướng
               </p>
             )}
             
@@ -389,12 +389,12 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
                             active && "nav-item active"
                           )}
                           style={active ? {
-                            background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                            background: 'linear-gradient(135deg, #14b8a6 0%, #10b981 100%)',
                             color: 'white',
-                            borderColor: '#3b82f6',
-                            boxShadow: '0 8px 25px -8px rgba(59, 130, 246, 0.5)'
+                            borderColor: '#10b981',
+                            boxShadow: '0 8px 25px -8px rgba(16, 185, 129, 0.5)'
                           } : {
-                            color: '#475569',
+                            color: '#047857',
                             background: 'transparent',
                             border: '1px solid transparent'
                           }}
@@ -434,7 +434,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
                                       "text-xs shadow-sm",
                                       active 
                                         ? "bg-white/20 text-white border-white/30" 
-                                        : "bg-red-100 text-red-800 border-red-300"
+                                        : "bg-emerald-100 text-emerald-800 border-emerald-300"
                                     )}
                                   >
                                     {item.badge}
@@ -473,12 +473,12 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
                             size="sm"
                             className={cn(
                               "w-full justify-start text-sm transition-all duration-200",
-                              subActive && "bg-blue-50 text-blue-700 border-l-2 border-blue-500"
+                              subActive && "bg-emerald-50 text-emerald-700 border-l-2 border-emerald-500"
                             )}
                             style={subActive ? {
-                              background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)',
-                              color: '#1d4ed8',
-                              borderLeft: '3px solid #3b82f6'
+                              background: 'linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%)',
+                              color: '#047857',
+                              borderLeft: '3px solid #10b981'
                             } : {
                               color: '#64748b'
                             }}
@@ -505,7 +505,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
               <>
                 {!collapsed && (
                   <p className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-4 px-2 pt-4">
-                    Administration
+                    Quản trị
                   </p>
                 )}
                 {adminMenuItems.map((item) => {
@@ -527,12 +527,12 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
                                 active && "nav-item active"
                               )}
                               style={active ? {
-                                background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
+                                background: 'linear-gradient(135deg, #14b8a6 0%, #10b981 100%)',
                                 color: 'white',
-                                borderColor: '#dc2626',
-                                boxShadow: '0 8px 25px -8px rgba(220, 38, 38, 0.5)'
+                                borderColor: '#10b981',
+                                boxShadow: '0 8px 25px -8px rgba(16, 185, 129, 0.5)'
                               } : {
-                                color: '#475569',
+                                color: '#047857',
                                 background: 'transparent',
                                 border: '1px solid transparent'
                               }}
@@ -580,12 +580,12 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
                                 size="sm"
                                 className={cn(
                                   "w-full justify-start text-sm transition-all duration-200",
-                                  subActive && "bg-red-50 text-red-700 border-l-2 border-red-500"
+                                  subActive && "bg-emerald-50 text-emerald-700 border-l-2 border-emerald-500"
                                 )}
                                 style={subActive ? {
-                                  background: 'linear-gradient(135deg, #fef2f2 0%, #fecaca 100%)',
-                                  color: '#b91c1c',
-                                  borderLeft: '3px solid #dc2626'
+                                  background: 'linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%)',
+                                  color: '#047857',
+                                  borderLeft: '3px solid #10b981'
                                 } : {
                                   color: '#64748b'
                                 }}
@@ -633,25 +633,25 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
                 "w-2 h-2 rounded-full",
                 isConnected ? "bg-emerald-500" : "bg-red-500"
               )}></div>
-              <span className="text-sm font-semibold text-slate-700">System Status</span>
+              <span className="text-sm font-semibold text-emerald-700">Trạng thái hệ thống</span>
             </div>
             <div className="space-y-1 text-xs text-slate-600">
               <div className="flex justify-between">
-                <span>Network:</span>
+                <span>Mạng:</span>
                 <span className={cn(
                   "font-medium",
                   isConnected ? "text-emerald-600" : "text-red-600"
                 )}>
-                  {isConnected ? "Connected" : "Disconnected"}
+                  {isConnected ? "Đã kết nối" : "Mất kết nối"}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span>Cameras:</span>
-                <span className="font-medium text-blue-600">4 Active</span>
+                <span>Camera:</span>
+                <span className="font-medium text-emerald-600">{counts.isLoading ? '...' : counts.totalCameras} hoạt động</span>
               </div>
               <div className="flex justify-between">
-                <span>Detection:</span>
-                <span className="font-medium text-emerald-600">Running</span>
+                <span>Nhận diện:</span>
+                <span className="font-medium text-emerald-600">Đang chạy</span>
               </div>
             </div>
           </div>
@@ -684,10 +684,10 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
           {!collapsed && (
             <div className="flex-1 min-w-0">
               <p className="text-sm font-bold text-slate-900 truncate">
-                {user?.full_name || 'User'}
+                {user?.full_name || 'Người dùng'}
               </p>
               <p className="text-xs text-slate-600 truncate">
-                {user?.email || 'user@example.com'}
+                {user?.email || 'user@email.com'}
               </p>
             </div>
           )}
@@ -704,7 +704,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false, onToggle }) => {
                 </Button>
               </TooltipTrigger>
               <TooltipContent side={collapsed ? "right" : "top"} className="bg-slate-900 text-white shadow-xl">
-                <p>Logout</p>
+                <p>Đăng xuất</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

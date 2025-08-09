@@ -30,8 +30,8 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   onOpenChange,
   title,
   description,
-  confirmText = 'Confirm',
-  cancelText = 'Cancel',
+  confirmText = 'Xác nhận',
+  cancelText = 'Hủy',
   onConfirm,
   variant = 'default',
   loading = false,
@@ -39,51 +39,51 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   const getIcon = () => {
     switch (variant) {
       case 'destructive':
-        return <XCircle className="h-6 w-6 text-red-600" />;
+        return <XCircle className="h-6 w-6 text-rose-600" />;
       case 'warning':
-        return <AlertTriangle className="h-6 w-6 text-yellow-600" />;
+        return <AlertTriangle className="h-6 w-6 text-amber-500" />;
       case 'success':
-        return <CheckCircle className="h-6 w-6 text-green-600" />;
+        return <CheckCircle className="h-6 w-6 text-emerald-600" />;
       default:
-        return <Info className="h-6 w-6 text-blue-600" />;
+        return <Info className="h-6 w-6 text-teal-600" />;
     }
   };
 
   const getButtonClassName = () => {
     switch (variant) {
       case 'destructive':
-        return cn(buttonVariants({ variant: 'destructive' }));
+        return cn(buttonVariants({ variant: 'destructive' }), 'bg-rose-600 hover:bg-rose-700');
       case 'warning':
-        return cn(buttonVariants({ variant: 'default' }), 'bg-yellow-600 hover:bg-yellow-700');
+        return cn(buttonVariants({ variant: 'default' }), 'bg-amber-500 hover:bg-amber-600 text-white');
       case 'success':
-        return cn(buttonVariants({ variant: 'default' }), 'bg-green-600 hover:bg-green-700');
+        return cn(buttonVariants({ variant: 'default' }), 'bg-emerald-600 hover:bg-emerald-700 text-white');
       default:
-        return cn(buttonVariants({ variant: 'default' }));
+        return cn(buttonVariants({ variant: 'default' }), 'bg-teal-600 hover:bg-teal-700 text-white');
     }
   };
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
+      <AlertDialogContent className="rounded-2xl border-0 shadow-xl bg-gradient-to-br from-white to-slate-50/80">
         <AlertDialogHeader>
           <div className="flex items-center space-x-3">
             {getIcon()}
-            <AlertDialogTitle>{title}</AlertDialogTitle>
+            <AlertDialogTitle className="text-slate-800">{title}</AlertDialogTitle>
           </div>
-          <AlertDialogDescription className="text-gray-600">
+          <AlertDialogDescription className="text-slate-600">
             {description}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={loading}>
+          <AlertDialogCancel disabled={loading} className="bg-slate-100 text-slate-700 hover:bg-slate-200">
             {cancelText}
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
-            className={getButtonClassName()} // Use className instead of variant
+            className={getButtonClassName()}
             disabled={loading}
           >
-            {loading ? 'Loading...' : confirmText}
+            {loading ? 'Đang xử lý...' : confirmText}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

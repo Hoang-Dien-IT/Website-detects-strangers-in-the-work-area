@@ -432,39 +432,40 @@ const PersonBulkImport: React.FC = () => {
   };
 
   return (
+
     <div className="max-w-6xl mx-auto p-6 space-y-6">
-      {/* ✅ Header */}
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="sm" onClick={() => navigate('/persons')}>
+          <Button variant="ghost" size="sm" onClick={() => navigate('/persons')} className="text-cyan-700 hover:text-cyan-900 hover:bg-cyan-50">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Persons
+            Quay lại danh sách
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Bulk Import Persons</h1>
-            <p className="text-gray-600">Import multiple known persons from a JSON file</p>
+            <h1 className="text-2xl font-bold text-emerald-900">Nhập hồ sơ hàng loạt</h1>
+            <p className="text-black">Tải lên nhiều hồ sơ nhân sự từ tệp JSON theo mẫu chuẩn của hệ thống</p>
           </div>
         </div>
-        <Button variant="outline" onClick={downloadTemplate}>
+        <Button variant="outline" onClick={downloadTemplate} className="border-cyan-200 text-cyan-700 hover:bg-cyan-50">
           <Download className="h-4 w-4 mr-2" />
-          Download Template
+          Tải file mẫu
         </Button>
       </div>
 
-      {/* ✅ Instructions */}
-      <Alert>
-        <FileText className="h-4 w-4" />
-        <AlertDescription>
-          Upload a JSON file containing an array of person objects. Each person must have a 'name' field (required), 
-          and can optionally include 'description', 'metadata', and 'face_images' fields. 
-          Download the template to see the correct format. Maximum 10 face images per person.
+      {/* Instructions */}
+      <Alert className="border-cyan-200 bg-cyan-50">
+        <FileText className="h-4 w-4 text-cyan-600" />
+        <AlertDescription className="text-black">
+          <b>Hướng dẫn:</b> Tải lên tệp JSON chứa danh sách hồ sơ nhân sự. <br />
+          <span className="text-black">Mỗi hồ sơ <b>phải có</b> trường <b>"name"</b> (bắt buộc), có thể thêm <b>"description"</b>, <b>"metadata"</b>, <b>"face_images"</b>.<br />
+          Xem file mẫu để biết định dạng chuẩn. Tối đa 10 ảnh khuôn mặt/người.</span>
         </AlertDescription>
       </Alert>
 
-      {/* ✅ Upload Area */}
-      <Card>
+      {/* Upload Area */}
+      <Card className="border-cyan-200 shadow-sm">
         <CardHeader>
-          <CardTitle>Upload JSON File</CardTitle>
+          <CardTitle className="text-cyan-800">Tải lên tệp JSON</CardTitle>
         </CardHeader>
         <CardContent>
           <div
@@ -472,19 +473,19 @@ const PersonBulkImport: React.FC = () => {
             className={`
               border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors
               ${isDragActive 
-                ? 'border-blue-400 bg-blue-50' 
-                : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+                ? 'border-cyan-400 bg-cyan-50' 
+                : 'border-cyan-200 hover:border-cyan-400 hover:bg-cyan-50'
               }
             `}
           >
             <input {...getInputProps()} />
-            <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+            <Upload className="mx-auto h-12 w-12 text-cyan-400 mb-4" />
             {isDragActive ? (
-              <p className="text-lg font-medium text-blue-600">Drop the JSON file here...</p>
+              <p className="text-lg font-medium text-cyan-700">Kéo thả tệp JSON vào đây...</p>
             ) : (
               <div>
-                <p className="text-lg font-medium mb-2">Drop your JSON file here, or click to browse</p>
-                <p className="text-sm text-gray-600">Only .json files are accepted (max 10MB)</p>
+                <p className="text-lg font-medium text-black mb-2">Kéo thả hoặc bấm để chọn tệp JSON</p>
+                <p className="text-sm text-black">Chỉ chấp nhận tệp .json (tối đa 10MB)</p>
               </div>
             )}
           </div>
@@ -493,31 +494,31 @@ const PersonBulkImport: React.FC = () => {
 
       {/* ✅ Preview & Import */}
       {persons.length > 0 && (
-        <Card>
+        <Card className="border-teal-200 shadow-sm">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center space-x-2">
-                <Users className="h-5 w-5" />
-                <span>Preview ({persons.length} persons)</span>
+              <CardTitle className="flex items-center space-x-2 text-emerald-800">
+                <Users className="h-5 w-5 text-emerald-600" />
+                <span>Xem Trước ({persons.length} hồ sơ)</span>
               </CardTitle>
               <div className="flex space-x-2">
-                <Button variant="outline" onClick={handleClear} disabled={importing}>
-                  Clear All
+                <Button variant="outline" onClick={handleClear} disabled={importing} className="border-cyan-200 text-black hover:bg-cyan-50">
+                  Xóa tất cả
                 </Button>
                 <Button 
                   onClick={handleImport} 
                   disabled={importing || persons.length === 0}
-                  className="min-w-32"
+                  className="min-w-32 bg-gradient-to-r from-emerald-500 to-cyan-600 hover:from-emerald-600 hover:to-cyan-700 text-white shadow-md"
                 >
                   {importing ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                      Importing...
+                      Đang nhập...
                     </>
                   ) : (
                     <>
                       <Upload className="h-4 w-4 mr-2" />
-                      Import All
+                      Nhập tất cả
                     </>
                   )}
                 </Button>
@@ -525,55 +526,51 @@ const PersonBulkImport: React.FC = () => {
             </div>
           </CardHeader>
           <CardContent>
-            {/* ✅ Progress Bar */}
+            {/* Progress Bar */}
             {importing && (
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">Import Progress</span>
-                  <span className="text-sm">{Math.round(importProgress)}%</span>
+                  <span className="text-sm font-medium text-emerald-700">Tiến Độ Nhập</span>
+                  <span className="text-sm text-emerald-700">{Math.round(importProgress)}%</span>
                 </div>
-                <Progress value={importProgress} className="h-2" />
+                <Progress value={importProgress} className="h-2 bg-emerald-100" />
               </div>
             )}
 
-            {/* ✅ Persons List */}
+            {/* Persons List */}
             <div className="space-y-3 max-h-96 overflow-y-auto">
               {persons.map((person, index) => (
-                <div key={index} className="flex items-center space-x-4 p-3 border rounded-lg bg-white hover:bg-gray-50 transition-colors">
+                <div key={index} className="flex items-center space-x-4 p-3 border rounded-lg bg-white hover:bg-teal-50 border-teal-100 transition-colors">
                   <div className="flex-shrink-0">
                     {getStatusIcon(person.status)}
                   </div>
-                  
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-3 mb-1">
-                      <h4 className="font-medium text-gray-900 truncate">{person.name}</h4>
+                      <h4 className="font-medium text-emerald-900 truncate">{person.name}</h4>
                       {getStatusBadge(person.status)}
                     </div>
-                    
-                    <div className="text-sm text-gray-600 space-y-1">
+                    <div className="text-sm text-black space-y-1">
                       {person.description && (
-                        <p className="truncate">{person.description}</p>
+                        <p className="truncate text-black">{person.description}</p>
                       )}
-                      
                       <div className="flex items-center space-x-4 flex-wrap">
                         {person.metadata?.department && (
-                          <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
+                          <span className="bg-cyan-100 text-cyan-800 px-2 py-1 rounded text-xs">
                             {person.metadata.department}
                           </span>
                         )}
                         {person.metadata?.employee_id && (
-                          <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs">
-                            ID: {person.metadata.employee_id}
+                          <span className="bg-emerald-100 text-emerald-800 px-2 py-1 rounded text-xs">
+                            Mã NV: {person.metadata.employee_id}
                           </span>
                         )}
                         {person.face_images && person.face_images.length > 0 && (
-                          <span className="flex items-center bg-green-100 text-green-800 px-2 py-1 rounded text-xs">
+                          <span className="flex items-center bg-cyan-100 text-cyan-800 px-2 py-1 rounded text-xs">
                             <ImageIcon className="h-3 w-3 mr-1" />
-                            {person.face_images.length} image{person.face_images.length > 1 ? 's' : ''}
+                            {person.face_images.length} ảnh
                           </span>
                         )}
                       </div>
-                      
                       {person.error && (
                         <p className="text-red-600 text-xs flex items-start bg-red-50 p-2 rounded">
                           <AlertTriangle className="h-3 w-3 mr-1 mt-0.5 flex-shrink-0" />
@@ -591,44 +588,44 @@ const PersonBulkImport: React.FC = () => {
 
       {/* ✅ Import Result */}
       {importResult && (
-        <Card>
+        <Card className="border-teal-200 shadow-sm">
           <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
+            <CardTitle className="flex items-center space-x-2 text-emerald-800">
               {importResult.success ? (
-                <Check className="h-5 w-5 text-green-600" />
+                <Check className="h-5 w-5 text-emerald-600" />
               ) : (
                 <AlertTriangle className="h-5 w-5 text-yellow-600" />
               )}
-              <span>Import Results</span>
+              <span>Kết Quả Nhập Dữ Liệu</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {/* ✅ Results Summary */}
+            {/* Results Summary */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="text-center p-4 bg-green-50 rounded-lg border border-green-200">
-                <div className="text-2xl font-bold text-green-600">
+              <div className="text-center p-4 bg-emerald-50 rounded-lg border border-emerald-200">
+                <div className="text-2xl font-bold text-emerald-600">
                   {importResult.imported_count}
                 </div>
-                <div className="text-sm text-green-700">Successfully Imported</div>
+                <div className="text-sm text-black">Nhập thành công</div>
               </div>
               <div className="text-center p-4 bg-red-50 rounded-lg border border-red-200">
                 <div className="text-2xl font-bold text-red-600">
                   {importResult.failed_count}
                 </div>
-                <div className="text-sm text-red-700">Failed</div>
+                <div className="text-sm text-black">Thất bại</div>
               </div>
-              <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <div className="text-2xl font-bold text-blue-600">{persons.length}</div>
-                <div className="text-sm text-blue-700">Total Processed</div>
+              <div className="text-center p-4 bg-cyan-50 rounded-lg border border-cyan-200">
+                <div className="text-2xl font-bold text-cyan-600">{persons.length}</div>
+                <div className="text-sm text-black">Tổng số hồ sơ</div>
               </div>
             </div>
 
-            {/* ✅ Errors Display */}
+            {/* Errors Display */}
             {importResult.errors.length > 0 && (
               <div className="mb-6">
                 <h4 className="font-medium text-red-900 mb-3 flex items-center">
                   <AlertTriangle className="h-4 w-4 mr-2" />
-                  Import Errors ({importResult.errors.length})
+                  Lỗi Khi Nhập Dữ Liệu ({importResult.errors.length})
                 </h4>
                 <div className="space-y-2 max-h-40 overflow-y-auto bg-red-50 p-4 rounded-lg border border-red-200">
                   {importResult.errors.map((error, index) => (
@@ -641,13 +638,13 @@ const PersonBulkImport: React.FC = () => {
               </div>
             )}
 
-            {/* ✅ Action Buttons */}
+            {/* Action Buttons */}
             <div className="flex justify-end space-x-3">
-              <Button variant="outline" onClick={handleClear}>
-                Import More
+              <Button variant="outline" onClick={handleClear} className="border-cyan-200 text-black hover:bg-cyan-50">
+                Nhập thêm
               </Button>
-              <Button onClick={() => navigate('/persons')}>
-                Go to Persons List
+              <Button onClick={() => navigate('/persons')} className="bg-gradient-to-r from-emerald-500 to-cyan-600 hover:from-emerald-600 hover:to-cyan-700 text-white shadow-md">
+                Về danh sách hồ sơ
               </Button>
             </div>
           </CardContent>

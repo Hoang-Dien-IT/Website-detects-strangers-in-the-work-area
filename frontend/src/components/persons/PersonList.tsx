@@ -98,12 +98,12 @@ const PersonList: React.FC<PersonListProps> = ({
   if (persons.length === 0) {
     return (
       <div className="text-center py-12">
-        <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-gray-900 mb-2">No persons registered</h3>
-        <p className="text-gray-600 mb-6">Start by adding people to your face recognition system.</p>
-        <Button>
+        <Users className="w-16 h-16 text-cyan-400 mx-auto mb-4" />
+        <h3 className="text-lg font-medium text-emerald-900 mb-2">Chưa có hồ sơ nào</h3>
+        <p className="text-black mb-6">Hãy thêm nhân sự vào hệ thống nhận diện khuôn mặt.</p>
+        <Button className="bg-gradient-to-r from-emerald-500 to-cyan-600 hover:from-emerald-600 hover:to-cyan-700 text-white">
           <Plus className="w-4 h-4 mr-2" />
-          Add Person
+          Thêm hồ sơ
         </Button>
       </div>
     );
@@ -125,16 +125,16 @@ const PersonList: React.FC<PersonListProps> = ({
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-900 truncate">
+                    <h3 className="font-semibold text-emerald-900 truncate">
                       {person.name}
                     </h3>
                     <div className="flex items-center space-x-2 mt-1">
-                      <Badge variant={person.is_active ? "default" : "secondary"}>
-                        {person.is_active ? 'Active' : 'Inactive'}
+                      <Badge variant={person.is_active ? "default" : "secondary"} className="text-black">
+                        {person.is_active ? 'Đang hoạt động' : 'Ngưng hoạt động'}
                       </Badge>
-                      <div className="flex items-center text-xs text-gray-500">
+                      <div className="flex items-center text-xs text-black">
                         <Image className="h-3 w-3 mr-1" />
-                        {person.face_images_count} {/* ✅ Use count from backend */}
+                        {person.face_images_count} ảnh
                       </div>
                     </div>
                   </div>
@@ -148,22 +148,22 @@ const PersonList: React.FC<PersonListProps> = ({
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={() => onViewDetails(person)}>
                         <Eye className="h-4 w-4 mr-2" />
-                        View Details
+                        Xem chi tiết
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => onEdit(person)}>
                         <Edit className="h-4 w-4 mr-2" />
-                        Edit
+                        Chỉnh sửa
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => onToggleStatus(person)}>
                         {person.is_active ? (
                           <>
                             <UserX className="h-4 w-4 mr-2" />
-                            Deactivate
+                            Ngưng hoạt động
                           </>
                         ) : (
                           <>
                             <UserCheck className="h-4 w-4 mr-2" />
-                            Activate
+                            Kích hoạt
                           </>
                         )}
                       </DropdownMenuItem>
@@ -172,7 +172,7 @@ const PersonList: React.FC<PersonListProps> = ({
                         className="text-red-600"
                       >
                         <Trash2 className="h-4 w-4 mr-2" />
-                        Delete
+                        Xóa
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -181,7 +181,7 @@ const PersonList: React.FC<PersonListProps> = ({
                 {/* Description */}
               {/* Description */}
               {person.description && (
-                <p className="text-sm text-gray-600 line-clamp-2">
+                <p className="text-sm text-black line-clamp-2">
                   {person.description}
                 </p>
               )}
@@ -190,18 +190,18 @@ const PersonList: React.FC<PersonListProps> = ({
               {person.metadata && (
                 <div className="space-y-1">
                   {person.metadata.department && (
-                    <div className="text-xs text-gray-500">
-                      <span className="font-medium">Dept:</span> {person.metadata.department}
+                    <div className="text-xs text-black">
+                      <span className="font-medium">Phòng ban:</span> {person.metadata.department}
                     </div>
                   )}
                   {person.metadata.employee_id && (
-                    <div className="text-xs text-gray-500">
-                      <span className="font-medium">ID:</span> {person.metadata.employee_id}
+                    <div className="text-xs text-black">
+                      <span className="font-medium">Mã NV:</span> {person.metadata.employee_id}
                     </div>
                   )}
                   {person.metadata.phone && (
-                    <div className="text-xs text-gray-500">
-                      <span className="font-medium">Phone:</span> {person.metadata.phone}
+                    <div className="text-xs text-black">
+                      <span className="font-medium">Điện thoại:</span> {person.metadata.phone}
                     </div>
                   )}
                 </div>
@@ -210,10 +210,10 @@ const PersonList: React.FC<PersonListProps> = ({
               {/* ✅ Remove images grid since backend doesn't provide images array */}
               {/* Face images count display instead */}
               {person.face_images_count > 0 && (
-                <div className="flex items-center justify-center p-3 bg-gray-50 rounded-lg">
-                  <Image className="h-4 w-4 mr-2 text-gray-500" />
-                  <span className="text-sm text-gray-600">
-                    {person.face_images_count} face image{person.face_images_count !== 1 ? 's' : ''}
+                <div className="flex items-center justify-center p-3 bg-cyan-50 rounded-lg">
+                  <Image className="h-4 w-4 mr-2 text-cyan-600" />
+                  <span className="text-sm text-black">
+                    {person.face_images_count} ảnh khuôn mặt
                   </span>
                 </div>
               )}
@@ -224,26 +224,26 @@ const PersonList: React.FC<PersonListProps> = ({
                   size="sm"
                   variant="outline"
                   onClick={() => onViewDetails(person)}
-                  className="flex-1"
+                  className="flex-1 text-black border-cyan-300 hover:bg-cyan-50"
                 >
                   <Eye className="w-4 h-4 mr-1" />
-                  View
+                  Xem
                 </Button>
                 <Button
                   size="sm"
                   onClick={() => onEdit(person)}
-                  className="flex-1"
+                  className="flex-1 bg-gradient-to-r from-emerald-500 to-cyan-600 hover:from-emerald-600 hover:to-cyan-700 text-white"
                 >
                   <Edit className="w-4 h-4 mr-1" />
-                  Edit
+                  Chỉnh sửa
                 </Button>
               </div>
 
               {/* Footer */}
-              <div className="text-xs text-gray-400 pt-2 border-t flex items-center justify-between">
+              <div className="text-xs text-black pt-2 border-t flex items-center justify-between">
                 <div className="flex items-center">
-                  <Calendar className="h-3 w-3 mr-1" />
-                  Added {formatDate(person.created_at)}
+                  <Calendar className="h-3 w-3 mr-1 text-cyan-600" />
+                  Thêm: {formatDate(person.created_at)}
                 </div>
               </div>
             </div>

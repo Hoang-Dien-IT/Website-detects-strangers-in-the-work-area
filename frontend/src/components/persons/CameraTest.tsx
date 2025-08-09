@@ -44,15 +44,15 @@ export const CameraTest: React.FC<CameraTestProps> = ({ cameras }) => {
   };
 
   return (
-    <Card>
+    <Card className="border-cyan-200 bg-cyan-50">
       <CardHeader>
-        <CardTitle>Camera Test</CardTitle>
+        <CardTitle className="text-cyan-800">Kiểm tra camera</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           {/* Camera Selection */}
           <div>
-            <h3 className="font-medium mb-2">Select Camera to Test:</h3>
+            <h3 className="font-medium mb-2 text-cyan-800">Chọn camera để kiểm tra:</h3>
             <div className="grid gap-2">
               {cameras.map((camera) => (
                 <Button
@@ -60,10 +60,10 @@ export const CameraTest: React.FC<CameraTestProps> = ({ cameras }) => {
                   onClick={() => testCamera(camera)}
                   disabled={isLoading}
                   variant={selectedCamera?.id === camera.id ? "default" : "outline"}
-                  className="justify-start"
+                  className={`justify-start ${selectedCamera?.id === camera.id ? 'bg-emerald-600 text-white' : 'border-cyan-400 text-black hover:bg-cyan-100'}`}
                 >
                   {camera.name} ({camera.camera_type})
-                  {isLoading && selectedCamera?.id === camera.id && " - Testing..."}
+                  {isLoading && selectedCamera?.id === camera.id && " - Đang kiểm tra..."}
                 </Button>
               ))}
             </div>
@@ -72,12 +72,12 @@ export const CameraTest: React.FC<CameraTestProps> = ({ cameras }) => {
           {/* Image Display */}
           {currentFrame && (
             <div>
-              <h3 className="font-medium mb-2">Captured Frame:</h3>
-              <div className="border rounded-lg overflow-hidden">
+              <h3 className="font-medium mb-2 text-cyan-800">Khung hình đã chụp:</h3>
+              <div className="border border-cyan-200 rounded-lg overflow-hidden">
                 <img
                   ref={imageRef}
                   src={currentFrame}
-                  alt="Camera capture"
+                  alt="Ảnh từ camera"
                   className="w-full h-auto"
                   onLoad={() => console.log('✅ Image loaded successfully')}
                   onError={(e) => console.error('❌ Image load error:', e)}
@@ -87,10 +87,10 @@ export const CameraTest: React.FC<CameraTestProps> = ({ cameras }) => {
           )}
 
           {/* Debug Info */}
-          <div className="text-sm text-gray-600">
-            <p>Selected Camera: {selectedCamera?.name || 'None'}</p>
-            <p>Frame Available: {currentFrame ? 'Yes' : 'No'}</p>
-            <p>Frame Length: {currentFrame.length} characters</p>
+          <div className="text-sm text-black">
+            <p>Camera đã chọn: {selectedCamera?.name || 'Chưa chọn'}</p>
+            <p>Đã có khung hình: {currentFrame ? 'Có' : 'Chưa'}</p>
+            <p>Độ dài dữ liệu ảnh: {currentFrame.length} ký tự</p>
           </div>
         </div>
       </CardContent>

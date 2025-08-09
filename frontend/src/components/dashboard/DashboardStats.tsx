@@ -272,20 +272,20 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({
   // ✅ Enhanced stats cards với Face Recognition specifics
   const statsCards: StatCard[] = [
     {
-      title: 'Total Cameras',
+      title: 'Tổng số camera',
       value: stats.cameras.total,
       icon: Camera,
-      description: `${stats.cameras.active} active, ${stats.cameras.offline} offline`,
+      description: `${stats.cameras.active} đang hoạt động, ${stats.cameras.offline} ngoại tuyến`,
       trend: {
         value: calculateChangePercentage(stats.cameras.total, Math.max(1, stats.cameras.total - 2)),
-        label: 'vs last month',
+        label: 'so với tháng trước',
         isPositive: true
       },
-      color: 'text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-900',
+      color: 'text-cyan-700 bg-cyan-100 dark:text-cyan-400 dark:bg-cyan-900',
       progress: stats.cameras.total > 0 ? (stats.cameras.active / stats.cameras.total) * 100 : 0,
       critical: stats.cameras.offline > stats.cameras.active,
       actionButton: {
-        label: 'Manage',
+        label: 'Quản lý',
         action: () => window.open('/cameras', '_blank'),
         icon: ExternalLink
       },
@@ -295,101 +295,101 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({
       }
     },
     {
-      title: 'Live Streaming',
+      title: 'Đang phát trực tiếp',
       value: stats.cameras.streaming,
       icon: Play,
-      description: `${stats.cameras.total > 0 ? Math.round((stats.cameras.streaming / stats.cameras.total) * 100) : 0}% of cameras`,
+      description: `${stats.cameras.total > 0 ? Math.round((stats.cameras.streaming / stats.cameras.total) * 100) : 0}% camera`,
       trend: {
         value: calculateChangePercentage(stats.cameras.streaming, Math.max(1, stats.cameras.streaming - 1)),
-        label: 'vs yesterday',
+        label: 'so với hôm qua',
         isPositive: true
       },
-      color: 'text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900',
+      color: 'text-teal-700 bg-teal-100 dark:text-teal-400 dark:bg-teal-900',
       progress: stats.cameras.total > 0 ? (stats.cameras.streaming / stats.cameras.total) * 100 : 0,
       critical: stats.cameras.streaming === 0 && stats.cameras.total > 0,
       actionButton: {
-        label: 'View Streams',
+        label: 'Xem trực tiếp',
         action: () => window.open('/cameras/streaming', '_blank'),
         icon: Play
       }
     },
     {
-      title: 'Known Persons',
+      title: 'Người đã biết',
       value: stats.persons.total,
       icon: Users,
-      description: `${stats.persons.with_images} with face images`,
+      description: `${stats.persons.with_images} có ảnh khuôn mặt`,
       trend: {
         value: calculateChangePercentage(stats.persons.total, Math.max(1, stats.persons.total - stats.persons.recent_additions)),
-        label: 'vs last week',
+        label: 'so với tuần trước',
         isPositive: true
       },
-      color: 'text-purple-600 bg-purple-100 dark:text-purple-400 dark:bg-purple-900',
+      color: 'text-emerald-700 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900',
       progress: stats.persons.total > 0 ? (stats.persons.with_images / stats.persons.total) * 100 : 0,
       actionButton: {
-        label: 'Add Person',
+        label: 'Thêm người',
         action: () => window.open('/persons/new', '_blank'),
         icon: Users
       }
     },
     {
-      title: 'Today Detections',
+      title: 'Nhận diện hôm nay',
       value: stats.detections.today,
       icon: Eye,
-      description: `${stats.detections.known_persons} known, ${stats.detections.strangers} strangers`,
+      description: `${stats.detections.known_persons} đã biết, ${stats.detections.strangers} người lạ`,
       trend: {
         value: calculateChangePercentage(stats.detections.today, Math.max(1, stats.detections.today - 50)),
-        label: 'vs yesterday',
+        label: 'so với hôm qua',
         isPositive: stats.detections.strangers <= stats.detections.known_persons
       },
-      color: 'text-orange-600 bg-orange-100 dark:text-orange-400 dark:bg-orange-900',
+      color: 'text-amber-700 bg-amber-100 dark:text-amber-400 dark:bg-amber-900',
       critical: stats.detections.strangers > stats.detections.known_persons,
       actionButton: {
-        label: 'View Logs',
+        label: 'Xem lịch sử',
         action: () => window.open('/detections', '_blank'),
         icon: Eye
       }
     },
     {
-      title: 'Detection Accuracy',
+      title: 'Độ chính xác nhận diện',
       value: `${stats.detections.confidence_avg}%`,
       icon: Shield,
-      description: 'Average confidence score',
+      description: 'Điểm tin cậy trung bình',
       trend: {
         value: calculateChangePercentage(stats.detections.confidence_avg, Math.max(1, stats.detections.confidence_avg - 5)),
-        label: 'vs last week',
+        label: 'so với tuần trước',
         isPositive: true
       },
       color: stats.detections.confidence_avg >= 85 ? 
-        'text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900' :
+        'text-emerald-700 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900' :
         stats.detections.confidence_avg >= 70 ?
-        'text-yellow-600 bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900' :
-        'text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900',
+        'text-yellow-700 bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900' :
+        'text-rose-700 bg-rose-100 dark:text-rose-400 dark:bg-rose-900',
       progress: stats.detections.confidence_avg,
       isText: true,
       critical: stats.detections.confidence_avg < 70
     },
     {
-      title: 'Active Alerts',
+      title: 'Cảnh báo đang hoạt động',
       value: stats.alerts.active,
       icon: AlertTriangle,
-      description: `${stats.alerts.critical} critical, ${stats.alerts.warnings} warnings`,
+      description: `${stats.alerts.critical} nghiêm trọng, ${stats.alerts.warnings} cảnh báo`,
       color: stats.alerts.critical > 0 ? 
-        'text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900' :
+        'text-rose-700 bg-rose-100 dark:text-rose-400 dark:bg-rose-900' :
         stats.alerts.warnings > 0 ?
-        'text-yellow-600 bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900' :
-        'text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900',
+        'text-yellow-700 bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900' :
+        'text-emerald-700 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900',
       critical: stats.alerts.critical > 0,
       actionButton: {
-        label: 'View Alerts',
+        label: 'Xem cảnh báo',
         action: () => window.open('/alerts', '_blank'),
         icon: Bell
       }
     },
     {
-      title: 'System Status',
-      value: stats.system.status.charAt(0).toUpperCase() + stats.system.status.slice(1),
+      title: 'Trạng thái hệ thống',
+      value: stats.system.status === 'healthy' ? 'Ổn định' : stats.system.status === 'warning' ? 'Cảnh báo' : 'Nguy cấp',
       icon: Server,
-      description: `Uptime: ${stats.system.uptime}`,
+      description: `Thời gian hoạt động: ${stats.system.uptime}`,
       isText: true,
       color: getStatusColor(stats.system.status),
       extraInfo: (
@@ -400,36 +400,36 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({
       ),
       critical: stats.system.status === 'critical',
       actionButton: {
-        label: 'System Info',
+        label: 'Thông tin hệ thống',
         action: () => window.open('/admin/system', '_blank'),
         icon: Settings
       }
     },
     {
-      title: 'CPU Usage',
+      title: 'CPU đang sử dụng',
       value: `${stats.system.cpu_usage}%`,
       icon: TrendingUp,
-      description: 'Current processor load',
+      description: 'Tải xử lý hiện tại',
       isText: true,
       color: stats.system.cpu_usage > 90 ? 
-        'text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900' : 
+        'text-rose-700 bg-rose-100 dark:text-rose-400 dark:bg-rose-900' : 
         stats.system.cpu_usage > 80 ?
-        'text-yellow-600 bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900' :
-        'text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-900',
+        'text-yellow-700 bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900' :
+        'text-cyan-700 bg-cyan-100 dark:text-cyan-400 dark:bg-cyan-900',
       progress: stats.system.cpu_usage,
       critical: stats.system.cpu_usage > 95
     },
     {
-      title: 'Memory Usage',
+      title: 'RAM đang sử dụng',
       value: `${stats.system.memory_usage}%`,
       icon: Database,
-      description: 'RAM utilization',
+      description: 'Sử dụng bộ nhớ RAM',
       isText: true,
       color: stats.system.memory_usage > 90 ? 
-        'text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900' : 
+        'text-rose-700 bg-rose-100 dark:text-rose-400 dark:bg-rose-900' : 
         stats.system.memory_usage > 85 ?
-        'text-yellow-600 bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900' :
-        'text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900',
+        'text-yellow-700 bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900' :
+        'text-emerald-700 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900',
       progress: stats.system.memory_usage,
       critical: stats.system.memory_usage > 95
     },
@@ -496,11 +496,11 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({
               isConnected ? "bg-green-500 animate-pulse" : "bg-red-500"
             )} />
             <span className="text-xs text-gray-500 dark:text-gray-400">
-              {isConnected ? 'Live' : 'Offline'}
+              {isConnected ? 'Trực tuyến' : 'Mất kết nối'}
             </span>
           </div>
           <span className="text-xs text-gray-400 dark:text-gray-500">
-            Last updated: {lastUpdated.toLocaleTimeString()}
+            Cập nhật: {lastUpdated.toLocaleTimeString()}
           </span>
         </div>
         
@@ -514,12 +514,12 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({
           {isRefreshing ? (
             <>
               <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
-              Refreshing...
+              Đang làm mới...
             </>
           ) : (
             <>
               <RefreshCw className="h-3 w-3 mr-1" />
-              Refresh
+              Làm mới
             </>
           )}
         </Button>
@@ -581,7 +581,7 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({
                   {stat.progress !== undefined && (
                     <div className="mt-3">
                       <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
-                        <span>Usage</span>
+                        <span>Sử dụng</span>
                         <span>{Math.round(stat.progress)}%</span>
                       </div>
                       <Progress 
@@ -623,7 +623,7 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({
         <Alert>
           <WifiOff className="h-4 w-4" />
           <AlertDescription>
-            Real-time updates are currently unavailable. Statistics may not reflect the latest changes.
+            Không thể cập nhật thời gian thực. Số liệu có thể chưa chính xác mới nhất.
           </AlertDescription>
         </Alert>
       )}

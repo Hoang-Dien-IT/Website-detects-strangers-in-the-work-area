@@ -555,23 +555,23 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
 
   return (
     <div className="min-h-screen bg-gray-50 py-2 sm:py-4">
-      <div className="container mx-auto px-2 sm:px-4 space-y-3 sm:space-y-4">
+  <div className="container mx-auto px-2 sm:px-4 space-y-3 sm:space-y-4">
         {/* Camera Selection */}
         {!selectedCamera && (
           <Card className="max-w-6xl mx-auto">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center space-x-2 text-lg">
-                <Camera className="h-5 w-5" />
-                <span>Select Camera for Face Capture</span>
+                <Camera className="h-5 w-5 text-cyan-600" />
+                <span>Chọn camera để chụp khuôn mặt</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <Alert>
-                  <AlertTriangle className="h-4 w-4" />
+                  <AlertTriangle className="h-4 w-4 text-amber-500" />
                   <AlertDescription className="text-sm">
-                    Choose a camera to capture face images for <strong>{personName}</strong>. 
-                    You need to capture at least {minImages} images and maximum {maxImages} images.
+                    Hãy chọn camera để chụp ảnh khuôn mặt cho <strong>{personName}</strong>.<br/>
+                    Cần chụp tối thiểu {minImages} ảnh, tối đa {maxImages} ảnh.
                   </AlertDescription>
                 </Alert>
 
@@ -579,32 +579,27 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
                   {cameras.map((camera) => (
                     <Card 
                       key={camera.id} 
-                      className="cursor-pointer hover:shadow-md transition-shadow"
+                      className="cursor-pointer hover:shadow-md transition-shadow border-cyan-200"
                       onClick={() => {
-                        console.log('🔵 Camera card clicked:', camera.name, camera.id);
-                        console.log('🔵 Camera object:', camera);
                         startStream(camera);
                       }}
                     >
                       <CardContent className="p-4">
                         <div className="space-y-2">
                           <div className="flex justify-between items-center">
-                            <h3 className="font-medium">{camera.name}</h3>
-                            <Badge variant={camera.is_active ? "default" : "secondary"}>
-                              {camera.is_active ? 'Active' : 'Inactive'}
+                            <h3 className="font-medium text-cyan-800">{camera.name}</h3>
+                            <Badge variant={camera.is_active ? "default" : "secondary"} className={camera.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'}>
+                              {camera.is_active ? 'Đang hoạt động' : 'Không hoạt động'}
                             </Badge>
                           </div>
-                          
-                          <p className="text-sm text-gray-600">{camera.description}</p>
-                          
-                          <div className="flex justify-between text-xs text-gray-500">
+                          <p className="text-sm text-cyan-700">{camera.description}</p>
+                          <div className="flex justify-between text-xs text-cyan-500">
                             <span>{camera.camera_type}</span>
                             <span>{camera.location}</span>
                           </div>
-                          
-                          <Button size="sm" className="w-full">
+                          <Button size="sm" className="w-full bg-cyan-600 text-white hover:bg-cyan-700">
                             <Camera className="h-4 w-4 mr-2" />
-                            Select Camera
+                            Chọn camera
                           </Button>
                         </div>
                       </CardContent>
@@ -614,9 +609,9 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
 
                 {cameras.length === 0 && (
                   <Alert>
-                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTriangle className="h-4 w-4 text-amber-500" />
                     <AlertDescription>
-                      No cameras available. Please add cameras first before capturing face images.
+                      Không có camera nào khả dụng. Vui lòng thêm camera trước khi chụp ảnh khuôn mặt.
                     </AlertDescription>
                   </Alert>
                 )}
@@ -629,28 +624,28 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
         {selectedCamera && (
           <div className="max-w-6xl mx-auto space-y-4">
             {/* Camera Info Header */}
-            <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+            <Card className="bg-gradient-to-r from-cyan-50 to-emerald-50 border-cyan-200">
               <CardContent className="p-4">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-blue-100 rounded-lg">
-                      <Camera className="h-5 w-5 text-blue-600" />
+                    <div className="p-2 bg-cyan-100 rounded-lg">
+                      <Camera className="h-5 w-5 text-cyan-600" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900">Camera: {selectedCamera.name}</h3>
-                      <p className="text-sm text-gray-600">Capturing face images for {personName}</p>
+                      <h3 className="font-semibold text-cyan-900">Camera: {selectedCamera.name}</h3>
+                      <p className="text-sm text-cyan-700">Đang chụp ảnh cho {personName}</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
                     {isStreaming && (
-                      <Badge variant="default" className="bg-green-600 text-xs">
-                        <div className="w-2 h-2 bg-green-300 rounded-full mr-1 animate-pulse"></div>
-                        Live ({currentFps} FPS)
+                      <Badge variant="default" className="bg-emerald-600 text-xs">
+                        <div className="w-2 h-2 bg-emerald-300 rounded-full mr-1 animate-pulse"></div>
+                        Đang phát ({currentFps} FPS)
                       </Badge>
                     )}
-                    <Button variant="outline" size="sm" onClick={changeCamera} className="text-xs">
+                    <Button variant="outline" size="sm" onClick={changeCamera} className="text-xs border-cyan-400 text-cyan-700">
                       <X className="h-3 w-3 mr-1" />
-                      Change Camera
+                      Đổi camera
                     </Button>
                   </div>
                 </div>
@@ -661,10 +656,10 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
             <div className="grid grid-cols-1 xl:grid-cols-5 gap-4">
               {/* Camera Feed - Main Area */}
               <div className="xl:col-span-3">
-                <Card className="shadow-lg border-2 border-gray-200">
+                <Card className="shadow-lg border-2 border-cyan-200">
                   <CardContent className="p-0">
                     {/* Camera Stream Container */}
-                    <div className="relative bg-gradient-to-br from-gray-900 to-black rounded-lg overflow-hidden">
+                    <div className="relative bg-gradient-to-br from-cyan-900 to-black rounded-lg overflow-hidden">
                       <div className="aspect-video relative">
                         {isStreaming ? (
                           <>
@@ -693,11 +688,11 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
                               <div className="absolute inset-0 flex items-center justify-center text-white text-sm">
                                 <div className="text-center bg-black bg-opacity-60 p-4 rounded-lg max-w-md">
                                   <Camera className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                                  <p className="mb-2">Connecting to camera...</p>
+                                  <p className="mb-2">Đang kết nối tới camera...</p>
                                   <div className="text-xs text-gray-300 space-y-1 mb-3">
-                                    <p>Camera: {selectedCamera?.name || 'None'}</p>
-                                    <p>Status: {isStreaming ? 'Connecting' : 'Disconnected'}</p>
-                                    {streamError && <p className="text-red-400">Error: {streamError}</p>}
+                                    <p>Camera: {selectedCamera?.name || 'Không xác định'}</p>
+                                    <p>Trạng thái: {isStreaming ? 'Đang kết nối' : 'Mất kết nối'}</p>
+                                    {streamError && <p className="text-rose-400">Lỗi: {streamError}</p>}
                                   </div>
                                   <div className="space-y-2">
                                     <Button
@@ -725,7 +720,7 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
                                       className="text-white border-white hover:bg-white hover:text-black text-xs"
                                     >
                                       <RefreshCw className="h-3 w-3 mr-1" />
-                                      Retry
+                                      Thử lại
                                     </Button>
                                     <Button
                                       size="sm"
@@ -747,7 +742,7 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
                                       className="text-white border-white hover:bg-white hover:text-black text-xs"
                                     >
                                       <RefreshCw className="h-3 w-3 mr-1" />
-                                      Reset
+                                      Đặt lại
                                     </Button>
                                   </div>
                                 </div>
@@ -755,9 +750,9 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
                             )}
                             {/* Connection status and controls overlay */}
                             <div className="absolute top-2 left-2 flex gap-1">
-                              <Badge variant="default" className="bg-green-600 text-xs">
-                                <div className="w-1.5 h-1.5 bg-green-300 rounded-full mr-1 animate-pulse"></div>
-                                Live ({currentFps} FPS)
+                              <Badge variant="default" className="bg-emerald-600 text-xs">
+                                <div className="w-1.5 h-1.5 bg-emerald-300 rounded-full mr-1 animate-pulse"></div>
+                                Đang phát ({currentFps} FPS)
                               </Badge>
                               <Button
                                 size="sm"
@@ -780,10 +775,10 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
                                 size="sm"
                                 variant="outline"
                                 onClick={exitCamera}
-                                className="bg-red-500/80 text-white border-red-400 hover:bg-red-600 hover:border-red-500 text-xs px-2 py-1"
+                                className="bg-rose-500/80 text-white border-rose-400 hover:bg-rose-600 hover:border-rose-500 text-xs px-2 py-1"
                               >
                                 <X className="h-3 w-3 mr-1" />
-                                Exit
+                                Thoát
                               </Button>
                             </div>
                             {/* Error overlay - improved design */}
@@ -802,7 +797,7 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
                           <div className="flex items-center justify-center h-full text-white">
                             <div className="text-center">
                               <Camera className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                              <p className="mb-3 text-base font-medium">Camera Not Connected</p>
+                              <p className="mb-3 text-base font-medium">Chưa kết nối camera</p>
                               {streamError && (
                                 <p className="text-red-400 text-sm mb-3 max-w-sm">{streamError}</p>
                               )}
@@ -814,26 +809,26 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
                                   className="text-white border-white hover:bg-white hover:text-black px-4"
                                 >
                                   <RefreshCw className="h-3 w-3 mr-1" />
-                                  Start Camera
+                                  Bắt đầu camera
                                 </Button>
                                 <br />
                                 <Button
                                   variant="outline"
                                   size="sm"
                                   onClick={changeCamera}
-                                  className="text-blue-400 border-blue-400 hover:bg-blue-400 hover:text-white px-4 mr-2"
+                                  className="text-cyan-500 border-cyan-400 hover:bg-cyan-400 hover:text-white px-4 mr-2"
                                 >
                                   <RefreshCw className="h-3 w-3 mr-1" />
-                                  Change Camera
+                                  Đổi camera
                                 </Button>
                                 <Button
                                   variant="outline"
                                   size="sm"
                                   onClick={exitCamera}
-                                  className="text-red-400 border-red-400 hover:bg-red-400 hover:text-white px-4"
+                                  className="text-rose-500 border-rose-400 hover:bg-rose-500 hover:text-white px-4"
                                 >
                                   <X className="h-3 w-3 mr-1" />
-                                  Exit Camera
+                                  Thoát camera
                                 </Button>
                               </div>
                             </div>
@@ -862,9 +857,9 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
                         )}
                       </Button>
                       <div className="text-gray-700 text-xs bg-white/80 rounded px-2 py-1 text-center">
-                        {isCapturing ? 'Capturing...' : 
-                         capturedImages.length >= maxImages ? 'Max reached' :
-                         !isStreaming ? 'Camera not ready' : 'Tap to capture'}
+                        {isCapturing ? 'Đang chụp...' : 
+                         capturedImages.length >= maxImages ? 'Đã đủ số lượng tối đa' :
+                         !isStreaming ? 'Camera chưa sẵn sàng' : 'Nhấn để chụp'}
                       </div>
                     </div>
                   </CardContent>
@@ -874,14 +869,14 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
               {/* Controls and Progress - Enhanced Right Column */}
               <div className="xl:col-span-2 space-y-3 sm:space-y-4 order-2">
                 {/* Progress Info - Enhanced Design */}
-                <Card className="border-2 border-blue-100 bg-gradient-to-br from-blue-50 to-indigo-50">
+                <Card className="border-2 border-cyan-100 bg-gradient-to-br from-cyan-50 to-emerald-50">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-base flex items-center justify-between">
                       <div className="flex items-center">
-                        <ImageIcon className="h-5 w-5 mr-2 text-blue-600" />
-                        <span className="text-gray-800">Capture Progress</span>
+                        <ImageIcon className="h-5 w-5 mr-2 text-cyan-600" />
+                        <span className="text-cyan-800">Tiến trình chụp ảnh</span>
                       </div>
-                      <Badge variant="outline" className="bg-white border-blue-200 text-blue-800">
+                      <Badge variant="outline" className="bg-white border-cyan-200 text-cyan-800">
                         {Math.round((capturedImages.length / minImages) * 100)}%
                       </Badge>
                     </CardTitle>
@@ -889,18 +884,18 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
                   <CardContent>
                     <div className="space-y-4">
                       <div className="flex justify-between items-center text-sm font-medium">
-                        <span className="text-gray-700">Photos Captured</span>
-                        <span className="text-blue-600 font-bold">{capturedImages.length} / {minImages} required</span>
+                        <span className="text-cyan-700">Số ảnh đã chụp</span>
+                        <span className="text-cyan-600 font-bold">{capturedImages.length} / {minImages} cần thiết</span>
                       </div>
                       
                       <div className="space-y-2">
                         <Progress 
                           value={(capturedImages.length / minImages) * 100} 
-                          className="h-3 bg-blue-100"
+                          className="h-3 bg-cyan-100"
                         />
-                        <div className="flex justify-between text-xs text-gray-500">
-                          <span>Minimum: {minImages}</span>
-                          <span>Maximum: {maxImages}</span>
+                        <div className="flex justify-between text-xs text-cyan-500">
+                          <span>Tối thiểu: {minImages}</span>
+                          <span>Tối đa: {maxImages}</span>
                         </div>
                       </div>
                       
@@ -908,20 +903,20 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
                         <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
                           <p className="text-sm text-amber-700 font-medium flex items-center">
                             <AlertTriangle className="h-4 w-4 mr-2" />
-                            Need {minImages - capturedImages.length} more photos
+                            Cần thêm {minImages - capturedImages.length} ảnh nữa
                           </p>
                           <p className="text-xs text-amber-600 mt-1">
-                            Capture different angles and expressions for better recognition
+                            Hãy chụp nhiều góc mặt và biểu cảm khác nhau để tăng độ chính xác
                           </p>
                         </div>
                       ) : (
-                        <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                          <p className="text-sm text-green-700 font-medium flex items-center">
+                        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+                          <p className="text-sm text-emerald-700 font-medium flex items-center">
                             <Check className="h-4 w-4 mr-2" />
-                            Ready to upload!
+                            Đã sẵn sàng tải lên!
                           </p>
-                          <p className="text-xs text-green-600 mt-1">
-                            You can capture {maxImages - capturedImages.length} more photos if needed
+                          <p className="text-xs text-emerald-600 mt-1">
+                            Bạn có thể chụp thêm {maxImages - capturedImages.length} ảnh nếu muốn
                           </p>
                         </div>
                       )}
@@ -931,19 +926,19 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
 
                 {/* Captured Images Preview - Enhanced Layout */}
                 {capturedImages.length > 0 && (
-                  <Card className="border-2 border-blue-100">
-                    <CardHeader className="pb-3 bg-gradient-to-r from-blue-50 to-indigo-50">
+                  <Card className="border-2 border-cyan-100">
+                    <CardHeader className="pb-3 bg-gradient-to-r from-cyan-50 to-emerald-50">
                       <CardTitle className="text-base flex items-center justify-between">
                         <div className="flex items-center">
-                          <ImageIcon className="h-5 w-5 mr-2 text-blue-600" />
-                          <span className="text-gray-800">Captured Photos</span>
+                          <ImageIcon className="h-5 w-5 mr-2 text-cyan-600" />
+                          <span className="text-cyan-800">Ảnh đã chụp</span>
                         </div>
-                        <Badge variant="secondary" className="bg-blue-100 text-blue-800 font-semibold">
+                        <Badge variant="secondary" className="bg-cyan-100 text-cyan-800 font-semibold">
                           {capturedImages.length} / {maxImages}
                         </Badge>
                       </CardTitle>
-                      <p className="text-xs text-gray-600 mt-1">
-                        Review your captured photos before uploading
+                      <p className="text-xs text-cyan-700 mt-1">
+                        Xem lại ảnh trước khi tải lên
                       </p>
                     </CardHeader>
                     <CardContent className="p-4">
@@ -971,40 +966,40 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
                               {/* Image Info */}
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between mb-1">
-                                  <h4 className="text-sm font-medium text-gray-900 truncate">
-                                    Photo #{index + 1}
+                                  <h4 className="text-sm font-medium text-cyan-900 truncate">
+                                    Ảnh #{index + 1}
                                   </h4>
                                   <div className="flex items-center space-x-1">
                                     {/* Status Indicator */}
                                     {image.uploading && (
-                                      <div className="flex items-center space-x-1 text-blue-600">
-                                        <div className="animate-spin rounded-full h-3 w-3 border border-blue-600 border-t-transparent" />
-                                        <span className="text-xs">Uploading...</span>
+                                      <div className="flex items-center space-x-1 text-cyan-600">
+                                        <div className="animate-spin rounded-full h-3 w-3 border border-cyan-600 border-t-transparent" />
+                                        <span className="text-xs">Đang tải lên...</span>
                                       </div>
                                     )}
                                     {image.uploaded && (
-                                      <div className="flex items-center space-x-1 text-green-600">
+                                      <div className="flex items-center space-x-1 text-emerald-600">
                                         <Check className="h-3 w-3" />
-                                        <span className="text-xs font-medium">Uploaded</span>
+                                        <span className="text-xs font-medium">Đã tải lên</span>
                                       </div>
                                     )}
                                     {image.error && (
-                                      <div className="flex items-center space-x-1 text-red-600">
+                                      <div className="flex items-center space-x-1 text-rose-600">
                                         <AlertTriangle className="h-3 w-3" />
-                                        <span className="text-xs font-medium">Failed</span>
+                                        <span className="text-xs font-medium">Lỗi</span>
                                       </div>
                                     )}
                                   </div>
                                 </div>
                                 
                                 {/* Timestamp */}
-                                <p className="text-xs text-gray-500 mb-2">
-                                  Captured: {new Date(image.timestamp).toLocaleTimeString()}
+                                <p className="text-xs text-cyan-500 mb-2">
+                                  Đã chụp: {new Date(image.timestamp).toLocaleTimeString()}
                                 </p>
                                 
                                 {/* Error Message */}
                                 {image.error && (
-                                  <p className="text-xs text-red-600 bg-red-50 p-1 rounded mb-2">
+                                  <p className="text-xs text-rose-600 bg-rose-50 p-1 rounded mb-2">
                                     {image.error}
                                   </p>
                                 )}
@@ -1017,22 +1012,22 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
                                       variant="outline"
                                       onClick={() => retryUpload(image.id)}
                                       disabled={image.uploading}
-                                      className="text-xs px-2 py-1 h-6 border-blue-300 text-blue-600 hover:bg-blue-50"
+                                      className="text-xs px-2 py-1 h-6 border-cyan-300 text-cyan-700 hover:bg-cyan-50"
                                     >
                                       <RotateCcw className="h-2.5 w-2.5 mr-1" />
-                                      Retry
+                                      Thử lại
                                     </Button>
                                   )}
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={() => removeImage(image.id)}
-                                    disabled={image.uploading}
-                                    className="text-xs px-2 py-1 h-6 border-red-300 text-red-600 hover:bg-red-50"
-                                  >
-                                    <Trash2 className="h-2.5 w-2.5 mr-1" />
-                                    Remove
-                                  </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => removeImage(image.id)}
+                                      disabled={image.uploading}
+                                      className="text-xs px-2 py-1 h-6 border-rose-300 text-rose-700 hover:bg-rose-50"
+                                    >
+                                      <Trash2 className="h-2.5 w-2.5 mr-1" />
+                                      Xóa
+                                    </Button>
                                 </div>
                               </div>
                             </div>
@@ -1043,23 +1038,23 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
                       {/* Summary Stats */}
                       <div className="mt-4 pt-3 border-t border-gray-200">
                         <div className="grid grid-cols-3 gap-4 text-center">
-                          <div className="bg-green-50 rounded-lg p-2">
-                            <p className="text-lg font-bold text-green-600">
+                          <div className="bg-emerald-50 rounded-lg p-2">
+                            <p className="text-lg font-bold text-emerald-600">
                               {capturedImages.filter(img => img.uploaded).length}
                             </p>
-                            <p className="text-xs text-green-700">Uploaded</p>
+                            <p className="text-xs text-black">Đã tải lên</p>
                           </div>
-                          <div className="bg-blue-50 rounded-lg p-2">
-                            <p className="text-lg font-bold text-blue-600">
+                          <div className="bg-cyan-50 rounded-lg p-2">
+                            <p className="text-lg font-bold text-cyan-600">
                               {capturedImages.filter(img => img.uploading).length}
                             </p>
-                            <p className="text-xs text-blue-700">Uploading</p>
+                            <p className="text-xs text-black">Đang tải lên</p>
                           </div>
-                          <div className="bg-red-50 rounded-lg p-2">
-                            <p className="text-lg font-bold text-red-600">
+                          <div className="bg-rose-50 rounded-lg p-2">
+                            <p className="text-lg font-bold text-rose-600">
                               {capturedImages.filter(img => img.error).length}
                             </p>
-                            <p className="text-xs text-red-700">Failed</p>
+                            <p className="text-xs text-black">Lỗi</p>
                           </div>
                         </div>
                       </div>
@@ -1073,7 +1068,7 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
                     <CardContent className="p-3">
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
-                          <span>Uploading photos...</span>
+                          <span>Đang tải ảnh lên...</span>
                           <span>{Math.round(uploadProgress)}%</span>
                         </div>
                         <Progress value={uploadProgress} className="h-2" />
@@ -1093,20 +1088,20 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
                             <Check className="h-5 w-5 text-green-600" />
                           </div>
                           <div>
-                            <p className="font-semibold">Upload Completed Successfully!</p>
-                            <p className="text-sm text-green-600">Returning to Person Details...</p>
+                            <p className="font-semibold">Tải ảnh lên thành công!</p>
+                            <p className="text-sm text-emerald-600">Đang quay lại trang chi tiết...</p>
                           </div>
                         </div>
                         
                         <div className="bg-white rounded-lg p-3 border border-green-200">
                           <div className="flex items-center justify-between text-sm">
-                            <span className="text-gray-700">✅ Face images uploaded for <strong>{personName}</strong></span>
-                            <Badge variant="secondary" className="bg-green-100 text-green-800">
-                              {capturedImages.filter(img => img.uploaded).length} Photos
+                            <span className="text-black">✅ Đã tải lên ảnh khuôn mặt cho <strong>{personName}</strong></span>
+                            <Badge variant="secondary" className="bg-emerald-100 text-emerald-800">
+                              {capturedImages.filter(img => img.uploaded).length} ảnh
                             </Badge>
                           </div>
-                          <p className="text-xs text-gray-500 mt-1">
-                            You can now generate face embeddings in the Person Details page
+                          <p className="text-xs text-black mt-1">
+                            Bạn có thể tạo embedding khuôn mặt ở trang chi tiết nhân sự
                           </p>
                         </div>
                       </div>
@@ -1117,11 +1112,11 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
                 {/* Validation Messages */}
                 {!canUpload && capturedImages.length > 0 && (
                   <Alert>
-                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTriangle className="h-4 w-4 text-amber-500" />
                     <AlertDescription className="text-sm">
                       {capturedImages.length < minImages 
-                        ? `Please capture at least ${minImages} images (${minImages - capturedImages.length} more needed).`
-                        : `Maximum ${maxImages} images allowed. Please remove ${capturedImages.length - maxImages} images.`
+                        ? `Cần chụp ít nhất ${minImages} ảnh (còn thiếu ${minImages - capturedImages.length} ảnh).`
+                        : `Tối đa ${maxImages} ảnh. Vui lòng xóa bớt ${capturedImages.length - maxImages} ảnh.`
                       }
                     </AlertDescription>
                   </Alert>
@@ -1129,9 +1124,9 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
 
                 {hasErrors && (
                   <Alert variant="destructive">
-                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTriangle className="h-4 w-4 text-rose-500" />
                     <AlertDescription className="text-sm">
-                      Some images failed to upload. Click the retry button on failed images or remove them.
+                      Một số ảnh tải lên thất bại. Hãy thử lại hoặc xóa ảnh lỗi.
                     </AlertDescription>
                   </Alert>
                 )}
@@ -1141,14 +1136,14 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
         )}
 
         {/* Action Buttons - Enhanced Design */}
-        <Card className="bg-gray-50 max-w-7xl mx-auto">
+  <Card className="bg-cyan-50 max-w-7xl mx-auto">
           <CardContent className="p-2 sm:p-3">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4">
-              <div className="text-xs sm:text-sm text-gray-600">
+              <div className="text-xs sm:text-sm text-black">
                 {capturedImages.length > 0 ? (
-                  <span>Ready to upload {capturedImages.length} photos for <strong>{personName}</strong></span>
+                  <span>Sẵn sàng tải lên {capturedImages.length} ảnh cho <strong>{personName}</strong></span>
                 ) : (
-                  <span>Use camera to capture face photos for <strong>{personName}</strong></span>
+                  <span>Dùng camera để chụp ảnh khuôn mặt cho <strong>{personName}</strong></span>
                 )}
               </div>
               
@@ -1157,10 +1152,10 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
                   variant="outline" 
                   onClick={onCancel} 
                   disabled={uploading || returningToDetails}
-                  className="flex-1 sm:flex-none px-3 sm:px-4 text-xs sm:text-sm"
+                  className="flex-1 sm:flex-none px-3 sm:px-4 text-xs sm:text-sm border-rose-300 text-rose-700"
                 >
                   <X className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                  Cancel
+                  Hủy
                 </Button>
                 
                 {/* Complete & Return button - show when minimum images are captured */}
@@ -1169,9 +1164,8 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
                     variant="outline"
                     onClick={() => {
                       const uploadedCount = capturedImages.filter(img => img.uploaded).length;
-                      toast.success(`✅ Face capture completed with ${uploadedCount} images!`);
+                      toast.success(`✅ Đã hoàn tất chụp với ${uploadedCount} ảnh!`);
                       setReturningToDetails(true);
-                      
                       setTimeout(() => {
                         if (selectedCamera) {
                           stopStream();
@@ -1180,10 +1174,10 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
                       }, 1500);
                     }}
                     disabled={uploading}
-                    className="flex-1 sm:flex-none px-3 sm:px-4 text-xs sm:text-sm border-green-300 text-green-600 hover:bg-green-50"
+                    className="flex-1 sm:flex-none px-3 sm:px-4 text-xs sm:text-sm border-emerald-300 text-emerald-700 hover:bg-emerald-50"
                   >
                     <Check className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                    Complete & Return
+                    Hoàn tất & Quay lại
                   </Button>
                 )}
                 
@@ -1191,17 +1185,17 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
                   <Button
                     onClick={uploadImages}
                     disabled={!canUpload || uploading || hasErrors}
-                    className="flex-1 sm:flex-none min-w-24 sm:min-w-32 px-3 sm:px-4 text-xs sm:text-sm"
+                    className="flex-1 sm:flex-none min-w-24 sm:min-w-32 px-3 sm:px-4 text-xs sm:text-sm bg-cyan-600 text-white hover:bg-cyan-700"
                   >
                     {uploading ? (
                       <>
                         <div className="animate-spin rounded-full h-3 w-3 sm:h-4 sm:w-4 border-b-2 border-white mr-1 sm:mr-2" />
-                        Uploading...
+                        Đang tải lên...
                       </>
                     ) : (
                       <>
                         <Download className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                        Upload {capturedImages.filter(img => !img.uploaded).length} Photos
+                        Tải lên {capturedImages.filter(img => !img.uploaded).length} ảnh
                       </>
                     )}
                   </Button>
@@ -1210,10 +1204,10 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
                 {returningToDetails && (
                   <Button
                     disabled
-                    className="flex-1 sm:flex-none min-w-24 sm:min-w-32 px-3 sm:px-4 text-xs sm:text-sm bg-green-600"
+                    className="flex-1 sm:flex-none min-w-24 sm:min-w-32 px-3 sm:px-4 text-xs sm:text-sm bg-emerald-600 text-white"
                   >
                     <div className="animate-spin rounded-full h-3 w-3 sm:h-4 sm:w-4 border-b-2 border-white mr-1 sm:mr-2" />
-                    Returning...
+                    Đang quay lại...
                   </Button>
                 )}
               </div>

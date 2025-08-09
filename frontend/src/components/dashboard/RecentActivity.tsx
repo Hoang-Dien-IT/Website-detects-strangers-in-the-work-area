@@ -126,8 +126,15 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
 
   // Helper function to safely format severity
   const formatSeverity = (severity: ActivitySeverity | undefined): string => {
-    if (!severity) return 'Unknown';
-    return severity.charAt(0).toUpperCase() + severity.slice(1);
+    if (!severity) return 'Không xác định';
+    switch (severity) {
+      case 'info': return 'Thông tin';
+      case 'warning': return 'Cảnh báo';
+      case 'error': return 'Lỗi';
+      case 'success': return 'Thành công';
+      case 'critical': return 'Nghiêm trọng';
+      default: return 'Không xác định';
+    }
   };
 
   // Helper function to get unique severities with proper typing
@@ -275,18 +282,17 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
 
   const getSeverityBadge = (severity?: ActivitySeverity, priority?: string) => {
     if (priority === 'urgent' || severity === 'critical') {
-      return <Badge variant="destructive" className="animate-pulse">Critical</Badge>;
+      return <Badge variant="destructive" className="animate-pulse bg-rose-100 text-rose-800 border-rose-300">Nghiêm trọng</Badge>;
     }
-    
     switch (severity) {
       case 'error':
-        return <Badge variant="destructive">Error</Badge>;
+        return <Badge variant="destructive" className="bg-rose-100 text-rose-800 border-rose-300">Lỗi</Badge>;
       case 'warning':
-        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 border-yellow-300">Warning</Badge>;
+        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 border-yellow-300">Cảnh báo</Badge>;
       case 'success':
-        return <Badge variant="default" className="bg-green-100 text-green-800 border-green-300">Success</Badge>;
+        return <Badge variant="default" className="bg-emerald-100 text-emerald-800 border-emerald-300">Thành công</Badge>;
       case 'info':
-        return <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">Info</Badge>;
+        return <Badge variant="outline" className="bg-cyan-50 text-cyan-700 border-cyan-200">Thông tin</Badge>;
       default:
         return null;
     }
@@ -311,15 +317,14 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
     const now = new Date();
     const time = new Date(timestamp);
     const diffInSeconds = Math.floor((now.getTime() - time.getTime()) / 1000);
-    
-    if (diffInSeconds < 60) return 'Just now';
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
-    return `${Math.floor(diffInSeconds / 86400)}d ago`;
+    if (diffInSeconds < 60) return 'Vừa xong';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} phút trước`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} giờ trước`;
+    return `${Math.floor(diffInSeconds / 86400)} ngày trước`;
   };
 
   const formatDetailedTimestamp = (timestamp: string) => {
-    return new Date(timestamp).toLocaleString();
+    return new Date(timestamp).toLocaleString('vi-VN');
   };
 
   const toggleItemExpansion = (itemId: string) => {
@@ -422,14 +427,14 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
 
   if (loading && activities.length === 0) {
     return (
-      <Card className={cn("", className)}>
+      <Card className={cn("border-cyan-200 bg-gradient-to-br from-white to-cyan-50", className)}>
         <CardHeader>
-          <CardTitle className="text-lg font-medium">Recent Activity</CardTitle>
+          <CardTitle className="text-lg font-bold text-cyan-700">Hoạt động gần đây</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-12">
-            <RefreshCw className="h-6 w-6 animate-spin text-gray-400" />
-            <span className="ml-2 text-gray-500">Loading activities...</span>
+            <RefreshCw className="h-6 w-6 animate-spin text-cyan-400" />
+            <span className="ml-2 text-cyan-600">Đang tải hoạt động...</span>
           </div>
         </CardContent>
       </Card>
@@ -438,52 +443,50 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
 
   return (
     <TooltipProvider>
-      <Card className={cn("", className)}>
+  <Card className={cn("border-cyan-200 bg-gradient-to-br from-white to-cyan-50", className)}>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <div className="flex items-center space-x-2">
-            <CardTitle className="text-lg font-medium">Recent Activity</CardTitle>
+            <CardTitle className="text-lg font-bold text-cyan-700">Hoạt động gần đây</CardTitle>
             {activities.length > 0 && (
-              <Badge variant="outline" className="ml-2">
+              <Badge variant="outline" className="ml-2 border-cyan-400 text-cyan-700">
                 {activities.length}
               </Badge>
             )}
           </div>
-          
           <div className="flex items-center space-x-2">
             {/* Filters */}
             {showFilters && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" className="border-cyan-400 text-cyan-700">
                     <Filter className="h-4 w-4 mr-2" />
-                    Filter
+                    Bộ lọc
                     <ChevronDown className="h-4 w-4 ml-2" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuLabel>Filter by Type</DropdownMenuLabel>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>Lọc theo loại</DropdownMenuLabel>
                   <DropdownMenuItem onClick={() => setFilterType('all')}>
-                    <span className={filterType === 'all' ? 'font-medium' : ''}>All Types</span>
+                    <span className={filterType === 'all' ? 'font-bold text-cyan-700' : ''}>Tất cả</span>
                   </DropdownMenuItem>
                   {getUniqueTypes().map(type => (
                     <DropdownMenuItem key={type} onClick={() => setFilterType(type)}>
-                      <span className={filterType === type ? 'font-medium' : ''}>
-                        {type.charAt(0).toUpperCase() + type.slice(1)}
+                      <span className={filterType === type ? 'font-bold text-cyan-700' : ''}>
+                        {type === 'detection' ? 'Nhận diện' : type === 'camera' ? 'Camera' : type === 'user' ? 'Người dùng' : type === 'system' ? 'Hệ thống' : type === 'security' ? 'Bảo mật' : type === 'backup' ? 'Sao lưu' : type === 'maintenance' ? 'Bảo trì' : type}
                       </span>
                     </DropdownMenuItem>
                   ))}
-                  
                   <DropdownMenuSeparator />
-                  <DropdownMenuLabel>Filter by Severity</DropdownMenuLabel>
+                  <DropdownMenuLabel>Lọc theo mức độ</DropdownMenuLabel>
                   <DropdownMenuItem onClick={() => handleSeverityFilter('all')}>
-                    <span className={filterSeverity === 'all' ? 'font-medium' : ''}>All Severities</span>
+                    <span className={filterSeverity === 'all' ? 'font-bold text-cyan-700' : ''}>Tất cả</span>
                   </DropdownMenuItem>
                   {getUniqueSeverities().map(severity => (
                     <DropdownMenuItem 
                       key={severity} 
                       onClick={() => handleSeverityFilter(severity)}
                     >
-                      <span className={filterSeverity === severity ? 'font-medium' : ''}>
+                      <span className={filterSeverity === severity ? 'font-bold text-cyan-700' : ''}>
                         {formatSeverity(severity)}
                       </span>
                     </DropdownMenuItem>
@@ -491,26 +494,24 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
-
             {/* Refresh Button */}
             {onRefresh && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="outline" size="sm" onClick={onRefresh} disabled={loading}>
+                  <Button variant="outline" size="sm" className="border-cyan-400 text-cyan-700" onClick={onRefresh} disabled={loading}>
                     <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Refresh Activity</p>
+                  <p>Làm mới</p>
                 </TooltipContent>
               </Tooltip>
             )}
-
             {/* View All Button */}
             {onViewAll && (
-              <Button variant="outline" size="sm" onClick={onViewAll}>
+              <Button variant="outline" size="sm" className="border-cyan-400 text-cyan-700" onClick={onViewAll}>
                 <ExternalLink className="h-4 w-4 mr-2" />
-                View All
+                Xem tất cả
               </Button>
             )}
           </div>
@@ -671,27 +672,27 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
             </ScrollArea>
           ) : (
             <div className="text-center py-12">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Activity className="h-8 w-8 text-gray-400" />
+              <div className="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Activity className="h-8 w-8 text-cyan-400" />
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No Activity Yet</h3>
-              <p className="text-gray-500 text-sm max-w-sm mx-auto">
+              <h3 className="text-lg font-bold text-cyan-700 mb-2">Chưa có hoạt động nào</h3>
+              <p className="text-cyan-600 text-sm max-w-sm mx-auto">
                 {filterType !== 'all' || filterSeverity !== 'all' 
-                  ? 'No activities match your current filters. Try adjusting your filter settings.'
-                  : 'When events occur in your system, they will appear here.'
+                  ? 'Không có hoạt động nào phù hợp với bộ lọc hiện tại. Hãy thử thay đổi bộ lọc.'
+                  : 'Khi có sự kiện xảy ra trong hệ thống, chúng sẽ hiển thị tại đây.'
                 }
               </p>
               {(filterType !== 'all' || filterSeverity !== 'all') && (
                 <Button
                   variant="outline"
                   size="sm"
-                  className="mt-4"
+                  className="mt-4 border-cyan-400 text-cyan-700"
                   onClick={() => {
                     setFilterType('all');
                     setFilterSeverity('all');
                   }}
                 >
-                  Clear Filters
+                  Xóa bộ lọc
                 </Button>
               )}
             </div>
@@ -699,9 +700,9 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
 
           {/* Auto-refresh indicator */}
           {autoRefresh && (
-            <div className="flex items-center justify-center mt-4 text-xs text-gray-500">
+            <div className="flex items-center justify-center mt-4 text-xs text-cyan-600">
               <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
-              Auto-refreshing every {Math.floor(refreshInterval / 1000)}s
+              Tự động làm mới mỗi {Math.floor(refreshInterval / 1000)} giây
             </div>
           )}
         </CardContent>

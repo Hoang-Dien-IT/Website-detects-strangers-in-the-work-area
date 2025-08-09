@@ -98,49 +98,48 @@ const StatsCards: React.FC<StatsCardsProps> = ({
 
     const colorMap = {
       blue: {
-        bg: 'bg-blue-50 dark:bg-blue-900/20',
-        icon: 'text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-900/50',
-        text: 'text-blue-900 dark:text-blue-100',
-        border: 'border-blue-200 dark:border-blue-800'
+        bg: 'bg-gradient-to-br from-cyan-50 to-teal-50',
+        icon: 'text-cyan-600 bg-cyan-100',
+        text: 'text-cyan-900',
+        border: 'border-cyan-200'
       },
       green: {
-        bg: 'bg-green-50 dark:bg-green-900/20',
-        icon: 'text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900/50',
-        text: 'text-green-900 dark:text-green-100',
-        border: 'border-green-200 dark:border-green-800'
+        bg: 'bg-gradient-to-br from-emerald-50 to-teal-50',
+        icon: 'text-emerald-600 bg-emerald-100',
+        text: 'text-emerald-900',
+        border: 'border-emerald-200'
       },
       yellow: {
-        bg: 'bg-yellow-50 dark:bg-yellow-900/20',
-        icon: 'text-yellow-600 bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900/50',
-        text: 'text-yellow-900 dark:text-yellow-100',
-        border: 'border-yellow-200 dark:border-yellow-800'
+        bg: 'bg-yellow-50',
+        icon: 'text-yellow-600 bg-yellow-100',
+        text: 'text-yellow-900',
+        border: 'border-yellow-200'
       },
       red: {
-        bg: 'bg-red-50 dark:bg-red-900/20',
-        icon: 'text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900/50',
-        text: 'text-red-900 dark:text-red-100',
-        border: 'border-red-200 dark:border-red-800'
+        bg: 'bg-rose-50',
+        icon: 'text-rose-600 bg-rose-100',
+        text: 'text-rose-900',
+        border: 'border-rose-200'
       },
       purple: {
-        bg: 'bg-purple-50 dark:bg-purple-900/20',
-        icon: 'text-purple-600 bg-purple-100 dark:text-purple-400 dark:bg-purple-900/50',
-        text: 'text-purple-900 dark:text-purple-100',
-        border: 'border-purple-200 dark:border-purple-800'
+        bg: 'bg-gradient-to-br from-cyan-50 to-purple-50',
+        icon: 'text-purple-600 bg-purple-100',
+        text: 'text-purple-900',
+        border: 'border-purple-200'
       },
       indigo: {
-        bg: 'bg-indigo-50 dark:bg-indigo-900/20',
-        icon: 'text-indigo-600 bg-indigo-100 dark:text-indigo-400 dark:bg-indigo-900/50',
-        text: 'text-indigo-900 dark:text-indigo-100',
-        border: 'border-indigo-200 dark:border-indigo-800'
+        bg: 'bg-gradient-to-br from-cyan-50 to-indigo-50',
+        icon: 'text-indigo-600 bg-indigo-100',
+        text: 'text-indigo-900',
+        border: 'border-indigo-200'
       },
       gray: {
-        bg: 'bg-gray-50 dark:bg-gray-900/20',
-        icon: 'text-gray-600 bg-gray-100 dark:text-gray-400 dark:bg-gray-900/50',
-        text: 'text-gray-900 dark:text-gray-100',
-        border: 'border-gray-200 dark:border-gray-800'
+        bg: 'bg-gray-50',
+        icon: 'text-gray-600 bg-gray-100',
+        text: 'text-gray-900',
+        border: 'border-gray-200'
       }
     };
-
     return colorMap[color];
   };
 

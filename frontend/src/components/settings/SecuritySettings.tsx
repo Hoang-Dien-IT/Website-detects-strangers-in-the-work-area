@@ -397,16 +397,16 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
       {/* ✅ Enhanced Change Password */}
       <Card className="shadow-sm">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Key className="h-5 w-5 text-blue-600" />
-            <span>Change Password</span>
+          <CardTitle className="flex items-center space-x-2 text-cyan-800">
+            <Key className="h-5 w-5 text-cyan-600" />
+            <span>Đổi mật khẩu</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Current Password */}
           <div className="space-y-2">
-            <Label htmlFor="current_password">
-              Current Password <span className="text-red-500">*</span>
+            <Label htmlFor="current_password" className="text-black">
+              Mật khẩu hiện tại <span className="text-red-500">*</span>
             </Label>
             <div className="relative">
               <Input
@@ -419,7 +419,7 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
                     setErrors(prev => ({ ...prev, current_password: '' }));
                   }
                 }}
-                placeholder="Enter current password"
+                placeholder="Nhập mật khẩu hiện tại"
                 className={errors.current_password ? 'border-red-500 focus:border-red-500' : ''}
                 disabled={loading}
               />
@@ -444,8 +444,8 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
 
           {/* New Password */}
           <div className="space-y-2">
-            <Label htmlFor="new_password">
-              New Password <span className="text-red-500">*</span>
+            <Label htmlFor="new_password" className="text-black">
+              Mật khẩu mới <span className="text-red-500">*</span>
             </Label>
             <div className="relative">
               <Input
@@ -458,7 +458,7 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
                     setErrors(prev => ({ ...prev, new_password: '' }));
                   }
                 }}
-                placeholder="Enter new password"
+                placeholder="Nhập mật khẩu mới"
                 className={errors.new_password ? 'border-red-500 focus:border-red-500' : ''}
                 disabled={loading}
               />
@@ -508,22 +508,22 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
                   </span>
                 </div>
                 <div className="text-xs text-gray-600 space-y-1">
-                  <p>Password requirements:</p>
+                  <p>Yêu cầu mật khẩu:</p>
                   <ul className="list-disc list-inside space-y-0.5 ml-2">
-                    <li className={passwordData.new_password.length >= 8 ? 'text-green-600' : 'text-gray-500'}>
-                      At least 8 characters
+                    <li className={passwordData.new_password.length >= 8 ? 'text-emerald-600' : 'text-gray-500'}>
+                      Tối thiểu 8 ký tự
                     </li>
-                    <li className={/[a-z]/.test(passwordData.new_password) ? 'text-green-600' : 'text-gray-500'}>
-                      Lowercase letter
+                    <li className={/[a-z]/.test(passwordData.new_password) ? 'text-emerald-600' : 'text-gray-500'}>
+                      Chữ thường
                     </li>
-                    <li className={/[A-Z]/.test(passwordData.new_password) ? 'text-green-600' : 'text-gray-500'}>
-                      Uppercase letter
+                    <li className={/[A-Z]/.test(passwordData.new_password) ? 'text-emerald-600' : 'text-gray-500'}>
+                      Chữ hoa
                     </li>
-                    <li className={/\d/.test(passwordData.new_password) ? 'text-green-600' : 'text-gray-500'}>
-                      Number
+                    <li className={/\d/.test(passwordData.new_password) ? 'text-emerald-600' : 'text-gray-500'}>
+                      Số
                     </li>
-                    <li className={/[!@#$%^&*]/.test(passwordData.new_password) ? 'text-green-600' : 'text-gray-500'}>
-                      Special character
+                    <li className={/[!@#$%^&*]/.test(passwordData.new_password) ? 'text-emerald-600' : 'text-gray-500'}>
+                      Ký tự đặc biệt
                     </li>
                   </ul>
                 </div>
@@ -540,8 +540,8 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
 
           {/* Confirm Password */}
           <div className="space-y-2">
-            <Label htmlFor="confirm_password">
-              Confirm New Password <span className="text-red-500">*</span>
+            <Label htmlFor="confirm_password" className="text-black">
+              Xác nhận mật khẩu mới <span className="text-red-500">*</span>
             </Label>
             <div className="relative">
               <Input
@@ -554,7 +554,7 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
                     setErrors(prev => ({ ...prev, confirm_password: '' }));
                   }
                 }}
-                placeholder="Confirm new password"
+                placeholder="Xác nhận mật khẩu mới"
                 className={errors.confirm_password ? 'border-red-500 focus:border-red-500' : ''}
                 disabled={loading}
               />
@@ -577,27 +577,27 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
             )}
           </div>
 
-          <Alert className="border-blue-200 bg-blue-50">
-            <Shield className="h-4 w-4 text-blue-600" />
-            <AlertDescription className="text-blue-800">
-              Choose a strong password with at least 8 characters, including uppercase, lowercase, numbers, and special characters.
+          <Alert className="border-cyan-200 bg-cyan-50">
+            <Shield className="h-4 w-4 text-cyan-600" />
+            <AlertDescription className="text-cyan-800">
+              Hãy chọn mật khẩu mạnh gồm tối thiểu 8 ký tự, có chữ hoa, chữ thường, số và ký tự đặc biệt.
             </AlertDescription>
           </Alert>
 
           <Button 
             onClick={handlePasswordChange}
             disabled={loading || !passwordData.current_password || !passwordData.new_password || !passwordData.confirm_password}
-            className="w-full bg-blue-600 hover:bg-blue-700"
+            className="w-full bg-gradient-to-r from-emerald-500 to-cyan-600 hover:from-emerald-600 hover:to-cyan-700 text-white"
           >
             {loading ? (
               <>
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                Changing Password...
+                Đang đổi mật khẩu...
               </>
             ) : (
               <>
                 <Key className="h-4 w-4 mr-2" />
-                Change Password
+                Đổi mật khẩu
               </>
             )}
           </Button>
@@ -607,20 +607,20 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
       {/* ✅ Enhanced Two-Factor Authentication */}
       <Card className="shadow-sm">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Smartphone className="h-5 w-5 text-green-600" />
-            <span>Two-Factor Authentication</span>
+          <CardTitle className="flex items-center space-x-2 text-emerald-900">
+            <Smartphone className="h-5 w-5 text-emerald-600" />
+            <span>Xác thực hai lớp (2FA)</span>
             <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-300">
-              Coming Soon
+              Sắp ra mắt
             </Badge>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label>Enable 2FA</Label>
-              <p className="text-sm text-gray-600">
-                Add an extra layer of security to your account with authenticator apps
+              <Label className="text-black">Bật xác thực 2 lớp</Label>
+              <p className="text-sm text-black">
+                Thêm lớp bảo mật cho tài khoản bằng ứng dụng xác thực
               </p>
             </div>
             <div className="flex items-center space-x-2">
@@ -636,10 +636,10 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
                 disabled // ✅ Disabled until backend implements 2FA
               />
               {securitySettings.two_factor_enabled && (
-                <Badge variant="default" className="bg-green-100 text-green-800 border-green-300">
-                  <CheckCircle className="h-3 w-3 mr-1" />
-                  Enabled
-                </Badge>
+                  <Badge variant="default" className="bg-emerald-100 text-emerald-800 border-emerald-300">
+                    <CheckCircle className="h-3 w-3 mr-1" />
+                    Đã bật
+                  </Badge>
               )}
             </div>
           </div>
@@ -647,7 +647,7 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
           <Alert className="border-yellow-200 bg-yellow-50">
             <AlertTriangle className="h-4 w-4 text-yellow-600" />
             <AlertDescription className="text-yellow-800">
-              Two-factor authentication will be available in a future update. Stay tuned for enhanced security features!
+              Tính năng xác thực hai lớp sẽ có trong bản cập nhật tới. Vui lòng chờ để tăng cường bảo mật!
             </AlertDescription>
           </Alert>
         </CardContent>
@@ -656,17 +656,17 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
       {/* ✅ Enhanced Login & Session Settings */}
       <Card className="shadow-sm">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Settings className="h-5 w-5 text-purple-600" />
-            <span>Login & Session Settings</span>
+          <CardTitle className="flex items-center space-x-2 text-cyan-800">
+            <Settings className="h-5 w-5 text-cyan-600" />
+            <span>Cài đặt đăng nhập & phiên làm việc</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label>Login Alerts</Label>
-              <p className="text-sm text-gray-600">
-                Get notified when someone logs into your account from a new device
+              <Label className="text-black">Thông báo đăng nhập</Label>
+              <p className="text-sm text-black">
+                Nhận thông báo khi có đăng nhập từ thiết bị mới
               </p>
             </div>
             <Switch
@@ -679,9 +679,9 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
 
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label>Device Notifications</Label>
-              <p className="text-sm text-gray-600">
-                Get notified when a new device accesses your account
+              <Label className="text-black">Thông báo thiết bị</Label>
+              <p className="text-sm text-black">
+                Nhận thông báo khi có thiết bị mới truy cập tài khoản
               </p>
             </div>
             <Switch
@@ -694,9 +694,9 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
 
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label>Suspicious Activity Alerts</Label>
-              <p className="text-sm text-gray-600">
-                Get alerted about unusual login patterns or security events
+              <Label className="text-black">Cảnh báo hoạt động bất thường</Label>
+              <p className="text-sm text-black">
+                Nhận cảnh báo khi phát hiện đăng nhập hoặc sự kiện bất thường
               </p>
             </div>
             <Switch
@@ -708,9 +708,9 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
           <Separator />
 
           <div className="space-y-2">
-            <Label htmlFor="session_timeout">
+            <Label htmlFor="session_timeout" className="text-black">
               <Clock className="h-4 w-4 inline mr-1" />
-              Session Timeout (minutes)
+              Thời gian hết phiên (phút)
             </Label>
             <Input
               id="session_timeout"
@@ -721,8 +721,8 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
               max="480"
               className="w-32"
             />
-            <p className="text-sm text-gray-600">
-              Automatically log out after this period of inactivity (5-480 minutes)
+            <p className="text-sm text-black">
+              Tự động đăng xuất sau khoảng thời gian không hoạt động (5-480 phút)
             </p>
           </div>
         </CardContent>
@@ -732,11 +732,11 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
       <Card className="shadow-sm">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center space-x-2">
-              <Monitor className="h-5 w-5 text-indigo-600" />
-              <span>Active Sessions</span>
+            <CardTitle className="flex items-center space-x-2 text-cyan-800">
+              <Monitor className="h-5 w-5 text-cyan-600" />
+              <span>Phiên hoạt động</span>
               <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-300">
-                Limited
+                Giới hạn
               </Badge>
             </CardTitle>
             <div className="flex items-center space-x-2">
@@ -775,15 +775,15 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
                       {session.is_current && (
                         <Badge variant="default" className="text-xs bg-green-100 text-green-800 border-green-300">
                           <CheckCircle className="h-3 w-3 mr-1" />
-                          Current Session
+                          Phiên hiện tại
                         </Badge>
                       )}
                     </div>
-                    <p className="text-sm text-gray-600">{session.location}</p>
-                    <div className="flex items-center space-x-4 text-xs text-gray-500 mt-1">
+                    <p className="text-sm text-black">{session.location}</p>
+                    <div className="flex items-center space-x-4 text-xs text-black mt-1">
                       <span>IP: {session.ip_address}</span>
                       <span>•</span>
-                      <span>Last active: {new Date(session.last_active).toLocaleString()}</span>
+                      <span>Hoạt động gần nhất: {new Date(session.last_active).toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
@@ -796,16 +796,16 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
                     className="text-red-600 hover:text-red-700 border-red-300"
                   >
                     <Lock className="h-4 w-4 mr-1" />
-                    End Session
+                    Kết thúc phiên
                   </Button>
                 )}
               </div>
             ))}
             
-            <Alert className="border-blue-200 bg-blue-50">
-              <Monitor className="h-4 w-4 text-blue-600" />
-              <AlertDescription className="text-blue-800">
-                Session management features are limited. Full session tracking will be available in a future update.
+            <Alert className="border-cyan-200 bg-cyan-50">
+              <Monitor className="h-4 w-4 text-cyan-600" />
+              <AlertDescription className="text-cyan-800">
+                Quản lý phiên hiện tại còn giới hạn. Tính năng đầy đủ sẽ có trong bản cập nhật tới.
               </AlertDescription>
             </Alert>
           </div>
@@ -815,17 +815,17 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
       {/* ✅ Enhanced Data & Privacy */}
       <Card className="shadow-sm">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Activity className="h-5 w-5 text-orange-600" />
-            <span>Data & Privacy</span>
+          <CardTitle className="flex items-center space-x-2 text-cyan-800">
+            <Activity className="h-5 w-5 text-cyan-600" />
+            <span>Dữ liệu & quyền riêng tư</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label>Password Expiry</Label>
-              <p className="text-sm text-gray-600">
-                Require password change every 90 days for enhanced security
+              <Label className="text-black">Hết hạn mật khẩu</Label>
+              <p className="text-sm text-black">
+                Yêu cầu đổi mật khẩu mỗi 90 ngày để tăng bảo mật
               </p>
             </div>
             <Switch
@@ -837,8 +837,8 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
           <Separator />
 
           <div className="space-y-2">
-            <Label htmlFor="history_retention">
-              Login History Retention (days)
+            <Label htmlFor="history_retention" className="text-black">
+              Thời gian lưu lịch sử đăng nhập (ngày)
             </Label>
             <Input
               id="history_retention"
@@ -849,8 +849,8 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
               max="365"
               className="w-32"
             />
-            <p className="text-sm text-gray-600">
-              How long to keep login history records (30-365 days)
+            <p className="text-sm text-black">
+              Thời gian lưu lịch sử đăng nhập (30-365 ngày)
             </p>
           </div>
 
@@ -859,9 +859,9 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
           {/* ✅ Data Export Section */}
           <div className="space-y-4">
             <div>
-              <Label className="text-base font-medium">Export Your Data</Label>
-              <p className="text-sm text-gray-600 mt-1">
-                Download a copy of your personal data stored in SafeFace
+              <Label className="text-base font-medium text-black">Xuất dữ liệu cá nhân</Label>
+              <p className="text-sm text-black mt-1">
+                Tải về bản sao dữ liệu cá nhân của bạn trên SafeFace
               </p>
             </div>
             
@@ -871,7 +871,7 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
               className="w-full sm:w-auto"
             >
               <Download className="h-4 w-4 mr-2" />
-              Export Data (JSON)
+              Xuất dữ liệu (JSON)
             </Button>
           </div>
 
@@ -880,9 +880,9 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
           {/* ✅ Account Deletion Section */}
           <div className="space-y-4">
             <div>
-              <Label className="text-base font-medium text-red-600">Danger Zone</Label>
-              <p className="text-sm text-gray-600 mt-1">
-                Permanently delete your account and all associated data
+              <Label className="text-base font-medium text-red-600">Vùng nguy hiểm</Label>
+              <p className="text-sm text-black mt-1">
+                Xóa vĩnh viễn tài khoản và toàn bộ dữ liệu liên quan
               </p>
             </div>
             
@@ -892,7 +892,7 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
               className="w-full sm:w-auto"
             >
               <Trash2 className="h-4 w-4 mr-2" />
-              Delete Account
+              Xóa tài khoản
             </Button>
           </div>
         </CardContent>
@@ -903,26 +903,26 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
         <Button 
           variant="outline" 
           onClick={() => window.location.reload()}
-          className="w-full sm:w-auto"
+          className="w-full sm:w-auto text-black border-cyan-300 hover:bg-cyan-50"
         >
           <RefreshCw className="h-4 w-4 mr-2" />
-          Reset
+          Đặt lại
         </Button>
         
         <Button 
           onClick={handleSaveSettings} 
           disabled={loading}
-          className="w-full sm:w-auto min-w-32 bg-blue-600 hover:bg-blue-700"
+          className="w-full sm:w-auto min-w-32 bg-gradient-to-r from-emerald-500 to-cyan-600 hover:from-emerald-600 hover:to-cyan-700 text-white"
         >
           {loading ? (
             <>
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-              Saving...
+              Đang lưu...
             </>
           ) : (
             <>
               <Save className="h-4 w-4 mr-2" />
-              Save Security Settings
+              Lưu cài đặt bảo mật
             </>
           )}
         </Button>
@@ -932,19 +932,19 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
       <Dialog open={showTwoFactorDialog} onOpenChange={setShowTwoFactorDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center space-x-2">
+            <DialogTitle className="flex items-center space-x-2 text-emerald-900">
               <Smartphone className="h-5 w-5" />
-              <span>Setup Two-Factor Authentication</span>
+              <span>Thiết lập xác thực hai lớp</span>
             </DialogTitle>
-            <DialogDescription>
-              Two-factor authentication adds an extra layer of security to your account.
+            <DialogDescription className="text-black">
+              Xác thực hai lớp giúp tăng cường bảo mật cho tài khoản của bạn.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <Alert className="border-yellow-200 bg-yellow-50">
               <AlertTriangle className="h-4 w-4 text-yellow-600" />
               <AlertDescription className="text-yellow-800">
-                Two-factor authentication is not yet available. This feature will be implemented in a future update.
+                Tính năng xác thực hai lớp chưa khả dụng. Sẽ được cập nhật trong thời gian tới.
               </AlertDescription>
             </Alert>
             
@@ -952,21 +952,21 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
               <div className="w-32 h-32 bg-white mx-auto mb-4 rounded border-2 border-dashed border-gray-300 flex items-center justify-center">
                 <Smartphone className="h-8 w-8 text-gray-400" />
               </div>
-              <p className="text-sm text-gray-600">
-                QR Code will be displayed here when 2FA is implemented
+              <p className="text-sm text-black">
+                Mã QR sẽ hiển thị tại đây khi 2FA được hỗ trợ
               </p>
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="verification_code">Verification Code</Label>
+              <Label htmlFor="verification_code" className="text-black">Mã xác thực</Label>
               <Input
                 id="verification_code"
                 placeholder="Enter 6-digit code"
                 maxLength={6}
                 disabled
               />
-              <p className="text-xs text-gray-500">
-                Use Google Authenticator, Authy, or similar apps
+              <p className="text-xs text-black">
+                Sử dụng Google Authenticator, Authy hoặc ứng dụng tương tự
               </p>
             </div>
             
@@ -976,7 +976,7 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
                 onClick={() => setShowTwoFactorDialog(false)}
                 className="flex-1"
               >
-                Cancel
+                Hủy
               </Button>
               <Button
                 onClick={() => {
@@ -987,7 +987,7 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
                 disabled
               >
                 <ExternalLink className="h-4 w-4 mr-2" />
-                Enable 2FA
+                Bật 2FA
               </Button>
             </div>
           </div>
@@ -1000,31 +1000,31 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center space-x-2 text-red-600">
               <AlertTriangle className="h-5 w-5" />
-              <span>Delete Account</span>
+              <span>Xóa tài khoản</span>
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-left space-y-3">
+            <AlertDialogDescription className="text-left space-y-3 text-black">
               <p>
-                Are you sure you want to permanently delete your account? This action cannot be undone.
+                Bạn có chắc chắn muốn xóa vĩnh viễn tài khoản? Hành động này không thể hoàn tác.
               </p>
               <div className="bg-red-50 border border-red-200 rounded p-3">
-                <p className="text-red-800 font-medium text-sm">This will permanently delete:</p>
+                <p className="text-red-800 font-medium text-sm">Bạn sẽ mất vĩnh viễn:</p>
                 <ul className="list-disc list-inside text-red-700 text-sm mt-2 space-y-1">
-                  <li>Your user profile and settings</li>
-                  <li>All cameras and their configurations</li>
-                  <li>All known persons and face images</li>
-                  <li>All detection logs and history</li>
-                  <li>All uploaded files and data</li>
+                  <li>Hồ sơ và cài đặt người dùng</li>
+                  <li>Tất cả camera và cấu hình</li>
+                  <li>Tất cả người đã lưu và ảnh khuôn mặt</li>
+                  <li>Tất cả nhật ký phát hiện và lịch sử</li>
+                  <li>Tất cả tệp và dữ liệu đã tải lên</li>
                 </ul>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="delete_confirm">
-                  Type <strong>DELETE</strong> to confirm:
+                <Label htmlFor="delete_confirm" className="text-black">
+                  Nhập <strong>DELETE</strong> để xác nhận:
                 </Label>
                 <Input
                   id="delete_confirm"
                   value={deleteConfirmText}
                   onChange={(e) => setDeleteConfirmText(e.target.value)}
-                  placeholder="Type DELETE to confirm"
+                  placeholder="Nhập DELETE để xác nhận"
                   className="font-mono"
                 />
               </div>
@@ -1037,7 +1037,7 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
                 setShowDeleteAccountDialog(false);
               }}
             >
-              Cancel
+              Hủy
             </AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleDeleteAccount}
@@ -1047,12 +1047,12 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ onSave }) => {
               {loading ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                  Deleting...
+                  Đang xóa...
                 </>
               ) : (
                 <>
                   <Trash2 className="h-4 w-4 mr-2" />
-                  Delete Account
+                  Xóa tài khoản
                 </>
               )}
             </AlertDialogAction>

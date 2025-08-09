@@ -179,61 +179,60 @@ const QuickActions: React.FC<QuickActionsProps> = ({
   };
 
   const handleScheduleReport = () => {
-    toast.info('Opening Face Recognition report scheduler...');
+    toast.info('Mở trình lập lịch báo cáo nhận diện khuôn mặt...');
     navigate('/analytics/reports?schedule=true');
   };
 
   const handleSystemBackup = () => {
     if (!user?.is_admin) {
-      toast.error('Administrator privileges required');
+      toast.error('Cần quyền quản trị viên');
       return;
     }
-    
-    toast.info('Starting Face Recognition system backup...');
+    toast.info('Đang bắt đầu sao lưu hệ thống nhận diện khuôn mặt...');
     setTimeout(() => {
-      toast.success('Backup initiated successfully');
+      toast.success('Khởi tạo sao lưu thành công');
     }, 3000);
   };
 
   // ✅ Enhanced primary actions với Face Recognition metrics
   const primaryActions = [
     {
-      title: 'Add Camera',
-      description: 'Connect security camera for face detection',
+      title: 'Thêm Camera',
+      description: 'Kết nối camera an ninh để nhận diện khuôn mặt',
       icon: Camera,
-      color: 'bg-blue-500 hover:bg-blue-600',
+      color: 'bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600',
       action: () => navigate('/cameras/new'),
       stats: stats?.cameras.total || 0,
-      badge: stats?.cameras.active ? `${stats.cameras.active}/${stats.cameras.total} active` : undefined,
+      badge: stats?.cameras.active ? `${stats.cameras.active}/${stats.cameras.total} hoạt động` : undefined,
       urgent: (stats?.cameras.offline || 0) > (stats?.cameras.active || 0)
     },
     {
-      title: 'Add Person',
-      description: 'Register known person with face images',
+      title: 'Thêm Người',
+      description: 'Đăng ký người quen với ảnh khuôn mặt',
       icon: Users,
-      color: 'bg-green-500 hover:bg-green-600',
+      color: 'bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-600 hover:to-teal-500',
       action: () => navigate('/persons/new'),
       stats: stats?.persons.total || 0,
-      badge: stats?.persons.with_images ? `${stats.persons.with_images} with faces` : undefined
+      badge: stats?.persons.with_images ? `${stats.persons.with_images} có khuôn mặt'` : undefined
     },
     {
-      title: 'View Detections',
-      description: 'Face detection logs and alerts',
+      title: 'Xem Nhận Diện',
+      description: 'Lịch sử & cảnh báo nhận diện khuôn mặt',
       icon: Eye,
-      color: 'bg-purple-500 hover:bg-purple-600',
+      color: 'bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600',
       action: () => navigate('/detections'),
       stats: stats?.detections.today || 0,
-      badge: 'today',
+      badge: 'hôm nay',
       urgent: (stats?.detections.strangers || 0) > 0
     },
     {
-      title: 'Live Monitoring',
-      description: 'Real-time face detection streams',
+      title: 'Giám Sát Trực Tiếp',
+      description: 'Xem trực tiếp nhận diện khuôn mặt',
       icon: Video,
-      color: 'bg-red-500 hover:bg-red-600',
+      color: 'bg-gradient-to-r from-teal-400 to-cyan-600 hover:from-teal-500 hover:to-cyan-700',
       action: () => navigate('/cameras/streaming'),
       stats: stats?.cameras.streaming || 0,
-      badge: 'streaming',
+      badge: 'đang phát',
       urgent: (stats?.cameras.streaming || 0) === 0 && (stats?.cameras.active || 0) > 0
     }
   ];
@@ -241,43 +240,43 @@ const QuickActions: React.FC<QuickActionsProps> = ({
   // ✅ Enhanced secondary actions
   const secondaryActions = [
     {
-      title: 'Import Persons',
-      description: 'Bulk import with face data',
+      title: 'Nhập Người',
+      description: 'Nhập khẩu danh sách người có dữ liệu khuôn mặt',
       icon: Upload,
       action: handleImportPersons,
       disabled: false
     },
     {
-      title: 'Export Data',
-      description: 'Download system analytics',
+      title: 'Xuất Dữ Liệu',
+      description: 'Tải về thống kê hệ thống',
       icon: Download,
       action: handleExportData,
       disabled: isExporting
     },
     {
-      title: 'Face Analytics',
-      description: 'Detection reports & insights',
+      title: 'Phân Tích Khuôn Mặt',
+      description: 'Báo cáo & thống kê nhận diện',
       icon: BarChart3,
       action: () => navigate('/analytics'),
       disabled: false
     },
     {
-      title: 'System Settings',
-      description: 'Configure face recognition',
+      title: 'Cài Đặt Hệ Thống',
+      description: 'Cấu hình nhận diện khuôn mặt',
       icon: Settings,
       action: () => navigate('/settings'),
       disabled: false
     },
     {
-      title: 'Schedule Report',
-      description: 'Automated face detection reports',
+      title: 'Lập Lịch Báo Cáo',
+      description: 'Tự động gửi báo cáo nhận diện',
       icon: Calendar,
       action: handleScheduleReport,
       disabled: false
     },
     {
-      title: 'Refresh Status',
-      description: 'Update real-time data',
+      title: 'Làm Mới Dữ Liệu',
+      description: 'Cập nhật dữ liệu thời gian thực',
       icon: RefreshCw,
       action: handleRefreshSystem,
       disabled: false,
@@ -288,29 +287,29 @@ const QuickActions: React.FC<QuickActionsProps> = ({
   // ✅ Enhanced admin actions với permission check
   const adminActions = user?.is_admin ? [
     {
-      title: 'User Management',
-      description: 'Manage system access',
+      title: 'Quản Lý Người Dùng',
+      description: 'Phân quyền & truy cập hệ thống',
       icon: Shield,
       action: () => navigate('/admin/users'),
       disabled: false
     },
     {
-      title: 'System Backup',
-      description: 'Backup face recognition data',
+      title: 'Sao Lưu Hệ Thống',
+      description: 'Sao lưu toàn bộ dữ liệu nhận diện',
       icon: Database,
       action: handleSystemBackup,
       disabled: false
     },
     {
-      title: 'System Logs',
-      description: 'Face detection activity logs',
+      title: 'Nhật Ký Hệ Thống',
+      description: 'Lịch sử hoạt động nhận diện',
       icon: FileText,
       action: () => navigate('/admin/logs'),
       disabled: false
     },
     {
-      title: 'Bulk Operations',
-      description: 'Mass face data operations',
+      title: 'Tác Vụ Hàng Loạt',
+      description: 'Xử lý dữ liệu khuôn mặt hàng loạt',
       icon: Zap,
       action: handleBulkActions,
       disabled: false
@@ -344,11 +343,11 @@ const QuickActions: React.FC<QuickActionsProps> = ({
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'success':
-        return <Badge className="bg-green-100 text-green-800">Success</Badge>;
+        return <Badge className="bg-emerald-100 text-emerald-800">Thành công</Badge>;
       case 'warning':
-        return <Badge className="bg-yellow-100 text-yellow-800">Warning</Badge>;
+        return <Badge className="bg-yellow-100 text-yellow-800">Cảnh báo</Badge>;
       case 'error':
-        return <Badge className="bg-red-100 text-red-800">Error</Badge>;
+        return <Badge className="bg-rose-100 text-rose-800">Lỗi</Badge>;
       default:
         return null;
     }
@@ -358,13 +357,13 @@ const QuickActions: React.FC<QuickActionsProps> = ({
     <div className={`space-y-6 ${className}`}>
       {/* Connection Status Alert */}
       {!isConnected && (
-        <Alert>
-          <WifiOff className="h-4 w-4" />
+        <Alert className="bg-gradient-to-r from-cyan-50 to-emerald-50 border-cyan-200">
+          <WifiOff className="h-4 w-4 text-cyan-600" />
           <AlertDescription>
-            Real-time connection unavailable. Some features may show cached data.
-            <Button variant="outline" size="sm" className="ml-2" onClick={handleRefreshSystem}>
+            Không thể kết nối thời gian thực. Một số tính năng sẽ hiển thị dữ liệu cũ.
+            <Button variant="outline" size="sm" className="ml-2 border-cyan-400 text-cyan-700" onClick={handleRefreshSystem}>
               <RefreshCw className="h-3 w-3 mr-1" />
-              Retry Connection
+              Thử lại kết nối
             </Button>
           </AlertDescription>
         </Alert>
@@ -372,38 +371,38 @@ const QuickActions: React.FC<QuickActionsProps> = ({
 
       {/* Export Progress */}
       {isExporting && (
-        <Alert>
-          <Download className="h-4 w-4" />
+        <Alert className="bg-gradient-to-r from-teal-50 to-cyan-50 border-teal-200">
+          <Download className="h-4 w-4 text-teal-600" />
           <AlertDescription>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span>Exporting Face Recognition data...</span>
+                <span>Đang xuất dữ liệu nhận diện khuôn mặt...</span>
                 <span className="text-sm">{exportProgress}%</span>
               </div>
-              <Progress value={exportProgress} className="h-2" />
+              <Progress value={exportProgress} className="h-2 bg-gradient-to-r from-teal-400 to-cyan-400" />
             </div>
           </AlertDescription>
         </Alert>
       )}
 
       {/* Primary Actions */}
-      <Card>
+      <Card className="border-emerald-200 bg-gradient-to-br from-cyan-50 to-emerald-50">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Zap className="h-5 w-5" />
-              <span>Quick Actions</span>
+              <Zap className="h-5 w-5 text-emerald-500" />
+              <span className="text-emerald-700 font-bold">Tác vụ nhanh</span>
             </div>
             <div className="flex items-center space-x-1">
               {isConnected ? (
-                <div className="flex items-center space-x-1 text-green-600">
+                <div className="flex items-center space-x-1 text-emerald-600">
                   <Wifi className="h-3 w-3" />
-                  <span className="text-xs">Live</span>
+                  <span className="text-xs">Trực tuyến</span>
                 </div>
               ) : (
-                <div className="flex items-center space-x-1 text-red-600">
+                <div className="flex items-center space-x-1 text-rose-600">
                   <WifiOff className="h-3 w-3" />
-                  <span className="text-xs">Offline</span>
+                  <span className="text-xs">Mất kết nối</span>
                 </div>
               )}
             </div>
@@ -413,26 +412,22 @@ const QuickActions: React.FC<QuickActionsProps> = ({
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {primaryActions.map((action, index) => {
               const Icon = action.icon;
-              
               return (
                 <Button
                   key={index}
                   onClick={action.action}
-                  className={`${action.color} text-white h-auto p-4 flex flex-col items-center justify-center space-y-3 relative group`}
+                  className={`${action.color} text-white h-auto p-4 flex flex-col items-center justify-center space-y-3 relative group shadow-md rounded-xl`}
                 >
                   {/* Urgent indicator */}
                   {action.urgent && (
                     <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-pulse" />
                   )}
-                  
                   <div className="flex items-center justify-center w-12 h-12 bg-white bg-opacity-20 rounded-full">
                     <Icon className="h-6 w-6" />
                   </div>
-                  
                   <div className="text-center">
                     <p className="font-semibold text-sm">{action.title}</p>
                     <p className="text-xs opacity-90">{action.description}</p>
-                    
                     {action.stats !== undefined && (
                       <div className="flex items-center justify-center space-x-1 mt-2">
                         <span className="text-lg font-bold">{action.stats}</span>
@@ -444,7 +439,6 @@ const QuickActions: React.FC<QuickActionsProps> = ({
                       </div>
                     )}
                   </div>
-                  
                   {/* Hover overlay */}
                   <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-200 rounded-lg" />
                 </Button>
@@ -455,33 +449,31 @@ const QuickActions: React.FC<QuickActionsProps> = ({
       </Card>
 
       {/* Secondary Actions */}
-      <Card>
+      <Card className="border-cyan-200 bg-gradient-to-br from-white to-cyan-50">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <Settings className="h-5 w-5" />
-            <span>Face Recognition Management</span>
+            <Settings className="h-5 w-5 text-cyan-500" />
+            <span className="text-cyan-700 font-bold">Quản lý nhận diện khuôn mặt</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {secondaryActions.map((action, index) => {
               const Icon = action.icon;
-              
               return (
                 <Button
                   key={index}
                   variant="outline"
                   onClick={action.action}
                   disabled={action.disabled}
-                  className={`h-20 flex flex-col items-center justify-center space-y-2 hover:bg-gray-50 group relative ${
-                    action.highlight ? 'border-orange-200 bg-orange-50' : ''
+                  className={`h-20 flex flex-col items-center justify-center space-y-2 group relative rounded-lg border-cyan-200 hover:bg-cyan-50 ${
+                    action.highlight ? 'border-emerald-300 bg-emerald-50' : ''
                   }`}
                 >
                   {action.highlight && (
-                    <div className="absolute -top-1 -right-1 w-2 h-2 bg-orange-400 rounded-full" />
+                    <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-400 rounded-full" />
                   )}
-                  
-                  <Icon className={`h-5 w-5 text-gray-600 group-hover:text-gray-900 transition-colors ${
+                  <Icon className={`h-5 w-5 text-cyan-600 group-hover:text-emerald-600 transition-colors ${
                     action.disabled ? 'animate-spin' : ''
                   }`} />
                   <div className="text-center">
@@ -497,27 +489,26 @@ const QuickActions: React.FC<QuickActionsProps> = ({
 
       {/* Admin Actions */}
       {user?.is_admin && adminActions.length > 0 && (
-        <Card>
+        <Card className="border-cyan-200 bg-gradient-to-br from-white to-cyan-50">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Shield className="h-5 w-5" />
-              <span>System Administration</span>
+              <Shield className="h-5 w-5 text-cyan-500" />
+              <span className="text-cyan-700 font-bold">Quản trị hệ thống</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {adminActions.map((action, index) => {
                 const Icon = action.icon;
-                
                 return (
                   <Button
                     key={index}
                     variant="outline"
                     onClick={action.action}
                     disabled={action.disabled}
-                    className="h-16 flex flex-col items-center justify-center space-y-1 hover:bg-red-50 hover:border-red-200 group"
+                    className="h-16 flex flex-col items-center justify-center space-y-1 group rounded-lg border-cyan-200 hover:bg-cyan-50"
                   >
-                    <Icon className="h-4 w-4 text-gray-600 group-hover:text-red-600 transition-colors" />
+                    <Icon className="h-4 w-4 text-cyan-600 group-hover:text-emerald-600 transition-colors" />
                     <div className="text-center">
                       <p className="text-xs font-medium">{action.title}</p>
                       <p className="text-xs text-gray-500">{action.description}</p>
@@ -531,16 +522,16 @@ const QuickActions: React.FC<QuickActionsProps> = ({
       )}
 
       {/* Recent Actions History */}
-      <Card>
+      <Card className="border-cyan-200 bg-gradient-to-br from-white to-cyan-50">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <History className="h-5 w-5" />
-              <span>Recent Face Recognition Activities</span>
+              <History className="h-5 w-5 text-cyan-500" />
+              <span className="text-cyan-700 font-bold">Hoạt động gần đây</span>
             </div>
             {recentActions.length > 3 && (
-              <Button variant="outline" size="sm" onClick={() => navigate('/admin/logs')}>
-                View All
+              <Button variant="outline" size="sm" className="border-cyan-400 text-cyan-700" onClick={() => navigate('/admin/logs')}>
+                Xem tất cả
               </Button>
             )}
           </CardTitle>
@@ -551,7 +542,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
               recentActions.slice(0, 3).map((action, index) => {
                 const Icon = getActionIcon(action.type);
                 return (
-                  <div key={action.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors">
+                  <div key={action.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-cyan-50 transition-colors">
                     <div className="flex items-center space-x-3">
                       <Icon className={`h-4 w-4 ${getActionColor(action.type)}`} />
                       <div>
@@ -570,19 +561,18 @@ const QuickActions: React.FC<QuickActionsProps> = ({
                 );
               })
             ) : (
-              <div className="text-center py-8 text-gray-500">
-                <Activity className="h-8 w-8 mx-auto mb-2 text-gray-300" />
-                <p className="text-sm">No recent activities</p>
-                <p className="text-xs">Actions will appear here as you use the system</p>
+              <div className="text-center py-8 text-gray-400">
+                <Activity className="h-8 w-8 mx-auto mb-2 text-cyan-200" />
+                <p className="text-sm">Chưa có hoạt động nào</p>
+                <p className="text-xs">Các thao tác sẽ hiển thị tại đây khi bạn sử dụng hệ thống</p>
               </div>
             )}
           </div>
-          
           {recentActions.length > 0 && (
             <div className="mt-4 pt-4 border-t">
-              <Button variant="outline" size="sm" className="w-full" onClick={() => navigate('/admin/logs')}>
+              <Button variant="outline" size="sm" className="w-full border-cyan-400 text-cyan-700" onClick={() => navigate('/admin/logs')}>
                 <History className="h-4 w-4 mr-2" />
-                View Complete Activity Log
+                Xem toàn bộ lịch sử hoạt động
               </Button>
             </div>
           )}

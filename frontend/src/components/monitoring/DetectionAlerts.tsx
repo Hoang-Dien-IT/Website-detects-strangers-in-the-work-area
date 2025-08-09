@@ -112,18 +112,16 @@ const DetectionAlerts: React.FC<DetectionAlertsProps> = ({
 
     // Show toast notification
     if (newAlert.type === 'unknown_person') {
-      toast.error(`🚨 Unknown Person Detected at ${newAlert.camera_name}`, {
-        description: `Confidence: ${(newAlert.confidence * 100).toFixed(1)}%`,
+      toast.error(`🚨 Phát hiện người lạ tại ${newAlert.camera_name}`, {
+        description: `Độ tin cậy: ${(newAlert.confidence * 100).toFixed(1)}%`,
         duration: 5000,
       });
-
-      // Play notification sound
       if (soundEnabled) {
         playNotificationSound();
       }
     } else {
-      toast.info(`👤 Known Person: ${newAlert.person_name} at ${newAlert.camera_name}`, {
-        description: `Confidence: ${(newAlert.confidence * 100).toFixed(1)}%`,
+      toast.info(`👤 Đã nhận diện: ${newAlert.person_name || 'Người quen'} tại ${newAlert.camera_name}`, {
+        description: `Độ tin cậy: ${(newAlert.confidence * 100).toFixed(1)}%`,
         duration: 3000,
       });
     }
@@ -180,21 +178,21 @@ const DetectionAlerts: React.FC<DetectionAlertsProps> = ({
   const getAlertIcon = (type: string, severity: string) => {
     switch (type) {
       case 'unknown_person':
-        return <UserX className="w-4 h-4" />;
+        return <UserX className="w-4 h-4 text-rose-600" />;
       case 'known_person':
-        return <User className="w-4 h-4" />;
+        return <User className="w-4 h-4 text-emerald-600" />;
       default:
-        return <AlertTriangle className="w-4 h-4" />;
+        return <AlertTriangle className="w-4 h-4 text-cyan-600" />;
     }
   };
 
   const getAlertColor = (type: string, severity: string) => {
     if (type === 'unknown_person') {
-      return 'bg-red-100 border-red-300 text-red-800';
+      return 'bg-rose-50 border-rose-200 text-rose-800';
     } else if (type === 'known_person') {
-      return 'bg-green-100 border-green-300 text-green-800';
+      return 'bg-emerald-50 border-emerald-200 text-emerald-800';
     }
-    return 'bg-yellow-100 border-yellow-300 text-yellow-800';
+    return 'bg-cyan-50 border-cyan-200 text-cyan-800';
   };
 
   const filteredAlerts = showOnlyUnread 
@@ -208,10 +206,10 @@ const DetectionAlerts: React.FC<DetectionAlertsProps> = ({
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-semibold flex items-center space-x-2">
-            <Shield className="w-5 h-5 text-blue-600" />
-            <span>Detection Alerts</span>
+            <Shield className="w-5 h-5 text-cyan-600" />
+            <span>Cảnh báo nhận diện</span>
             {unreadCount > 0 && (
-              <Badge variant="destructive" className="ml-2">
+              <Badge variant="destructive" className="ml-2 bg-rose-500 text-white border-rose-500">
                 {unreadCount}
               </Badge>
             )}
@@ -221,7 +219,7 @@ const DetectionAlerts: React.FC<DetectionAlertsProps> = ({
               variant="ghost"
               size="sm"
               onClick={() => setSoundEnabled(!soundEnabled)}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-cyan-500 hover:text-cyan-700"
             >
               {soundEnabled ? <Bell className="w-4 h-4" /> : <BellOff className="w-4 h-4" />}
             </Button>
@@ -231,37 +229,37 @@ const DetectionAlerts: React.FC<DetectionAlertsProps> = ({
                   variant="ghost"
                   size="sm"
                   onClick={markAllAsRead}
-                  className="text-blue-600 hover:text-blue-800"
+                  className="text-cyan-700 hover:text-cyan-900"
                 >
-                  Mark All Read
+                  Đánh dấu đã đọc
                 </Button>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={clearAllAlerts}
-                  className="text-red-600 hover:text-red-800"
+                  className="text-rose-600 hover:text-rose-800"
                 >
-                  Clear All
+                  Xóa tất cả
                 </Button>
               </>
             )}
           </div>
         </div>
-        <div className="flex items-center space-x-4 text-sm text-gray-500">
+        <div className="flex items-center space-x-4 text-sm text-cyan-700">
           <div className="flex items-center space-x-1">
-            <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
-            <span>{isConnected ? 'Connected' : 'Disconnected'}</span>
+            <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-500' : 'bg-rose-500'}`} />
+            <span>{isConnected ? 'Đã kết nối' : 'Mất kết nối'}</span>
           </div>
           <span>•</span>
-          <span>{filteredAlerts.length} alerts</span>
+          <span>{filteredAlerts.length} cảnh báo</span>
         </div>
       </CardHeader>
       <CardContent>
         {filteredAlerts.length === 0 ? (
           <div className="text-center py-8">
-            <Shield className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-500">No detection alerts</p>
-            <p className="text-sm text-gray-400">All quiet on the security front</p>
+            <Shield className="w-12 h-12 text-cyan-200 mx-auto mb-3" />
+            <p className="text-cyan-500">Không có cảnh báo nhận diện</p>
+            <p className="text-sm text-cyan-400">Hệ thống đang an toàn</p>
           </div>
         ) : (
           <div className="space-y-3 max-h-96 overflow-y-auto">
@@ -273,7 +271,7 @@ const DetectionAlerts: React.FC<DetectionAlertsProps> = ({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   className={`p-3 rounded-lg border ${getAlertColor(alert.type, alert.severity)} ${
-                    !alert.is_read ? 'ring-2 ring-blue-200' : ''
+                    !alert.is_read ? 'ring-2 ring-cyan-200' : ''
                   }`}
                 >
                   <div className="flex items-start justify-between">
@@ -285,15 +283,15 @@ const DetectionAlerts: React.FC<DetectionAlertsProps> = ({
                         <div className="flex items-center space-x-2 mb-1">
                           <p className="font-medium text-sm">
                             {alert.type === 'unknown_person' 
-                              ? '🚨 Unknown Person Detected' 
-                              : `👤 ${alert.person_name} Detected`
+                              ? '🚨 Phát hiện người lạ' 
+                              : `👤 Đã nhận diện: ${alert.person_name || 'Người quen'}`
                             }
                           </p>
                           {!alert.is_read && (
-                            <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                            <div className="w-2 h-2 bg-cyan-500 rounded-full" />
                           )}
                         </div>
-                        <div className="flex items-center space-x-4 text-xs text-gray-600 mb-2">
+                        <div className="flex items-center space-x-4 text-xs text-cyan-700 mb-2">
                           <div className="flex items-center space-x-1">
                             <Camera className="w-3 h-3" />
                             <span>{alert.camera_name}</span>
@@ -302,12 +300,12 @@ const DetectionAlerts: React.FC<DetectionAlertsProps> = ({
                             <Clock className="w-3 h-3" />
                             <span>{formatTimestamp(alert.timestamp)}</span>
                           </div>
-                          <Badge variant="outline" className="text-xs">
+                          <Badge variant="outline" className="text-xs border-cyan-300 text-cyan-700">
                             {(alert.confidence * 100).toFixed(1)}%
                           </Badge>
                         </div>
                         {alert.location && (
-                          <div className="flex items-center space-x-1 text-xs text-gray-500 mb-2">
+                          <div className="flex items-center space-x-1 text-xs text-cyan-500 mb-2">
                             <MapPin className="w-3 h-3" />
                             <span>{alert.location}</span>
                           </div>
@@ -320,7 +318,7 @@ const DetectionAlerts: React.FC<DetectionAlertsProps> = ({
                           variant="ghost"
                           size="sm"
                           onClick={() => markAsRead(alert.id)}
-                          className="text-blue-600 hover:text-blue-800 h-6 w-6 p-0"
+                          className="text-cyan-700 hover:text-cyan-900 h-6 w-6 p-0"
                         >
                           <Eye className="w-3 h-3" />
                         </Button>
@@ -329,7 +327,7 @@ const DetectionAlerts: React.FC<DetectionAlertsProps> = ({
                         variant="ghost"
                         size="sm"
                         onClick={() => removeAlert(alert.id)}
-                        className="text-red-600 hover:text-red-800 h-6 w-6 p-0"
+                        className="text-rose-600 hover:text-rose-800 h-6 w-6 p-0"
                       >
                         <X className="w-3 h-3" />
                       </Button>

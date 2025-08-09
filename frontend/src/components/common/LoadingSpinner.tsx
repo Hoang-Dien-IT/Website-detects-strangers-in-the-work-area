@@ -41,13 +41,13 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
 
   const getColorClasses = () => {
     switch (color) {
-      case 'primary': return 'text-blue-600';
-      case 'secondary': return 'text-gray-600';
-      case 'success': return 'text-green-600';
-      case 'warning': return 'text-yellow-600';
-      case 'error': return 'text-red-600';
-      case 'gray': return 'text-gray-400';
-      default: return 'text-blue-600';
+      case 'primary': return 'text-teal-600';
+      case 'secondary': return 'text-emerald-600';
+      case 'success': return 'text-emerald-600';
+      case 'warning': return 'text-amber-500';
+      case 'error': return 'text-rose-600';
+      case 'gray': return 'text-slate-400';
+      default: return 'text-teal-600';
     }
   };
 
@@ -186,9 +186,9 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
       
       {/* Progress bar for Face Recognition tasks */}
       {progress !== undefined && (
-        <div className="w-32 bg-gray-200 rounded-full h-1.5 mt-2">
+        <div className="w-32 bg-gradient-to-r from-teal-100 to-emerald-100 rounded-full h-1.5 mt-2">
           <div 
-            className="bg-blue-600 h-1.5 rounded-full transition-all duration-300"
+            className="bg-gradient-to-r from-teal-500 to-emerald-500 h-1.5 rounded-full transition-all duration-300"
             style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
           />
         </div>
@@ -197,7 +197,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
       {/* Loading stage indicator */}
       {stage && (
         <div className={cn(
-          'text-xs text-gray-500 mt-1',
+          'text-xs text-emerald-700 mt-1',
           getTextSizeClasses()
         )}>
           {stage}
@@ -245,7 +245,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
 
 // ✨ Enhanced preset components for Face Recognition SaaS
 export const PageLoadingSpinner: React.FC<{ text?: string }> = ({ 
-  text = 'Loading...' 
+  text = 'Đang tải dữ liệu...' 
 }) => (
   <LoadingSpinner 
     size="lg" 
@@ -303,7 +303,7 @@ export const FaceScanLoader: React.FC<{
 );
 
 export const CameraLoadingSpinner: React.FC<{ text?: string }> = ({ 
-  text = 'Connecting to camera...' 
+  text = 'Đang kết nối tới camera...' 
 }) => (
   <LoadingSpinner 
     size="md" 
@@ -322,7 +322,7 @@ export const ProcessingLoader: React.FC<{
     size="md" 
     variant="bars" 
     color="primary"
-    text="Processing..."
+    text="Đang xử lý..."
     progress={progress}
     stage={stage}
     centered 

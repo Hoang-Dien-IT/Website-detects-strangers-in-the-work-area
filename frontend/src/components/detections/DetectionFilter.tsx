@@ -149,7 +149,7 @@ const DetectionFilterComponent: React.FC<DetectionFilterProps> = ({
             <Filter className="h-5 w-5" />
             <span>Filters</span>
             {hasActiveFilters && (
-              <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full">
+              <span className="bg-gradient-to-r from-cyan-100 to-emerald-100 text-emerald-800 text-xs font-bold px-2 py-1 rounded-full">
                 {getActiveFiltersCount()}
               </span>
             )}
@@ -160,24 +160,25 @@ const DetectionFilterComponent: React.FC<DetectionFilterProps> = ({
               <Button
                 variant="outline"
                 size="sm"
+                className="border-cyan-400 text-cyan-700"
                 onClick={() => setIsAdvancedOpen(!isAdvancedOpen)}
               >
                 <Sliders className="h-4 w-4 mr-2" />
-                Advanced
+                Nâng cao
               </Button>
             )}
             
             {onExport && (
-              <Button variant="outline" size="sm" onClick={onExport}>
+              <Button variant="outline" size="sm" className="border-cyan-400 text-cyan-700" onClick={onExport}>
                 <Download className="h-4 w-4 mr-2" />
-                Export
+                Xuất dữ liệu
               </Button>
             )}
             
             {hasActiveFilters && (
-              <Button variant="outline" size="sm" onClick={handleResetFilters}>
+              <Button variant="outline" size="sm" className="border-cyan-400 text-cyan-700" onClick={handleResetFilters}>
                 <RotateCcw className="h-4 w-4 mr-2" />
-                Reset
+                Đặt lại
               </Button>
             )}
           </div>
@@ -187,14 +188,14 @@ const DetectionFilterComponent: React.FC<DetectionFilterProps> = ({
       <CardContent className="space-y-6">
         {/* Search */}
         <div className="space-y-2">
-          <Label>Search</Label>
+          <Label className="text-cyan-700 font-bold">Tìm kiếm</Label>
           <div className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             <Input
-              placeholder="Search by person name, camera..."
+              placeholder="Tìm theo tên người, camera..."
               value={searchTerm}
               onChange={(e) => handleSearchChange(e.target.value)}
-              className="pl-10"
+              className="pl-10 border-cyan-300 focus:border-emerald-400"
             />
           </div>
         </div>
@@ -203,16 +204,16 @@ const DetectionFilterComponent: React.FC<DetectionFilterProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Camera Filter */}
           <div className="space-y-2">
-            <Label>Camera</Label>
+            <Label className="text-cyan-700 font-bold">Camera</Label>
             <Select
               value={filters.camera_id || 'all_cameras'}
               onValueChange={(value) => handleFilterChange('camera_id', value === 'all_cameras' ? undefined : value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="All Cameras" />
+                <SelectValue placeholder="Tất cả camera" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all_cameras">All Cameras</SelectItem>
+                <SelectItem value="all_cameras">Tất cả camera</SelectItem>
                 {cameras.map((camera) => (
                   <SelectItem key={camera.id} value={camera.id}>
                     {camera.name}
@@ -224,25 +225,25 @@ const DetectionFilterComponent: React.FC<DetectionFilterProps> = ({
 
           {/* Detection Type Filter */}
           <div className="space-y-2">
-            <Label>Detection Type</Label>
+            <Label className="text-cyan-700 font-bold">Loại nhận diện</Label>
             <Select
               value={filters.detection_type || 'all_types'}
               onValueChange={(value) => handleFilterChange('detection_type', value === 'all_types' ? undefined : value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="All Types" />
+                <SelectValue placeholder="Tất cả loại" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all_types">All Types</SelectItem>
-                <SelectItem value="known_person">Known Persons</SelectItem>
-                <SelectItem value="stranger">Strangers</SelectItem>
+                <SelectItem value="all_types">Tất cả loại</SelectItem>
+                <SelectItem value="known_person">Người đã đăng ký</SelectItem>
+                <SelectItem value="stranger">Người lạ</SelectItem>
               </SelectContent>
             </Select>
           </div>
           
           {/* Results per page */}
           <div className="space-y-2">
-            <Label>Results per page</Label>
+            <Label className="text-cyan-700 font-bold">Số kết quả/trang</Label>
             <Select
               value={filters.limit?.toString() || '20'}
               onValueChange={(value) => handleFilterChange('limit', parseInt(value))}
@@ -262,7 +263,7 @@ const DetectionFilterComponent: React.FC<DetectionFilterProps> = ({
 
         {/* Date Range */}
         <div className="space-y-2">
-          <Label>Date Range</Label>
+          <Label className="text-cyan-700 font-bold">Khoảng ngày</Label>
           <div className="grid grid-cols-2 gap-2">
             <Popover>
               <PopoverTrigger asChild>
@@ -274,7 +275,7 @@ const DetectionFilterComponent: React.FC<DetectionFilterProps> = ({
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {startDate ? format(startDate, "PPP") : "Start date"}
+                  {startDate ? format(startDate, "PPP") : "Từ ngày"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -297,7 +298,7 @@ const DetectionFilterComponent: React.FC<DetectionFilterProps> = ({
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {endDate ? format(endDate, "PPP") : "End date"}
+                  {endDate ? format(endDate, "PPP") : "Đến ngày"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -324,19 +325,19 @@ const DetectionFilterComponent: React.FC<DetectionFilterProps> = ({
               className="text-xs"
             >
               <X className="h-3 w-3 mr-1" />
-              Clear dates
+              Xóa ngày
             </Button>
           )}
         </div>
 
         {/* Advanced Filters */}
         {showAdvanced && isAdvancedOpen && (
-          <div className="space-y-6 p-4 border rounded-lg bg-gray-50">
-            <h4 className="font-medium">Advanced Filters</h4>
+          <div className="space-y-6 p-4 border rounded-lg bg-gradient-to-br from-cyan-50 to-emerald-50">
+            <h4 className="font-bold text-cyan-700">Bộ lọc nâng cao</h4>
             
             {/* Confidence Range */}
             <div className="space-y-2">
-              <Label>Confidence Range: {confidenceRange[0]}% - {confidenceRange[1]}%</Label>
+              <Label className="text-cyan-700 font-bold">Độ tin cậy: {confidenceRange[0]}% - {confidenceRange[1]}%</Label>
               <Slider
                 value={confidenceRange}
                 onValueChange={setConfidenceRange}
@@ -349,7 +350,7 @@ const DetectionFilterComponent: React.FC<DetectionFilterProps> = ({
 
             {/* Results Limit */}
             <div className="space-y-2">
-              <Label>Results per page</Label>
+              <Label className="text-cyan-700 font-bold">Số kết quả/trang</Label>
               <Select
                 value={filters.limit?.toString() || '20'}
                 onValueChange={(value) => handleFilterChange('limit', parseInt(value))}
@@ -369,8 +370,8 @@ const DetectionFilterComponent: React.FC<DetectionFilterProps> = ({
             {/* Real-time Updates */}
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Real-time Updates</Label>
-                <p className="text-sm text-gray-600">Auto-refresh results every 5 seconds</p>
+                <Label className="text-cyan-700 font-bold">Tự động cập nhật</Label>
+                <p className="text-sm text-cyan-600">Tự động làm mới kết quả mỗi 5 giây</p>
               </div>
               <Switch
                 checked={realTimeFilter}
@@ -382,13 +383,13 @@ const DetectionFilterComponent: React.FC<DetectionFilterProps> = ({
 
         {/* Apply Button */}
         <div className="flex space-x-2">
-          <Button onClick={() => handleApplyFilters()} className="flex-1">
+          <Button onClick={() => handleApplyFilters()} className="flex-1 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-bold">
             <Filter className="h-4 w-4 mr-2" />
-            Apply Filters
+            Áp dụng bộ lọc
           </Button>
           
           {hasActiveFilters && (
-            <Button variant="outline" onClick={handleResetFilters}>
+            <Button variant="outline" className="border-cyan-400 text-cyan-700" onClick={handleResetFilters}>
               <RotateCcw className="h-4 w-4" />
             </Button>
           )}
@@ -397,14 +398,14 @@ const DetectionFilterComponent: React.FC<DetectionFilterProps> = ({
         {/* Active Filters Summary */}
         {hasActiveFilters && (
           <div className="space-y-2">
-            <Label className="text-sm">Active Filters:</Label>
+            <Label className="text-sm text-cyan-700 font-bold">Bộ lọc đang áp dụng:</Label>
             <div className="flex flex-wrap gap-2">
               {filters.camera_id && (
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
-                  Camera: {cameras.find(c => c.id === filters.camera_id)?.name || 'Unknown'}
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-cyan-100 text-cyan-800">
+                  Camera: {cameras.find(c => c.id === filters.camera_id)?.name || 'Không rõ'}
                   <button
                     onClick={() => handleFilterChange('camera_id', undefined)}
-                    className="ml-1 hover:text-blue-600"
+                    className="ml-1 hover:text-cyan-600"
                   >
                     <X className="h-3 w-3" />
                   </button>
@@ -412,11 +413,11 @@ const DetectionFilterComponent: React.FC<DetectionFilterProps> = ({
               )}
               
               {filters.detection_type && (
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
-                  Type: {filters.detection_type === 'known_person' ? 'Known Person' : 'Stranger'}
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-emerald-100 text-emerald-800">
+                  Loại: {filters.detection_type === 'known_person' ? 'Người đã đăng ký' : 'Người lạ'}
                   <button
                     onClick={() => handleFilterChange('detection_type', undefined)}
-                    className="ml-1 hover:text-green-600"
+                    className="ml-1 hover:text-emerald-600"
                   >
                     <X className="h-3 w-3" />
                   </button>
@@ -424,14 +425,14 @@ const DetectionFilterComponent: React.FC<DetectionFilterProps> = ({
               )}
               
               {(startDate || endDate) && (
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-purple-100 text-purple-800">
-                  Date Range
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-cyan-100 text-cyan-800">
+                  Khoảng ngày
                   <button
                     onClick={() => {
                       setStartDate(undefined);
                       setEndDate(undefined);
                     }}
-                    className="ml-1 hover:text-purple-600"
+                    className="ml-1 hover:text-cyan-600"
                   >
                     <X className="h-3 w-3" />
                   </button>

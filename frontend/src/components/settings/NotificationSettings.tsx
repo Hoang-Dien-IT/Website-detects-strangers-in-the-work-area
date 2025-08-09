@@ -211,18 +211,18 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ onSave }) =
       {/* Global Settings */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Bell className="h-5 w-5" />
-            <span>Global Notification Settings</span>
+          <CardTitle className="flex items-center space-x-2 text-cyan-800">
+            <Bell className="h-5 w-5 text-cyan-600" />
+            <span>Cài đặt thông báo chung</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Master Toggle */}
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label className="text-base font-medium">Enable Notifications</Label>
-              <p className="text-sm text-gray-600">
-                Master switch for all notifications
+              <Label className="text-base font-medium text-black">Bật thông báo</Label>
+              <p className="text-sm text-black">
+                Bật/tắt toàn bộ thông báo hệ thống
               </p>
             </div>
             <Switch
@@ -237,12 +237,12 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ onSave }) =
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="flex items-center space-x-2">
-                  <Mail className="h-4 w-4" />
-                  <span>Email Notifications</span>
+                <Label className="flex items-center space-x-2 text-black">
+                  <Mail className="h-4 w-4 text-cyan-600" />
+                  <span>Thông báo Email</span>
                 </Label>
-                <p className="text-sm text-gray-600">
-                  Receive notifications via email
+                <p className="text-sm text-black">
+                  Nhận thông báo qua email
                 </p>
               </div>
               <Switch
@@ -254,12 +254,12 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ onSave }) =
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="flex items-center space-x-2">
-                  <Smartphone className="h-4 w-4" />
-                  <span>Push Notifications</span>
+                <Label className="flex items-center space-x-2 text-black">
+                  <Smartphone className="h-4 w-4 text-cyan-600" />
+                  <span>Thông báo đẩy</span>
                 </Label>
-                <p className="text-sm text-gray-600">
-                  Browser push notifications
+                <p className="text-sm text-black">
+                  Nhận thông báo đẩy trên trình duyệt
                 </p>
               </div>
               <Switch
@@ -271,12 +271,12 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ onSave }) =
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="flex items-center space-x-2">
-                  {settings.sound_enabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
-                  <span>Sound Alerts</span>
+                <Label className="flex items-center space-x-2 text-black">
+                  {settings.sound_enabled ? <Volume2 className="h-4 w-4 text-cyan-600" /> : <VolumeX className="h-4 w-4 text-cyan-600" />}
+                  <span>Cảnh báo âm thanh</span>
                 </Label>
-                <p className="text-sm text-gray-600">
-                  Play sound for notifications
+                <p className="text-sm text-black">
+                  Phát âm thanh khi có thông báo
                 </p>
               </div>
               <Switch
@@ -288,12 +288,12 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ onSave }) =
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="flex items-center space-x-2">
-                  <AlertTriangle className="h-4 w-4" />
-                  <span>Immediate Alerts</span>
+                <Label className="flex items-center space-x-2 text-black">
+                  <AlertTriangle className="h-4 w-4 text-cyan-600" />
+                  <span>Cảnh báo khẩn cấp</span>
                 </Label>
-                <p className="text-sm text-gray-600">
-                  High-priority instant alerts
+                <p className="text-sm text-black">
+                  Thông báo ưu tiên cao, gửi ngay lập tức
                 </p>
               </div>
               <Switch
@@ -309,21 +309,21 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ onSave }) =
       {/* Event-based Notifications */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Activity className="h-5 w-5" />
-            <span>Event Notifications</span>
+          <CardTitle className="flex items-center space-x-2 text-cyan-800">
+            <Activity className="h-5 w-5 text-cyan-600" />
+            <span>Thông báo sự kiện</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="flex items-center space-x-2">
-                  <Camera className="h-4 w-4" />
-                  <span>Face Detection Alerts</span>
+                <Label className="flex items-center space-x-2 text-black">
+                  <Camera className="h-4 w-4 text-cyan-600" />
+                  <span>Cảnh báo phát hiện khuôn mặt</span>
                 </Label>
-                <p className="text-sm text-gray-600">
-                  Notify when faces are detected
+                <p className="text-sm text-black">
+                  Thông báo khi phát hiện khuôn mặt trên camera
                 </p>
               </div>
               <Switch
@@ -335,12 +335,12 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ onSave }) =
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="flex items-center space-x-2">
-                  <Settings className="h-4 w-4" />
-                  <span>System Alerts</span>
+                <Label className="flex items-center space-x-2 text-black">
+                  <Settings className="h-4 w-4 text-cyan-600" />
+                  <span>Cảnh báo hệ thống</span>
                 </Label>
-                <p className="text-sm text-gray-600">
-                  System status and maintenance
+                <p className="text-sm text-black">
+                  Thông báo về trạng thái và bảo trì hệ thống
                 </p>
               </div>
               <Switch
@@ -352,12 +352,12 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ onSave }) =
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="flex items-center space-x-2">
-                  <Shield className="h-4 w-4" />
-                  <span>Security Alerts</span>
+                <Label className="flex items-center space-x-2 text-black">
+                  <Shield className="h-4 w-4 text-cyan-600" />
+                  <span>Cảnh báo bảo mật</span>
                 </Label>
-                <p className="text-sm text-gray-600">
-                  Login and security events
+                <p className="text-sm text-black">
+                  Thông báo về đăng nhập và sự kiện bảo mật
                 </p>
               </div>
               <Switch
@@ -369,12 +369,12 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ onSave }) =
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="flex items-center space-x-2">
-                  <Mail className="h-4 w-4" />
-                  <span>Weekly Reports</span>
+                <Label className="flex items-center space-x-2 text-black">
+                  <Mail className="h-4 w-4 text-cyan-600" />
+                  <span>Báo cáo hàng tuần</span>
                 </Label>
-                <p className="text-sm text-gray-600">
-                  Weekly activity summaries
+                <p className="text-sm text-black">
+                  Tổng hợp hoạt động hàng tuần
                 </p>
               </div>
               <Switch
@@ -390,7 +390,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ onSave }) =
           {/* Alert Threshold */}
           <div className="space-y-4">
             <div>
-              <Label htmlFor="alert_threshold">Detection Confidence Threshold</Label>
+              <Label htmlFor="alert_threshold" className="text-black">Ngưỡng tin cậy phát hiện</Label>
               <div className="flex items-center space-x-4 mt-2">
                 <Input
                   id="alert_threshold"
@@ -403,14 +403,14 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ onSave }) =
                   className="w-32"
                   disabled={!settings.global_enabled}
                 />
-                <span className="text-sm text-gray-600">
-                  Only send alerts for detections above this confidence level
+                <span className="text-sm text-black">
+                  Chỉ gửi cảnh báo khi độ tin cậy vượt ngưỡng này
                 </span>
               </div>
             </div>
 
             <div>
-              <Label htmlFor="digest_frequency">Notification Frequency</Label>
+              <Label htmlFor="digest_frequency" className="text-black">Tần suất thông báo</Label>
               <Select 
                 value={settings.digest_frequency} 
                 onValueChange={(value) => handleSettingChange('digest_frequency', value)}
@@ -419,10 +419,10 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ onSave }) =
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="realtime">Real-time</SelectItem>
-                  <SelectItem value="hourly">Hourly Digest</SelectItem>
-                  <SelectItem value="daily">Daily Digest</SelectItem>
-                  <SelectItem value="weekly">Weekly Digest</SelectItem>
+                  <SelectItem value="realtime">Theo thời gian thực</SelectItem>
+                  <SelectItem value="hourly">Tổng hợp theo giờ</SelectItem>
+                  <SelectItem value="daily">Tổng hợp theo ngày</SelectItem>
+                  <SelectItem value="weekly">Tổng hợp theo tuần</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -433,17 +433,17 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ onSave }) =
       {/* Quiet Hours */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Clock className="h-5 w-5" />
-            <span>Quiet Hours</span>
+          <CardTitle className="flex items-center space-x-2 text-cyan-800">
+            <Clock className="h-5 w-5 text-cyan-600" />
+            <span>Khung giờ yên lặng</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label>Enable Quiet Hours</Label>
-              <p className="text-sm text-gray-600">
-                Suppress non-critical notifications during specified hours
+              <Label className="text-black">Bật khung giờ yên lặng</Label>
+              <p className="text-sm text-black">
+                Tạm dừng thông báo không quan trọng trong khung giờ này
               </p>
             </div>
             <Switch
@@ -456,7 +456,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ onSave }) =
           {settings.quiet_hours_enabled && (
             <div className="grid grid-cols-2 gap-4 pl-4 border-l-2 border-gray-200">
               <div>
-                <Label htmlFor="quiet_start">Start Time</Label>
+                <Label htmlFor="quiet_start" className="text-black">Bắt đầu</Label>
                 <Input
                   id="quiet_start"
                   type="time"
@@ -466,7 +466,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ onSave }) =
                 />
               </div>
               <div>
-                <Label htmlFor="quiet_end">End Time</Label>
+                <Label htmlFor="quiet_end" className="text-black">Kết thúc</Label>
                 <Input
                   id="quiet_end"
                   type="time"
@@ -484,22 +484,22 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ onSave }) =
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center space-x-2">
-              <Zap className="h-5 w-5" />
-              <span>Notification Channels</span>
+            <CardTitle className="flex items-center space-x-2 text-cyan-800">
+              <Zap className="h-5 w-5 text-cyan-600" />
+              <span>Kênh thông báo</span>
             </CardTitle>
-            <Button size="sm" onClick={addNotificationChannel}>
+            <Button size="sm" onClick={addNotificationChannel} className="bg-gradient-to-r from-emerald-500 to-cyan-600 hover:from-emerald-600 hover:to-cyan-700 text-white">
               <Plus className="h-4 w-4 mr-2" />
-              Add Channel
+              Thêm kênh
             </Button>
           </div>
         </CardHeader>
         <CardContent>
           {settings.channels.length === 0 ? (
             <div className="text-center py-8">
-              <Bell className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-              <p className="text-gray-600">No custom notification channels configured</p>
-              <p className="text-sm text-gray-500">Add channels like webhooks or custom integrations</p>
+              <Bell className="w-12 h-12 text-cyan-400 mx-auto mb-3" />
+              <p className="text-black">Chưa cấu hình kênh thông báo nào</p>
+              <p className="text-sm text-black">Thêm các kênh như webhook hoặc tích hợp khác</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -508,8 +508,8 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ onSave }) =
                   <div className="flex items-center space-x-3">
                     {getChannelTypeIcon(channel.type)}
                     <div>
-                      <h4 className="font-medium">{channel.name}</h4>
-                      <p className="text-sm text-gray-600 capitalize">{channel.type} channel</p>
+                      <h4 className="font-medium text-black">{channel.name}</h4>
+                      <p className="text-sm text-black capitalize">Kênh: {channel.type}</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
@@ -541,13 +541,13 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ onSave }) =
       {/* Test & Actions */}
       <Card>
         <CardHeader>
-          <CardTitle>Test & Save</CardTitle>
+          <CardTitle className="text-cyan-800">Kiểm tra & Lưu</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Alert>
-            <Info className="h-4 w-4" />
-            <AlertDescription>
-              Test your notification settings to ensure they're working correctly before saving.
+          <Alert className="border-cyan-200 bg-cyan-50">
+            <Info className="h-4 w-4 text-cyan-600" />
+            <AlertDescription className="text-black">
+              Hãy kiểm tra thử trước khi lưu để đảm bảo cấu hình thông báo hoạt động đúng.
             </AlertDescription>
           </Alert>
 
@@ -556,30 +556,31 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ onSave }) =
               variant="outline"
               onClick={handleTestNotification}
               disabled={testNotification || !settings.global_enabled}
+              className="text-black border-cyan-300 hover:bg-cyan-50"
             >
               {testNotification ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 mr-2" />
-                  Sending...
+                  Đang gửi...
                 </>
               ) : (
                 <>
                   <Bell className="h-4 w-4 mr-2" />
-                  Send Test Notification
+                  Gửi thử thông báo
                 </>
               )}
             </Button>
 
-            <Button onClick={handleSaveSettings} disabled={saving}>
+            <Button onClick={handleSaveSettings} disabled={saving} className="bg-gradient-to-r from-emerald-500 to-cyan-600 hover:from-emerald-600 hover:to-cyan-700 text-white">
               {saving ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                  Saving...
+                  Đang lưu...
                 </>
               ) : (
                 <>
                   <Save className="h-4 w-4 mr-2" />
-                  Save Settings
+                  Lưu cấu hình
                 </>
               )}
             </Button>
