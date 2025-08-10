@@ -14,7 +14,7 @@ const BulkImportPage: React.FC = () => {
   const handleClear = () => {
     // Reset any import state or clear selected files
     console.log('🔵 BulkImportPage: Clearing import data');
-    toast.success('Ready for new import');
+  toast.success('Sẵn sàng cho lần nhập mới');
   };
 
   const handleImport = async () => {
@@ -26,11 +26,11 @@ const BulkImportPage: React.FC = () => {
       console.log('🔵 BulkImportPage: Testing bulk import endpoint...');
       
       // Add your import logic here
-      toast.success('Import functionality is ready!');
+  toast.success('Chức năng nhập đã sẵn sàng!');
       
     } catch (error: any) {
       console.error('❌ BulkImportPage: Import failed:', error);
-      toast.error(`Import failed: ${error.message}`);
+  toast.error(`Nhập thất bại: ${error.message}`);
     } finally {
       setImporting(false);
     }
@@ -69,7 +69,7 @@ const BulkImportPage: React.FC = () => {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     
-    toast.success('Template downloaded successfully!');
+  toast.success('Tải mẫu thành công!');
   };
 
   return (
@@ -79,16 +79,16 @@ const BulkImportPage: React.FC = () => {
         <div className="flex items-center space-x-4">
           <Button variant="ghost" size="sm" onClick={handleBackToPersons}>
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Persons
+            Quay lại danh sách người
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Bulk Import Persons</h1>
-            <p className="text-gray-600">Import multiple known persons from a JSON file</p>
+            <h1 className="text-2xl font-bold text-gray-900">Nhập nhiều người cùng lúc</h1>
+            <p className="text-gray-600">Nhập nhiều người đã biết từ tệp JSON</p>
           </div>
         </div>
         <Button variant="outline" onClick={downloadTemplate}>
           <Download className="h-4 w-4 mr-2" />
-          Download Template
+          Tải mẫu JSON
         </Button>
       </div>
       <div className="max-w-4xl mx-auto">
@@ -101,11 +101,11 @@ const BulkImportPage: React.FC = () => {
             className="flex items-center space-x-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            <span>Back to Persons</span>
+            <span>Quay lại danh sách người</span>
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Bulk Import Persons</h1>
-            <p className="text-slate-600">Import multiple persons with face data from JSON files</p>
+            <h1 className="text-2xl font-bold text-gray-900">Nhập nhiều người cùng lúc</h1>
+            <p className="text-slate-600">Nhập nhiều người với dữ liệu khuôn mặt từ tệp JSON</p>
           </div>
         </div>
 
@@ -115,16 +115,16 @@ const BulkImportPage: React.FC = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Upload className="w-5 h-5" />
-                <span>Upload Files</span>
+                <span>Tải tệp lên</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center">
                 <Upload className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                <p className="text-slate-600 mb-4">Drag and drop JSON files here or click to browse</p>
+                <p className="text-slate-600 mb-4">Kéo và thả tệp JSON vào đây hoặc bấm để chọn tệp</p>
                 <Button variant="outline">
                   <FileText className="w-4 h-4 mr-2" />
-                  Select Files
+                  Chọn tệp
                 </Button>
               </div>
               
@@ -134,7 +134,7 @@ const BulkImportPage: React.FC = () => {
                 className="w-full"
               >
                 <Users className="w-4 h-4 mr-2" />
-                {importing ? 'Testing...' : 'Test Import'}
+                {importing ? 'Đang kiểm tra...' : 'Kiểm tra nhập dữ liệu'}
               </Button>
             </CardContent>
           </Card>
@@ -148,10 +148,10 @@ const BulkImportPage: React.FC = () => {
                 {/* ✅ Action Buttons */}
                 <div className="flex justify-end space-x-3">
                   <Button variant="outline" onClick={handleClear}>
-                    Import More
+                    Nhập thêm
                   </Button>
                   <Button onClick={handleGoToPersonsList}>
-                    Go to Persons List
+                    Đến danh sách người
                   </Button>
                 </div>
               </CardContent>

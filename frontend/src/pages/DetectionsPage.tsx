@@ -78,7 +78,7 @@ const DetectionCardImage: React.FC<{ image_url?: string; image_path?: string; id
       />
       <div className="absolute top-2 left-2">
         <Badge variant={detection_type === 'stranger' ? 'destructive' : 'default'} className="text-xs px-2 py-1">
-          {detection_type === 'stranger' ? 'Unknown' : 'Known'}
+          {detection_type === 'stranger' ? 'Người lạ' : 'Đã biết'}
         </Badge>
       </div>
     </>
@@ -446,8 +446,8 @@ const DetectionsPage: React.FC = () => {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 text-lg">Loading detections...</p>
-          <p className="text-gray-500 text-sm mt-2">This may take a few moments</p>
+          <p className="text-gray-600 text-lg">Đang tải các phát hiện...</p>
+          <p className="text-gray-500 text-sm mt-2">Điều này có thể mất vài phút</p>
         </div>
       </div>
     );
@@ -465,18 +465,18 @@ const DetectionsPage: React.FC = () => {
                 <Activity className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Detection Activity</h1>
+                <h1 className="text-2xl font-bold text-gray-900">Hoạt động phát hiện</h1>
                 <div className="flex items-center space-x-4 mt-1">
-                  <p className="text-gray-600">Real-time face detection monitoring</p>
+                  <p className="text-gray-600">Giám sát nhận diện khuôn mặt thời gian thực</p>
                   {isConnected ? (
                     <div className="flex items-center space-x-1 text-emerald-600">
                       <Wifi className="h-4 w-4" />
-                      <span className="text-sm font-medium">Live Updates</span>
+                      <span className="text-sm font-medium">Cập nhật trực tiếp</span>
                     </div>
                   ) : (
                     <div className="flex items-center space-x-1 text-red-600">
                       <WifiOff className="h-4 w-4" />
-                      <span className="text-sm font-medium">Disconnected</span>
+                      <span className="text-sm font-medium">Mất kết nối</span>
                     </div>
                   )}
                 </div>
@@ -496,7 +496,7 @@ const DetectionsPage: React.FC = () => {
               className="shadow-sm hover:shadow-md transition-shadow"
             >
               <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-              {refreshing ? 'Refreshing...' : 'Refresh'}
+              {refreshing ? 'Đang làm mới...' : 'Làm mới'}
             </Button>
             
             <Button
@@ -506,7 +506,7 @@ const DetectionsPage: React.FC = () => {
               className="shadow-sm hover:shadow-md transition-shadow"
             >
               <Download className="h-4 w-4 mr-2" />
-              Export
+              Xuất dữ liệu
             </Button>
             
             <Button
@@ -516,7 +516,7 @@ const DetectionsPage: React.FC = () => {
               className="shadow-sm hover:shadow-md transition-shadow"
             >
               <Settings className="h-4 w-4 mr-2" />
-              Cleanup
+              Dọn dẹp
             </Button>
           </div>
         </div>
@@ -533,12 +533,12 @@ const DetectionsPage: React.FC = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Detections</p>
+                  <p className="text-sm font-medium text-gray-600">Tổng phát hiện</p>
                   <p className="text-3xl font-bold text-gray-900">{stats.total_detections.toLocaleString()}</p>
                   <p className="text-xs text-gray-500 mt-1">
-                    {stats.today_detections} today
+                    {stats.today_detections} hôm nay
                     {stats.detection_rate_per_day && (
-                      <span> • {stats.detection_rate_per_day.toFixed(1)}/day avg</span>
+                      <span> • {stats.detection_rate_per_day.toFixed(1)}/ngày trung bình</span>
                     )}
                   </p>
                 </div>
@@ -554,12 +554,12 @@ const DetectionsPage: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Known Persons</p>
+                <p className="text-sm font-medium text-gray-600">Người đã biết</p>
                 <p className="text-3xl font-bold text-emerald-600">{stats.known_person_detections.toLocaleString()}</p>
                 <p className="text-xs text-gray-500 mt-1">
                   {stats.total_detections > 0 
-                    ? `${((stats.known_person_detections / stats.total_detections) * 100).toFixed(1)}% of total`
-                    : '0% of total'
+                    ? `${((stats.known_person_detections / stats.total_detections) * 100).toFixed(1)}% tổng số`
+                    : '0% tổng số'
                   }
                 </p>
               </div>
@@ -574,12 +574,12 @@ const DetectionsPage: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Unknown Persons</p>
+                <p className="text-sm font-medium text-gray-600">Người lạ</p>
                 <p className="text-3xl font-bold text-red-600">{stats.stranger_detections.toLocaleString()}</p>
                 <p className="text-xs text-gray-500 mt-1">
                   {stats.total_detections > 0 
-                    ? `${((stats.stranger_detections / stats.total_detections) * 100).toFixed(1)}% of total`
-                    : '0% of total'
+                    ? `${((stats.stranger_detections / stats.total_detections) * 100).toFixed(1)}% tổng số`
+                    : '0% tổng số'
                   }
                 </p>
               </div>
@@ -594,10 +594,10 @@ const DetectionsPage: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Active Cameras</p>
+                <p className="text-sm font-medium text-gray-600">Camera hoạt động</p>
                 <p className="text-3xl font-bold text-purple-600">{stats.cameras_active.toLocaleString()}</p>
                 <p className="text-xs text-gray-500 mt-1">
-                  {cameras.length} total cameras
+                  {cameras.length} tổng camera
                 </p>
               </div>
               <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
@@ -613,7 +613,7 @@ const DetectionsPage: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Filter className="h-5 w-5" />
-            <span>Filter & Search</span>
+            <span>Bộ lọc & Tìm kiếm</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -622,7 +622,7 @@ const DetectionsPage: React.FC = () => {
             <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
-                placeholder="Search detections..."
+                placeholder="Tìm kiếm phát hiện..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 bg-white border-gray-200 shadow-sm hover:shadow-md transition-shadow"
@@ -635,10 +635,10 @@ const DetectionsPage: React.FC = () => {
               onValueChange={(value) => handleFilterChange('camera_id', value === 'all_cameras' ? undefined : value)}
             >
               <SelectTrigger className="bg-white border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                <SelectValue placeholder="All Cameras" />
+                <SelectValue placeholder="Tất cả Camera" />
               </SelectTrigger>
               <SelectContent className="bg-white border-gray-200 shadow-xl">
-                <SelectItem value="all_cameras">All Cameras</SelectItem>
+                <SelectItem value="all_cameras">Tất cả Camera</SelectItem>
                 {cameras.map((camera) => (
                   <SelectItem key={camera.id} value={camera.id}>
                     {camera.name}
@@ -653,20 +653,20 @@ const DetectionsPage: React.FC = () => {
               onValueChange={(value) => handleFilterChange('detection_type', value === 'all_types' ? undefined : value)}
             >
               <SelectTrigger className="bg-white border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                <SelectValue placeholder="All Types" />
+                <SelectValue placeholder="Tất cả loại" />
               </SelectTrigger>
               <SelectContent className="bg-white border-gray-200 shadow-xl">
-                <SelectItem value="all_types">All Types</SelectItem>
+                <SelectItem value="all_types">Tất cả loại</SelectItem>
                 <SelectItem value="known_person">
                   <div className="flex items-center space-x-2">
                     <UserCheck className="h-4 w-4 text-emerald-600" />
-                    <span>Known Persons</span>
+                    <span>Người đã biết</span>
                   </div>
                 </SelectItem>
                 <SelectItem value="stranger">
                   <div className="flex items-center space-x-2">
                     <AlertTriangle className="h-4 w-4 text-red-600" />
-                    <span>Unknown Persons</span>
+                    <span>Người lạ</span>
                   </div>
                 </SelectItem>
               </SelectContent>
@@ -675,7 +675,7 @@ const DetectionsPage: React.FC = () => {
             {/* Start Date Filter */}
             <Input
               type="date"
-              placeholder="Start Date"
+              placeholder="Ngày bắt đầu"
               value={filters.start_date || ''}
               onChange={(e) => handleFilterChange('start_date', e.target.value || undefined)}
               className="bg-white border-gray-200 shadow-sm hover:shadow-md transition-shadow"
@@ -685,20 +685,20 @@ const DetectionsPage: React.FC = () => {
           {/* Active Filters Display */}
           {(searchTerm || Object.values(filters).some(v => v !== undefined && v !== 20 && v !== 0)) && (
             <div className="flex items-center space-x-2 mt-4 pt-4 border-t">
-              <span className="text-sm text-gray-600">Active filters:</span>
+              <span className="text-sm text-gray-600">Bộ lọc đang hoạt động:</span>
               {searchTerm && (
                 <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                  Search: {searchTerm}
+                  Tìm kiếm: {searchTerm}
                 </Badge>
               )}
               {filters.camera_id && (
                 <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                  Camera: {cameras.find(c => c.id === filters.camera_id)?.name || 'Unknown'}
+                  Camera: {cameras.find(c => c.id === filters.camera_id)?.name || 'Không rõ'}
                 </Badge>
               )}
               {filters.detection_type && (
                 <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
-                  Type: {filters.detection_type === 'known_person' ? 'Known Person' : 'Unknown Person'}
+                  Loại: {filters.detection_type === 'known_person' ? 'Người đã biết' : 'Người lạ'}
                 </Badge>
               )}
               <Button
@@ -707,7 +707,7 @@ const DetectionsPage: React.FC = () => {
                 onClick={clearFilters}
                 className="text-gray-500 hover:text-gray-700"
               >
-                Clear all
+                Xóa tất cả
               </Button>
             </div>
           )}
@@ -928,9 +928,9 @@ const DetectionsPage: React.FC = () => {
                 <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
                   <Activity className="h-6 w-6 text-white" />
                 </div>
-                <span className="text-2xl font-bold text-white tracking-wide drop-shadow">Detection Details</span>
+                <span className="text-2xl font-bold text-white tracking-wide drop-shadow">Chi tiết phát hiện</span>
                 <span className={`ml-4 px-4 py-1 rounded-full text-sm font-semibold shadow border ${selectedDetection.detection_type === 'stranger' ? 'bg-red-600 border-red-600 text-white' : 'bg-emerald-600 border-emerald-600 text-white'}`}>
-                  {selectedDetection.detection_type === 'stranger' ? 'Unknown Person' : 'Known Person'}
+                  {selectedDetection.detection_type === 'stranger' ? 'Người lạ' : 'Người đã biết'}
                 </span>
               </div>
               <span className="text-white text-xs font-mono opacity-80 bg-black/20 px-3 py-1 rounded-lg">{selectedDetection.id}</span>
@@ -952,23 +952,23 @@ const DetectionsPage: React.FC = () => {
                   />
                   {/* Overlay with detection info */}
                   <div className="absolute top-2 left-2 bg-blue-600 text-white px-3 py-1 rounded text-xs font-semibold shadow">
-                    {formatConfidence(selectedDetection.confidence)} confidence
+                    {formatConfidence(selectedDetection.confidence)} độ tin cậy
                   </div>
                   {selectedDetection.similarity_score && (
                     <div className="absolute top-2 right-2 bg-emerald-600 text-white px-3 py-1 rounded text-xs font-semibold shadow">
-                      {formatConfidence(selectedDetection.similarity_score)} similarity
+                      {formatConfidence(selectedDetection.similarity_score)} tương đồng
                     </div>
                   )}
                   <div className="absolute bottom-2 left-2">
                     <span className={`px-3 py-1 rounded text-xs font-semibold shadow border ${selectedDetection.detection_type === 'stranger' ? 'bg-red-600 border-red-600 text-white' : 'bg-emerald-600 border-emerald-600 text-white'}`}>
-                      {selectedDetection.detection_type === 'stranger' ? 'Unknown' : 'Known'}
+                      {selectedDetection.detection_type === 'stranger' ? 'Lạ' : 'Đã biết'}
                     </span>
                   </div>
                 </div>
                 {/* Bounding Box Info */}
                 {selectedDetection.bbox && (
                   <div className="mt-6 w-full">
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Bounding Box</label>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Khung viền</label>
                     <div className="mt-2 grid grid-cols-4 gap-3">
                       <div className="bg-gray-100 p-3 rounded-xl text-center shadow">
                         <p className="font-bold text-xs text-gray-600">X</p>
@@ -993,24 +993,24 @@ const DetectionsPage: React.FC = () => {
               {/* Modern Details Panel */}
               <div className="p-8 flex flex-col gap-6">
                 <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Detection Type</label>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Loại phát hiện</label>
                   <div className="mt-2">
                     <span className={`inline-flex items-center gap-2 px-4 py-1 rounded-full text-sm font-semibold shadow border ${selectedDetection.detection_type === 'stranger' ? 'bg-red-600 border-red-600 text-white' : 'bg-emerald-600 border-emerald-600 text-white'}`}>
                       {selectedDetection.detection_type === 'stranger' ? <AlertTriangle className="h-4 w-4" /> : <UserCheck className="h-4 w-4" />}
-                      {selectedDetection.detection_type === 'stranger' ? 'Unknown Person' : 'Known Person'}
+                      {selectedDetection.detection_type === 'stranger' ? 'Người lạ' : 'Người đã biết'}
                     </span>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-6">
                   <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Confidence</label>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Độ tin cậy</label>
                     <p className="mt-2 text-2xl font-extrabold text-blue-600">
                       {formatConfidence(selectedDetection.confidence)}
                     </p>
                   </div>
                   {selectedDetection.similarity_score && (
                     <div>
-                      <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Similarity</label>
+                      <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Độ tương đồng</label>
                       <p className="mt-2 text-2xl font-extrabold text-emerald-600">
                         {formatConfidence(selectedDetection.similarity_score)}
                       </p>
@@ -1019,14 +1019,14 @@ const DetectionsPage: React.FC = () => {
                 </div>
                 {selectedDetection.person_name && (
                   <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Person Name</label>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Tên người</label>
                     <p className="mt-2 text-lg font-bold text-gray-800">{selectedDetection.person_name}</p>
                   </div>
                 )}
                 <div>
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Camera</label>
                   <div className="mt-2 space-y-1">
-                    <p className="font-bold text-gray-800">{selectedDetection.camera_name || 'Unknown Camera'}</p>
+                    <p className="font-bold text-gray-800">{selectedDetection.camera_name || 'Camera không xác định'}</p>
                     {selectedDetection.location && (
                       <p className="text-xs text-gray-500 flex items-center">
                         <MapPin className="h-4 w-4 mr-1" />
@@ -1036,25 +1036,25 @@ const DetectionsPage: React.FC = () => {
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Detection Time</label>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Thời gian phát hiện</label>
                   <div className="mt-2 space-y-1">
                     <p className="font-bold text-gray-800">{new Date(selectedDetection.timestamp).toLocaleString()}</p>
                     <p className="text-xs text-gray-500">{formatTimeAgo(selectedDetection.timestamp)}</p>
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Alert Status</label>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Trạng thái cảnh báo</label>
                   <div className="mt-2">
                     <span className={`inline-flex items-center gap-2 px-4 py-1 rounded-full text-sm font-semibold shadow border ${selectedDetection.is_alert_sent ? 'bg-blue-600 border-blue-600 text-white' : 'bg-gray-300 border-gray-400 text-gray-700'}`}>
                       {selectedDetection.is_alert_sent ? <span className="mr-1">🔔</span> : <span className="mr-1">🔕</span>}
-                      {selectedDetection.is_alert_sent ? 'Alert Sent' : 'No Alert'}
+                      {selectedDetection.is_alert_sent ? 'Đã gửi cảnh báo' : 'Không có cảnh báo'}
                     </span>
                   </div>
                 </div>
                 {/* Additional metadata if available */}
                 {selectedDetection.metadata && Object.keys(selectedDetection.metadata).length > 0 && (
                   <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Additional Information</label>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Thông tin bổ sung</label>
                     <div className="mt-2 bg-gray-100 p-4 rounded-xl shadow-inner">
                       <pre className="text-xs text-gray-800 whitespace-pre-wrap">
                         {JSON.stringify(selectedDetection.metadata, null, 2)}

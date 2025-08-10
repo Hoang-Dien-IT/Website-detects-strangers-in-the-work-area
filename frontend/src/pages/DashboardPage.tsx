@@ -279,7 +279,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center space-y-4">
           <LoadingSpinner />
-          <p className="text-gray-600">Loading dashboard data...</p>
+          <p className="text-gray-600">Đang tải dữ liệu tổng quan...</p>
         </div>
       </div>
     );
@@ -293,35 +293,35 @@ const CustomTooltip = ({ active, payload, label }: any) => {
           <div className="space-y-2">
             <div className="flex items-center space-x-3">
               <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-slate-700 bg-clip-text text-transparent">
-                Dashboard
+                Bảng điều khiển
               </h1>
               <div className="flex items-center space-x-2">
                 {stats.systemHealth === 'healthy' && (
                   <Badge className="bg-emerald-100 text-emerald-800 border-emerald-300 shadow-sm">
                     <CheckCircle className="w-3 h-3 mr-1" />
-                    System Healthy
+                    Hệ thống ổn định
                   </Badge>
                 )}
                 {stats.systemHealth === 'warning' && (
                   <Badge className="bg-amber-100 text-amber-800 border-amber-300 shadow-sm">
                     <AlertTriangle className="w-3 h-3 mr-1" />
-                    System Warning
+                    Cảnh báo hệ thống
                   </Badge>
                 )}
                 {stats.systemHealth === 'error' && (
                   <Badge className="bg-red-100 text-red-800 border-red-300 shadow-sm">
                     <WifiOff className="w-3 h-3 mr-1" />
-                    System Error
+                    Lỗi hệ thống
                   </Badge>
                 )}
               </div>
             </div>
             <div className="flex items-center space-x-4 text-slate-600">
-              <p>Welcome back, <span className="font-semibold text-slate-900">{user?.full_name}</span></p>
+              <p>Chào mừng trở lại, <span className="font-semibold text-slate-900">{user?.full_name}</span></p>
               {lastUpdated && (
                 <div className="flex items-center space-x-1 text-sm">
                   <Clock className="w-4 h-4" />
-                  <span>Updated {lastUpdated.toLocaleTimeString()}</span>
+                  <span>Cập nhật lúc {lastUpdated.toLocaleTimeString()}</span>
                 </div>
               )}
             </div>
@@ -335,14 +335,14 @@ const CustomTooltip = ({ active, payload, label }: any) => {
               className="flex items-center bg-white border-slate-300 text-slate-700 hover:bg-slate-50 shadow-sm"
             >
               <RefreshCw className={cn("w-4 h-4 mr-2", refreshing && "animate-spin")} />
-              Refresh
+              Làm mới
             </Button>
             <Button 
               onClick={() => navigate('/cameras/new')} 
               className="flex items-center bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Add Camera
+              Thêm Camera
             </Button>
             <Button 
               variant="outline" 
@@ -350,7 +350,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
               className="flex items-center bg-white border-emerald-300 text-emerald-700 hover:bg-emerald-50 shadow-sm"
             >
               <Users className="w-4 h-4 mr-2" />
-              Add Person
+              Thêm người
             </Button>
           </div>
         </div>
@@ -360,7 +360,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
           {/* Cameras Card */}
           <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-blue-50 to-blue-100/50">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-semibold text-slate-700">Camera Network</CardTitle>
+              <CardTitle className="text-sm font-semibold text-slate-700">Hệ thống Camera</CardTitle>
               <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-200">
                 <Camera className="h-6 w-6 text-blue-600" />
               </div>
@@ -371,17 +371,17 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                 <div className="flex items-center space-x-4 text-sm">
                   <div className="flex items-center space-x-1">
                     <div className="w-2 h-2 bg-emerald-500 rounded-full shadow-sm"></div>
-                    <span className="text-emerald-700 font-medium">{stats.cameras.active} active</span>
+                    <span className="text-emerald-700 font-medium">{stats.cameras.active} đang hoạt động</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Wifi className="w-3 h-3 text-blue-600" />
-                    <span className="text-blue-700 font-medium">{stats.cameras.streaming} streaming</span>
+                    <span className="text-blue-700 font-medium">{stats.cameras.streaming} đang phát trực tiếp</span>
                   </div>
                 </div>
                 {stats.cameras.offline > 0 && (
                   <div className="flex items-center space-x-1 text-sm">
                     <WifiOff className="w-3 h-3 text-red-600" />
-                    <span className="text-red-700 font-medium">{stats.cameras.offline} offline</span>
+                    <span className="text-red-700 font-medium">{stats.cameras.offline} ngoại tuyến</span>
                   </div>
                 )}
               </div>
@@ -391,7 +391,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
           {/* Persons Card */}
           <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-emerald-50 to-emerald-100/50">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-semibold text-slate-700">Known Persons</CardTitle>
+              <CardTitle className="text-sm font-semibold text-slate-700">Người đã biết</CardTitle>
               <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-200">
                 <Users className="h-6 w-6 text-emerald-600" />
               </div>
@@ -402,11 +402,11 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                 <div className="flex items-center space-x-4 text-sm">
                   <div className="flex items-center space-x-1">
                     <div className="w-2 h-2 bg-emerald-500 rounded-full shadow-sm"></div>
-                    <span className="text-emerald-700 font-medium">{stats.persons.active} active</span>
+                    <span className="text-emerald-700 font-medium">{stats.persons.active} đang hoạt động</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <CheckCircle className="w-3 h-3 text-emerald-600" />
-                    <span className="text-emerald-700 font-medium">{stats.persons.verified} verified</span>
+                    <span className="text-emerald-700 font-medium">{stats.persons.verified} đã xác thực</span>
                   </div>
                 </div>
               </div>
@@ -416,7 +416,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
           {/* Detections Card */}
           <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-purple-50 to-purple-100/50">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-semibold text-slate-700">Today's Activity</CardTitle>
+              <CardTitle className="text-sm font-semibold text-slate-700">Hoạt động hôm nay</CardTitle>
               <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-200">
                 <Eye className="h-6 w-6 text-purple-600" />
               </div>
@@ -427,12 +427,12 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                 <div className="flex items-center space-x-4 text-sm">
                   <div className="flex items-center space-x-1">
                     <TrendingUp className="w-3 h-3 text-purple-600" />
-                    <span className="text-purple-700 font-medium">{stats.detections.thisWeek} this week</span>
+                    <span className="text-purple-700 font-medium">{stats.detections.thisWeek} trong tuần</span>
                   </div>
                   {stats.detections.accuracy > 0 && (
                     <div className="flex items-center space-x-1">
                       <Target className="w-3 h-3 text-emerald-600" />
-                      <span className="text-emerald-700 font-medium">{stats.detections.accuracy.toFixed(1)}% accuracy</span>
+                      <span className="text-emerald-700 font-medium">{stats.detections.accuracy.toFixed(1)}% độ chính xác</span>
                     </div>
                   )}
                 </div>
@@ -448,7 +448,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
             'bg-gradient-to-br from-red-50 to-red-100/50'
           )}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-semibold text-slate-700">Security Status</CardTitle>
+              <CardTitle className="text-sm font-semibold text-slate-700">Trạng thái an ninh</CardTitle>
               <div className={cn(
                 "p-3 rounded-xl border",
                 stats.systemHealth === 'healthy' ? 'bg-emerald-500/10 border-emerald-200' :
@@ -469,26 +469,26 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                   stats.systemHealth === 'healthy' ? 'text-emerald-700' :
                   stats.systemHealth === 'warning' ? 'text-amber-700' : 'text-red-700'
                 )}>
-                  {stats.systemHealth === 'healthy' ? 'All Systems' : 
-                   stats.systemHealth === 'warning' ? 'Minor Issues' : 'Attention Needed'}
+                  {stats.systemHealth === 'healthy' ? 'Tất cả hệ thống' : 
+                   stats.systemHealth === 'warning' ? 'Có vấn đề nhỏ' : 'Cần chú ý'}
                 </div>
                 <div className="flex items-center space-x-1 text-sm">
                   {stats.systemHealth === 'healthy' && (
                     <>
                       <CheckCircle className="w-3 h-3 text-emerald-600" />
-                      <span className="text-emerald-700 font-medium">All systems operational</span>
+                      <span className="text-emerald-700 font-medium">Tất cả hệ thống hoạt động bình thường</span>
                     </>
                   )}
                   {stats.systemHealth === 'warning' && (
                     <>
                       <AlertTriangle className="w-3 h-3 text-amber-600" />
-                      <span className="text-amber-700 font-medium">Some systems need attention</span>
+                      <span className="text-amber-700 font-medium">Một số hệ thống cần kiểm tra</span>
                     </>
                   )}
                   {stats.systemHealth === 'error' && (
                     <>
                       <WifiOff className="w-3 h-3 text-red-600" />
-                      <span className="text-red-700 font-medium">Critical issues detected</span>
+                      <span className="text-red-700 font-medium">Phát hiện lỗi nghiêm trọng</span>
                     </>
                   )}
                 </div>
@@ -503,15 +503,15 @@ const CustomTooltip = ({ active, payload, label }: any) => {
           <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-all duration-300">
             <CardHeader className="pb-4 bg-gradient-to-r from-slate-50 to-blue-50/30 rounded-t-lg">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-xl font-bold text-slate-900">Detection Activity</CardTitle>
+                <CardTitle className="text-xl font-bold text-slate-900">Biểu đồ phát hiện</CardTitle>
                 <div className="flex items-center space-x-4 text-sm">
                   <div className="flex items-center space-x-2">
                     <div className="w-3 h-3 bg-blue-500 rounded-full shadow-sm"></div>
-                    <span className="text-slate-600 font-medium">Known Persons</span>
+                    <span className="text-slate-600 font-medium">Người đã biết</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <div className="w-3 h-3 bg-red-500 rounded-full shadow-sm"></div>
-                    <span className="text-slate-600 font-medium">Strangers</span>
+                    <span className="text-slate-600 font-medium">Người lạ</span>
                   </div>
                 </div>
               </div>
@@ -558,7 +558,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
           <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-all duration-300">
             <CardHeader className="pb-4 bg-gradient-to-r from-slate-50 to-emerald-50/30 rounded-t-lg">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-xl font-bold text-slate-900">Detection Accuracy</CardTitle>
+                <CardTitle className="text-xl font-bold text-slate-900">Độ chính xác nhận diện</CardTitle>
                 <Badge className="bg-emerald-100 text-emerald-800 border-emerald-300 shadow-sm">
                   Avg: {(chartData.reduce((sum, d) => sum + d.accuracy, 0) / chartData.length).toFixed(1)}%
                 </Badge>
@@ -603,7 +603,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
           <Card className="xl:col-span-2 bg-white border-0 shadow-lg hover:shadow-xl transition-all duration-300">
             <CardHeader className="pb-4 bg-gradient-to-r from-slate-50 to-purple-50/30 rounded-t-lg">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-xl font-bold text-slate-900">Recent Detections</CardTitle>
+                <CardTitle className="text-xl font-bold text-slate-900">Nhận diện gần đây</CardTitle>
                 <Button 
                   variant="outline" 
                   size="sm" 
@@ -611,7 +611,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                   className="bg-white border-slate-300 text-slate-700 hover:bg-slate-50 shadow-sm"
                 >
                   <BarChart3 className="w-4 h-4 mr-2" />
-                  View All
+                  Xem tất cả
                 </Button>
               </div>
             </CardHeader>
@@ -628,7 +628,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                       <div className="flex-1 space-y-1">
                         <div className="flex items-center justify-between">
                           <p className="font-semibold text-slate-900">
-                            {detection.detection_type === 'stranger' ? 'Unknown Person' : detection.person_name || 'Known Person'}
+                            {detection.detection_type === 'stranger' ? 'Người lạ' : detection.person_name || 'Người đã biết'}
                           </p>
                           <Badge 
                             variant={detection.detection_type === 'stranger' ? 'destructive' : 'default'} 
@@ -639,17 +639,17 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                                 : 'bg-emerald-100 text-emerald-800 border-emerald-300'
                             )}
                           >
-                            {detection.detection_type === 'stranger' ? 'Stranger' : 'Known'}
+                            {detection.detection_type === 'stranger' ? 'Người lạ' : 'Đã biết'}
                           </Badge>
                         </div>
                         <div className="flex items-center space-x-4 text-sm text-slate-600">
                           <div className="flex items-center space-x-1">
                             <Camera className="w-3 h-3" />
-                            <span>{detection.camera_name || 'Unknown Camera'}</span>
+                            <span>{detection.camera_name || 'Không rõ camera'}</span>
                           </div>
                           <div className="flex items-center space-x-1">
                             <Target className="w-3 h-3" />
-                            <span>{(detection.confidence * 100).toFixed(1)}% confidence</span>
+                            <span>{(detection.confidence * 100).toFixed(1)}% độ tin cậy</span>
                           </div>
                         </div>
                       </div>
@@ -663,8 +663,8 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                 ) : (
                   <div className="text-center py-12">
                     <Eye className="h-12 w-12 mx-auto text-slate-300 mb-4" />
-                    <p className="text-slate-500 font-medium">No recent detections</p>
-                    <p className="text-sm text-slate-400">Detection activity will appear here as people are recognized</p>
+                    <p className="text-slate-500 font-medium">Chưa có nhận diện gần đây</p>
+                    <p className="text-sm text-slate-400">Hoạt động nhận diện sẽ hiển thị tại đây khi có người được nhận diện</p>
                   </div>
                 )}
               </div>
@@ -674,7 +674,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
           {/* Quick Actions */}
           <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-all duration-300">
             <CardHeader className="pb-4 bg-gradient-to-r from-slate-50 to-blue-50/30 rounded-t-lg">
-              <CardTitle className="text-xl font-bold text-slate-900">Quick Actions</CardTitle>
+              <CardTitle className="text-xl font-bold text-slate-900">Hành động nhanh</CardTitle>
             </CardHeader>
             <CardContent className="bg-white">
               <div className="space-y-3">
@@ -684,7 +684,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                   onClick={() => navigate('/cameras')}
                 >
                   <Camera className="w-4 h-4 mr-3 text-blue-600" />
-                  <span className="text-slate-700">Manage Cameras</span>
+                  <span className="text-slate-700">Quản lý Camera</span>
                 </Button>
                 
                 <Button 
@@ -693,7 +693,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                   onClick={() => navigate('/persons')}
                 >
                   <Users className="w-4 h-4 mr-3 text-emerald-600" />
-                  <span className="text-slate-700">Manage Known Persons</span>
+                  <span className="text-slate-700">Quản lý người đã biết</span>
                 </Button>
                 
                 <Button 
@@ -702,7 +702,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                   onClick={() => navigate('/detections')}
                 >
                   <Eye className="w-4 h-4 mr-3 text-purple-600" />
-                  <span className="text-slate-700">View Detection Logs</span>
+                  <span className="text-slate-700">Xem nhật ký nhận diện</span>
                 </Button>
                 
                 <Button 
@@ -711,7 +711,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                   onClick={() => navigate('/analytics')}
                 >
                   <BarChart3 className="w-4 h-4 mr-3 text-orange-600" />
-                  <span className="text-slate-700">Analytics & Reports</span>
+                  <span className="text-slate-700">Phân tích & Báo cáo</span>
                 </Button>
                 
                 <Button 
@@ -720,7 +720,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                   onClick={() => navigate('/settings')}
                 >
                   <Activity className="w-4 h-4 mr-3 text-slate-600" />
-                  <span className="text-slate-700">System Settings</span>
+                  <span className="text-slate-700">Cài đặt hệ thống</span>
                 </Button>
               </div>
             </CardContent>

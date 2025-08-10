@@ -9,6 +9,7 @@ from ..models.detection_log import (
     DetectionFilter
 )
 from datetime import datetime, timedelta
+from ..utils.timezone_utils import vietnam_now
 import asyncio
 import base64
 import os
@@ -50,7 +51,7 @@ class DetectionService:
                 "image_path": image_filename,
                 "image_base64": detection_data.image_base64,  # Keep for quick access
                 "bbox": detection_data.bbox,
-                "timestamp": datetime.utcnow(),
+                "timestamp": vietnam_now(),
                 "is_alert_sent": detection_data.detection_type == "stranger",  # ✅ FIXED: True for strangers, False for known persons
                 "alert_sent": detection_data.detection_type == "stranger",  # ✅ FIXED: Compatibility field
                 "alert_methods": ["websocket"] if detection_data.detection_type == "stranger" else [],
@@ -216,7 +217,7 @@ class DetectionService:
                         "image_path": image_path,
                         "image_url": image_url,
                         "bbox": detection.get("bbox", [0, 0, 0, 0]),
-                        "timestamp": detection.get("timestamp", datetime.utcnow()),
+                        "timestamp": detection.get("timestamp", vietnam_now()),
                         "is_alert_sent": detection.get("is_alert_sent", False),
                     }
                     results.append(detection_response)
@@ -256,7 +257,7 @@ class DetectionService:
             })
             
             # Time-based counts
-            now = datetime.utcnow()
+            now = vietnam_now()
             today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
             week_start = now - timedelta(days=7)
             month_start = now - timedelta(days=30)
@@ -357,7 +358,7 @@ class DetectionService:
                 similarity_score=log_data.get("similarity_score"),
                 image_url=image_url,
                 bbox=log_data.get("bbox", []),
-                timestamp=log_data.get("timestamp", datetime.utcnow()),
+                timestamp=log_data.get("timestamp", vietnam_now()),
                 is_alert_sent=log_data.get("is_alert_sent", False)
             )
         except Exception as e:
@@ -400,7 +401,7 @@ class DetectionService:
     async def cleanup_old_detections(self, user_id: str, days_to_keep: int = 30) -> int:
         """Dọn dẹp detection logs cũ"""
         try:
-            cutoff_date = datetime.utcnow() - timedelta(days=days_to_keep)
+            cutoff_date = vietnam_now() - timedelta(days=days_to_keep)
             
             # Get old detections to delete image files
             old_detections = []

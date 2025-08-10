@@ -24,7 +24,6 @@ const HomePage = React.lazy(() => import('@/pages/HomePage'));
 const FeaturesPage = React.lazy(() => import('@/pages/FeaturesPage'));
 // const SolutionsPage = React.lazy(() => import('@/pages/SolutionsPage'));
 const ContactPage = React.lazy(() => import('@/pages/ContactPage'));
-const AboutPage = React.lazy(() => import('@/pages/AboutPage'));
 // const BlogPage = React.lazy(() => import('@/pages/BlogPage'));
 const LoginPage = React.lazy(() => import('@/pages/LoginPage'));
 const RegisterPage = React.lazy(() => import('@/pages/RegisterPage'));
@@ -243,13 +242,6 @@ const App: React.FC = () => {
                             <SolutionsPage />
                           </Suspense>
                         } /> */}
-
-                        {/* Company Pages */}
-                        <Route path="about" element={
-                          <Suspense fallback={<AppLoadingFallback />}>
-                            <AboutPage />
-                          </Suspense>
-                        } />
                         <Route path="contact" element={
                           <Suspense fallback={<AppLoadingFallback />}>
                             <ContactPage />

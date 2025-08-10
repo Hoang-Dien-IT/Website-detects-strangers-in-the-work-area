@@ -125,18 +125,23 @@ const PersonsPage: React.FC = () => {
     <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Known Persons</h1>
-          <p className="text-gray-600">Manage your known persons database</p>
+        <div className="flex items-center space-x-4">
+          <div className="bg-blue-100 p-3 rounded-full">
+            <Users className="w-8 h-8 text-blue-600" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-extrabold text-gray-900 leading-tight mb-1">Người đã biết</h1>
+            <p className="text-gray-500 text-base">Quản lý cơ sở dữ liệu người đã biết của bạn</p>
+          </div>
         </div>
         <div className="flex space-x-3">
           <Button variant="outline" onClick={handleBulkImport}>
             <Upload className="w-4 h-4 mr-2" />
-            Bulk Import
+            Nhập nhiều
           </Button>
           <Button onClick={() => navigate('/persons/new')}>
             <Plus className="w-4 h-4 mr-2" />
-            Add Person
+            Thêm người
           </Button>
         </div>
       </div>
@@ -146,7 +151,7 @@ const PersonsPage: React.FC = () => {
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
           <Input
-            placeholder="Search persons..."
+            placeholder="Tìm kiếm người..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -172,10 +177,10 @@ const PersonsPage: React.FC = () => {
                       <CardTitle className="text-lg">{person.name}</CardTitle>
                       <div className="flex space-x-1 mt-1">
                         <Badge variant={person.is_active ? "default" : "secondary"}>
-                          {person.is_active ? 'Active' : 'Inactive'}
+                          {person.is_active ? 'Đang hoạt động' : 'Ngưng hoạt động'}
                         </Badge>
                         <Badge variant="outline">
-                          {person.face_images_count} {person.face_images_count === 1 ? 'photo' : 'photos'}
+                          {person.face_images_count} {person.face_images_count === 1 ? 'ảnh' : 'ảnh'}
                         </Badge>
                       </div>
                     </div>
@@ -189,22 +194,22 @@ const PersonsPage: React.FC = () => {
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={() => navigate(`/persons/${person.id}`)}>
                         <Eye className="h-4 w-4 mr-2" />
-                        View Details
+                        Xem chi tiết
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate(`/persons/${person.id}/edit`)}>
                         <Edit className="h-4 w-4 mr-2" />
-                        Edit Person
+                        Chỉnh sửa
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleToggleStatus(person)}>
                         {person.is_active ? (
                           <>
                             <UserX className="h-4 w-4 mr-2" />
-                            Deactivate
+                            Ngưng hoạt động
                           </>
                         ) : (
                           <>
                             <UserCheck className="h-4 w-4 mr-2" />
-                            Activate
+                            Kích hoạt
                           </>
                         )}
                       </DropdownMenuItem>
@@ -213,7 +218,7 @@ const PersonsPage: React.FC = () => {
                         className="text-red-600"
                       >
                         <Trash2 className="h-4 w-4 mr-2" />
-                        Delete Person
+                        Xóa người
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -222,7 +227,7 @@ const PersonsPage: React.FC = () => {
               <CardContent className="space-y-3">
                 <div>
                   <p className="text-sm text-gray-600">
-                    {person.description || 'No description provided'}
+                    {person.description || 'Chưa có mô tả'}
                   </p>
                   {person.metadata && Object.keys(person.metadata).length > 0 && (
                     <div className="mt-2 space-y-1">
@@ -237,7 +242,7 @@ const PersonsPage: React.FC = () => {
 
                 <div className="pt-2 border-t">
                   <p className="text-xs text-gray-400">
-                    Added: {new Date(person.created_at).toLocaleDateString()}
+                    Ngày thêm: {new Date(person.created_at).toLocaleDateString()}
                   </p>
                 </div>
 
@@ -250,7 +255,7 @@ const PersonsPage: React.FC = () => {
                     className="flex-1"
                   >
                     <Eye className="w-4 h-4 mr-1" />
-                    View
+                    Xem
                   </Button>
                   <Button
                     size="sm"
@@ -258,7 +263,7 @@ const PersonsPage: React.FC = () => {
                     className="flex-1"
                   >
                     <Edit className="w-4 h-4 mr-1" />
-                    Edit
+                    Chỉnh sửa
                   </Button>
                 </div>
               </CardContent>
@@ -269,13 +274,13 @@ const PersonsPage: React.FC = () => {
         <Card>
           <CardContent className="text-center py-16">
             <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No persons found</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Không tìm thấy người nào</h3>
             <p className="text-gray-600 mb-6">
-              {searchTerm ? 'No persons match your search criteria.' : 'Get started by adding your first known person.'}
+              {searchTerm ? 'Không có người nào phù hợp với tiêu chí tìm kiếm.' : 'Hãy bắt đầu bằng cách thêm người đầu tiên.'}
             </p>
             <Button onClick={() => navigate('/persons/new')}>
               <Plus className="w-4 h-4 mr-2" />
-              Add Person
+              Thêm người
             </Button>
           </CardContent>
         </Card>
@@ -285,19 +290,19 @@ const PersonsPage: React.FC = () => {
       <AlertDialog open={deleteDialog.open} onOpenChange={(open) => !open && setDeleteDialog({ open: false, person: null })}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Person</AlertDialogTitle>
+            <AlertDialogTitle>Xóa người</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete "{deleteDialog.person?.name}"? This action cannot be undone.
-              All associated face images and detection history will also be deleted.
+              Bạn có chắc chắn muốn xóa "{deleteDialog.person?.name}" không? Hành động này không thể hoàn tác.
+              Tất cả ảnh khuôn mặt và lịch sử nhận diện liên quan cũng sẽ bị xóa.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Hủy</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deleteDialog.person && handleDeletePerson(deleteDialog.person)}
               className="bg-red-600 hover:bg-red-700"
             >
-              Delete
+              Xóa
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

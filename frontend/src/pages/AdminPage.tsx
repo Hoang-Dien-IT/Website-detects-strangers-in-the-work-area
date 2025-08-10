@@ -101,25 +101,25 @@ const AdminPage: React.FC = () => {
   // ✅ Handle tab change with navigation
   const handleTabChange = (value: string) => {
     setActiveTab(value);
-    if (value === 'dashboard') {
-      navigate('/admin');
-    } else {
-      navigate(`/admin/${value}`);
-    }
+      if (value === 'dashboard') {
+        navigate('/admin');
+      } else {
+        navigate(`/admin/${value}`);
+      }
   };
 
   // ✅ Set active tab based on URL
   useEffect(() => {
     const path = location.pathname;
-    if (path.includes('/users')) {
-      setActiveTab('users');
-    } else if (path.includes('/monitoring')) {
-      setActiveTab('monitoring');
-    } else if (path.includes('/logs')) {
-      setActiveTab('logs');
-    } else {
-      setActiveTab('dashboard');
-    }
+      if (path.includes('/users')) {
+        setActiveTab('users');
+      } else if (path.includes('/monitoring')) {
+        setActiveTab('monitoring');
+      } else if (path.includes('/logs')) {
+        setActiveTab('logs');
+      } else {
+        setActiveTab('dashboard');
+      }
   }, [location.pathname]);
 
   // ✅ Enhanced data loading with proper error handling and type transformation
@@ -341,12 +341,12 @@ const AdminPage: React.FC = () => {
         )
       );
       
-      toast.success(`User ${user.username} ${user.is_active ? 'deactivated' : 'activated'} successfully`);
+      toast.success(`Người dùng ${user.username} đã ${user.is_active ? 'bị vô hiệu hóa' : 'được kích hoạt'} thành công`);
       console.log('✅ AdminPage: User status toggled successfully');
       
     } catch (error: any) {
       console.error('❌ AdminPage: Error toggling user status:', error);
-      toast.error(`Failed to update user status: ${error.message || 'Unknown error'}`);
+      toast.error(`Không thể cập nhật trạng thái người dùng: ${error.message || 'Lỗi không xác định'}`);
       
       // Reload data to ensure consistency
       await loadAdminData(true);
@@ -371,12 +371,12 @@ const AdminPage: React.FC = () => {
         )
       );
       
-      toast.success(`Admin role ${user.is_admin ? 'removed from' : 'granted to'} ${user.username}`);
+      toast.success(`Quyền quản trị đã ${user.is_admin ? 'bị gỡ bỏ khỏi' : 'được cấp cho'} ${user.username}`);
       console.log('✅ AdminPage: Admin role toggled successfully');
       
     } catch (error: any) {
       console.error('❌ AdminPage: Error toggling admin role:', error);
-      toast.error(`Failed to update admin role: ${error.message || 'Unknown error'}`);
+      toast.error(`Không thể cập nhật quyền quản trị: ${error.message || 'Lỗi không xác định'}`);
       
       // Reload data to ensure consistency
       await loadAdminData(true);
@@ -398,8 +398,8 @@ const AdminPage: React.FC = () => {
         toast.success(`User ${user.username} deleted successfully`);
         console.log('✅ AdminPage: User deleted successfully');
       } else {
-        // Backend doesn't have delete endpoint yet
-        throw new Error('User deletion functionality not implemented in backend yet');
+        // Backend chưa có endpoint xóa người dùng
+        throw new Error('Tính năng xóa người dùng chưa được triển khai ở backend');
       }
       
       setDeleteDialog({ open: false, user: null });
@@ -407,9 +407,9 @@ const AdminPage: React.FC = () => {
     } catch (error: any) {
       console.error('❌ AdminPage: Error deleting user:', error);
       
-      let errorMessage = 'Failed to delete user';
-      if (error.message.includes('not implemented')) {
-        errorMessage = 'User deletion feature is not yet implemented in backend';
+      let errorMessage = 'Không thể xóa người dùng';
+      if (error.message.includes('not implemented') || error.message.includes('chưa được triển khai')) {
+        errorMessage = 'Tính năng xóa người dùng chưa được triển khai ở backend';
       } else if (error.message) {
         errorMessage = error.message;
       }
@@ -431,12 +431,12 @@ const AdminPage: React.FC = () => {
         setSelectedUser(userDetails);
         setShowUserDetailsDialog(true);
       } else {
-        throw new Error('User details not found');
+        throw new Error('Không tìm thấy thông tin chi tiết người dùng');
       }
       
     } catch (error: any) {
       console.error('❌ AdminPage: Error getting user details:', error);
-      toast.error(`Failed to load user details: ${error.message || 'Unknown error'}`);
+      toast.error(`Không thể tải thông tin chi tiết người dùng: ${error.message || 'Lỗi không xác định'}`);
     }
   };
 
@@ -476,7 +476,7 @@ const AdminPage: React.FC = () => {
           break;
           
         default:
-          throw new Error('Invalid data type');
+          throw new Error('Loại dữ liệu không hợp lệ');
       }
       
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -489,12 +489,12 @@ const AdminPage: React.FC = () => {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
       
-      toast.success(`${dataType.charAt(0).toUpperCase() + dataType.slice(1)} exported successfully`);
+      toast.success(`Xuất ${dataType} thành công`);
       console.log('✅ AdminPage: Export completed:', filename);
       
     } catch (error: any) {
       console.error('❌ AdminPage: Error exporting data:', error);
-      toast.error(`Failed to export ${dataType}: ${error.message || 'Unknown error'}`);
+      toast.error(`Không thể xuất ${dataType}: ${error.message || 'Lỗi không xác định'}`);
     }
   };
 
@@ -541,13 +541,13 @@ const AdminPage: React.FC = () => {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <Shield className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Access Denied</h3>
-          <p className="text-gray-600">You need administrator privileges to view this page.</p>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Từ chối truy cập</h3>
+          <p className="text-gray-600">Bạn cần quyền quản trị viên để xem trang này.</p>
         </div>
       </div>
     );
   }
-
+    // Đã xử lý ở trên, xóa đoạn lặp này để tránh lỗi cú pháp
   // ✅ Loading state
   if (loading) {
     return (
@@ -555,13 +555,13 @@ const AdminPage: React.FC = () => {
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <LoadingSpinner size="lg" />
-            <p className="mt-4 text-gray-600">Loading admin panel...</p>
+            <p className="mt-4 text-gray-600">Đang tải bảng điều khiển quản trị...</p>
           </div>
         </div>
       </AdminLayout>
     );
   }
-
+    // Đã xử lý ở trên, xóa đoạn lặp này để tránh lỗi cú pháp
   return (
     <AdminLayout>
       <div className="space-y-6">
@@ -588,11 +588,11 @@ const AdminPage: React.FC = () => {
               </div>
               <div>
                 <h1 className="text-4xl font-bold text-white mb-2">
-                  SafeFace Admin Panel
+                  Bảng điều khiển quản trị SafeFace
                 </h1>
                 <div className="flex items-center space-x-2">
                   <div className="px-3 py-1 bg-white/20 rounded-full backdrop-blur-sm">
-                    <span className="text-sm font-medium">System Admin</span>
+                    <span className="text-sm font-medium">Quản trị hệ thống</span>
                   </div>
                   <div className="px-3 py-1 bg-white/20 rounded-full backdrop-blur-sm">
                     <span className="text-sm font-medium">Administrator</span>
@@ -602,7 +602,7 @@ const AdminPage: React.FC = () => {
             </div>
             
             <p className="text-blue-100 text-lg mb-4 leading-relaxed">
-              User Account Management & System Overview
+              Quản lý tài khoản người dùng & Tổng quan hệ thống
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
@@ -611,7 +611,7 @@ const AdminPage: React.FC = () => {
                   <Calendar className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <div className="text-blue-100">Last updated</div>
+                  <div className="text-blue-100">Cập nhật lần cuối</div>
                   <div className="font-semibold">{new Date().toLocaleTimeString()}</div>
                 </div>
               </div>
@@ -621,8 +621,8 @@ const AdminPage: React.FC = () => {
                   <Users className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <div className="text-blue-100">Total user accounts</div>
-                  <div className="font-semibold">{users.length} users</div>
+                  <div className="text-blue-100">Tổng số tài khoản</div>
+                  <div className="font-semibold">{users.length} người dùng</div>
                 </div>
               </div>
               
@@ -631,8 +631,8 @@ const AdminPage: React.FC = () => {
                   <Camera className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <div className="text-blue-100">Total user cameras</div>
-                  <div className="font-semibold">{stats?.total_cameras || 0} cameras</div>
+                  <div className="text-blue-100">Tổng số camera người dùng</div>
+                  <div className="font-semibold">{stats?.total_cameras || 0} camera</div>
                 </div>
               </div>
             </div>
@@ -659,11 +659,11 @@ const AdminPage: React.FC = () => {
                   )}
                 </div>
                 <div>
-                  <div className="text-xs text-blue-200">System Status</div>
+                  <div className="text-xs text-blue-200">Trạng thái hệ thống</div>
                   <div className="font-semibold text-sm">
                     {health.database === 'healthy' && health.face_recognition === 'healthy' 
-                      ? 'All Systems Healthy' 
-                      : 'Issues Detected'
+                      ? 'Tất cả hệ thống hoạt động tốt' 
+                      : 'Phát hiện sự cố'
                     }
                   </div>
                 </div>
@@ -678,28 +678,28 @@ const AdminPage: React.FC = () => {
                 className="bg-white/20 hover:bg-white/30 border-white/20 text-white backdrop-blur-sm transition-all duration-300 hover:scale-105"
               >
                 <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-                {refreshing ? 'Refreshing...' : 'Refresh'}
+                {refreshing ? 'Đang làm mới...' : 'Làm mới'}
               </Button>
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="secondary" className="bg-white/20 hover:bg-white/30 border-white/20 text-white backdrop-blur-sm transition-all duration-300 hover:scale-105">
                     <Download className="w-4 h-4 mr-2" />
-                    Export
+                    Xuất dữ liệu
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="bg-white/95 backdrop-blur-sm">
                   <DropdownMenuItem onClick={() => handleExportData('users')}>
                     <Users className="h-4 w-4 mr-2" />
-                    Export Users
+                    Xuất người dùng
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => handleExportData('logs')}>
                     <Activity className="h-4 w-4 mr-2" />
-                    Export Logs
+                    Xuất nhật ký
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => handleExportData('stats')}>
                     <TrendingUp className="h-4 w-4 mr-2" />
-                    Export Statistics
+                    Xuất thống kê
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -769,17 +769,17 @@ const AdminPage: React.FC = () => {
                       <div className="p-2 bg-green-500/20 rounded-lg">
                         <UserCheck className="h-5 w-5 text-green-600" />
                       </div>
-                      <p className="text-sm font-semibold text-green-700">Active Users</p>
+                      <p className="text-sm font-semibold text-green-700">Người dùng đang hoạt động</p>
                     </div>
                     <p className="text-3xl font-bold text-green-900">{stats.active_users}</p>
                     <div className="flex items-center space-x-2">
                       <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-0 px-2 py-1">
                         <div className="w-2 h-2 bg-blue-500 rounded-full mr-1" />
-                        {Math.round((stats.active_users / stats.total_users) * 100) || 0}% of total
+                        {Math.round((stats.active_users / stats.total_users) * 100) || 0}% tổng số
                       </Badge>
                       <Badge variant="secondary" className="bg-green-100 text-green-800 border-0 px-2 py-1">
                         <div className="w-2 h-2 bg-green-500 rounded-full mr-1" />
-                        online
+                        trực tuyến
                       </Badge>
                     </div>
                   </div>
@@ -808,17 +808,17 @@ const AdminPage: React.FC = () => {
                       <div className="p-2 bg-purple-500/20 rounded-lg">
                         <Shield className="h-5 w-5 text-purple-600" />
                       </div>
-                      <p className="text-sm font-semibold text-purple-700">Admin Users</p>
+                      <p className="text-sm font-semibold text-purple-700">Người dùng quản trị</p>
                     </div>
                     <p className="text-3xl font-bold text-purple-900">{stats.admin_users || 0}</p>
                     <div className="flex items-center space-x-2">
                       <Badge variant="secondary" className="bg-purple-100 text-purple-800 border-0 px-2 py-1">
                         <div className="w-2 h-2 bg-purple-500 rounded-full mr-1" />
-                        {Math.round(((stats.admin_users || 0) / stats.total_users) * 100) || 0}% of total
+                        {Math.round(((stats.admin_users || 0) / stats.total_users) * 100) || 0}% tổng số
                       </Badge>
                       <Badge variant="secondary" className="bg-red-100 text-red-800 border-0 px-2 py-1">
                         <div className="w-2 h-2 bg-red-500 rounded-full mr-1" />
-                        privileged
+                        có đặc quyền
                       </Badge>
                     </div>
                   </div>
@@ -847,17 +847,17 @@ const AdminPage: React.FC = () => {
                       <div className="p-2 bg-orange-500/20 rounded-lg">
                         <Camera className="h-5 w-5 text-orange-600" />
                       </div>
-                      <p className="text-sm font-semibold text-orange-700">User Cameras</p>
+                      <p className="text-sm font-semibold text-orange-700">Camera người dùng</p>
                     </div>
                     <p className="text-3xl font-bold text-orange-900">{stats.total_cameras}</p>
                     <div className="flex items-center space-x-2">
                       <Badge variant="secondary" className="bg-green-100 text-green-800 border-0 px-2 py-1">
                         <div className="w-2 h-2 bg-green-500 rounded-full mr-1" />
-                        {stats.active_cameras} online
+                        {stats.active_cameras} trực tuyến
                       </Badge>
                       <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-0 px-2 py-1">
                         <div className="w-2 h-2 bg-blue-500 rounded-full mr-1" />
-                        {stats.streaming_cameras || 0} streaming
+                        {stats.streaming_cameras || 0} đang phát
                       </Badge>
                     </div>
                   </div>
@@ -883,7 +883,7 @@ const AdminPage: React.FC = () => {
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              System health issues detected. This may affect user data and account management. Please check the monitoring tab for details.
+              Phát hiện sự cố sức khỏe hệ thống. Điều này có thể ảnh hưởng đến dữ liệu và quản lý tài khoản người dùng. Vui lòng kiểm tra tab giám sát để biết chi tiết.
             </AlertDescription>
           </Alert>
         </motion.div>
@@ -904,7 +904,7 @@ const AdminPage: React.FC = () => {
               <div className="p-1.5 bg-blue-100 rounded-lg">
                 <BarChart3 className="h-4 w-4 text-blue-600" />
               </div>
-              <span className="font-medium">Dashboard</span>
+              <span className="font-medium">Tổng quan</span>
             </TabsTrigger>
             <TabsTrigger 
               value="users" 
@@ -913,7 +913,7 @@ const AdminPage: React.FC = () => {
               <div className="p-1.5 bg-green-100 rounded-lg">
                 <Users className="h-4 w-4 text-green-600" />
               </div>
-              <span className="font-medium">Users</span>
+              <span className="font-medium">Người dùng</span>
             </TabsTrigger>
             <TabsTrigger 
               value="monitoring" 
@@ -922,7 +922,7 @@ const AdminPage: React.FC = () => {
               <div className="p-1.5 bg-purple-100 rounded-lg">
                 <Monitor className="h-4 w-4 text-purple-600" />
               </div>
-              <span className="font-medium">Monitoring</span>
+              <span className="font-medium">Giám sát</span>
             </TabsTrigger>
             <TabsTrigger 
               value="logs" 
@@ -931,7 +931,7 @@ const AdminPage: React.FC = () => {
               <div className="p-1.5 bg-orange-100 rounded-lg">
                 <FileText className="h-4 w-4 text-orange-600" />
               </div>
-              <span className="font-medium">Logs</span>
+              <span className="font-medium">Nhật ký</span>
             </TabsTrigger>
           </TabsList>
 
@@ -1022,8 +1022,8 @@ const AdminPage: React.FC = () => {
                                     : 'bg-purple-50 text-purple-700 border-purple-200'
                                 }`}
                               >
-                                {activity.type.toLowerCase().includes('user') ? 'User' : 
-                                 activity.type.toLowerCase().includes('login') ? 'Auth' : 'System'}
+                                {activity.type.toLowerCase().includes('user') ? 'Người dùng' : 
+                                 activity.type.toLowerCase().includes('login') ? 'Xác thực' : 'Hệ thống'}
                               </Badge>
                             </div>
                           </div>
@@ -1036,7 +1036,7 @@ const AdminPage: React.FC = () => {
                       <div className="mt-6 text-center">
                         <Button variant="outline" className="bg-gradient-to-r from-blue-50 to-green-50 hover:from-blue-100 hover:to-green-100 border-blue-200">
                           <Activity className="w-4 h-4 mr-2" />
-                          View All Activities ({stats.recent_activity.length})
+                          Xem tất cả hoạt động ({stats.recent_activity.length})
                         </Button>
                       </div>
                     )}
@@ -1058,8 +1058,8 @@ const AdminPage: React.FC = () => {
                       <Users className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-gray-900">User Management Actions</h3>
-                      <p className="text-sm text-gray-500">Quick access to user administration tasks</p>
+                      <h3 className="text-xl font-bold text-gray-900">Hành động quản lý người dùng</h3>
+                      <p className="text-sm text-gray-500">Truy cập nhanh các tác vụ quản trị người dùng</p>
                     </div>
                   </CardTitle>
                 </CardHeader>
@@ -1075,8 +1075,8 @@ const AdminPage: React.FC = () => {
                           <Users className="w-8 h-8 text-pink-600" />
                         </div>
                         <div className="text-center">
-                          <div className="text-sm font-medium text-pink-700">Manage User Accounts</div>
-                          <div className="text-xs text-pink-600">View, edit, activate/deactivate users</div>
+                          <div className="text-sm font-medium text-pink-700">Quản lý tài khoản người dùng</div>
+                          <div className="text-xs text-pink-600">Xem, chỉnh sửa, kích hoạt/vô hiệu hóa người dùng</div>
                         </div>
                       </div>
                     </Button>
@@ -1091,8 +1091,8 @@ const AdminPage: React.FC = () => {
                           <Monitor className="w-8 h-8 text-green-600" />
                         </div>
                         <div className="text-center">
-                          <div className="text-sm font-medium text-green-700">System Overview</div>
-                          <div className="text-xs text-green-600">Monitor system health & resources</div>
+                          <div className="text-sm font-medium text-green-700">Tổng quan hệ thống</div>
+                          <div className="text-xs text-green-600">Giám sát sức khỏe hệ thống & tài nguyên</div>
                         </div>
                       </div>
                     </Button>
@@ -1100,29 +1100,29 @@ const AdminPage: React.FC = () => {
                   
                   {/* User Statistics Summary */}
                   <div className="mt-6 pt-6 border-t border-gray-100">
-                    <h4 className="text-sm font-semibold text-gray-700 mb-4">User Account Summary</h4>
+                    <h4 className="text-sm font-semibold text-gray-700 mb-4">Tóm tắt tài khoản người dùng</h4>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       <div className="text-center p-3 bg-blue-50 rounded-xl">
                         <div className="text-2xl font-bold text-blue-600">{users.length}</div>
-                        <div className="text-xs text-blue-700 font-medium">Total Accounts</div>
+                        <div className="text-xs text-blue-700 font-medium">Tổng tài khoản</div>
                       </div>
                       <div className="text-center p-3 bg-green-50 rounded-xl">
                         <div className="text-2xl font-bold text-green-600">
                           {users.filter(u => u.is_active).length}
                         </div>
-                        <div className="text-xs text-green-700 font-medium">Active Users</div>
+                        <div className="text-xs text-green-700 font-medium">Người dùng hoạt động</div>
                       </div>
                       <div className="text-center p-3 bg-purple-50 rounded-xl">
                         <div className="text-2xl font-bold text-purple-600">
                           {users.filter(u => u.is_admin).length}
                         </div>
-                        <div className="text-xs text-purple-700 font-medium">Admin Users</div>
+                        <div className="text-xs text-purple-700 font-medium">Quản trị viên</div>
                       </div>
                       <div className="text-center p-3 bg-orange-50 rounded-xl">
                         <div className="text-2xl font-bold text-orange-600">
                           {stats?.total_cameras || 0}
                         </div>
-                        <div className="text-xs text-orange-700 font-medium">User Cameras</div>
+                        <div className="text-xs text-orange-700 font-medium">Camera người dùng</div>
                       </div>
                     </div>
                   </div>
@@ -1145,7 +1145,7 @@ const AdminPage: React.FC = () => {
                       <Search className="h-5 w-5 text-gray-400" />
                     </div>
                     <Input
-                      placeholder="Search users by name, username, email, or department..."
+                      placeholder="Tìm kiếm người dùng theo tên, tài khoản, email hoặc phòng ban..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-12 pr-4 py-3 bg-white border-0 shadow-lg rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
@@ -1169,14 +1169,14 @@ const AdminPage: React.FC = () => {
                   <div className="flex items-center space-x-3 text-sm bg-white rounded-2xl px-6 py-3 shadow-lg">
                     <div className="flex items-center space-x-2">
                       <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                      <span className="text-gray-700 font-medium">{filteredUsers.length} of {users.length} users</span>
+                      <span className="text-gray-700 font-medium">{filteredUsers.length} trong số {users.length} người dùng</span>
                     </div>
                     <div className="w-px h-4 bg-gray-300" />
                     <Badge variant="secondary" className="bg-green-100 text-green-800 border-0">
-                      {users.filter(u => u.is_active).length} active
+                      {users.filter(u => u.is_active).length} đang hoạt động
                     </Badge>
                     <Badge variant="secondary" className="bg-purple-100 text-purple-800 border-0">
-                      {users.filter(u => u.is_admin).length} admins
+                      {users.filter(u => u.is_admin).length} quản trị viên
                     </Badge>
                   </div>
                 </div>
@@ -1191,8 +1191,8 @@ const AdminPage: React.FC = () => {
                         <Users className="w-6 h-6 text-white" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold text-gray-900">Users Management</h3>
-                        <p className="text-sm text-gray-500">Manage user accounts and permissions</p>
+                        <h3 className="text-xl font-bold text-gray-900">Quản lý người dùng</h3>
+                        <p className="text-sm text-gray-500">Quản lý tài khoản và phân quyền người dùng</p>
                       </div>
                     </div>
                     <Button 
@@ -1202,7 +1202,7 @@ const AdminPage: React.FC = () => {
                       className="bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 border-blue-200 transition-all duration-300"
                     >
                       <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-                      Refresh
+                      Làm mới
                     </Button>
                   </CardTitle>
                 </CardHeader>
@@ -1244,11 +1244,11 @@ const AdminPage: React.FC = () => {
                                       ? 'bg-green-100 text-green-800 border-green-200' 
                                       : 'bg-gray-100 text-gray-600 border-gray-200'
                                   } transition-all duration-300`}>
-                                    {user.is_active ? 'Active' : 'Inactive'}
+                                    {user.is_active ? 'Đang hoạt động' : 'Không hoạt động'}
                                   </Badge>
                                   {user.is_admin && (
                                     <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0">
-                                      Admin
+                                      Quản trị viên
                                     </Badge>
                                   )}
                                 </div>
@@ -1268,38 +1268,36 @@ const AdminPage: React.FC = () => {
                               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
                                 <div className="flex items-center space-x-2 p-2 bg-blue-50 rounded-lg">
                                   <Calendar className="w-3 h-3 text-blue-600" />
-                                  <div>
-                                    <div className="text-blue-600 font-medium">Joined</div>
-                                    <div className="text-gray-700">{new Date(user.created_at).toLocaleDateString()}</div>
-                                  </div>
-                                </div>
-                                
-                                {user.department && (
-                                  <div className="flex items-center space-x-2 p-2 bg-green-50 rounded-lg">
-                                    <div className="w-3 h-3 bg-green-600 rounded-full" />
                                     <div>
-                                      <div className="text-green-600 font-medium">Department</div>
-                                      <div className="text-gray-700">{user.department}</div>
+                                      <div className="text-blue-600 font-medium">Tham gia</div>
+                                      <div className="text-gray-700">{new Date(user.created_at).toLocaleDateString()}</div>
                                     </div>
                                   </div>
-                                )}
-                                
-                                {user.last_login && (
-                                  <div className="flex items-center space-x-2 p-2 bg-purple-50 rounded-lg">
-                                    <Activity className="w-3 h-3 text-purple-600" />
-                                    <div>
-                                      <div className="text-purple-600 font-medium">Last login</div>
-                                      <div className="text-gray-700">{new Date(user.last_login).toLocaleDateString()}</div>
+                                  
+                                  {user.department && (
+                                    <div className="flex items-center space-x-2 p-2 bg-green-50 rounded-lg">
+                                      <div className="w-3 h-3 bg-green-600 rounded-full" />
+                                      <div>
+                                        <div className="text-green-600 font-medium">Phòng ban</div>
+                                        <div className="text-gray-700">{user.department}</div>
+                                      </div>
                                     </div>
-                                  </div>
-                                )}
-                                
-                                {user.stats && (
+                                  )}
+                                  
+                                  {user.last_login && (
+                                    <div className="flex items-center space-x-2 p-2 bg-purple-50 rounded-lg">
+                                      <Activity className="w-3 h-3 text-purple-600" />
+                                      <div>
+                                        <div className="text-purple-600 font-medium">Lần đăng nhập cuối</div>
+                                        <div className="text-gray-700">{new Date(user.last_login).toLocaleDateString()}</div>
+                                      </div>
+                                    </div>
+                                  )}                                {user.stats && (
                                   <div className="flex items-center space-x-2 p-2 bg-orange-50 rounded-lg">
                                     <TrendingUp className="w-3 h-3 text-orange-600" />
                                     <div>
                                       <div className="text-orange-600 font-medium">Stats</div>
-                                      <div className="text-gray-700">{user.stats.total_logins || 0} logins</div>
+                                      <div className="text-gray-700">{user.stats.total_logins || 0} lần đăng nhập</div>
                                     </div>
                                   </div>
                                 )}
@@ -1321,31 +1319,31 @@ const AdminPage: React.FC = () => {
                                 <DropdownMenuContent align="end" className="w-48 bg-white/95 backdrop-blur-sm">
                                   <DropdownMenuItem onClick={() => handleViewUserDetails(user)} className="hover:bg-blue-50">
                                     <Eye className="h-4 w-4 mr-2 text-blue-600" />
-                                    View Details
+                                    Xem chi tiết
                                   </DropdownMenuItem>
                                   <DropdownMenuItem onClick={() => handleToggleUserStatus(user)} className="hover:bg-green-50">
                                     {user.is_active ? (
                                       <>
                                         <UserX className="h-4 w-4 mr-2 text-red-600" />
-                                        Deactivate User
+                                        Vô hiệu hóa
                                       </>
                                     ) : (
                                       <>
                                         <UserCheck className="h-4 w-4 mr-2 text-green-600" />
-                                        Activate User
+                                        Kích hoạt
                                       </>
                                     )}
                                   </DropdownMenuItem>
                                   <DropdownMenuItem onClick={() => handleToggleAdminRole(user)} className="hover:bg-purple-50">
                                     <Shield className="h-4 w-4 mr-2 text-purple-600" />
-                                    {user.is_admin ? 'Remove Admin' : 'Make Admin'}
+                                    {user.is_admin ? 'Bỏ quyền quản trị' : 'Cấp quyền quản trị'}
                                   </DropdownMenuItem>
                                   <DropdownMenuItem 
                                     onClick={() => setDeleteDialog({ open: true, user })}
                                     className="text-red-600 hover:bg-red-50"
                                   >
                                     <Trash2 className="h-4 w-4 mr-2" />
-                                    Delete User
+                                    Xóa người dùng
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>
@@ -1363,22 +1361,22 @@ const AdminPage: React.FC = () => {
                           <div className="absolute inset-0 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full blur-xl opacity-50" />
                           <div className="relative p-8 bg-white rounded-2xl shadow-lg max-w-md mx-auto">
                             <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                            <h3 className="text-xl font-bold text-gray-900 mb-2">No users found</h3>
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">Không tìm thấy người dùng</h3>
                             {searchTerm ? (
                               <div className="space-y-3">
                                 <p className="text-gray-500">
-                                  No users match your search criteria "<strong className="text-gray-700">{searchTerm}</strong>"
+                                  Không có người dùng nào khớp với tiêu chí tìm kiếm "<strong className="text-gray-700">{searchTerm}</strong>"
                                 </p>
                                 <Button 
                                   variant="outline" 
                                   onClick={() => setSearchTerm('')}
                                   className="bg-blue-50 hover:bg-blue-100 border-blue-200"
                                 >
-                                  Clear Search
+                                  Xóa tìm kiếm
                                 </Button>
                               </div>
                             ) : (
-                              <p className="text-gray-500">No users have been created yet</p>
+                              <p className="text-gray-500">Chưa có người dùng nào được tạo</p>
                             )}
                           </div>
                         </div>
@@ -1404,8 +1402,8 @@ const AdminPage: React.FC = () => {
                       <Activity className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-gray-900">System Health</h3>
-                      <p className="text-sm text-gray-500">Core system components status</p>
+                      <h3 className="text-xl font-bold text-gray-900">Sức khỏe hệ thống</h3>
+                      <p className="text-sm text-gray-500">Trạng thái các thành phần hệ thống cốt lõi</p>
                     </div>
                   </CardTitle>
                 </CardHeader>
@@ -1433,8 +1431,8 @@ const AdminPage: React.FC = () => {
                               }`} />
                             </div>
                             <div>
-                              <h4 className="font-semibold text-gray-900">Database Connection</h4>
-                              <p className="text-sm text-gray-600">PostgreSQL database status</p>
+                              <h4 className="font-semibold text-gray-900">Kết nối cơ sở dữ liệu</h4>
+                              <p className="text-sm text-gray-600">Trạng thái cơ sở dữ liệu PostgreSQL</p>
                             </div>
                           </div>
                           <Badge 
@@ -1445,7 +1443,7 @@ const AdminPage: React.FC = () => {
                                 : 'bg-red-100 text-red-800 border-red-200'
                             } transition-all duration-300`}
                           >
-                            {health.database === 'healthy' ? 'Healthy' : 'Error'}
+                            {health.database === 'healthy' ? 'Khỏe mạnh' : 'Lỗi'}
                           </Badge>
                         </div>
                       </motion.div>
@@ -1471,8 +1469,8 @@ const AdminPage: React.FC = () => {
                               }`} />
                             </div>
                             <div>
-                              <h4 className="font-semibold text-gray-900">Face Recognition AI</h4>
-                              <p className="text-sm text-gray-600">Deep learning model status</p>
+                              <h4 className="font-semibold text-gray-900">AI Nhận diện khuôn mặt</h4>
+                              <p className="text-sm text-gray-600">Trạng thái mô hình học sâu</p>
                             </div>
                           </div>
                           <Badge 
@@ -1483,7 +1481,7 @@ const AdminPage: React.FC = () => {
                                 : 'bg-red-100 text-red-800 border-red-200'
                             } transition-all duration-300`}
                           >
-                            {health.face_recognition === 'healthy' ? 'Healthy' : 'Error'}
+                            {health.face_recognition === 'healthy' ? 'Khỏe mạnh' : 'Lỗi'}
                           </Badge>
                         </div>
                       </motion.div>

@@ -241,10 +241,10 @@ const AlertsPage: React.FC = () => {
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center">
             <AlertTriangle className="h-8 w-8 text-red-500 mr-3" />
-            Security Alerts
+            Cảnh báo an ninh
           </h1>
           <p className="text-gray-600 mt-2">
-            Monitor and manage security alerts and suspicious activities
+            Theo dõi và quản lý các cảnh báo an ninh, hoạt động đáng ngờ
           </p>
         </div>
         <div className="flex items-center space-x-3">
@@ -253,7 +253,7 @@ const AlertsPage: React.FC = () => {
             className="flex items-center space-x-1"
           >
             <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
-            <span>{isConnected ? 'Live' : 'Offline'}</span>
+            <span>{isConnected ? 'Trực tiếp' : 'Mất kết nối'}</span>
           </Badge>
           <Button
             variant="outline"
@@ -261,11 +261,11 @@ const AlertsPage: React.FC = () => {
             disabled={refreshing}
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-            Refresh
+            Làm mới
           </Button>
           <Button onClick={handleExport}>
             <Download className="h-4 w-4 mr-2" />
-            Export
+            Xuất dữ liệu
           </Button>
         </div>
       </motion.div>
@@ -276,7 +276,7 @@ const AlertsPage: React.FC = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Alerts</p>
+                <p className="text-sm text-gray-600">Tổng cảnh báo</p>
                 <p className="text-2xl font-bold">{stats.total}</p>
               </div>
               <Bell className="h-6 w-6 text-blue-500" />
@@ -288,7 +288,7 @@ const AlertsPage: React.FC = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Today</p>
+                <p className="text-sm text-gray-600">Hôm nay</p>
                 <p className="text-2xl font-bold">{stats.today}</p>
               </div>
               <Clock className="h-6 w-6 text-green-500" />
@@ -300,7 +300,7 @@ const AlertsPage: React.FC = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">High Priority</p>
+                <p className="text-sm text-gray-600">Mức độ cao</p>
                 <p className="text-2xl font-bold text-red-600">{stats.high}</p>
               </div>
               <AlertTriangle className="h-6 w-6 text-red-500" />
@@ -312,7 +312,7 @@ const AlertsPage: React.FC = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Medium</p>
+                <p className="text-sm text-gray-600">Mức độ trung bình</p>
                 <p className="text-2xl font-bold text-orange-600">{stats.medium}</p>
               </div>
               <Shield className="h-6 w-6 text-orange-500" />
@@ -324,7 +324,7 @@ const AlertsPage: React.FC = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Low Priority</p>
+                <p className="text-sm text-gray-600">Mức độ thấp</p>
                 <p className="text-2xl font-bold text-yellow-600">{stats.low}</p>
               </div>
               <Eye className="h-6 w-6 text-yellow-500" />
@@ -336,7 +336,7 @@ const AlertsPage: React.FC = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Unread</p>
+                <p className="text-sm text-gray-600">Chưa đọc</p>
                 <p className="text-2xl font-bold text-purple-600">{stats.unread}</p>
               </div>
               <Bell className="h-6 w-6 text-purple-500" />
@@ -350,15 +350,15 @@ const AlertsPage: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center">
             <Filter className="h-5 w-5 mr-2" />
-            Filters
+            Bộ lọc
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Search</label>
+              <label className="block text-sm font-medium mb-2">Tìm kiếm</label>
               <Input
-                placeholder="Search alerts..."
+                placeholder="Tìm kiếm cảnh báo..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full"
@@ -371,7 +371,7 @@ const AlertsPage: React.FC = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Cameras</SelectItem>
+                  <SelectItem value="all">Tất cả camera</SelectItem>
                   {cameras.map(camera => (
                     <SelectItem key={camera.id} value={camera.id}>
                       {camera.name}
@@ -381,15 +381,15 @@ const AlertsPage: React.FC = () => {
               </Select>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Severity</label>
+              <label className="block text-sm font-medium mb-2">Mức độ</label>
               <Select value={filterSeverity} onValueChange={setFilterSeverity}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Severities</SelectItem>
-                  <SelectItem value="stranger">High (Stranger)</SelectItem>
-                  <SelectItem value="unknown">Medium (Unknown)</SelectItem>
+                  <SelectItem value="all">Tất cả mức độ</SelectItem>
+                  <SelectItem value="stranger">Cao (Người lạ)</SelectItem>
+                  <SelectItem value="unknown">Trung bình (Không xác định)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -400,7 +400,7 @@ const AlertsPage: React.FC = () => {
       {/* Alerts Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Security Alerts</CardTitle>
+          <CardTitle>Cảnh báo an ninh</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -411,13 +411,13 @@ const AlertsPage: React.FC = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date & Time</TableHead>
+                  <TableHead>Ngày & Giờ</TableHead>
                   <TableHead>Camera</TableHead>
-                  <TableHead>Alert Type</TableHead>
-                  <TableHead>Confidence</TableHead>
-                  <TableHead>Severity</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>Loại cảnh báo</TableHead>
+                  <TableHead>Độ tin cậy</TableHead>
+                  <TableHead>Mức độ</TableHead>
+                  <TableHead>Trạng thái</TableHead>
+                  <TableHead>Hành động</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -436,14 +436,14 @@ const AlertsPage: React.FC = () => {
                       <TableCell>
                         <div className="flex items-center space-x-2">
                           <Camera className="h-4 w-4 text-gray-500" />
-                          <span>{alert.camera_name || 'Unknown'}</span>
+                          <span>{alert.camera_name || 'Không xác định'}</span>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center space-x-2">
                           <User className="h-4 w-4 text-gray-500" />
                           <span>
-                            {alert.detection_type === 'stranger' ? 'Unknown Person' : 'Unidentified'}
+                            {alert.detection_type === 'stranger' ? 'Người lạ' : 'Không xác định'}
                           </span>
                         </div>
                       </TableCell>
@@ -454,12 +454,12 @@ const AlertsPage: React.FC = () => {
                       </TableCell>
                       <TableCell>
                         <Badge className={getSeverityColor(severity)}>
-                          {severity.toUpperCase()}
+                          {severity === 'high' ? 'Cao' : severity === 'medium' ? 'Trung bình' : severity === 'low' ? 'Thấp' : 'Thông tin'}
                         </Badge>
                       </TableCell>
                       <TableCell>
                         <Badge variant={alert.is_alert_sent ? 'default' : 'destructive'}>
-                          {alert.is_alert_sent ? 'Sent' : 'Unread'}
+                          {alert.is_alert_sent ? 'Đã gửi' : 'Chưa đọc'}
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -488,8 +488,8 @@ const AlertsPage: React.FC = () => {
           {alerts.length === 0 && !loading && (
             <div className="text-center py-12">
               <Shield className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No alerts found</h3>
-              <p className="text-gray-500">All systems are secure. No security alerts detected.</p>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Không có cảnh báo nào</h3>
+              <p className="text-gray-500">Tất cả hệ thống đều an toàn. Không phát hiện cảnh báo an ninh.</p>
             </div>
           )}
           
@@ -501,17 +501,17 @@ const AlertsPage: React.FC = () => {
                 onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                 disabled={currentPage === 1}
               >
-                Previous
+                Trước
               </Button>
               <span className="text-sm text-gray-600">
-                Page {currentPage} of {totalPages}
+                Trang {currentPage} / {totalPages}
               </span>
               <Button
                 variant="outline"
                 onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                 disabled={currentPage === totalPages}
               >
-                Next
+                Tiếp
               </Button>
             </div>
           )}

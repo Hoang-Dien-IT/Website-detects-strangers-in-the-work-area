@@ -710,26 +710,26 @@ const CameraDetailPage: React.FC = () => {
                     <CardHeader>
                       <CardTitle className="flex items-center space-x-2">
                         <Activity className="w-5 h-5" />
-                        <span>Quick Stats</span>
+                        <span>Thống kê nhanh</span>
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600">Total Detections</span>
+                        <span className="text-gray-600">Tổng số nhận diện</span>
                         <span className="font-medium">{stats.total_detections}</span>
                       </div>
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600">Last Detection</span>
+                        <span className="text-gray-600">Nhận diện gần nhất</span>
                         <span className="font-medium">
-                          {stats.last_detection ? new Date(stats.last_detection).toLocaleString() : 'None'}
+                          {stats.last_detection ? new Date(stats.last_detection).toLocaleString() : 'Không có'}
                         </span>
                       </div>
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600">Streaming Time</span>
+                        <span className="text-gray-600">Thời gian phát trực tiếp</span>
                         <span className="font-medium">{formatUptime(stats.streaming_time)}</span>
                       </div>
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600">Camera Uptime</span>
+                        <span className="text-gray-600">Thời gian hoạt động</span>
                         <span className="font-medium">{formatUptime(stats.uptime)}</span>
                       </div>
                     </CardContent>
@@ -745,11 +745,11 @@ const CameraDetailPage: React.FC = () => {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <Video className="w-5 h-5" />
-                  <span>Live Stream</span>
+                  <span>Phát trực tiếp</span>
                   {camera.is_streaming && (
                     <Badge className="bg-red-100 text-red-800">
                       <div className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></div>
-                      LIVE
+                      TRỰC TIẾP
                     </Badge>
                   )}
                 </CardTitle>
@@ -760,9 +760,9 @@ const CameraDetailPage: React.FC = () => {
                     <div className="w-full h-full flex items-center justify-center">
                       <div className="text-center text-white">
                         <Video className="w-16 h-16 mx-auto mb-4" />
-                        <p className="mb-2">Live Stream Active</p>
+                        <p className="mb-2">Đang phát trực tiếp</p>
                         <p className="text-sm text-gray-300">
-                          Stream URL: /api/stream/{camera.id}/video
+                          Đường dẫn phát: /api/stream/{camera.id}/video
                         </p>
                         {/* TODO: Implement actual video stream component */}
                       </div>
@@ -771,14 +771,14 @@ const CameraDetailPage: React.FC = () => {
                     <div className="flex items-center justify-center h-full">
                       <div className="text-center text-white">
                         <Camera className="w-16 h-16 mx-auto mb-4" />
-                        <p className="mb-2">Camera is not streaming</p>
+                        <p className="mb-2">Camera chưa phát trực tiếp</p>
                         <Button onClick={handleStartStream} disabled={streamLoading}>
                           {streamLoading ? (
                             <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
                           ) : (
                             <Play className="w-4 h-4 mr-2" />
                           )}
-                          Start Stream
+                          Bắt đầu phát trực tiếp
                         </Button>
                       </div>
                     </div>
@@ -794,18 +794,18 @@ const CameraDetailPage: React.FC = () => {
                       <span>Viewers: {streamStatus?.viewers_count || 0}</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Button variant="outline" size="sm" onClick={handleCaptureSnapshot}>
-                        <Camera className="w-4 h-4 mr-2" />
-                        Snapshot
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={handleStopStream} disabled={streamLoading}>
-                        {streamLoading ? (
-                          <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                        ) : (
-                          <Square className="w-4 h-4 mr-2" />
-                        )}
-                        Stop Stream
-                      </Button>
+                        <Button variant="outline" size="sm" onClick={handleCaptureSnapshot}>
+                          <Camera className="w-4 h-4 mr-2" />
+                          Chụp ảnh
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={handleStopStream} disabled={streamLoading}>
+                          {streamLoading ? (
+                            <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                          ) : (
+                            <Square className="w-4 h-4 mr-2" />
+                          )}
+                          Dừng phát trực tiếp
+                        </Button>
                     </div>
                   </div>
                 )}
@@ -820,7 +820,7 @@ const CameraDetailPage: React.FC = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
                     <Activity className="w-5 h-5" />
-                    <span>Performance Stats</span>
+                    <span>Thống kê hiệu suất</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -829,7 +829,7 @@ const CameraDetailPage: React.FC = () => {
                       <div className="text-2xl font-bold text-blue-600">
                         {stats?.total_detections || 0}
                       </div>
-                      <div className="text-sm text-gray-600">Total Detections</div>
+                      <div className="text-sm text-gray-600">Tổng số nhận diện</div>
                     </div>
                     
                     <div className="grid grid-cols-2 gap-4">
@@ -837,14 +837,14 @@ const CameraDetailPage: React.FC = () => {
                         <div className="text-lg font-bold text-green-600">
                           {formatUptime(stats?.uptime || 0)}
                         </div>
-                        <div className="text-xs text-gray-600">Uptime</div>
+                        <div className="text-xs text-gray-600">Thời gian hoạt động</div>
                       </div>
                       
                       <div className="text-center p-3 bg-purple-50 rounded-lg">
                         <div className="text-lg font-bold text-purple-600">
                           {formatUptime(stats?.streaming_time || 0)}
                         </div>
-                        <div className="text-xs text-gray-600">Streaming Time</div>
+                        <div className="text-xs text-gray-600">Thời gian phát trực tiếp</div>
                       </div>
                     </div>
                   </div>
@@ -855,14 +855,14 @@ const CameraDetailPage: React.FC = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
                     <Clock className="w-5 h-5" />
-                    <span>Timeline</span>
+                    <span>Mốc thời gian</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
                     <div className="flex items-center space-x-3 text-sm">
                       <Calendar className="w-4 h-4 text-gray-400" />
-                      <span className="text-gray-600">Created:</span>
+                      <span className="text-gray-600">Ngày tạo:</span>
                       <span className="font-medium">
                         {new Date(camera.created_at).toLocaleString()}
                       </span>
@@ -871,7 +871,7 @@ const CameraDetailPage: React.FC = () => {
                     {camera.updated_at && (
                       <div className="flex items-center space-x-3 text-sm">
                         <Clock className="w-4 h-4 text-gray-400" />
-                        <span className="text-gray-600">Last Updated:</span>
+                        <span className="text-gray-600">Cập nhật lần cuối:</span>
                         <span className="font-medium">
                           {new Date(camera.updated_at).toLocaleString()}
                         </span>
@@ -881,7 +881,7 @@ const CameraDetailPage: React.FC = () => {
                     {camera.last_online && (
                       <div className="flex items-center space-x-3 text-sm">
                         <Wifi className="w-4 h-4 text-gray-400" />
-                        <span className="text-gray-600">Last Online:</span>
+                        <span className="text-gray-600">Lần online gần nhất:</span>
                         <span className="font-medium">
                           {new Date(camera.last_online).toLocaleString()}
                         </span>
@@ -891,7 +891,7 @@ const CameraDetailPage: React.FC = () => {
                     {stats?.last_detection && (
                       <div className="flex items-center space-x-3 text-sm">
                         <Eye className="w-4 h-4 text-gray-400" />
-                        <span className="text-gray-600">Last Detection:</span>
+                        <span className="text-gray-600">Nhận diện gần nhất:</span>
                         <span className="font-medium">
                           {new Date(stats.last_detection).toLocaleString()}
                         </span>

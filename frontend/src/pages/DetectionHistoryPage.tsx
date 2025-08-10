@@ -489,7 +489,7 @@ const DetectionHistoryPage: React.FC = () => {
       <Dialog open={showDetail} onOpenChange={setShowDetail}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Detection Details</DialogTitle>
+            <DialogTitle>Chi tiết phát hiện</DialogTitle>
             <DialogDescription>
               Thông tin chi tiết sự kiện phát hiện khuôn mặt
             </DialogDescription>
@@ -505,15 +505,15 @@ const DetectionHistoryPage: React.FC = () => {
                 />
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <div className="font-semibold">Date & Time:</div>
+                <div className="font-semibold">Ngày & Giờ:</div>
                 <div>{formatDate(selectedDetection.timestamp)}</div>
                 <div className="font-semibold">Camera:</div>
-                <div>{selectedDetection.camera_name || 'Unknown'}</div>
-                <div className="font-semibold">Person:</div>
-                <div>{selectedDetection.person_name || 'Unknown Person'}</div>
-                <div className="font-semibold">Confidence:</div>
+                <div>{selectedDetection.camera_name || 'Không xác định'}</div>
+                <div className="font-semibold">Người:</div>
+                <div>{selectedDetection.person_name || 'Người lạ'}</div>
+                <div className="font-semibold">Độ tin cậy:</div>
                 <div>{((selectedDetection.confidence || 0) * 100).toFixed(1)}%</div>
-                <div className="font-semibold">Status:</div>
+                <div className="font-semibold">Trạng thái:</div>
                 <div>
                   <Badge className={getTypeColor(selectedDetection.detection_type || 'unknown')}>
                     {getTypeDisplayName(selectedDetection.detection_type || 'unknown')}
@@ -524,7 +524,7 @@ const DetectionHistoryPage: React.FC = () => {
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowDetail(false)}>
-              Close
+              Đóng
             </Button>
           </DialogFooter>
         </DialogContent>

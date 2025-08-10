@@ -403,17 +403,17 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center space-x-2">
-              <Users className="h-5 w-5" />
-              <span>User Management</span>
+            <CardTitle className="flex items-center space-x-2 text-cyan-800">
+              <Users className="h-5 w-5 text-cyan-600" />
+              <span>Quản lý người dùng</span>
             </CardTitle>
             <div className="flex items-center space-x-2">
-              <Badge variant="outline">
-                {users.length} total users
+              <Badge variant="outline" className="text-black border-cyan-300 bg-cyan-50">
+                {users.length} người dùng
               </Badge>
-              <Button onClick={() => setShowCreateDialog(true)}>
+              <Button onClick={() => setShowCreateDialog(true)} className="bg-gradient-to-r from-emerald-500 to-cyan-600 hover:from-emerald-600 hover:to-cyan-700 text-white">
                 <UserPlus className="h-4 w-4 mr-2" />
-                Add User
+                Thêm người dùng
               </Button>
             </div>
           </div>
@@ -425,7 +425,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
-                  placeholder="Search users..."
+                  placeholder="Tìm kiếm người dùng..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -438,10 +438,10 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Roles</SelectItem>
-                <SelectItem value="admin">Admin</SelectItem>
-                <SelectItem value="user">User</SelectItem>
-                <SelectItem value="viewer">Viewer</SelectItem>
+                <SelectItem value="all">Tất cả vai trò</SelectItem>
+                <SelectItem value="admin">Quản trị viên</SelectItem>
+                <SelectItem value="user">Người dùng</SelectItem>
+                <SelectItem value="viewer">Xem</SelectItem>
               </SelectContent>
             </Select>
 
@@ -450,15 +450,15 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
+                <SelectItem value="all">Tất cả trạng thái</SelectItem>
+                <SelectItem value="active">Đang hoạt động</SelectItem>
+                <SelectItem value="inactive">Ngưng hoạt động</SelectItem>
               </SelectContent>
             </Select>
 
-            <Button variant="outline" onClick={loadUsers} disabled={loading}>
+            <Button variant="outline" onClick={loadUsers} disabled={loading} className="text-black border-cyan-300 hover:bg-cyan-50">
               <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-              Refresh
+              Làm mới
             </Button>
           </div>
         </CardContent>
@@ -470,24 +470,24 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
           {loading ? (
             <div className="p-8 text-center">
               <RefreshCw className="h-8 w-8 animate-spin mx-auto text-gray-400" />
-              <p className="text-gray-600 mt-2">Loading users...</p>
+              <p className="text-black mt-2">Đang tải người dùng...</p>
             </div>
           ) : filteredUsers.length === 0 ? (
             <div className="p-8 text-center">
               <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">No users found</p>
+              <p className="text-black">Không tìm thấy người dùng</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50 border-b">
                   <tr>
-                    <th className="text-left p-4 font-medium text-gray-700">User</th>
-                    <th className="text-left p-4 font-medium text-gray-700">Role</th>
-                    <th className="text-left p-4 font-medium text-gray-700">Status</th>
-                    <th className="text-left p-4 font-medium text-gray-700">Last Login</th>
-                    <th className="text-left p-4 font-medium text-gray-700">Created</th>
-                    <th className="text-right p-4 font-medium text-gray-700">Actions</th>
+                    <th className="text-left p-4 font-medium text-cyan-800">Người dùng</th>
+                    <th className="text-left p-4 font-medium text-cyan-800">Vai trò</th>
+                    <th className="text-left p-4 font-medium text-cyan-800">Trạng thái</th>
+                    <th className="text-left p-4 font-medium text-cyan-800">Đăng nhập gần nhất</th>
+                    <th className="text-left p-4 font-medium text-cyan-800">Ngày tạo</th>
+                    <th className="text-right p-4 font-medium text-cyan-800">Thao tác</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -502,48 +502,50 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <div className="font-medium text-gray-900">
+                            <div className="font-medium text-black">
                               {user.full_name}
                               {user.id === currentUser?.id && (
-                                <Badge variant="outline" className="ml-2 text-xs">You</Badge>
+                                <Badge variant="outline" className="ml-2 text-xs border-cyan-300 bg-cyan-50 text-black">Bạn</Badge>
                               )}
                             </div>
-                            <div className="text-sm text-gray-600">@{user.username}</div>
-                            <div className="text-sm text-gray-500">{user.email}</div>
+                            <div className="text-sm text-black">@{user.username}</div>
+                            <div className="text-sm text-black">{user.email}</div>
                           </div>
                         </div>
                       </td>
                       <td className="p-4">
-                        <Badge className={`${getRoleColor(user.role || 'user')} flex items-center space-x-1 w-fit`}>
+                        <Badge className={`flex items-center space-x-1 w-fit border-cyan-300 bg-cyan-50 text-black`}>
                           {getRoleIcon(user.role || 'user')}
-                          <span className="capitalize">{user.role || 'user'}</span>
+                          <span className="capitalize">
+                            {user.role === 'admin' ? 'Quản trị viên' : user.role === 'user' ? 'Người dùng' : 'Xem'}
+                          </span>
                         </Badge>
                       </td>
                       <td className="p-4">
                         <div className="flex items-center space-x-2">
                           {user.is_active ? (
                             <>
-                              <CheckCircle className="h-4 w-4 text-green-600" />
-                              <span className="text-green-600">Active</span>
+                              <CheckCircle className="h-4 w-4 text-emerald-600" />
+                              <span className="text-emerald-600">Đang hoạt động</span>
                             </>
                           ) : (
                             <>
                               <XCircle className="h-4 w-4 text-red-600" />
-                              <span className="text-red-600">Inactive</span>
+                              <span className="text-red-600">Ngưng hoạt động</span>
                             </>
                           )}
                         </div>
                       </td>
                       <td className="p-4">
-                        <div className="text-sm text-gray-600">
+                        <div className="text-sm text-black">
                           {user.last_login 
                             ? new Date(user.last_login).toLocaleDateString()
-                            : 'Never'
+                            : 'Chưa từng'
                           }
                         </div>
                       </td>
                       <td className="p-4">
-                        <div className="text-sm text-gray-600">
+                        <div className="text-sm text-black">
                           {new Date(user.created_at).toLocaleDateString()}
                         </div>
                       </td>
@@ -556,30 +558,30 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
                               <DropdownMenuItem onClick={() => openEditDialog(user)}>
                                 <Edit className="h-4 w-4 mr-2" />
-                                Edit User
+                                Chỉnh sửa
                               </DropdownMenuItem>
                               <DropdownMenuItem 
                                 onClick={() => handleToggleUserStatus(user)}
-                                className={user.is_active ? 'text-orange-600' : 'text-green-600'}
+                                className={user.is_active ? 'text-orange-600' : 'text-emerald-600'}
                               >
                                 {user.is_active ? (
                                   <>
                                     <XCircle className="h-4 w-4 mr-2" />
-                                    Deactivate
+                                    Ngưng hoạt động
                                   </>
                                 ) : (
                                   <>
                                     <CheckCircle className="h-4 w-4 mr-2" />
-                                    Activate
+                                    Kích hoạt
                                   </>
                                 )}
                               </DropdownMenuItem>
                               <DropdownMenuItem onClick={() => handleResetPassword(user)}>
                                 <RefreshCw className="h-4 w-4 mr-2" />
-                                Reset Password
+                                Đặt lại mật khẩu
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem 
@@ -588,7 +590,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
                                 disabled={user.id === currentUser?.id}
                               >
                                 <Trash2 className="h-4 w-4 mr-2" />
-                                Delete User
+                                Xóa người dùng
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -607,9 +609,9 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Create New User</DialogTitle>
-            <DialogDescription>
-              Add a new user to the system with specific roles and permissions.
+            <DialogTitle className="text-cyan-800">Thêm người dùng mới</DialogTitle>
+            <DialogDescription className="text-black">
+              Thêm người dùng mới với vai trò và quyền hạn cụ thể.
             </DialogDescription>
           </DialogHeader>
           
@@ -617,7 +619,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
             {/* Basic Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="username">Username *</Label>
+                <Label htmlFor="username" className="text-black">Tên đăng nhập *</Label>
                 <Input
                   id="username"
                   value={formData.username}
@@ -627,7 +629,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
                       setFormErrors(prev => ({ ...prev, username: '' }));
                     }
                   }}
-                  placeholder="Enter username"
+                  placeholder="Nhập tên đăng nhập"
                   className={formErrors.username ? 'border-red-500' : ''}
                 />
                 {formErrors.username && (
@@ -636,7 +638,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email *</Label>
+                <Label htmlFor="email" className="text-black">Email *</Label>
                 <Input
                   id="email"
                   type="email"
@@ -647,7 +649,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
                       setFormErrors(prev => ({ ...prev, email: '' }));
                     }
                   }}
-                  placeholder="Enter email"
+                  placeholder="Nhập email"
                   className={formErrors.email ? 'border-red-500' : ''}
                 />
                 {formErrors.email && (
@@ -656,7 +658,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
               </div>
 
               <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="full_name">Full Name *</Label>
+                <Label htmlFor="full_name" className="text-black">Họ và tên *</Label>
                 <Input
                   id="full_name"
                   value={formData.full_name}
@@ -666,7 +668,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
                       setFormErrors(prev => ({ ...prev, full_name: '' }));
                     }
                   }}
-                  placeholder="Enter full name"
+                  placeholder="Nhập họ và tên"
                   className={formErrors.full_name ? 'border-red-500' : ''}
                 />
                 {formErrors.full_name && (
@@ -675,7 +677,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password *</Label>
+                <Label htmlFor="password" className="text-black">Mật khẩu *</Label>
                 <div className="relative">
                   <Input
                     id="password"
@@ -687,7 +689,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
                         setFormErrors(prev => ({ ...prev, password: '' }));
                       }
                     }}
-                    placeholder="Enter password"
+                    placeholder="Nhập mật khẩu"
                     className={formErrors.password ? 'border-red-500' : ''}
                   />
                   <Button
@@ -706,7 +708,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirm_password">Confirm Password *</Label>
+                <Label htmlFor="confirm_password" className="text-black">Xác nhận mật khẩu *</Label>
                 <Input
                   id="confirm_password"
                   type={showPassword ? 'text' : 'password'}
@@ -717,7 +719,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
                       setFormErrors(prev => ({ ...prev, confirm_password: '' }));
                     }
                   }}
-                  placeholder="Confirm password"
+                  placeholder="Xác nhận mật khẩu"
                   className={formErrors.confirm_password ? 'border-red-500' : ''}
                 />
                 {formErrors.confirm_password && (
@@ -726,7 +728,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone</Label>
+                <Label htmlFor="phone" className="text-black">Số điện thoại</Label>
                 <Input
                   id="phone"
                   value={formData.phone}
@@ -745,12 +747,12 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="department">Department</Label>
+                <Label htmlFor="department" className="text-black">Phòng ban</Label>
                 <Input
                   id="department"
                   value={formData.department}
                   onChange={(e) => setFormData(prev => ({ ...prev, department: e.target.value }))}
-                  placeholder="Enter department"
+                  placeholder="Nhập phòng ban"
                 />
               </div>
             </div>
@@ -760,15 +762,15 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
             {/* Role and Status */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="role">Role</Label>
+                <Label htmlFor="role" className="text-black">Vai trò</Label>
                 <Select value={formData.role} onValueChange={(value) => setFormData(prev => ({ ...prev, role: value as any }))}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="viewer">Viewer</SelectItem>
-                    <SelectItem value="user">User</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="viewer">Xem</SelectItem>
+                    <SelectItem value="user">Người dùng</SelectItem>
+                    <SelectItem value="admin">Quản trị viên</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -778,13 +780,13 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
                   checked={formData.is_active}
                   onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_active: checked }))}
                 />
-                <Label>Active User</Label>
+                <Label className="text-black">Đang hoạt động</Label>
               </div>
             </div>
 
             {/* Permissions */}
             <div className="space-y-4">
-              <Label>Permissions</Label>
+              <Label className="text-black">Quyền hạn</Label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 {availablePermissions.map((permission) => (
                   <div key={permission.id} className="flex items-center space-x-2">
@@ -807,7 +809,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
                       }}
                       className="rounded border-gray-300"
                     />
-                    <Label htmlFor={permission.id} className="text-sm">
+                    <Label htmlFor={permission.id} className="text-sm text-black">
                       {permission.label}
                     </Label>
                   </div>
@@ -817,12 +819,12 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
           </div>
 
           <div className="flex justify-end space-x-2 mt-6">
-            <Button variant="outline" onClick={() => { setShowCreateDialog(false); resetForm(); }}>
-              Cancel
+            <Button variant="outline" onClick={() => { setShowCreateDialog(false); resetForm(); }} className="text-black border-cyan-300 hover:bg-cyan-50">
+              Hủy
             </Button>
-            <Button onClick={handleCreateUser}>
+            <Button onClick={handleCreateUser} className="bg-gradient-to-r from-emerald-500 to-cyan-600 hover:from-emerald-600 hover:to-cyan-700 text-white">
               <UserPlus className="h-4 w-4 mr-2" />
-              Create User
+              Thêm người dùng
             </Button>
           </div>
         </DialogContent>
@@ -832,9 +834,9 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
       <Dialog open={showEditDialog} onOpenChange={(open) => { setShowEditDialog(open); if (!open) resetForm(); }}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Edit User</DialogTitle>
-            <DialogDescription>
-              Update user information, role, and permissions.
+            <DialogTitle className="text-cyan-800">Chỉnh sửa người dùng</DialogTitle>
+            <DialogDescription className="text-black">
+              Cập nhật thông tin, vai trò và quyền hạn người dùng.
             </DialogDescription>
           </DialogHeader>
           
@@ -842,7 +844,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
             {/* Basic Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="edit_username">Username *</Label>
+                <Label htmlFor="edit_username" className="text-black">Tên đăng nhập *</Label>
                 <Input
                   id="edit_username"
                   value={formData.username}
@@ -861,7 +863,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="edit_email">Email *</Label>
+                <Label htmlFor="edit_email" className="text-black">Email *</Label>
                 <Input
                   id="edit_email"
                   type="email"
@@ -880,7 +882,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
               </div>
 
               <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="edit_full_name">Full Name *</Label>
+                <Label htmlFor="edit_full_name" className="text-black">Họ và tên *</Label>
                 <Input
                   id="edit_full_name"
                   value={formData.full_name}
@@ -898,7 +900,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="edit_phone">Phone</Label>
+                <Label htmlFor="edit_phone" className="text-black">Số điện thoại</Label>
                 <Input
                   id="edit_phone"
                   value={formData.phone}
@@ -916,7 +918,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="edit_department">Department</Label>
+                <Label htmlFor="edit_department" className="text-black">Phòng ban</Label>
                 <Input
                   id="edit_department"
                   value={formData.department}
@@ -930,15 +932,15 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
             {/* Role and Status */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="edit_role">Role</Label>
+                <Label htmlFor="edit_role" className="text-black">Vai trò</Label>
                 <Select value={formData.role} onValueChange={(value) => setFormData(prev => ({ ...prev, role: value as any }))}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="viewer">Viewer</SelectItem>
-                    <SelectItem value="user">User</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="viewer">Xem</SelectItem>
+                    <SelectItem value="user">Người dùng</SelectItem>
+                    <SelectItem value="admin">Quản trị viên</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -948,13 +950,13 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
                   checked={formData.is_active}
                   onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_active: checked }))}
                 />
-                <Label>Active User</Label>
+                <Label className="text-black">Đang hoạt động</Label>
               </div>
             </div>
 
             {/* Permissions */}
             <div className="space-y-4">
-              <Label>Permissions</Label>
+              <Label className="text-black">Quyền hạn</Label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 {availablePermissions.map((permission) => (
                   <div key={permission.id} className="flex items-center space-x-2">
@@ -977,7 +979,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
                       }}
                       className="rounded border-gray-300"
                     />
-                    <Label htmlFor={`edit_${permission.id}`} className="text-sm">
+                    <Label htmlFor={`edit_${permission.id}`} className="text-sm text-black">
                       {permission.label}
                     </Label>
                   </div>
@@ -987,12 +989,12 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
           </div>
 
           <div className="flex justify-end space-x-2 mt-6">
-            <Button variant="outline" onClick={() => { setShowEditDialog(false); resetForm(); }}>
-              Cancel
+            <Button variant="outline" onClick={() => { setShowEditDialog(false); resetForm(); }} className="text-black border-cyan-300 hover:bg-cyan-50">
+              Hủy
             </Button>
-            <Button onClick={handleUpdateUser}>
+            <Button onClick={handleUpdateUser} className="bg-gradient-to-r from-emerald-500 to-cyan-600 hover:from-emerald-600 hover:to-cyan-700 text-white">
               <Save className="h-4 w-4 mr-2" />
-              Update User
+              Cập nhật
             </Button>
           </div>
         </DialogContent>
@@ -1002,21 +1004,20 @@ const UserSettings: React.FC<UserSettingsProps> = ({ onUserUpdated }) => {
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete User</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete user "{selectedUser?.full_name}"? 
-              This action cannot be undone and will remove all associated data.
+            <AlertDialogTitle className="text-red-600">Xóa người dùng</AlertDialogTitle>
+            <AlertDialogDescription className="text-black">
+              Bạn có chắc chắn muốn xóa người dùng "{selectedUser?.full_name}"? Hành động này không thể hoàn tác và sẽ xóa toàn bộ dữ liệu liên quan.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setSelectedUser(null)}>
-              Cancel
+            <AlertDialogCancel onClick={() => setSelectedUser(null)} className="text-black border-cyan-300 hover:bg-cyan-50">
+              Hủy
             </AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleDeleteUser}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-red-600 hover:bg-red-700 text-white"
             >
-              Delete User
+              Xóa người dùng
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

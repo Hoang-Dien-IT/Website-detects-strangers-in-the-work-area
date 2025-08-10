@@ -1,11 +1,9 @@
 // Export all pages
 export { default as HomePage } from './HomePage';
 export { default as FeaturesPage } from './FeaturesPage';
-// export { default as SolutionsPage } from './SolutionsPage';
-export { default as PricingPage } from './PricingPage';
+
 export { default as ContactPage } from './ContactPage';
-export { default as AboutPage } from './AboutPage';
-// export { default as BlogPage } from './BlogPage';
+
 export { default as LoginPage } from './LoginPage';
 export { default as RegisterPage } from './RegisterPage';
 

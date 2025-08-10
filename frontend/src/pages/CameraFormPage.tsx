@@ -22,10 +22,10 @@ const CameraFormPage: React.FC = () => {
 
   // Determine mode
   const isEdit = Boolean(id);
-  const pageTitle = isEdit ? 'Edit Camera' : 'Add New Camera';
+  const pageTitle = isEdit ? 'Chỉnh sửa Camera' : 'Thêm Camera mới';
   const pageDescription = isEdit 
-    ? 'Update camera settings and configuration' 
-    : 'Configure your camera for face detection monitoring';
+    ? 'Cập nhật cài đặt và cấu hình camera' 
+    : 'Cấu hình camera của bạn để giám sát nhận diện khuôn mặt';
 
   // ✅ Load camera data for edit mode
   useEffect(() => {
@@ -49,7 +49,7 @@ const CameraFormPage: React.FC = () => {
       console.error('❌ CameraFormPage: Error loading camera:', error);
       const errorMessage = error.message || 'Failed to load camera data';
       setError(errorMessage);
-      toast.error('Failed to load camera', {
+      toast.error('Không thể tải dữ liệu camera', {
         description: errorMessage
       });
     } finally {
@@ -69,7 +69,7 @@ const CameraFormPage: React.FC = () => {
         const updatedCamera = await cameraService.updateCamera(id, formData as CameraUpdate);
         console.log('✅ CameraFormPage: Camera updated successfully:', updatedCamera);
         
-        toast.success('Camera updated successfully');
+  toast.success('Cập nhật camera thành công');
         setSaveStatus('success');
         setCamera(updatedCamera);
         
@@ -80,7 +80,7 @@ const CameraFormPage: React.FC = () => {
         const newCamera = await cameraService.createCamera(formData as CameraCreate);
         console.log('✅ CameraFormPage: Camera created successfully:', newCamera);
         
-        toast.success('Camera added successfully');
+  toast.success('Thêm camera thành công');
         setSaveStatus('success');
         
         setTimeout(() => {
@@ -90,17 +90,15 @@ const CameraFormPage: React.FC = () => {
     } catch (error: any) {
       console.error(`❌ Failed to ${isEdit ? 'update' : 'create'} camera:`, error);
       
-      let errorMessage = `Failed to ${isEdit ? 'update' : 'create'} camera`;
-      
+      let errorMessage = `Không thể ${isEdit ? 'cập nhật' : 'tạo'} camera`;
       if (error.message) {
         errorMessage = error.message;
       } else if (error.response?.data?.detail) {
         errorMessage = error.response.data.detail;
       }
-      
       setError(errorMessage);
       setSaveStatus('error');
-      toast.error(`Failed to ${isEdit ? 'update' : 'create'} camera`, {
+      toast.error(`Không thể ${isEdit ? 'cập nhật' : 'tạo'} camera`, {
         description: errorMessage
       });
     } finally {
@@ -128,7 +126,7 @@ const CameraFormPage: React.FC = () => {
               onClick={handleGoBack}
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Cameras
+              Quay lại danh sách Camera
             </Button>
             <div>
               <h1 className="text-xl font-semibold text-gray-900">{pageTitle}</h1>
@@ -142,10 +140,10 @@ const CameraFormPage: React.FC = () => {
             <CardContent className="flex flex-col items-center justify-center py-8">
               <Loader2 className="h-8 w-8 animate-spin text-blue-600 mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">
-                Loading Camera Details
+                Đang tải thông tin Camera
               </h3>
               <p className="text-sm text-gray-600 text-center">
-                Please wait while we fetch the camera information...
+                Vui lòng chờ trong khi chúng tôi lấy thông tin camera...
               </p>
             </CardContent>
           </Card>
@@ -165,7 +163,7 @@ const CameraFormPage: React.FC = () => {
             onClick={handleGoBack}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Cameras
+            Quay lại danh sách Camera
           </Button>
           <div>
             <h1 className="text-xl font-semibold text-gray-900">{pageTitle}</h1>
@@ -189,7 +187,7 @@ const CameraFormPage: React.FC = () => {
             <Alert className="border-green-200 bg-green-50">
               <CheckCircle2 className="h-4 w-4 text-green-600" />
               <AlertDescription className="text-green-800">
-                Camera {isEdit ? 'updated' : 'created'} successfully! Redirecting...
+                Camera {isEdit ? 'đã được cập nhật' : 'đã được tạo mới'} thành công! Đang chuyển hướng...
               </AlertDescription>
             </Alert>
           )}

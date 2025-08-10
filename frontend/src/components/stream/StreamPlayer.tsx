@@ -84,14 +84,14 @@ const StreamPlayer: React.FC<StreamPlayerProps> = ({
       <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/70 to-transparent z-10 p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Camera className="w-4 h-4 text-white" />
-            <span className="text-white font-medium text-sm">{cameraName}</span>
+            <Camera className="w-4 h-4 text-cyan-400" />
+            <span className="text-cyan-200 font-semibold text-base drop-shadow">{cameraName}</span>
           </div>
           <div className="flex items-center space-x-2">
             {!hasError && !isLoading && (
               <div className="flex items-center space-x-1">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-green-400 text-xs">LIVE</span>
+                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                <span className="text-emerald-200 text-xs font-semibold">TRỰC TIẾP</span>
               </div>
             )}
           </div>
@@ -102,8 +102,8 @@ const StreamPlayer: React.FC<StreamPlayerProps> = ({
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-800 z-20">
           <div className="text-center">
-            <RefreshCw className="w-8 h-8 text-blue-500 animate-spin mx-auto mb-2" />
-            <p className="text-gray-300 text-sm">Loading stream...</p>
+            <RefreshCw className="w-8 h-8 text-cyan-500 animate-spin mx-auto mb-2" />
+            <p className="text-cyan-200 text-sm">Đang tải luồng video...</p>
           </div>
         </div>
       )}
@@ -113,13 +113,13 @@ const StreamPlayer: React.FC<StreamPlayerProps> = ({
         <div className="absolute inset-0 flex items-center justify-center bg-gray-800 z-20">
           <div className="text-center p-4">
             <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-3" />
-            <p className="text-red-400 text-sm mb-3">{errorMessage}</p>
+            <p className="text-red-400 text-sm mb-3">Không thể tải luồng từ camera: {errorMessage}</p>
             <button
               onClick={handleRetry}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors flex items-center space-x-2 mx-auto"
+              className="bg-gradient-to-r from-emerald-500 to-cyan-600 hover:from-emerald-600 hover:to-cyan-700 text-white px-4 py-2 rounded-lg text-sm transition-colors flex items-center space-x-2 mx-auto"
             >
               <RefreshCw className="w-4 h-4" />
-              <span>Retry ({retryCount})</span>
+              <span>Thử lại ({retryCount})</span>
             </button>
           </div>
         </div>
@@ -139,10 +139,10 @@ const StreamPlayer: React.FC<StreamPlayerProps> = ({
       {!hasError && !isLoading && (
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
           <div className="flex items-center justify-between">
-            <div className="text-xs text-gray-300">
-              Face Recognition: Active
+            <div className="text-xs text-cyan-100 font-medium">
+              Nhận diện khuôn mặt: <span className="text-emerald-200 font-semibold">Đang hoạt động</span>
             </div>
-            <div className="text-xs text-gray-400">
+            <div className="text-xs text-cyan-200">
               Camera ID: {cameraId}
             </div>
           </div>

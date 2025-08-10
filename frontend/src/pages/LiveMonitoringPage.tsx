@@ -113,11 +113,11 @@ const LiveMonitoringPage: React.FC = () => {
   const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const streamLayouts: StreamLayout[] = [
-    { type: '1x1', label: 'Single View', icon: <Maximize className="h-4 w-4" />, maxStreams: 1 },
-    { type: '2x2', label: '2x2 Grid', icon: <Grid2x2 className="h-4 w-4" />, maxStreams: 4 },
-    { type: '3x3', label: '3x3 Grid', icon: <Grid3x3 className="h-4 w-4" />, maxStreams: 9 },
-    { type: '4x4', label: '4x4 Grid', icon: <Grid3x3 className="h-4 w-4" />, maxStreams: 16 },
-    { type: 'list', label: 'List View', icon: <List className="h-4 w-4" />, maxStreams: 8 }
+    { type: '1x1', label: 'Xem đơn', icon: <Maximize className="h-4 w-4" />, maxStreams: 1 },
+    { type: '2x2', label: 'Lưới 2x2', icon: <Grid2x2 className="h-4 w-4" />, maxStreams: 4 },
+    { type: '3x3', label: 'Lưới 3x3', icon: <Grid3x3 className="h-4 w-4" />, maxStreams: 9 },
+    { type: '4x4', label: 'Lưới 4x4', icon: <Grid3x3 className="h-4 w-4" />, maxStreams: 16 },
+    { type: 'list', label: 'Xem danh sách', icon: <List className="h-4 w-4" />, maxStreams: 8 }
   ];
 
   // ✅ Load initial data
@@ -328,7 +328,7 @@ const LiveMonitoringPage: React.FC = () => {
           : stream
       ));
       
-      toast.success('Stream started successfully');
+      toast.success('Đã bắt đầu phát trực tiếp thành công');
       console.log('✅ LiveMonitoringPage: Stream started successfully');
       
     } catch (error: any) {
@@ -341,7 +341,7 @@ const LiveMonitoringPage: React.FC = () => {
           : stream
       ));
       
-      toast.error(`Failed to start stream: ${error.message || 'Unknown error'}`);
+      toast.error(`Không thể bắt đầu phát trực tiếp: ${error.message || 'Lỗi không xác định'}`);
     }
   };
 
@@ -359,12 +359,12 @@ const LiveMonitoringPage: React.FC = () => {
           : stream
       ));
       
-      toast.success('Stream stopped successfully');
+      toast.success('Đã dừng phát trực tiếp thành công');
       console.log('✅ LiveMonitoringPage: Stream stopped successfully');
       
     } catch (error: any) {
       console.error('❌ LiveMonitoringPage: Error stopping stream:', error);
-      toast.error(`Failed to stop stream: ${error.message || 'Unknown error'}`);
+      toast.error(`Không thể dừng phát trực tiếp: ${error.message || 'Lỗi không xác định'}`);
     }
   };
 
@@ -376,7 +376,7 @@ const LiveMonitoringPage: React.FC = () => {
       
       // ✅ TODO: Implement recording API when backend supports it
       console.log('🔵 LiveMonitoringPage: Recording toggle not yet implemented in backend');
-      toast.info('Recording feature will be available soon');
+      toast.info('Tính năng ghi hình sẽ sớm có sẵn');
       
       // For now, just toggle local state
       setActiveStreams(prev => prev.map(s => 
@@ -540,8 +540,8 @@ const LiveMonitoringPage: React.FC = () => {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 text-lg">Loading live monitoring...</p>
-          <p className="text-gray-500 text-sm mt-2">Connecting to camera streams...</p>
+          <p className="text-gray-600 text-lg">Đang tải giám sát trực tiếp...</p>
+          <p className="text-gray-500 text-sm mt-2">Đang kết nối với luồng camera...</p>
         </div>
       </div>
     );
@@ -566,9 +566,9 @@ const LiveMonitoringPage: React.FC = () => {
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                    Live Monitoring
+                    Giám sát trực tiếp
                   </h1>
-                  <p className="text-sm text-gray-600">Real-time camera surveillance & detection</p>
+                  <p className="text-sm text-gray-600">Giám sát camera thời gian thực & phát hiện</p>
                 </div>
               </div>
               
@@ -585,12 +585,12 @@ const LiveMonitoringPage: React.FC = () => {
                   {isConnected ? (
                     <>
                       <Wifi className="h-3 w-3" />
-                      <span>Connected</span>
+                      <span>Đã kết nối</span>
                     </>
                   ) : (
                     <>
                       <WifiOff className="h-3 w-3" />
-                      <span>Disconnected</span>
+                      <span>Mất kết nối</span>
                     </>
                   )}
                 </Badge>
@@ -599,19 +599,19 @@ const LiveMonitoringPage: React.FC = () => {
                 <div className="hidden lg:flex items-center space-x-4 text-sm text-gray-600">
                   <div className="flex items-center space-x-1">
                     <Camera className="h-4 w-4" />
-                    <span>{activeStreams.length} cameras</span>
+                    <span>{activeStreams.length} camera</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Video className="h-4 w-4" />
-                    <span>{activeStreams.filter(s => s.isStreaming).length} streaming</span>
+                    <span>{activeStreams.filter(s => s.isStreaming).length} đang phát</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Eye className="h-4 w-4" />
-                    <span>{selectedCameras.length} viewing</span>
+                    <span>{selectedCameras.length} đang xem</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Shield className="h-4 w-4" />
-                    <span>{recentDetections.length} detections</span>
+                    <span>{recentDetections.length} phát hiện</span>
                   </div>
                 </div>
               </div>
@@ -642,9 +642,9 @@ const LiveMonitoringPage: React.FC = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-white border-gray-200 shadow-xl">
-                  <SelectItem value="all">All Cameras</SelectItem>
-                  <SelectItem value="streaming">Streaming</SelectItem>
-                  <SelectItem value="detection">With Detections</SelectItem>
+                  <SelectItem value="all">Tất cả Camera</SelectItem>
+                  <SelectItem value="streaming">Đang phát</SelectItem>
+                  <SelectItem value="detection">Có phát hiện</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -675,7 +675,7 @@ const LiveMonitoringPage: React.FC = () => {
                 className="shadow-sm hover:shadow-md transition-shadow"
               >
                 <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-                {refreshing ? 'Refreshing...' : 'Refresh'}
+                {refreshing ? 'Đang làm mới...' : 'Làm mới'}
               </Button>
 
               <Button
@@ -714,8 +714,8 @@ const LiveMonitoringPage: React.FC = () => {
                   <div className="w-20 h-20 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full flex items-center justify-center mx-auto">
                     <MonitorPlay className="h-10 w-10 text-purple-600" />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900">No cameras selected</h3>
-                  <p className="text-gray-600">Select cameras from the sidebar to start live monitoring</p>
+                  <h3 className="text-xl font-semibold text-gray-900">Chưa chọn camera nào</h3>
+                  <p className="text-gray-600">Chọn camera từ thanh bên để bắt đầu giám sát trực tiếp</p>
                   <div className="flex flex-col sm:flex-row gap-3 justify-center">
                     <Button 
                       className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
@@ -726,7 +726,7 @@ const LiveMonitoringPage: React.FC = () => {
                       }}
                     >
                       <Play className="h-4 w-4 mr-2" />
-                      Start Monitoring
+                      Bắt đầu giám sát
                     </Button>
                     <Button 
                       variant="outline"
@@ -734,7 +734,7 @@ const LiveMonitoringPage: React.FC = () => {
                       disabled={refreshing}
                     >
                       <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-                      Refresh Cameras
+                      Làm mới Camera
                     </Button>
                   </div>
                 </CardContent>
@@ -795,8 +795,8 @@ const LiveMonitoringPage: React.FC = () => {
                                 )}
                               </div>
                               <p className="text-lg font-semibold text-gray-700 mb-1">
-                                {stream.status === 'error' ? 'Stream Error' :
-                                 stream.status === 'connecting' ? 'Connecting...' : 'Stream Offline'}
+                                {stream.status === 'error' ? 'Lỗi luồng phát' :
+                                 stream.status === 'connecting' ? 'Đang kết nối...' : 'Luồng phát ngoại tuyến'}
                               </p>
                               <p className="text-sm text-gray-500 mb-4">{stream.camera.name}</p>
                               {stream.status !== 'connecting' && (
@@ -806,7 +806,7 @@ const LiveMonitoringPage: React.FC = () => {
                                   onClick={() => handleStartStream(cameraId)}
                                 >
                                   <Play className="h-3 w-3 mr-1" />
-                                  Start Stream
+                                  Bắt đầu phát
                                 </Button>
                               )}
                             </div>
@@ -905,7 +905,7 @@ const LiveMonitoringPage: React.FC = () => {
                                 <div className="flex items-center space-x-4 text-xs text-gray-600">
                                   <div className="flex items-center space-x-1">
                                     <MapPin className="h-3 w-3" />
-                                    <span>{stream.camera.location || 'Unknown'}</span>
+                                    <span>{stream.camera.location || 'Không rõ'}</span>
                                   </div>
                                   <div className="flex items-center space-x-1">
                                     <Users className="h-3 w-3" />
@@ -915,7 +915,7 @@ const LiveMonitoringPage: React.FC = () => {
                               </div>
                               {stream.lastDetection && (
                                 <div className="text-right">
-                                  <p className="text-xs font-medium text-gray-900">Last Detection</p>
+                                  <p className="text-xs font-medium text-gray-900">Phát hiện cuối</p>
                                   <p className="text-xs text-gray-600">
                                     {formatTimeAgo(stream.lastDetection.timestamp)}
                                   </p>
@@ -943,7 +943,7 @@ const LiveMonitoringPage: React.FC = () => {
           {/* Camera List Section */}
           <div className="p-6 border-b border-slate-200/60">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Available Cameras</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Camera khả dụng</h3>
               <div className="flex items-center space-x-2">
                 <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
                   {filteredStreams.length}
@@ -987,7 +987,7 @@ const LiveMonitoringPage: React.FC = () => {
                           }`} />
                           <div className="min-w-0 flex-1">
                             <p className="font-medium text-gray-900 text-sm truncate">{stream.camera.name}</p>
-                            <p className="text-xs text-gray-500 truncate">{stream.camera.location || 'No location'}</p>
+                            <p className="text-xs text-gray-500 truncate">{stream.camera.location || 'Không có vị trí'}</p>
                           </div>
                         </div>
                         <div className="flex flex-col items-end space-y-1">
@@ -999,7 +999,7 @@ const LiveMonitoringPage: React.FC = () => {
                                 : 'bg-gray-100 text-gray-600'
                             }`}
                           >
-                            {stream.isStreaming ? 'Live' : 'Offline'}
+                            {stream.isStreaming ? 'Trực tiếp' : 'Ngoại tuyến'}
                           </Badge>
                           {stream.camera.detection_enabled && (
                             <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
@@ -1016,14 +1016,14 @@ const LiveMonitoringPage: React.FC = () => {
               {filteredStreams.length === 0 && (
                 <div className="text-center py-8">
                   <Camera className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                  <p className="text-gray-600 text-sm">No cameras match your filter</p>
+                  <p className="text-gray-600 text-sm">Không có camera nào phù hợp với bộ lọc của bạn</p>
                   <Button 
                     size="sm" 
                     variant="outline" 
                     onClick={() => setFilterStatus('all')}
                     className="mt-2"
                   >
-                    Show All
+                    Hiển thị tất cả
                   </Button>
                 </div>
               )}
@@ -1047,7 +1047,7 @@ const LiveMonitoringPage: React.FC = () => {
           <Alert className="bg-red-50 border-red-200 shadow-xl backdrop-blur-sm">
             <AlertTriangle className="h-4 w-4 text-red-600" />
             <AlertDescription className="text-red-800">
-              Lost connection to live monitoring service. Attempting to reconnect...
+              Mất kết nối với dịch vụ giám sát trực tiếp. Đang cố gắng kết nối lại...
             </AlertDescription>
           </Alert>
         </motion.div>

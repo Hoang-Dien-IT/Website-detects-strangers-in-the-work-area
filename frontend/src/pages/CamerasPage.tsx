@@ -114,7 +114,7 @@ const CamerasPage: React.FC = () => {
     try {
       if (showRefresh) {
         setRefreshing(true);
-        toast.info('🔄 Refreshing camera list...');
+  toast.info('🔄 Đang làm mới danh sách camera...');
       } else {
         setLoading(true);
       }
@@ -125,11 +125,11 @@ const CamerasPage: React.FC = () => {
       setCameras(response);
       
       if (showRefresh) {
-        toast.success('✅ Camera list refreshed');
+  toast.success('✅ Đã làm mới danh sách camera');
       }
     } catch (error: any) {
       console.error('❌ CamerasPage: Error loading cameras:', error);
-      toast.error(`Failed to load cameras: ${error.message || 'Unknown error'}`);
+  toast.error(`Không thể tải danh sách camera: ${error.message || 'Lỗi không xác định'}`);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -167,11 +167,11 @@ const CamerasPage: React.FC = () => {
     try {
       console.log('🔵 CamerasPage: Starting stream for camera:', camera.id);
       await cameraService.startStreaming(camera.id); // ✅ Use correct method name
-      toast.success(`🎥 ${camera.name} stream started`);
+  toast.success(`🎥 Đã bắt đầu phát trực tiếp cho ${camera.name}`);
       await loadCameras(); // ✅ Wait for reload
     } catch (error: any) {
       console.error('❌ CamerasPage: Error starting stream:', error);
-      toast.error(`Failed to start stream: ${error.message || 'Unknown error'}`);
+  toast.error(`Không thể bắt đầu phát trực tiếp: ${error.message || 'Lỗi không xác định'}`);
     }
   };
 
@@ -179,11 +179,11 @@ const CamerasPage: React.FC = () => {
     try {
       console.log('🔵 CamerasPage: Stopping stream for camera:', camera.id);
       await cameraService.stopStreaming(camera.id); // ✅ Use correct method name
-      toast.success(`⏹️ ${camera.name} stream stopped`);
+  toast.success(`⏹️ Đã dừng phát trực tiếp cho ${camera.name}`);
       await loadCameras(); // ✅ Wait for reload
     } catch (error: any) {
       console.error('❌ CamerasPage: Error stopping stream:', error);
-      toast.error(`Failed to stop stream: ${error.message || 'Unknown error'}`);
+  toast.error(`Không thể dừng phát trực tiếp: ${error.message || 'Lỗi không xác định'}`);
     }
   };
 
@@ -191,12 +191,12 @@ const CamerasPage: React.FC = () => {
     try {
       console.log('🔵 CamerasPage: Deleting camera:', camera.id);
       await cameraService.deleteCamera(camera.id);
-      toast.success(`🗑️ ${camera.name} deleted successfully`);
+  toast.success(`🗑️ Đã xóa camera ${camera.name} thành công`);
       await loadCameras(); // ✅ Wait for reload
       setDeleteDialog({ open: false, camera: null });
     } catch (error: any) {
       console.error('❌ CamerasPage: Error deleting camera:', error);
-      toast.error(`Failed to delete camera: ${error.message || 'Unknown error'}`);
+  toast.error(`Không thể xóa camera: ${error.message || 'Lỗi không xác định'}`);
     }
   };
 
@@ -206,7 +206,7 @@ const CamerasPage: React.FC = () => {
       console.log('🔵 CamerasPage: Testing camera connection:', camera.id);
       
       // ✅ Show loading state
-      toast.info(`🔍 Testing ${camera.name}...`);
+  toast.info(`🔍 Đang kiểm tra ${camera.name}...`);
       
       const result = await cameraService.testCamera(camera.id);
       console.log('✅ CamerasPage: Connection test result:', result);
@@ -215,30 +215,30 @@ const CamerasPage: React.FC = () => {
       if (result.is_connected) {
         if (result.status === 'success') {
           toast.success(`✅ ${camera.name}: ${result.message}`, {
-            description: result.connection_type ? `Type: ${result.connection_type}` : undefined
+            description: result.connection_type ? `Loại: ${result.connection_type}` : undefined
           });
         } else {
-          toast.success(`✅ ${camera.name} connection successful`);
+          toast.success(`✅ Kết nối với ${camera.name} thành công`);
         }
       } else if (result.status === 'warning') {
         toast.warning(`⚠️ ${camera.name}: ${result.message}`, {
-          description: 'Configuration may need attention'
+          description: 'Cấu hình có thể cần kiểm tra lại'
         });
       } else {
         toast.error(`❌ ${camera.name}: ${result.message}`, {
-          description: 'Check camera settings and network connection'
+          description: 'Vui lòng kiểm tra cấu hình và kết nối mạng của camera'
         });
       }
       
       // ✅ Special handling for different camera types
       if (result.camera_type === 'webcam') {
-        toast.info(`💡 ${camera.name} (Webcam): Local device test - network test not required`);
+  toast.info(`💡 ${camera.name} (Webcam): Thiết bị cục bộ - không cần kiểm tra mạng`);
       }
       
     } catch (error: any) {
       console.error('❌ CamerasPage: Error testing camera connection:', error);
-      toast.error(`❌ Failed to test ${camera.name}`, {
-        description: error.message || 'Unknown error occurred'
+      toast.error(`❌ Không thể kiểm tra ${camera.name}`, {
+        description: error.message || 'Lỗi không xác định'
       });
     }
   };
@@ -251,16 +251,16 @@ const CamerasPage: React.FC = () => {
       
       if (camera.detection_enabled) {
         await cameraService.stopDetection(camera.id);
-        toast.success(`🛡️ Detection disabled for ${camera.name}`);
+  toast.success(`🛡️ Đã tắt phát hiện cho ${camera.name}`);
       } else {
         await cameraService.startDetection(camera.id);
-        toast.success(`🛡️ Detection enabled for ${camera.name}`);
+  toast.success(`🛡️ Đã bật phát hiện cho ${camera.name}`);
       }
       
       await loadCameras(); // ✅ Reload to get updated status
     } catch (error: any) {
       console.error('❌ CamerasPage: Error toggling detection:', error);
-      toast.error(`Failed to toggle detection: ${error.message || 'Unknown error'}`);
+  toast.error(`Không thể chuyển trạng thái phát hiện: ${error.message || 'Lỗi không xác định'}`);
     }
   };
 
@@ -278,14 +278,14 @@ const CamerasPage: React.FC = () => {
 
   // ✅ FIX: Add camera type display helper
   const getCameraTypeDisplay = (type: string) => {
-    const typeMap: { [key: string]: string } = {
+    const viTypeMap: { [key: string]: string } = {
       'webcam': 'Webcam',
-      'ip_camera': 'IP Camera',
-      'rtsp': 'RTSP Camera',
-      'usb': 'USB Camera',
-      'usb_camera': 'USB Camera'
+      'ip_camera': 'Camera IP',
+      'rtsp': 'Camera RTSP',
+      'usb': 'Camera USB',
+      'usb_camera': 'Camera USB'
     };
-    return typeMap[type] || type.replace('_', ' ').toUpperCase();
+    return viTypeMap[type] || type.replace('_', ' ').toUpperCase();
   };
 
   if (loading) {
@@ -293,7 +293,7 @@ const CamerasPage: React.FC = () => {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 text-lg">Loading cameras...</p>
+          <p className="text-gray-600 text-lg">Đang tải danh sách camera...</p>
         </div>
       </div>
     );
@@ -317,9 +317,9 @@ const CamerasPage: React.FC = () => {
             </div>
             <div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Camera Management
+                Quản lý Camera
               </h1>
-              <p className="text-gray-600">Monitor and manage your security cameras</p>
+              <p className="text-gray-600">Theo dõi và quản lý các camera an ninh của bạn</p>
             </div>
           </div>
         </div>
@@ -333,7 +333,7 @@ const CamerasPage: React.FC = () => {
             className="shadow-sm hover:shadow-md transition-shadow"
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-            Refresh
+            Làm mới
           </Button>
           
           <Button 
@@ -341,7 +341,7 @@ const CamerasPage: React.FC = () => {
             className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg"
           >
             <Plus className="w-4 h-4 mr-2" />
-            Add Camera
+            Thêm Camera
           </Button>
         </div>
       </motion.div>
@@ -357,9 +357,9 @@ const CamerasPage: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Cameras</p>
+                <p className="text-sm font-medium text-gray-600">Tổng số Camera</p>
                 <p className="text-3xl font-bold text-gray-900">{stats.total}</p>
-                <p className="text-xs text-gray-500 mt-1">All registered devices</p>
+                <p className="text-xs text-gray-500 mt-1">Tất cả thiết bị đã đăng ký</p>
               </div>
               <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
                 <Camera className="h-6 w-6 text-blue-600" />
@@ -372,9 +372,9 @@ const CamerasPage: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Active</p>
+                <p className="text-sm font-medium text-gray-600">Đang hoạt động</p>
                 <p className="text-3xl font-bold text-emerald-600">{stats.active}</p>
-                <p className="text-xs text-gray-500 mt-1">Online and ready</p>
+                <p className="text-xs text-gray-500 mt-1">Đang trực tuyến</p>
               </div>
               <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
                 <Power className="h-6 w-6 text-emerald-600" />
@@ -387,9 +387,9 @@ const CamerasPage: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Streaming</p>
+                <p className="text-sm font-medium text-gray-600">Đang phát trực tiếp</p>
                 <p className="text-3xl font-bold text-purple-600">{stats.streaming}</p>
-                <p className="text-xs text-gray-500 mt-1">Currently live</p>
+                <p className="text-xs text-gray-500 mt-1">Đang phát sóng</p>
               </div>
               <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
                 <Video className="h-6 w-6 text-purple-600" />
@@ -402,9 +402,9 @@ const CamerasPage: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Offline</p>
+                <p className="text-sm font-medium text-gray-600">Ngoại tuyến</p>
                 <p className="text-3xl font-bold text-red-600">{stats.offline}</p>
-                <p className="text-xs text-gray-500 mt-1">Need attention</p>
+                <p className="text-xs text-gray-500 mt-1">Cần kiểm tra</p>
               </div>
               <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
                 <PowerOff className="h-6 w-6 text-red-600" />
@@ -425,7 +425,7 @@ const CamerasPage: React.FC = () => {
           <div className="relative flex-1 lg:w-80">
             <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             <Input
-              placeholder="Search cameras by name, location, or description..."
+              placeholder="Tìm kiếm camera theo tên, vị trí hoặc mô tả..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 bg-white border-gray-200 shadow-sm focus:shadow-md transition-shadow"
@@ -438,10 +438,10 @@ const CamerasPage: React.FC = () => {
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-white border-gray-200 shadow-xl">
-              <SelectItem value="all">All Cameras</SelectItem>
-              <SelectItem value="active">Active Only</SelectItem>
-              <SelectItem value="streaming">Streaming</SelectItem>
-              <SelectItem value="offline">Offline</SelectItem>
+              <SelectItem value="all">Tất cả Camera</SelectItem>
+              <SelectItem value="active">Chỉ đang hoạt động</SelectItem>
+              <SelectItem value="streaming">Đang phát trực tiếp</SelectItem>
+              <SelectItem value="offline">Ngoại tuyến</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -506,24 +506,24 @@ const CamerasPage: React.FC = () => {
                       <DropdownMenuContent align="end" className="bg-white border-gray-200 shadow-xl">
                         <DropdownMenuItem onClick={() => navigate(`/cameras/${camera.id}`)}>
                           <Eye className="h-4 w-4 mr-2" />
-                          View Details
+                          Xem chi tiết
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => navigate(`/cameras/${camera.id}/stream`)}>
                           <MonitorPlay className="h-4 w-4 mr-2" />
-                          Live Stream
+                          Xem trực tiếp
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => navigate(`/cameras/${camera.id}/edit`)}>
                           <Settings className="h-4 w-4 mr-2" />
-                          Edit Settings
+                          Chỉnh sửa
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleTestConnection(camera)}>
                           <Signal className="h-4 w-4 mr-2" />
-                          Test Connection
+                          Kiểm tra kết nối
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleToggleDetection(camera)}>
                           <Shield className="h-4 w-4 mr-2" />
-                          {camera.detection_enabled ? 'Disable' : 'Enable'} Detection
+                          {camera.detection_enabled ? 'Tắt' : 'Bật'} phát hiện
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem 
@@ -531,7 +531,7 @@ const CamerasPage: React.FC = () => {
                           className="text-red-600 focus:text-red-600"
                         >
                           <Trash2 className="h-4 w-4 mr-2" />
-                          Delete Camera
+                          Xóa Camera
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -550,12 +550,12 @@ const CamerasPage: React.FC = () => {
                       {camera.is_active ? (
                         <>
                           <Power className="w-3 h-3 mr-1" />
-                          Active
+                          Đang hoạt động
                         </>
                       ) : (
                         <>
                           <PowerOff className="w-3 h-3 mr-1" />
-                          Offline
+                          Ngoại tuyến
                         </>
                       )}
                     </Badge>
@@ -563,21 +563,21 @@ const CamerasPage: React.FC = () => {
                     {camera.is_streaming && (
                       <Badge className="bg-purple-100 text-purple-800 border-purple-300 text-xs">
                         <div className="w-2 h-2 bg-purple-500 rounded-full mr-1 animate-pulse" />
-                        Streaming
+                        Đang phát trực tiếp
                       </Badge>
                     )}
 
                     {camera.detection_enabled && (
                       <Badge className="bg-blue-100 text-blue-800 border-blue-300 text-xs">
                         <Shield className="w-3 h-3 mr-1" />
-                        Detection
+                        Đang phát hiện
                       </Badge>
                     )}
 
                     {camera.is_recording && (
                       <Badge className="bg-red-100 text-red-800 border-red-300 text-xs">
                         <div className="w-2 h-2 bg-red-500 rounded-full mr-1 animate-pulse" />
-                        Recording
+                        Đang ghi hình
                       </Badge>
                     )}
                   </div>
@@ -587,7 +587,7 @@ const CamerasPage: React.FC = () => {
                   {/* Camera Info */}
                   <div className="space-y-2">
                     <p className="text-sm text-gray-600 line-clamp-2">
-                      {camera.description || 'No description provided'}
+                      {camera.description || 'Chưa có mô tả'}
                     </p>
                     
                     {camera.location && (
@@ -599,7 +599,7 @@ const CamerasPage: React.FC = () => {
 
                     <div className="flex items-center text-xs text-gray-400">
                       <Calendar className="h-3 w-3 mr-1" />
-                      <span>Added {new Date(camera.created_at).toLocaleDateString()}</span>
+                        <span>Thêm ngày {new Date(camera.created_at).toLocaleDateString()}</span>
                     </div>
 
                     {/* ✅ Add stream settings display */}
@@ -620,7 +620,7 @@ const CamerasPage: React.FC = () => {
                         <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-green-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
                           <Play className="h-6 w-6 text-white" />
                         </div>
-                        <p className="text-sm font-medium text-emerald-600">Live Stream Active</p>
+                        <p className="text-sm font-medium text-emerald-600">Đang phát trực tiếp</p>
                         <div className="flex items-center justify-center mt-2">
                           <div className="flex space-x-1">
                             <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
@@ -635,10 +635,10 @@ const CamerasPage: React.FC = () => {
                           <Camera className="h-6 w-6 text-white" />
                         </div>
                         <p className="text-sm font-medium text-gray-600">
-                          {camera.is_active ? 'Camera Ready' : 'Camera Offline'}
+                          {camera.is_active ? 'Camera sẵn sàng' : 'Camera ngoại tuyến'}
                         </p>
                         <p className="text-xs text-gray-500 mt-1">
-                          {camera.is_active ? 'Click start to begin streaming' : 'Check connection settings'}
+                          {camera.is_active ? 'Nhấn bắt đầu để phát trực tiếp' : 'Vui lòng kiểm tra kết nối'}
                         </p>
                       </div>
                     )}
@@ -654,7 +654,7 @@ const CamerasPage: React.FC = () => {
                         className="flex-1 border-red-200 text-red-600 hover:bg-red-50"
                       >
                         <Square className="w-3 h-3 mr-1" />
-                        Stop
+                        Dừng
                       </Button>
                     ) : (
                       <Button
@@ -664,7 +664,7 @@ const CamerasPage: React.FC = () => {
                         disabled={!camera.is_active}
                       >
                         <Play className="w-3 h-3 mr-1" />
-                        Start
+                        Bắt đầu
                       </Button>
                     )}
                     
@@ -704,12 +704,12 @@ const CamerasPage: React.FC = () => {
                 <Camera className="w-10 h-10 text-blue-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                {searchTerm || filterStatus !== 'all' ? 'No cameras found' : 'No cameras yet'}
+                {searchTerm || filterStatus !== 'all' ? 'Không tìm thấy camera nào' : 'Chưa có camera nào'}
               </h3>
               <p className="text-gray-600 mb-6 max-w-md mx-auto">
                 {searchTerm || filterStatus !== 'all' 
-                  ? 'No cameras match your search criteria. Try adjusting your filters.'
-                  : 'Get started by adding your first security camera to begin monitoring.'
+                  ? 'Không có camera nào phù hợp với tiêu chí tìm kiếm. Hãy thử thay đổi bộ lọc.'
+                  : 'Hãy bắt đầu bằng cách thêm camera đầu tiên để giám sát.'
                 }
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -718,7 +718,7 @@ const CamerasPage: React.FC = () => {
                   className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  Add Your First Camera
+                  Thêm Camera đầu tiên
                 </Button>
                 {(searchTerm || filterStatus !== 'all') && (
                   <Button 
@@ -728,7 +728,7 @@ const CamerasPage: React.FC = () => {
                       setFilterStatus('all');
                     }}
                   >
-                    Clear Filters
+                    Xóa bộ lọc
                   </Button>
                 )}
               </div>
@@ -745,29 +745,29 @@ const CamerasPage: React.FC = () => {
               <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
                 <Trash2 className="h-5 w-5 text-red-600" />
               </div>
-              <span>Delete Camera</span>
+              <span>Xóa Camera</span>
             </AlertDialogTitle>
             <AlertDialogDescription className="text-gray-600">
-              Are you sure you want to delete <span className="font-semibold">"{deleteDialog.camera?.name}"</span>? 
-              This action cannot be undone and will remove:
+              Bạn có chắc chắn muốn xóa <span className="font-semibold">"{deleteDialog.camera?.name}"</span> không?
+              Hành động này không thể hoàn tác và sẽ xóa:
               <ul className="list-disc list-inside mt-2 space-y-1">
-                <li>All detection logs and recordings</li>
-                <li>Camera configuration settings</li>
-                <li>Stream history and analytics</li>
-                <li>Associated face detection data</li>
+                <li>Tất cả nhật ký phát hiện và bản ghi hình</li>
+                <li>Cài đặt cấu hình camera</li>
+                <li>Lịch sử phát trực tiếp và phân tích</li>
+                <li>Dữ liệu nhận diện khuôn mặt liên quan</li>
               </ul>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel className="hover:bg-gray-50">
-              Cancel
+              Hủy
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deleteDialog.camera && handleDeleteCamera(deleteDialog.camera)}
               className="bg-red-600 hover:bg-red-700 focus:ring-red-500"
             >
               <Trash2 className="h-4 w-4 mr-2" />
-              Delete Camera
+              Xóa Camera
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
