@@ -235,7 +235,7 @@ const GeneralSettingsPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-gradient-to-r from-emerald-50 via-blue-50 to-indigo-50 border-b border-slate-200 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Button 
@@ -245,25 +245,24 @@ const GeneralSettingsPage: React.FC = () => {
               className="mr-2"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Settings
+              Quay lại cài đặt
             </Button>
-            <div className="h-6 border-l border-gray-300" />
+            <div className="h-6 border-l border-slate-300" />
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <User className="h-6 w-6 text-blue-600" />
+              <div className="p-2 bg-emerald-100 rounded-lg">
+                <User className="h-6 w-6 text-emerald-700" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">General Settings</h1>
-                <p className="text-sm text-gray-500">Manage your profile information and system preferences</p>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-800 to-emerald-700 bg-clip-text text-transparent">Cài đặt chung</h1>
+                <p className="text-sm text-slate-600">Quản lý thông tin cá nhân & tuỳ chọn hệ thống</p>
               </div>
             </div>
           </div>
-          
           <div className={`flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-medium ${
-            isConnected ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+            isConnected ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
           }`}>
-            <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
-            <span>{isConnected ? 'Connected' : 'Disconnected'}</span>
+            <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-500' : 'bg-red-500'}`} />
+            <span>{isConnected ? 'Đã kết nối' : 'Mất kết nối'}</span>
           </div>
         </div>
       </div>
@@ -276,7 +275,7 @@ const GeneralSettingsPage: React.FC = () => {
               <CardHeader className="pb-4">
                 <div className="flex items-center space-x-3">
                   <User className="h-5 w-5 text-blue-600" />
-                  <CardTitle className="text-lg font-semibold">Profile Information</CardTitle>
+                  <CardTitle className="text-lg font-semibold">Thông tin cá nhân</CardTitle>
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -319,7 +318,7 @@ const GeneralSettingsPage: React.FC = () => {
                       >
                         <span>
                           <Upload className="h-4 w-4 mr-2" />
-                          {uploadingAvatar ? 'Uploading...' : 'Upload New Avatar'}
+                          {uploadingAvatar ? 'Đang tải lên...' : 'Đổi ảnh đại diện'}
                         </span>
                       </Button>
                     </Label>
@@ -330,7 +329,7 @@ const GeneralSettingsPage: React.FC = () => {
                       className="hidden"
                       onChange={handleAvatarUpload}
                     />
-                    <p className="text-xs text-gray-500 mt-1">JPG, PNG or WebP. Max 5MB.</p>
+                    <p className="text-xs text-slate-500 mt-1">Ảnh JPG, PNG hoặc WebP. Tối đa 5MB.</p>
                   </div>
                 </div>
 
@@ -338,7 +337,7 @@ const GeneralSettingsPage: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="full_name" className="text-sm font-medium">
-                      Full Name <span className="text-red-500">*</span>
+                      Họ và tên <span className="text-red-500">*</span>
                     </Label>
                     <Input
                       id="full_name"
@@ -354,7 +353,7 @@ const GeneralSettingsPage: React.FC = () => {
 
                   <div>
                     <Label htmlFor="username" className="text-sm font-medium">
-                      Username <span className="text-red-500">*</span>
+                      Tên đăng nhập <span className="text-red-500">*</span>
                     </Label>
                     <Input
                       id="username"
@@ -370,7 +369,7 @@ const GeneralSettingsPage: React.FC = () => {
 
                   <div>
                     <Label htmlFor="email" className="text-sm font-medium">
-                      Email Address <span className="text-red-500">*</span>
+                      Email <span className="text-red-500">*</span>
                     </Label>
                     <Input
                       id="email"
@@ -386,7 +385,7 @@ const GeneralSettingsPage: React.FC = () => {
                   </div>
 
                   <div>
-                    <Label htmlFor="phone" className="text-sm font-medium">Phone Number</Label>
+                    <Label htmlFor="phone" className="text-sm font-medium">Số điện thoại</Label>
                     <Input
                       id="phone"
                       value={profileData.phone}
@@ -396,7 +395,7 @@ const GeneralSettingsPage: React.FC = () => {
                   </div>
 
                   <div>
-                    <Label htmlFor="job_title" className="text-sm font-medium">Job Title</Label>
+                    <Label htmlFor="job_title" className="text-sm font-medium">Chức vụ</Label>
                     <Input
                       id="job_title"
                       value={profileData.job_title}
@@ -406,7 +405,7 @@ const GeneralSettingsPage: React.FC = () => {
                   </div>
 
                   <div>
-                    <Label htmlFor="company" className="text-sm font-medium">Company</Label>
+                    <Label htmlFor="company" className="text-sm font-medium">Công ty</Label>
                     <Input
                       id="company"
                       value={profileData.company}
@@ -426,7 +425,7 @@ const GeneralSettingsPage: React.FC = () => {
                   </div>
 
                   <div>
-                    <Label htmlFor="location" className="text-sm font-medium">Location</Label>
+                    <Label htmlFor="location" className="text-sm font-medium">Địa chỉ</Label>
                     <Input
                       id="location"
                       value={profileData.location}
@@ -437,12 +436,12 @@ const GeneralSettingsPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="bio" className="text-sm font-medium">Bio</Label>
+                  <Label htmlFor="bio" className="text-sm font-medium">Giới thiệu</Label>
                   <Textarea
                     id="bio"
                     value={profileData.bio}
                     onChange={(e) => setProfileData(prev => ({ ...prev, bio: e.target.value }))}
-                    placeholder="Tell us about yourself..."
+                    placeholder="Giới thiệu về bản thân..."
                     className="min-h-[80px]"
                   />
                 </div>
@@ -457,12 +456,12 @@ const GeneralSettingsPage: React.FC = () => {
                   ) : profileSaved ? (
                     <>
                       <Save className="h-4 w-4 mr-2" />
-                      Profile Saved!
+                      Đã lưu!
                     </>
                   ) : (
                     <>
                       <Save className="h-4 w-4 mr-2" />
-                      Save Profile
+                      Lưu thông tin
                     </>
                   )}
                 </Button>
@@ -476,7 +475,7 @@ const GeneralSettingsPage: React.FC = () => {
               <CardHeader className="pb-4">
                 <div className="flex items-center space-x-3">
                   <Monitor className="h-5 w-5 text-purple-600" />
-                  <CardTitle className="text-lg font-semibold">System Preferences</CardTitle>
+                  <CardTitle className="text-lg font-semibold">Tuỳ chọn hệ thống</CardTitle>
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -484,7 +483,7 @@ const GeneralSettingsPage: React.FC = () => {
                 <div>
                   <div className="flex items-center space-x-2 mb-3">
                     <Sun className="h-4 w-4 text-orange-500" />
-                    <Label className="text-sm font-medium">Theme</Label>
+                    <Label className="text-sm font-medium">Giao diện</Label>
                   </div>
                   <Select 
                     value={systemPreferences.theme} 
@@ -499,19 +498,19 @@ const GeneralSettingsPage: React.FC = () => {
                       <SelectItem value="light">
                         <div className="flex items-center space-x-2">
                           <Sun className="h-4 w-4" />
-                          <span>Light</span>
+                          <span>Sáng</span>
                         </div>
                       </SelectItem>
                       <SelectItem value="dark">
                         <div className="flex items-center space-x-2">
                           <Moon className="h-4 w-4" />
-                          <span>Dark</span>
+                          <span>Tối</span>
                         </div>
                       </SelectItem>
                       <SelectItem value="auto">
                         <div className="flex items-center space-x-2">
                           <Laptop className="h-4 w-4" />
-                          <span>System</span>
+                          <span>Hệ thống</span>
                         </div>
                       </SelectItem>
                     </SelectContent>
@@ -522,7 +521,7 @@ const GeneralSettingsPage: React.FC = () => {
                 <div>
                   <div className="flex items-center space-x-2 mb-3">
                     <Globe className="h-4 w-4 text-blue-500" />
-                    <Label className="text-sm font-medium">Language</Label>
+                    <Label className="text-sm font-medium">Ngôn ngữ</Label>
                   </div>
                   <Select 
                     value={systemPreferences.language} 
@@ -544,7 +543,7 @@ const GeneralSettingsPage: React.FC = () => {
                 <div>
                   <div className="flex items-center space-x-2 mb-3">
                     <Clock className="h-4 w-4 text-green-500" />
-                    <Label className="text-sm font-medium">Timezone</Label>
+                    <Label className="text-sm font-medium">Múi giờ</Label>
                   </div>
                   <Select 
                     value={systemPreferences.timezone} 
@@ -570,8 +569,8 @@ const GeneralSettingsPage: React.FC = () => {
                     <div className="flex items-center space-x-3">
                       <Monitor className="h-4 w-4 text-gray-500" />
                       <div>
-                        <Label className="font-medium">Enable Animations</Label>
-                        <p className="text-xs text-gray-500">Show smooth transitions and animations</p>
+                        <Label className="font-medium">Bật hiệu ứng</Label>
+                        <p className="text-xs text-slate-500">Hiển thị hiệu ứng chuyển động mượt mà</p>
                       </div>
                     </div>
                     <Switch
@@ -586,8 +585,8 @@ const GeneralSettingsPage: React.FC = () => {
                     <div className="flex items-center space-x-3">
                       <Database className="h-4 w-4 text-gray-500" />
                       <div>
-                        <Label className="font-medium">Auto Save</Label>
-                        <p className="text-xs text-gray-500">Automatically save changes</p>
+                        <Label className="font-medium">Tự động lưu</Label>
+                        <p className="text-xs text-slate-500">Tự động lưu thay đổi</p>
                       </div>
                     </div>
                     <Switch
@@ -602,8 +601,8 @@ const GeneralSettingsPage: React.FC = () => {
                     <div className="flex items-center space-x-3">
                       <AlertCircle className="h-4 w-4 text-gray-500" />
                       <div>
-                        <Label className="font-medium">Show Tooltips</Label>
-                        <p className="text-xs text-gray-500">Display helpful tooltips</p>
+                        <Label className="font-medium">Hiển thị gợi ý</Label>
+                        <p className="text-xs text-slate-500">Hiển thị gợi ý khi di chuột</p>
                       </div>
                     </div>
                     <Switch
@@ -618,8 +617,8 @@ const GeneralSettingsPage: React.FC = () => {
                     <div className="flex items-center space-x-3">
                       <Database className="h-4 w-4 text-gray-500" />
                       <div>
-                        <Label className="font-medium">Compact Mode</Label>
-                        <p className="text-xs text-gray-500">Use compact interface layout</p>
+                        <Label className="font-medium">Chế độ gọn nhẹ</Label>
+                        <p className="text-xs text-slate-500">Giao diện tối giản, tiết kiệm không gian</p>
                       </div>
                     </div>
                     <Switch
@@ -641,12 +640,12 @@ const GeneralSettingsPage: React.FC = () => {
                   ) : systemSaved ? (
                     <>
                       <Save className="h-4 w-4 mr-2" />
-                      Preferences Saved!
+                      Đã lưu!
                     </>
                   ) : (
                     <>
                       <Save className="h-4 w-4 mr-2" />
-                      Save System Preferences
+                      Lưu tuỳ chọn hệ thống
                     </>
                   )}
                 </Button>
@@ -661,10 +660,10 @@ const GeneralSettingsPage: React.FC = () => {
             {...fadeInUp}
             className="mt-6"
           >
-            <Alert className="border-green-200 bg-green-50">
-              <AlertCircle className="h-4 w-4 text-green-600" />
-              <AlertDescription className="text-green-800">
-                Settings have been saved successfully!
+            <Alert className="border-emerald-200 bg-emerald-50">
+              <AlertCircle className="h-4 w-4 text-emerald-600" />
+              <AlertDescription className="text-emerald-800">
+                Đã lưu cài đặt thành công!
               </AlertDescription>
             </Alert>
           </motion.div>

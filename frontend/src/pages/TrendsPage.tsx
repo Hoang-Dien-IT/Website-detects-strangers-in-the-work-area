@@ -222,17 +222,17 @@ const TrendsPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50 p-6 space-y-6">
+  <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-blue-50 p-6 space-y-6">
       {/* Header */}
-      <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6">
+  <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border border-emerald-100 p-6">
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center space-y-4 lg:space-y-0">
           <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-xl flex items-center justify-center">
               <TrendingUp className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Trends Analysis</h1>
-              <p className="text-gray-600">Historical patterns and trend analysis</p>
+              <h1 className="text-2xl font-bold text-emerald-900">Phân tích xu hướng</h1>
+              <p className="text-slate-600">Theo dõi mô hình và xu hướng phát hiện qua thời gian</p>
             </div>
           </div>
           <div className="flex items-center space-x-3">
@@ -241,10 +241,10 @@ const TrendsPage: React.FC = () => {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="7d">Last 7 days</SelectItem>
-                <SelectItem value="30d">Last 30 days</SelectItem>
-                <SelectItem value="90d">Last 90 days</SelectItem>
-                <SelectItem value="1y">Last year</SelectItem>
+                <SelectItem value="7d">7 ngày gần nhất</SelectItem>
+                <SelectItem value="30d">30 ngày gần nhất</SelectItem>
+                <SelectItem value="90d">90 ngày gần nhất</SelectItem>
+                <SelectItem value="1y">1 năm gần nhất</SelectItem>
               </SelectContent>
             </Select>
             <Select value={chartType} onValueChange={setChartType}>
@@ -252,9 +252,9 @@ const TrendsPage: React.FC = () => {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="line">Line Chart</SelectItem>
-                <SelectItem value="bar">Bar Chart</SelectItem>
-                <SelectItem value="area">Area Chart</SelectItem>
+                <SelectItem value="line">Biểu đồ đường</SelectItem>
+                <SelectItem value="bar">Biểu đồ cột</SelectItem>
+                <SelectItem value="area">Biểu đồ vùng</SelectItem>
               </SelectContent>
             </Select>
             <Button
@@ -265,17 +265,17 @@ const TrendsPage: React.FC = () => {
               }}
               variant="outline"
               disabled={refreshing}
-              className="shadow-sm hover:shadow-md transition-shadow"
+              className="shadow-sm hover:shadow-md transition-shadow border-emerald-300 text-emerald-700"
             >
               <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-              {refreshing ? 'Refreshing...' : 'Refresh'}
+              {refreshing ? 'Đang làm mới...' : 'Làm mới'}
             </Button>
             <Button
               onClick={handleExportTrends}
-              className="shadow-sm hover:shadow-md transition-shadow"
+              className="shadow-sm hover:shadow-md transition-shadow bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
             >
               <Download className="w-4 h-4 mr-2" />
-              Export Trends
+              Xuất báo cáo
             </Button>
           </div>
         </div>
@@ -283,28 +283,28 @@ const TrendsPage: React.FC = () => {
 
       {/* Performance Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="bg-white/80 backdrop-blur-sm border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300">
+        <Card className="bg-white/80 backdrop-blur-sm border-emerald-200 shadow-lg hover:shadow-xl transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Detection Growth</CardTitle>
-            <TrendingUp className={`h-4 w-4 ${trendsData.performance_metrics.detection_growth >= 0 ? 'text-green-600' : 'text-red-600'}`} />
+            <CardTitle className="text-sm font-medium text-emerald-700">Tăng trưởng phát hiện</CardTitle>
+            <TrendingUp className={`h-4 w-4 ${trendsData.performance_metrics.detection_growth >= 0 ? 'text-emerald-600' : 'text-red-600'}`} />
           </CardHeader>
           <CardContent>
-            <div className={`text-3xl font-bold ${trendsData.performance_metrics.detection_growth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <div className={`text-3xl font-bold ${trendsData.performance_metrics.detection_growth >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
               {trendsData.performance_metrics.detection_growth > 0 ? '+' : ''}
               {trendsData.performance_metrics.detection_growth}%
             </div>
             <div className="flex items-center space-x-2 mt-2">
               {getTrendIcon(trendsData.performance_metrics.detection_growth)}
               <span className={`text-sm ${getTrendColor(trendsData.performance_metrics.detection_growth)}`}>
-                vs last period
+                So với kỳ trước
               </span>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white/80 backdrop-blur-sm border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300">
+        <Card className="bg-white/80 backdrop-blur-sm border-blue-200 shadow-lg hover:shadow-xl transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Accuracy Trend</CardTitle>
+            <CardTitle className="text-sm font-medium text-blue-700">Xu hướng chính xác</CardTitle>
             <Activity className={`h-4 w-4 ${trendsData.performance_metrics.accuracy_trend >= 0 ? 'text-blue-600' : 'text-red-600'}`} />
           </CardHeader>
           <CardContent>
@@ -315,15 +315,15 @@ const TrendsPage: React.FC = () => {
             <div className="flex items-center space-x-2 mt-2">
               {getTrendIcon(trendsData.performance_metrics.accuracy_trend)}
               <span className={`text-sm ${getTrendColor(trendsData.performance_metrics.accuracy_trend)}`}>
-                improvement
+                Cải thiện
               </span>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white/80 backdrop-blur-sm border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300">
+        <Card className="bg-white/80 backdrop-blur-sm border-orange-200 shadow-lg hover:shadow-xl transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Peak Hour</CardTitle>
+            <CardTitle className="text-sm font-medium text-orange-700">Khung giờ cao điểm</CardTitle>
             <Clock className="h-4 w-4 text-orange-600" />
           </CardHeader>
           <CardContent>
@@ -331,22 +331,22 @@ const TrendsPage: React.FC = () => {
             <div className="flex items-center space-x-2 mt-2">
               <Zap className="h-4 w-4 text-orange-500" />
               <span className="text-sm text-orange-600">
-                Highest activity
+                Hoạt động nhiều nhất
               </span>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white/80 backdrop-blur-sm border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300">
+        <Card className="bg-white/80 backdrop-blur-sm border-purple-200 shadow-lg hover:shadow-xl transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Response Time</CardTitle>
+            <CardTitle className="text-sm font-medium text-purple-700">Thời gian phản hồi</CardTitle>
             <Activity className="h-4 w-4 text-purple-600" />
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-purple-600">{trendsData.performance_metrics.avg_response_time}s</div>
             <div className="flex items-center space-x-2 mt-2">
               <Badge variant="outline" className="bg-purple-50 text-purple-700">
-                Average
+                Trung bình
               </Badge>
             </div>
           </CardContent>
@@ -356,11 +356,11 @@ const TrendsPage: React.FC = () => {
       {/* Main Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Daily Trends Chart */}
-        <Card className="bg-white/90 backdrop-blur-sm border-slate-200 shadow-lg">
+        <Card className="bg-white/90 backdrop-blur-sm border-blue-200 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <BarChart3 className="h-5 w-5 text-blue-600" />
-              <span>Daily Detection Trends</span>
+              <span>Xu hướng phát hiện theo ngày</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -443,11 +443,11 @@ const TrendsPage: React.FC = () => {
         </Card>
 
         {/* Hourly Activity Pattern */}
-        <Card className="bg-white/90 backdrop-blur-sm border-slate-200 shadow-lg">
+        <Card className="bg-white/90 backdrop-blur-sm border-orange-200 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Clock className="h-5 w-5 text-orange-600" />
-              <span>Hourly Activity Pattern</span>
+              <span>Biểu đồ hoạt động theo giờ</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -468,11 +468,11 @@ const TrendsPage: React.FC = () => {
       {/* Detection Patterns and Monthly Comparison */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Detection Patterns */}
-        <Card className="bg-white/90 backdrop-blur-sm border-slate-200 shadow-lg">
+        <Card className="bg-white/90 backdrop-blur-sm border-purple-200 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Eye className="h-5 w-5 text-purple-600" />
-              <span>Detection Patterns</span>
+              <span>Phân loại phát hiện</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -499,11 +499,11 @@ const TrendsPage: React.FC = () => {
         </Card>
 
         {/* Monthly Comparison */}
-        <Card className="bg-white/90 backdrop-blur-sm border-slate-200 shadow-lg">
+        <Card className="bg-white/90 backdrop-blur-sm border-emerald-200 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Calendar className="h-5 w-5 text-green-600" />
-              <span>Monthly Comparison</span>
+              <Calendar className="h-5 w-5 text-emerald-600" />
+              <span>So sánh theo tháng</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -523,43 +523,40 @@ const TrendsPage: React.FC = () => {
       </div>
 
       {/* Insights Summary */}
-      <Card className="bg-white/90 backdrop-blur-sm border-slate-200 shadow-lg">
+      <Card className="bg-white/90 backdrop-blur-sm border-emerald-200 shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <Activity className="h-5 w-5 text-blue-600" />
-            <span>Key Insights</span>
+            <Activity className="h-5 w-5 text-emerald-600" />
+            <span>Nhận định nổi bật</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 bg-green-50 rounded-lg">
+            <div className="p-4 bg-emerald-50 rounded-lg">
               <div className="flex items-center space-x-2 mb-2">
-                <TrendingUp className="h-5 w-5 text-green-600" />
-                <span className="font-medium text-green-800">Growth Trend</span>
+                <TrendingUp className="h-5 w-5 text-emerald-600" />
+                <span className="font-medium text-emerald-800">Xu hướng tăng trưởng</span>
               </div>
-              <p className="text-sm text-green-700">
-                Detection accuracy has improved by {trendsData.performance_metrics.accuracy_trend}% over the selected period, 
-                indicating better system performance.
+              <p className="text-sm text-emerald-700">
+                Độ chính xác phát hiện đã cải thiện {trendsData.performance_metrics.accuracy_trend}% trong giai đoạn này, cho thấy hệ thống hoạt động hiệu quả hơn.
               </p>
             </div>
             <div className="p-4 bg-orange-50 rounded-lg">
               <div className="flex items-center space-x-2 mb-2">
                 <Clock className="h-5 w-5 text-orange-600" />
-                <span className="font-medium text-orange-800">Peak Activity</span>
+                <span className="font-medium text-orange-800">Khung giờ sôi động</span>
               </div>
               <p className="text-sm text-orange-700">
-                Highest detection activity occurs at {trendsData.performance_metrics.peak_detection_hour}, 
-                typically during business hours.
+                Hoạt động phát hiện cao nhất vào lúc {trendsData.performance_metrics.peak_detection_hour}, thường rơi vào giờ làm việc.
               </p>
             </div>
             <div className="p-4 bg-blue-50 rounded-lg">
               <div className="flex items-center space-x-2 mb-2">
                 <Zap className="h-5 w-5 text-blue-600" />
-                <span className="font-medium text-blue-800">Performance</span>
+                <span className="font-medium text-blue-800">Hiệu suất</span>
               </div>
               <p className="text-sm text-blue-700">
-                Average response time is {trendsData.performance_metrics.avg_response_time}s, 
-                meeting optimal performance standards.
+                Thời gian phản hồi trung bình là {trendsData.performance_metrics.avg_response_time}s, đáp ứng tiêu chuẩn tối ưu.
               </p>
             </div>
           </div>

@@ -117,7 +117,7 @@ const LiveDetectionPage: React.FC = () => {
   };
 
   const formatTime = (timestamp: string) => {
-    return new Date(timestamp).toLocaleTimeString();
+    return new Date(timestamp).toLocaleTimeString('vi-VN');
   };
 
   const getStatusColor = (status: string) => {
@@ -127,9 +127,9 @@ const LiveDetectionPage: React.FC = () => {
       case 'acknowledged':
         return 'bg-yellow-100 text-yellow-800 border-yellow-300';
       case 'resolved':
-        return 'bg-green-100 text-green-800 border-green-300';
+        return 'bg-emerald-100 text-emerald-800 border-emerald-300';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-300';
+        return 'bg-slate-100 text-slate-800 border-slate-300';
     }
   };
 
@@ -166,22 +166,23 @@ const LiveDetectionPage: React.FC = () => {
   if (loading) {
     return (
       <div className="container mx-auto p-6 flex items-center justify-center h-96">
-        <RefreshCw className="h-8 w-8 animate-spin text-blue-500" />
+        <RefreshCw className="h-8 w-8 animate-spin text-emerald-600" />
+        <span className="ml-4 text-slate-700 text-lg">Đang tải dữ liệu trực tiếp...</span>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+  <div className="container mx-auto p-6 space-y-6 bg-gradient-to-br from-slate-50 via-emerald-50 to-indigo-50 min-h-screen">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex items-center justify-between"
       >
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Live Detection</h1>
-          <p className="text-gray-600 mt-2">
-            Real-time face detection monitoring
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-emerald-700 bg-clip-text text-transparent">Giám sát trực tiếp</h1>
+          <p className="text-slate-600 mt-2">
+            Theo dõi nhận diện khuôn mặt thời gian thực
           </p>
         </div>
         <div className="flex items-center space-x-3">
@@ -189,8 +190,8 @@ const LiveDetectionPage: React.FC = () => {
             variant={isConnected ? 'default' : 'destructive'}
             className="flex items-center space-x-1"
           >
-            <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
-            <span>{isConnected ? 'Connected' : 'Disconnected'}</span>
+            <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-500' : 'bg-red-500'}`} />
+            <span>{isConnected ? 'Đã kết nối' : 'Mất kết nối'}</span>
           </Badge>
           <Button
             onClick={toggleMonitoring}
@@ -199,12 +200,12 @@ const LiveDetectionPage: React.FC = () => {
             {isMonitoring ? (
               <>
                 <Square className="h-4 w-4 mr-2" />
-                Stop Monitoring
+                Dừng giám sát
               </>
             ) : (
               <>
                 <Play className="h-4 w-4 mr-2" />
-                Start Monitoring
+                Bắt đầu giám sát
               </>
             )}
           </Button>
@@ -213,54 +214,54 @@ const LiveDetectionPage: React.FC = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card>
+        <Card className="border-slate-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Active Cameras</p>
-                <p className="text-2xl font-bold">{activeCameras.length}</p>
+                <p className="text-sm text-slate-600">Camera đang hoạt động</p>
+                <p className="text-2xl font-bold text-slate-900">{activeCameras.length}</p>
               </div>
-              <Camera className="h-8 w-8 text-blue-500" />
+              <Camera className="h-8 w-8 text-emerald-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-slate-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Live Detections</p>
-                <p className="text-2xl font-bold">{filteredDetections.length}</p>
+                <p className="text-sm text-slate-600">Nhận diện trực tiếp</p>
+                <p className="text-2xl font-bold text-slate-900">{filteredDetections.length}</p>
               </div>
-              <Activity className="h-8 w-8 text-green-500" />
+              <Activity className="h-8 w-8 text-emerald-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-slate-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">New Alerts</p>
-                <p className="text-2xl font-bold">
+                <p className="text-sm text-slate-600">Cảnh báo mới</p>
+                <p className="text-2xl font-bold text-slate-900">
                   {filteredDetections.filter(d => d.status === 'new').length}
                 </p>
               </div>
-              <Bell className="h-8 w-8 text-red-500" />
+              <Bell className="h-8 w-8 text-red-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-slate-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Monitoring</p>
-                <p className="text-2xl font-bold">
-                  {isMonitoring ? 'ON' : 'OFF'}
+                <p className="text-sm text-slate-600">Trạng thái giám sát</p>
+                <p className="text-2xl font-bold text-slate-900">
+                  {isMonitoring ? 'ĐANG BẬT' : 'ĐANG TẮT'}
                 </p>
               </div>
-              <Shield className={`h-8 w-8 ${isMonitoring ? 'text-green-500' : 'text-gray-400'}`} />
+              <Shield className={`h-8 w-8 ${isMonitoring ? 'text-emerald-600' : 'text-slate-400'}`} />
             </div>
           </CardContent>
         </Card>
@@ -273,13 +274,13 @@ const LiveDetectionPage: React.FC = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
-                <span>Camera Preview</span>
+                <span>Xem trước camera</span>
                 <select
                   value={selectedCamera}
                   onChange={(e) => setSelectedCamera(e.target.value)}
                   className="text-sm border rounded px-2 py-1"
                 >
-                  <option value="all">All Cameras</option>
+                  <option value="all">Tất cả camera</option>
                   {activeCameras.map(camera => (
                     <option key={camera.id} value={camera.id}>
                       {camera.name}
@@ -305,8 +306,8 @@ const LiveDetectionPage: React.FC = () => {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <Camera className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500">No active cameras with detection enabled</p>
+                  <Camera className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                  <p className="text-slate-500">Không có camera nào đang hoạt động hoặc bật nhận diện</p>
                 </div>
               )}
             </CardContent>
@@ -316,7 +317,7 @@ const LiveDetectionPage: React.FC = () => {
         {/* Detection Events */}
         <Card>
           <CardHeader>
-            <CardTitle>Recent Detections</CardTitle>
+            <CardTitle>Nhận diện gần đây</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3 max-h-96 overflow-y-auto">
@@ -332,15 +333,15 @@ const LiveDetectionPage: React.FC = () => {
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-1">
-                          <User className="h-4 w-4 text-gray-500" />
+                          <User className="h-4 w-4 text-slate-500" />
                           <span className="font-medium text-sm">
-                            {detection.person_name || 'Unknown Person'}
+                            {detection.person_name || 'Người lạ'}
                           </span>
                           <Badge className={getStatusColor(detection.status)}>
-                            {detection.status}
+                            {detection.status === 'new' ? 'Mới' : detection.status === 'acknowledged' ? 'Đã xác nhận' : 'Đã xử lý'}
                           </Badge>
                         </div>
-                        <div className="flex items-center space-x-2 text-xs text-gray-500">
+                        <div className="flex items-center space-x-2 text-xs text-slate-500">
                           <Camera className="h-3 w-3" />
                           <span>{detection.camera_name}</span>
                           <Clock className="h-3 w-3" />
@@ -348,7 +349,7 @@ const LiveDetectionPage: React.FC = () => {
                         </div>
                         <div className="mt-1">
                           <Badge variant="secondary" className="text-xs">
-                            {(detection.confidence * 100).toFixed(1)}% confidence
+                            {(detection.confidence * 100).toFixed(1)}% độ tin cậy
                           </Badge>
                         </div>
                       </div>
@@ -366,11 +367,10 @@ const LiveDetectionPage: React.FC = () => {
                   </motion.div>
                 ))}
               </AnimatePresence>
-              
               {filteredDetections.length === 0 && (
                 <div className="text-center py-8">
-                  <Eye className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                  <p className="text-gray-500 text-sm">No recent detections</p>
+                  <Eye className="h-8 w-8 text-slate-400 mx-auto mb-2" />
+                  <p className="text-slate-500 text-sm">Không có nhận diện gần đây</p>
                 </div>
               )}
             </div>

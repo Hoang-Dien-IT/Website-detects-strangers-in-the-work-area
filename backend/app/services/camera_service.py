@@ -99,40 +99,61 @@ class CameraService:
             raise ValueError(f"Failed to create camera: {str(e)}")
 
     async def _async_test_camera_connection(self, camera_url: str) -> bool:
-        """Test camera connection async (basic network check)"""
+        """Test camera connection async với OpenCV"""
         try:
             if not camera_url:
                 return False
             
-            # Parse URL để lấy host và port
-            if camera_url.startswith('rtsp://'):
-                # Parse RTSP URL
-                pattern = r'rtsp://(?:([^:@]+):([^@]+)@)?([^:/]+)(?::(\d+))?'
-                match = re.match(pattern, camera_url)
-                if match:
-                    host = match.group(3)
-                    port = int(match.group(4)) if match.group(4) else 554
-                else:
-                    return False
-            elif camera_url.startswith('http://') or camera_url.startswith('https://'):
-                # Parse HTTP URL
-                parsed = urllib.parse.urlparse(camera_url)
-                host = parsed.hostname
-                port = parsed.port or (443 if parsed.scheme == 'https' else 80)
-            else:
-                # Webcam hoặc file path
-                return True
+            print(f"🔵 Testing camera connection: {camera_url}")
             
-            # Test network connection
+            # Chạy test OpenCV trong thread pool để tránh blocking
             loop = asyncio.get_event_loop()
-            return await loop.run_in_executor(None, self._test_socket_connection, host, port)
+            result = await loop.run_in_executor(None, self._test_opencv_connection, camera_url)
+            
+            if result:
+                print(f"✅ Camera connection successful: {camera_url}")
+            else:
+                print(f"❌ Camera connection failed: {camera_url}")
+            
+            return result
             
         except Exception as e:
-            print(f"Connection test error: {e}")
+            print(f"❌ Connection test error: {e}")
             return False
 
+    def _test_opencv_connection(self, camera_url: str) -> bool:
+        """Test camera connection using OpenCV"""
+        cap = None
+        try:
+            # Khởi tạo VideoCapture
+            cap = cv2.VideoCapture(camera_url)
+            
+            if not cap.isOpened():
+                return False
+            
+            # Thiết lập timeout cho IP camera
+            cap.set(cv2.CAP_PROP_OPEN_TIMEOUT_MSEC, 5000)  # 5 giây timeout
+            cap.set(cv2.CAP_PROP_READ_TIMEOUT_MSEC, 3000)  # 3 giây read timeout
+            
+            # Thử đọc một frame
+            ret, frame = cap.read()
+            
+            if ret and frame is not None:
+                print(f"✅ Successfully read frame from camera, size: {frame.shape}")
+                return True
+            else:
+                print(f"❌ Cannot read frame from camera")
+                return False
+                
+        except Exception as e:
+            print(f"❌ OpenCV connection error: {e}")
+            return False
+        finally:
+            if cap:
+                cap.release()
+
     def _test_socket_connection(self, host: str, port: int) -> bool:
-        """Test socket connection to host:port"""
+        """Test socket connection to host:port (backup method)"""
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.settimeout(5)  # 5 second timeout

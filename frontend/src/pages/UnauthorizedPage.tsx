@@ -72,33 +72,33 @@ const UnauthorizedPage: React.FC = () => {
 
   const accessRequirements = {
     admin: {
-      title: 'Administrator Access Required',
-      description: 'This page requires administrator privileges to access.',
-      icon: <Shield className="h-16 w-16 text-red-500" />,
+      title: 'Yêu cầu quyền Quản trị viên',
+      description: 'Trang này chỉ dành cho tài khoản quản trị viên hệ thống.',
+      icon: <Shield className="h-16 w-16 text-emerald-600" />,
       suggestions: [
-        'Contact your system administrator to request admin access',
-        'Verify you are logged in with the correct account',
-        'Check if your account has the necessary permissions'
+        'Liên hệ quản trị viên để được cấp quyền',
+        'Đảm bảo bạn đã đăng nhập đúng tài khoản',
+        'Kiểm tra lại quyền truy cập của bạn trong hệ thống'
       ]
     },
     manager: {
-      title: 'Manager Access Required',
-      description: 'This page requires manager-level permissions to access.',
-      icon: <Users className="h-16 w-16 text-orange-500" />,
+      title: 'Yêu cầu quyền Quản lý',
+      description: 'Trang này chỉ dành cho tài khoản quản lý.',
+      icon: <Users className="h-16 w-16 text-blue-500" />,
       suggestions: [
-        'Contact your manager to request elevated permissions',
-        'Verify your role in the system',
-        'Check with HR about your access level'
+        'Liên hệ quản lý để được cấp quyền',
+        'Xác nhận vai trò của bạn trong hệ thống',
+        'Trao đổi với bộ phận nhân sự về quyền truy cập'
       ]
     },
     premium: {
-      title: 'Premium Feature',
-      description: 'This feature requires a premium subscription to access.',
+      title: 'Tính năng nâng cao',
+      description: 'Bạn cần nâng cấp gói dịch vụ để sử dụng tính năng này.',
       icon: <Key className="h-16 w-16 text-purple-500" />,
       suggestions: [
-        'Upgrade to a premium plan to access this feature',
-        'Contact sales for subscription options',
-        'Check your current plan limitations'
+        'Nâng cấp gói dịch vụ để truy cập tính năng',
+        'Liên hệ bộ phận kinh doanh để được tư vấn',
+        'Kiểm tra lại gói dịch vụ hiện tại của bạn'
       ]
     }
   };
@@ -106,7 +106,7 @@ const UnauthorizedPage: React.FC = () => {
   const requirement = accessRequirements[requiredRole as keyof typeof accessRequirements] || accessRequirements.admin;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 flex items-center justify-center p-4">
+  <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-blue-50 flex items-center justify-center p-4">
       <motion.div 
         className="max-w-2xl w-full text-center space-y-8"
         variants={animationVariants.container}
@@ -115,7 +115,7 @@ const UnauthorizedPage: React.FC = () => {
       >
         {/* Error Icon & Code */}
         <motion.div variants={animationVariants.item} className="relative">
-          <div className="inline-flex items-center justify-center w-32 h-32 bg-gradient-to-r from-red-500 to-orange-500 rounded-full mb-6 relative overflow-hidden">
+          <div className="inline-flex items-center justify-center w-32 h-32 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full mb-6 relative overflow-hidden">
             <div className="absolute inset-0 bg-white/20 backdrop-blur-sm rounded-full"></div>
             <UserX className="w-16 h-16 text-white z-10" />
             
@@ -136,7 +136,7 @@ const UnauthorizedPage: React.FC = () => {
           
           {/* 403 Text */}
           <motion.div 
-            className="text-8xl md:text-9xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent"
+            className="text-8xl md:text-9xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent"
             variants={animationVariants.item}
           >
             403
@@ -145,10 +145,10 @@ const UnauthorizedPage: React.FC = () => {
 
         {/* Error Message */}
         <motion.div variants={animationVariants.item} className="space-y-4">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
-            Access Denied
+          <h1 className="text-3xl md:text-4xl font-bold text-emerald-900">
+            Không có quyền truy cập
           </h1>
-          <p className="text-lg text-gray-600 max-w-md mx-auto">
+          <p className="text-lg text-slate-600 max-w-md mx-auto">
             {requirement.description}
           </p>
           
@@ -156,28 +156,28 @@ const UnauthorizedPage: React.FC = () => {
           {isAuthenticated && user && (
             <div className="flex items-center justify-center space-x-4 text-sm bg-white/60 backdrop-blur-sm rounded-lg p-4 border">
               <div className="flex items-center space-x-2">
-                <span className="text-gray-600">Logged in as:</span>
+                <span className="text-slate-600">Tài khoản:</span>
                 <Badge variant="outline">
                   {user.full_name || user.username}
                 </Badge>
                 {user.is_admin ? (
-                  <Badge variant="default" className="bg-red-600">Admin</Badge>
+                  <Badge variant="default" className="bg-emerald-600">Quản trị viên</Badge>
                 ) : (
-                  <Badge variant="secondary">User</Badge>
+                  <Badge variant="secondary">Người dùng</Badge>
                 )}
               </div>
             </div>
           )}
 
           {/* Attempted access info */}
-          <div className="text-sm text-gray-500">
-            <p>Attempted to access: <code className="bg-gray-100 px-2 py-1 rounded text-gray-700">{from}</code></p>
+          <div className="text-sm text-slate-500">
+            <p>Đường dẫn bạn cố truy cập: <code className="bg-slate-100 px-2 py-1 rounded text-slate-700">{from}</code></p>
           </div>
         </motion.div>
 
         {/* Main Alert */}
         <motion.div variants={animationVariants.item}>
-          <Alert variant="destructive" className="border-red-200 bg-red-50">
+          <Alert variant="destructive" className="border-emerald-200 bg-emerald-50">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription className="text-left">
               <div className="space-y-3">
@@ -186,13 +186,12 @@ const UnauthorizedPage: React.FC = () => {
                 </div>
                 <h3 className="font-semibold text-lg text-center">{requirement.title}</h3>
                 <p className="text-center mb-4">{requirement.description}</p>
-                
                 <div className="space-y-2">
-                  <h4 className="font-medium">What you can do:</h4>
+                  <h4 className="font-medium">Bạn có thể:</h4>
                   <ul className="space-y-1 text-sm">
                     {requirement.suggestions.map((suggestion, index) => (
                       <li key={index} className="flex items-start space-x-2">
-                        <span className="text-red-500 mt-1">•</span>
+                        <span className="text-emerald-600 mt-1">•</span>
                         <span>{suggestion}</span>
                       </li>
                     ))}
@@ -205,19 +204,17 @@ const UnauthorizedPage: React.FC = () => {
 
         {/* Action Buttons */}
         <motion.div variants={animationVariants.item} className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button onClick={handleGoHome} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+          <Button onClick={handleGoHome} className="bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700">
             <Home className="h-4 w-4 mr-2" />
-            {isAuthenticated ? 'Go to Dashboard' : 'Go to Home'}
+            {isAuthenticated ? 'Về trang chính' : 'Về trang chủ'}
           </Button>
-          
-          <Button variant="outline" onClick={handleGoBack}>
+          <Button variant="outline" className="border-emerald-300 text-emerald-700" onClick={handleGoBack}>
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Go Back
+            Quay lại
           </Button>
-          
-          <Button variant="outline" onClick={handleContactAdmin}>
+          <Button variant="outline" className="border-emerald-300 text-emerald-700" onClick={handleContactAdmin}>
             <HelpCircle className="h-4 w-4 mr-2" />
-            Get Help
+            Liên hệ hỗ trợ
           </Button>
         </motion.div>
 
@@ -227,7 +224,7 @@ const UnauthorizedPage: React.FC = () => {
             <CardHeader>
               <CardTitle className="flex items-center justify-center space-x-2">
                 <Phone className="h-5 w-5 text-blue-600" />
-                <span>Need Access?</span>
+                <span>Cần cấp quyền?</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -241,8 +238,8 @@ const UnauthorizedPage: React.FC = () => {
                     <Mail className="h-4 w-4" />
                   </div>
                   <div className="text-center">
-                    <span className="text-sm font-medium">Email Admin</span>
-                    <p className="text-xs text-gray-600">Request access via email</p>
+                    <span className="text-sm font-medium">Gửi email cho quản trị viên</span>
+                    <p className="text-xs text-slate-600">Yêu cầu cấp quyền qua email</p>
                   </div>
                 </Button>
 
@@ -255,8 +252,8 @@ const UnauthorizedPage: React.FC = () => {
                     <HelpCircle className="h-4 w-4" />
                   </div>
                   <div className="text-center">
-                    <span className="text-sm font-medium">Contact Support</span>
-                    <p className="text-xs text-gray-600">Get help from our team</p>
+                    <span className="text-sm font-medium">Liên hệ hỗ trợ</span>
+                    <p className="text-xs text-slate-600">Nhận hỗ trợ từ đội ngũ SafeFace</p>
                   </div>
                 </Button>
               </div>
@@ -271,25 +268,25 @@ const UnauthorizedPage: React.FC = () => {
               <CardHeader>
                 <CardTitle className="flex items-center justify-center space-x-2">
                   <Eye className="h-5 w-5 text-green-600" />
-                  <span>Available to You</span>
+                  <span>Truy cập nhanh</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {[
-                    { label: 'Dashboard', icon: <Home className="h-4 w-4" />, path: '/dashboard' },
-                    { label: 'Profile', icon: <Users className="h-4 w-4" />, path: '/profile' },
-                    { label: 'Settings', icon: <Settings className="h-4 w-4" />, path: '/settings' },
-                    { label: 'Help', icon: <HelpCircle className="h-4 w-4" />, path: '/help' }
+                    { label: 'Trang chính', icon: <Home className="h-4 w-4" />, path: '/dashboard' },
+                    { label: 'Hồ sơ', icon: <Users className="h-4 w-4" />, path: '/profile' },
+                    { label: 'Cài đặt', icon: <Settings className="h-4 w-4" />, path: '/settings' },
+                    { label: 'Hỗ trợ', icon: <HelpCircle className="h-4 w-4" />, path: '/help' }
                   ].map((action, index) => (
                     <Button
                       key={index}
                       variant="ghost"
                       size="sm"
-                      className="h-auto p-3 flex flex-col items-center space-y-1 hover:bg-gray-50"
+                      className="h-auto p-3 flex flex-col items-center space-y-1 hover:bg-slate-50"
                       onClick={() => navigate(action.path)}
                     >
-                      <div className="p-1 bg-gray-100 rounded text-gray-600">
+                      <div className="p-1 bg-slate-100 rounded text-emerald-700">
                         {action.icon}
                       </div>
                       <span className="text-xs font-medium">{action.label}</span>
@@ -304,20 +301,17 @@ const UnauthorizedPage: React.FC = () => {
         {/* Security Notice */}
         <motion.div variants={animationVariants.item} className="bg-white/60 backdrop-blur-sm rounded-lg p-6 border">
           <div className="flex items-center justify-center space-x-2 mb-3">
-            <Lock className="h-5 w-5 text-blue-600" />
-            <h3 className="text-lg font-semibold text-gray-900">Security Notice</h3>
+            <Lock className="h-5 w-5 text-emerald-600" />
+            <h3 className="text-lg font-semibold text-emerald-900">Thông báo bảo mật</h3>
           </div>
-          
-          <p className="text-gray-600 text-sm">
-            This access restriction is in place to protect sensitive system resources. 
-            All access attempts are logged for security purposes. If you believe you should 
-            have access to this resource, please contact your system administrator.
+          <p className="text-slate-600 text-sm">
+            Việc giới hạn truy cập này nhằm bảo vệ tài nguyên quan trọng của hệ thống. Mọi lượt truy cập đều được ghi nhận để đảm bảo an toàn. Nếu bạn nghĩ mình cần quyền truy cập, vui lòng liên hệ quản trị viên hệ thống.
           </p>
         </motion.div>
 
         {/* Footer */}
-        <motion.div variants={animationVariants.item} className="text-xs text-gray-400">
-          <p>© 2024 SafeFace AI Technologies. All rights reserved.</p>
+        <motion.div variants={animationVariants.item} className="text-xs text-slate-400">
+          <p>© 2024 SafeFace. Đã đăng ký bản quyền.</p>
         </motion.div>
       </motion.div>
     </div>

@@ -209,87 +209,87 @@ const SecuritySettingsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+  <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-blue-50">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <motion.div {...fadeInUp} className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Security Settings</h1>
-              <p className="text-gray-600">Manage your account security, authentication, and access controls</p>
+              <h1 className="text-3xl font-bold text-emerald-900 mb-2">Cài đặt bảo mật</h1>
+              <p className="text-slate-600">Quản lý bảo mật tài khoản, xác thực và quyền truy cập hệ thống SafeFace</p>
             </div>
             <div className="flex items-center space-x-3">
               <div className={`flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-medium ${
                 isConnected 
-                  ? 'bg-green-100 text-green-800' 
+                  ? 'bg-emerald-100 text-emerald-800' 
                   : 'bg-red-100 text-red-800'
               }`}>
-                <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
-                <span>{isConnected ? 'Connected' : 'Disconnected'}</span>
+                <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-500' : 'bg-red-500'}`} />
+                <span>{isConnected ? 'Đã kết nối' : 'Mất kết nối'}</span>
               </div>
               <Button 
                 variant="outline" 
                 onClick={() => navigate('/app/settings')}
-                className="flex items-center space-x-2"
+                className="flex items-center space-x-2 border-emerald-300 hover:bg-emerald-50 text-emerald-700"
               >
-                <Settings className="h-4 w-4" />
-                <span>Back to Settings</span>
+                <Settings className="h-4 w-4 text-emerald-700" />
+                <span>Quay lại cài đặt</span>
               </Button>
             </div>
           </div>
 
-          {/* Security Status Overview */}
+          {/* Tổng quan bảo mật */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Two-Factor Auth</p>
-                    <p className="text-lg font-semibold text-gray-900">
-                      {securitySettings.two_factor_enabled ? 'Enabled' : 'Disabled'}
+                    <p className="text-sm text-slate-600">Xác thực 2 lớp</p>
+                    <p className="text-lg font-semibold text-emerald-900">
+                      {securitySettings.two_factor_enabled ? 'Đã bật' : 'Chưa bật'}
                     </p>
                   </div>
-                  <ShieldCheck className={`h-8 w-8 ${securitySettings.two_factor_enabled ? 'text-green-600' : 'text-gray-400'}`} />
+                  <ShieldCheck className={`h-8 w-8 ${securitySettings.two_factor_enabled ? 'text-emerald-600' : 'text-slate-400'}`} />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Login Alerts</p>
-                    <p className="text-lg font-semibold text-gray-900">
-                      {securitySettings.login_alerts ? 'Active' : 'Inactive'}
+                    <p className="text-sm text-slate-600">Cảnh báo đăng nhập</p>
+                    <p className="text-lg font-semibold text-emerald-900">
+                      {securitySettings.login_alerts ? 'Đang bật' : 'Đang tắt'}
                     </p>
                   </div>
-                  <AlertCircle className={`h-8 w-8 ${securitySettings.login_alerts ? 'text-blue-600' : 'text-gray-400'}`} />
+                  <AlertCircle className={`h-8 w-8 ${securitySettings.login_alerts ? 'text-blue-600' : 'text-slate-400'}`} />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Session Timeout</p>
-                    <p className="text-lg font-semibold text-gray-900">{securitySettings.session_timeout} min</p>
+                    <p className="text-sm text-slate-600">Thời gian hết phiên</p>
+                    <p className="text-lg font-semibold text-emerald-900">{securitySettings.session_timeout} phút</p>
                   </div>
                   <Clock className="h-8 w-8 text-purple-600" />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">IP Whitelist</p>
-                    <p className="text-lg font-semibold text-gray-900">
-                      {securitySettings.ip_whitelist_enabled ? `${securitySettings.ip_whitelist.length} IPs` : 'Disabled'}
+                    <p className="text-sm text-slate-600">Danh sách IP cho phép</p>
+                    <p className="text-lg font-semibold text-emerald-900">
+                      {securitySettings.ip_whitelist_enabled ? `${securitySettings.ip_whitelist.length} IP` : 'Chưa bật'}
                     </p>
                   </div>
-                  <Globe className={`h-8 w-8 ${securitySettings.ip_whitelist_enabled ? 'text-orange-600' : 'text-gray-400'}`} />
+                  <Globe className={`h-8 w-8 ${securitySettings.ip_whitelist_enabled ? 'text-orange-600' : 'text-slate-400'}`} />
                 </div>
               </CardContent>
             </Card>
@@ -299,11 +299,11 @@ const SecuritySettingsPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Authentication Settings */}
           <motion.div {...fadeInUp} className="space-y-6">
-            <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
-                  <Shield className="h-5 w-5 text-blue-600" />
-                  <span>Authentication</span>
+                  <Shield className="h-5 w-5 text-emerald-600" />
+                  <span>Xác thực & đăng nhập</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -311,21 +311,21 @@ const SecuritySettingsPage: React.FC = () => {
                   <div className="space-y-0.5">
                     <Label className="flex items-center space-x-2">
                       <QrCode className="w-4 h-4" />
-                      <span>Two-Factor Authentication</span>
+                      <span>Xác thực 2 lớp (2FA)</span>
                     </Label>
-                    <p className="text-sm text-gray-600">Add extra security with 2FA</p>
+                    <p className="text-sm text-slate-600">Tăng bảo mật với xác thực hai lớp</p>
                   </div>
                   <div className="flex items-center space-x-2">
                     {securitySettings.two_factor_enabled ? (
                       <>
-                        <Badge className="bg-green-100 text-green-800">Enabled</Badge>
-                        <Button size="sm" variant="outline" onClick={handleDisable2FA}>
-                          Disable
+                        <Badge className="bg-emerald-100 text-emerald-800">Đã bật</Badge>
+                        <Button size="sm" variant="outline" className="border-emerald-300 text-emerald-700" onClick={handleDisable2FA}>
+                          Tắt 2FA
                         </Button>
                       </>
                     ) : (
-                      <Button size="sm" onClick={() => setShow2FADialog(true)}>
-                        Enable 2FA
+                      <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold" onClick={() => setShow2FADialog(true)}>
+                        Bật 2FA
                       </Button>
                     )}
                   </div>
@@ -337,9 +337,9 @@ const SecuritySettingsPage: React.FC = () => {
                   <div className="space-y-0.5">
                     <Label className="flex items-center space-x-2">
                       <Mail className="w-4 h-4" />
-                      <span>Login Alerts</span>
+                      <span>Cảnh báo đăng nhập</span>
                     </Label>
-                    <p className="text-sm text-gray-600">Get notified of new login attempts</p>
+                    <p className="text-sm text-slate-600">Nhận thông báo khi có đăng nhập mới</p>
                   </div>
                   <Switch
                     checked={securitySettings.login_alerts}
@@ -352,7 +352,7 @@ const SecuritySettingsPage: React.FC = () => {
                 <Separator />
 
                 <div className="space-y-4">
-                  <Label>Session Timeout (minutes)</Label>
+                  <Label>Thời gian hết phiên (phút)</Label>
                   <Select
                     value={securitySettings.session_timeout.toString()}
                     onValueChange={(value) => 
@@ -363,11 +363,11 @@ const SecuritySettingsPage: React.FC = () => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="15">15 minutes</SelectItem>
-                      <SelectItem value="30">30 minutes</SelectItem>
-                      <SelectItem value="60">1 hour</SelectItem>
-                      <SelectItem value="120">2 hours</SelectItem>
-                      <SelectItem value="480">8 hours</SelectItem>
+                      <SelectItem value="15">15 phút</SelectItem>
+                      <SelectItem value="30">30 phút</SelectItem>
+                      <SelectItem value="60">1 giờ</SelectItem>
+                      <SelectItem value="120">2 giờ</SelectItem>
+                      <SelectItem value="480">8 giờ</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -378,9 +378,9 @@ const SecuritySettingsPage: React.FC = () => {
                   <div className="space-y-0.5">
                     <Label className="flex items-center space-x-2">
                       <Monitor className="w-4 h-4" />
-                      <span>Auto Logout</span>
+                      <span>Tự động đăng xuất</span>
                     </Label>
-                    <p className="text-sm text-gray-600">Automatically logout when inactive</p>
+                    <p className="text-sm text-slate-600">Tự động đăng xuất khi không hoạt động</p>
                   </div>
                   <Switch
                     checked={securitySettings.auto_logout}
@@ -393,16 +393,16 @@ const SecuritySettingsPage: React.FC = () => {
             </Card>
 
             {/* Password Change */}
-            <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
-                  <Key className="h-5 w-5 text-green-600" />
-                  <span>Change Password</span>
+                  <Key className="h-5 w-5 text-emerald-600" />
+                  <span>Đổi mật khẩu</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="current_password">Current Password</Label>
+                  <Label htmlFor="current_password">Mật khẩu hiện tại</Label>
                   <div className="relative">
                     <Input
                       id="current_password"
@@ -427,7 +427,7 @@ const SecuritySettingsPage: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="new_password">New Password</Label>
+                  <Label htmlFor="new_password">Mật khẩu mới</Label>
                   <div className="relative">
                     <Input
                       id="new_password"
@@ -452,7 +452,7 @@ const SecuritySettingsPage: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="confirm_password">Confirm New Password</Label>
+                  <Label htmlFor="confirm_password">Xác nhận mật khẩu mới</Label>
                   <div className="relative">
                     <Input
                       id="confirm_password"
@@ -479,10 +479,10 @@ const SecuritySettingsPage: React.FC = () => {
                 <Button 
                   onClick={handlePasswordChange} 
                   disabled={loading} 
-                  className="w-full"
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
                 >
                   {loading ? <RefreshCw className="h-4 w-4 mr-2 animate-spin" /> : <Key className="h-4 w-4 mr-2" />}
-                  Change Password
+                  Đổi mật khẩu
                 </Button>
               </CardContent>
             </Card>
@@ -490,11 +490,11 @@ const SecuritySettingsPage: React.FC = () => {
 
           {/* Advanced Security */}
           <motion.div {...fadeInUp} className="space-y-6">
-            <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <Lock className="h-5 w-5 text-red-600" />
-                  <span>Access Control</span>
+                  <span>Kiểm soát truy cập</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -502,9 +502,9 @@ const SecuritySettingsPage: React.FC = () => {
                   <div className="space-y-0.5">
                     <Label className="flex items-center space-x-2">
                       <Globe className="w-4 h-4" />
-                      <span>IP Whitelist</span>
+                      <span>Danh sách IP cho phép</span>
                     </Label>
-                    <p className="text-sm text-gray-600">Restrict access to specific IP addresses</p>
+                    <p className="text-sm text-slate-600">Chỉ cho phép truy cập từ các địa chỉ IP này</p>
                   </div>
                   <Switch
                     checked={securitySettings.ip_whitelist_enabled}
@@ -518,21 +518,21 @@ const SecuritySettingsPage: React.FC = () => {
                   <div className="space-y-4">
                     <div className="flex space-x-2">
                       <Input
-                        placeholder="Enter IP address (e.g., 192.168.1.1)"
+                        placeholder="Nhập địa chỉ IP (vd: 192.168.1.1)"
                         value={newIPAddress}
                         onChange={(e) => setNewIPAddress(e.target.value)}
                       />
-                      <Button onClick={addIPAddress} size="sm">
-                        Add
+                      <Button onClick={addIPAddress} size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold">
+                        Thêm
                       </Button>
                     </div>
                     
                     {securitySettings.ip_whitelist.length > 0 && (
                       <div className="space-y-2">
-                        <Label>Allowed IP Addresses</Label>
+                        <Label>Danh sách IP đã thêm</Label>
                         <div className="max-h-32 overflow-y-auto space-y-1">
                           {securitySettings.ip_whitelist.map((ip, index) => (
-                            <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                            <div key={index} className="flex items-center justify-between p-2 bg-slate-50 rounded">
                               <span className="text-sm font-mono">{ip}</span>
                               <Button
                                 size="sm"
@@ -540,7 +540,7 @@ const SecuritySettingsPage: React.FC = () => {
                                 onClick={() => removeIPAddress(ip)}
                                 className="text-red-600 hover:text-red-800"
                               >
-                                Remove
+                                Xóa
                               </Button>
                             </div>
                           ))}
@@ -553,7 +553,7 @@ const SecuritySettingsPage: React.FC = () => {
                 <Separator />
 
                 <div className="space-y-4">
-                  <Label>Login Attempts Limit</Label>
+                  <Label>Giới hạn số lần đăng nhập sai</Label>
                   <Select
                     value={securitySettings.login_attempts_limit.toString()}
                     onValueChange={(value) => 
@@ -564,31 +564,31 @@ const SecuritySettingsPage: React.FC = () => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="3">3 attempts</SelectItem>
-                      <SelectItem value="5">5 attempts</SelectItem>
-                      <SelectItem value="10">10 attempts</SelectItem>
-                      <SelectItem value="0">Unlimited</SelectItem>
+                      <SelectItem value="3">3 lần</SelectItem>
+                      <SelectItem value="5">5 lần</SelectItem>
+                      <SelectItem value="10">10 lần</SelectItem>
+                      <SelectItem value="0">Không giới hạn</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-4">
-                  <Label>Account Lockout Duration (minutes)</Label>
+                  <Label>Thời gian khóa tài khoản (phút)</Label>
                   <Select
                     value={securitySettings.account_lockout_duration.toString()}
-                    onValueChange={(value) => 
-                      setSecuritySettings(prev => ({ ...prev, account_lockout_duration: parseInt(value) }))
-                    }
+                    onValueChange={(value) => {
+                      setSecuritySettings(prev => ({ ...prev, account_lockout_duration: parseInt(value) }));
+                    }}
                   >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="5">5 minutes</SelectItem>
-                      <SelectItem value="15">15 minutes</SelectItem>
-                      <SelectItem value="30">30 minutes</SelectItem>
-                      <SelectItem value="60">1 hour</SelectItem>
-                      <SelectItem value="1440">24 hours</SelectItem>
+                      <SelectItem value="5">5 phút</SelectItem>
+                      <SelectItem value="15">15 phút</SelectItem>
+                      <SelectItem value="30">30 phút</SelectItem>
+                      <SelectItem value="60">1 giờ</SelectItem>
+                      <SelectItem value="1440">24 giờ</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -596,11 +596,11 @@ const SecuritySettingsPage: React.FC = () => {
             </Card>
 
             {/* Audit & Monitoring */}
-            <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <History className="h-5 w-5 text-purple-600" />
-                  <span>Audit & Monitoring</span>
+                  <span>Giám sát & nhật ký</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -608,9 +608,9 @@ const SecuritySettingsPage: React.FC = () => {
                   <div className="space-y-0.5">
                     <Label className="flex items-center space-x-2">
                       <Database className="w-4 h-4" />
-                      <span>Session Recording</span>
+                      <span>Ghi lại phiên đăng nhập</span>
                     </Label>
-                    <p className="text-sm text-gray-600">Record user sessions for security auditing</p>
+                    <p className="text-sm text-slate-600">Lưu lại hoạt động người dùng để kiểm tra bảo mật</p>
                   </div>
                   <Switch
                     checked={securitySettings.enable_session_recording}
@@ -623,7 +623,7 @@ const SecuritySettingsPage: React.FC = () => {
                 <Separator />
 
                 <div className="space-y-4">
-                  <Label>Audit Log Retention (days)</Label>
+                  <Label>Thời gian lưu nhật ký (ngày)</Label>
                   <Select
                     value={securitySettings.audit_log_retention.toString()}
                     onValueChange={(value) => 
@@ -634,11 +634,11 @@ const SecuritySettingsPage: React.FC = () => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="7">7 days</SelectItem>
-                      <SelectItem value="30">30 days</SelectItem>
-                      <SelectItem value="90">90 days</SelectItem>
-                      <SelectItem value="365">1 year</SelectItem>
-                      <SelectItem value="-1">Forever</SelectItem>
+                      <SelectItem value="7">7 ngày</SelectItem>
+                      <SelectItem value="30">30 ngày</SelectItem>
+                      <SelectItem value="90">90 ngày</SelectItem>
+                      <SelectItem value="365">1 năm</SelectItem>
+                      <SelectItem value="-1">Vĩnh viễn</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -649,15 +649,15 @@ const SecuritySettingsPage: React.FC = () => {
 
         {/* Save Button */}
         <motion.div {...fadeInUp} className="mt-8">
-          <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+          <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
             <CardContent className="p-6">
               <Button 
                 onClick={handleSecuritySettingsUpdate} 
                 disabled={loading} 
-                className="w-full"
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
               >
                 {loading ? <RefreshCw className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
-                Save Security Settings
+                Lưu cài đặt bảo mật
               </Button>
             </CardContent>
           </Card>
@@ -668,9 +668,7 @@ const SecuritySettingsPage: React.FC = () => {
           <Alert className="border-amber-200 bg-amber-50">
             <AlertCircle className="h-4 w-4 text-amber-600" />
             <AlertDescription className="text-amber-800">
-              <strong>Security Recommendations:</strong> Enable two-factor authentication, use strong passwords, 
-              and regularly review your security settings. Consider enabling IP whitelisting if you access 
-              the system from fixed locations.
+              <strong>Khuyến nghị bảo mật:</strong> Hãy bật xác thực 2 lớp, sử dụng mật khẩu mạnh và thường xuyên kiểm tra lại cài đặt bảo mật. Nếu bạn truy cập từ địa chỉ cố định, hãy bật danh sách IP cho phép.
             </AlertDescription>
           </Alert>
         </motion.div>
@@ -682,25 +680,25 @@ const SecuritySettingsPage: React.FC = () => {
           <DialogHeader>
             <DialogTitle className="flex items-center space-x-2">
               <QrCode className="h-5 w-5" />
-              <span>Setup Two-Factor Authentication</span>
+              <span>Kích hoạt xác thực 2 lớp (2FA)</span>
             </DialogTitle>
             <DialogDescription>
-              Scan this QR code with your authenticator app and enter the verification code.
+              Quét mã QR này bằng ứng dụng xác thực và nhập mã xác minh bên dưới.
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4">
-            <div className="flex justify-center p-4 bg-gray-50 rounded-lg">
-              <div className="w-32 h-32 bg-white border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
-                <QrCode className="h-16 w-16 text-gray-400" />
+            <div className="flex justify-center p-4 bg-slate-50 rounded-lg">
+              <div className="w-32 h-32 bg-white border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-center">
+                <QrCode className="h-16 w-16 text-slate-400" />
               </div>
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="2fa_code">Verification Code</Label>
+              <Label htmlFor="2fa_code">Mã xác minh</Label>
               <Input
                 id="2fa_code"
-                placeholder="Enter 6-digit code"
+                placeholder="Nhập mã 6 số"
                 value={twoFactorCode}
                 onChange={(e) => setTwoFactorCode(e.target.value)}
                 maxLength={6}
@@ -709,12 +707,12 @@ const SecuritySettingsPage: React.FC = () => {
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShow2FADialog(false)}>
-              Cancel
+            <Button variant="outline" className="border-emerald-300 text-emerald-700" onClick={() => setShow2FADialog(false)}>
+              Hủy
             </Button>
-            <Button onClick={handleEnable2FA} disabled={loading || twoFactorCode.length !== 6}>
+            <Button className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold" onClick={handleEnable2FA} disabled={loading || twoFactorCode.length !== 6}>
               {loading ? <RefreshCw className="h-4 w-4 mr-2 animate-spin" /> : null}
-              Enable 2FA
+              Kích hoạt 2FA
             </Button>
           </DialogFooter>
         </DialogContent>

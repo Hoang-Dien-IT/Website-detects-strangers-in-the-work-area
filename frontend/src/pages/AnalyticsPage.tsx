@@ -85,8 +85,6 @@ const AnalyticsPage: React.FC = () => {
     detection_types: []
   });
 
-  // const detectionTypeColors = ['#3B82F6', '#EF4444', '#10B981', '#F59E0B'];
-
   useEffect(() => {
     loadAnalytics();
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -102,7 +100,7 @@ const AnalyticsPage: React.FC = () => {
         detectionService.getChartData(timeRange, 'area')
       ]);
       
-      // Transform data for display
+      // Transform data for display with custom colors
       const transformedStats: AnalyticsStats = {
         total_detections: analyticsResponse.overview.total_detections,
         known_detections: analyticsResponse.overview.known_person_detections,
@@ -128,14 +126,14 @@ const AnalyticsPage: React.FC = () => {
         })),
         detection_types: [
           { 
-            name: 'Known Persons', 
+            name: 'Người Quen Biết', 
             value: analyticsResponse.overview.known_person_detections, 
-            color: '#10B981' 
+            color: '#059669' // Emerald-600 
           },
           { 
-            name: 'Strangers', 
+            name: 'Người Lạ', 
             value: analyticsResponse.overview.stranger_detections, 
-            color: '#EF4444' 
+            color: '#DC2626' // Red-600
           }
         ]
       };
@@ -144,7 +142,7 @@ const AnalyticsPage: React.FC = () => {
       
     } catch (error) {
       console.error('Error loading analytics:', error);
-      toast.error('Failed to load analytics data');
+      toast.error('Không thể tải dữ liệu thống kê');
       
       // Fallback to empty data
       setStats({
@@ -165,7 +163,7 @@ const AnalyticsPage: React.FC = () => {
 
   const handleExportReport = async () => {
     try {
-      toast.info('🔄 Exporting analytics report...');
+      toast.info('🔄 Đang xuất báo cáo thống kê...');
       
       const blob = await detectionService.exportStats(timeRange, 'csv');
       
@@ -173,16 +171,16 @@ const AnalyticsPage: React.FC = () => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `analytics-report-${timeRange}-${new Date().toISOString().split('T')[0]}.csv`;
+      link.download = `bao-cao-thong-ke-${timeRange}-${new Date().toISOString().split('T')[0]}.csv`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
       
-      toast.success('✅ Analytics report exported successfully');
+      toast.success('✅ Xuất báo cáo thống kê thành công');
     } catch (error) {
       console.error('Error exporting report:', error);
-      toast.error('❌ Failed to export analytics report');
+      toast.error('❌ Không thể xuất báo cáo thống kế');
     }
   };
 
@@ -191,92 +189,102 @@ const AnalyticsPage: React.FC = () => {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6 space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Analytics Dashboard</h1>
-          <p className="text-gray-600">Comprehensive insights and detection analytics</p>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+            Bảng Điều Khiển Thống Kê
+          </h1>
+          <p className="text-slate-600">Báo cáo chi tiết về hoạt động nhận diện khuôn mặt</p>
         </div>
         <div className="flex space-x-3">
           <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="w-32">
+            <SelectTrigger className="w-40 border-slate-300 focus:border-slate-500">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="24h">Last 24h</SelectItem>
-              <SelectItem value="7d">Last 7 days</SelectItem>
-              <SelectItem value="30d">Last 30 days</SelectItem>
-              <SelectItem value="90d">Last 90 days</SelectItem>
+              <SelectItem value="24h">24 giờ qua</SelectItem>
+              <SelectItem value="7d">7 ngày qua</SelectItem>
+              <SelectItem value="30d">30 ngày qua</SelectItem>
+              <SelectItem value="90d">90 ngày qua</SelectItem>
             </SelectContent>
           </Select>
-          <Button onClick={loadAnalytics} variant="outline">
+          <Button onClick={loadAnalytics} variant="outline" className="border-slate-300 hover:bg-slate-50">
             <RefreshCw className="w-4 h-4 mr-2" />
-            Refresh
+            Làm mới
           </Button>
-          <Button onClick={handleExportReport}>
+          <Button onClick={handleExportReport} className="bg-slate-800 hover:bg-slate-700 text-white">
             <Download className="w-4 h-4 mr-2" />
-            Export Report
+            Xuất báo cáo
           </Button>
         </div>
       </div>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
+        <Card className="border-slate-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Detections</CardTitle>
-            <Eye className="h-4 w-4 text-blue-600" />
+            <CardTitle className="text-sm font-medium text-slate-700">Tổng số nhận diện</CardTitle>
+            <div className="p-2 bg-blue-100 rounded-full">
+              <Eye className="h-4 w-4 text-blue-700" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.total_detections.toLocaleString()}</div>
-            <p className="text-xs text-green-600">
-              +12.5% from last period
+            <div className="text-2xl font-bold text-slate-900">{stats.total_detections.toLocaleString()}</div>
+            <p className="text-xs text-emerald-600 font-medium">
+              +12.5% so với kỳ trước
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-slate-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Known Persons</CardTitle>
-            <Users className="h-4 w-4 text-green-600" />
+            <CardTitle className="text-sm font-medium text-slate-700">Người quen biết</CardTitle>
+            <div className="p-2 bg-emerald-100 rounded-full">
+              <Users className="h-4 w-4 text-emerald-700" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.known_detections.toLocaleString()}</div>
-            <p className="text-xs text-gray-600">
+            <div className="text-2xl font-bold text-slate-900">{stats.known_detections.toLocaleString()}</div>
+            <p className="text-xs text-slate-600">
               {stats.total_detections > 0 
-                ? `${((stats.known_detections / stats.total_detections) * 100).toFixed(1)}% of total`
-                : '0% of total'
+                ? `${((stats.known_detections / stats.total_detections) * 100).toFixed(1)}% tổng số`
+                : '0% tổng số'
               }
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-slate-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Strangers Detected</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-red-600" />
+            <CardTitle className="text-sm font-medium text-slate-700">Người lạ phát hiện</CardTitle>
+            <div className="p-2 bg-red-100 rounded-full">
+              <AlertTriangle className="h-4 w-4 text-red-700" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.stranger_detections.toLocaleString()}</div>
-            <p className="text-xs text-gray-600">
+            <div className="text-2xl font-bold text-slate-900">{stats.stranger_detections.toLocaleString()}</div>
+            <p className="text-xs text-slate-600">
               {stats.total_detections > 0 
-                ? `${((stats.stranger_detections / stats.total_detections) * 100).toFixed(1)}% of total`
-                : '0% of total'
+                ? `${((stats.stranger_detections / stats.total_detections) * 100).toFixed(1)}% tổng số`
+                : '0% tổng số'
               }
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-slate-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Acquaintance rate</CardTitle>
-            <Target className="h-4 w-4 text-purple-600" />
+            <CardTitle className="text-sm font-medium text-slate-700">Tỷ lệ quen biết</CardTitle>
+            <div className="p-2 bg-purple-100 rounded-full">
+              <Target className="h-4 w-4 text-purple-700" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.accuracy_rate}%</div>
-            <p className="text-xs text-green-600">
-              +0.3% improvement
+            <div className="text-2xl font-bold text-slate-900">{stats.accuracy_rate}%</div>
+            <p className="text-xs text-emerald-600 font-medium">
+              +0.3% cải thiện
             </p>
           </CardContent>
         </Card>
@@ -284,53 +292,68 @@ const AnalyticsPage: React.FC = () => {
 
       {/* Charts Section */}
       <Tabs defaultValue="trends" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="trends">Detection Trends</TabsTrigger>
-          <TabsTrigger value="patterns">Time Patterns</TabsTrigger>
-          <TabsTrigger value="cameras">Camera Performance</TabsTrigger>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
+        <TabsList className="bg-slate-100 border border-slate-200">
+          <TabsTrigger value="trends" className="data-[state=active]:bg-white data-[state=active]:text-slate-800">
+            Xu hướng nhận diện
+          </TabsTrigger>
+          <TabsTrigger value="patterns" className="data-[state=active]:bg-white data-[state=active]:text-slate-800">
+            Mẫu thời gian
+          </TabsTrigger>
+          <TabsTrigger value="cameras" className="data-[state=active]:bg-white data-[state=active]:text-slate-800">
+            Hiệu suất camera
+          </TabsTrigger>
+          <TabsTrigger value="overview" className="data-[state=active]:bg-white data-[state=active]:text-slate-800">
+            Tổng quan
+          </TabsTrigger>
         </TabsList>
 
         {/* Detection Trends */}
         <TabsContent value="trends" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Detection Trends Over Time</CardTitle>
+          <Card className="border-slate-200 shadow-lg">
+            <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-200">
+              <CardTitle className="text-slate-800">Xu hướng nhận diện theo thời gian</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
               {stats.detection_trends.length > 0 ? (
                 <ResponsiveContainer width="100%" height={400}>
                   <AreaChart data={stats.detection_trends}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <Tooltip />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                    <XAxis dataKey="date" tick={{ fill: '#64748b' }} />
+                    <YAxis tick={{ fill: '#64748b' }} />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'white', 
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                      }} 
+                    />
                     <Area 
                       type="monotone" 
                       dataKey="known" 
                       stackId="1"
-                      stroke="#10B981" 
-                      fill="#10B981" 
+                      stroke="#059669" 
+                      fill="#059669" 
                       fillOpacity={0.6}
-                      name="Known Persons"
+                      name="Người quen biết"
                     />
                     <Area 
                       type="monotone" 
                       dataKey="strangers" 
                       stackId="1"
-                      stroke="#EF4444" 
-                      fill="#EF4444" 
+                      stroke="#DC2626" 
+                      fill="#DC2626" 
                       fillOpacity={0.6}
-                      name="Strangers"
+                      name="Người lạ"
                     />
                   </AreaChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="flex items-center justify-center h-64 text-gray-500">
+                <div className="flex items-center justify-center h-64 text-slate-500">
                   <div className="text-center">
-                    <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                    <p>No detection trends data available</p>
-                    <p className="text-sm">Data will appear here once detections are recorded</p>
+                    <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-slate-400" />
+                    <p className="font-medium">Không có dữ liệu xu hướng nhận diện</p>
+                    <p className="text-sm">Dữ liệu sẽ xuất hiện khi có hoạt động nhận diện</p>
                   </div>
                 </div>
               )}
@@ -340,27 +363,34 @@ const AnalyticsPage: React.FC = () => {
 
         {/* Time Patterns */}
         <TabsContent value="patterns" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Hourly Detection Patterns</CardTitle>
+          <Card className="border-slate-200 shadow-lg">
+            <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-200">
+              <CardTitle className="text-slate-800">Mẫu nhận diện theo giờ</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
               {stats.hourly_patterns.length > 0 ? (
                 <ResponsiveContainer width="100%" height={400}>
                   <BarChart data={stats.hourly_patterns}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="hour" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="detections" fill="#3B82F6" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                    <XAxis dataKey="hour" tick={{ fill: '#64748b' }} />
+                    <YAxis tick={{ fill: '#64748b' }} />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'white', 
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                      }} 
+                    />
+                    <Bar dataKey="detections" fill="#475569" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="flex items-center justify-center h-64 text-gray-500">
+                <div className="flex items-center justify-center h-64 text-slate-500">
                   <div className="text-center">
-                    <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                    <p>No hourly patterns data available</p>
-                    <p className="text-sm">Data will appear here once detections are recorded</p>
+                    <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-slate-400" />
+                    <p className="font-medium">Không có dữ liệu mẫu theo giờ</p>
+                    <p className="text-sm">Dữ liệu sẽ xuất hiện khi có hoạt động nhận diện</p>
                   </div>
                 </div>
               )}
@@ -370,38 +400,43 @@ const AnalyticsPage: React.FC = () => {
 
         {/* Camera Performance */}
         <TabsContent value="cameras" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Top Performing Cameras</CardTitle>
+          <Card className="border-slate-200 shadow-lg">
+            <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-200">
+              <CardTitle className="text-slate-800">Camera hiệu suất cao nhất</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
               {stats.top_cameras.length > 0 ? (
                 <div className="space-y-4">
                   {stats.top_cameras.map((camera, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div key={index} className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
                       <div className="flex items-center space-x-3">
-                        <Camera className="h-5 w-5 text-blue-600" />
+                        <div className="p-2 bg-blue-100 rounded-full">
+                          <Camera className="h-5 w-5 text-blue-700" />
+                        </div>
                         <div>
-                          <p className="font-medium">{camera.camera_name}</p>
-                          <p className="text-sm text-gray-600">
-                            {camera.detection_count} detections
+                          <p className="font-medium text-slate-900">{camera.camera_name}</p>
+                          <p className="text-sm text-slate-600">
+                            {camera.detection_count} lần nhận diện
                           </p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <Badge variant="default">
-                          {camera.accuracy.toFixed(1)}% accuracy
+                        <Badge 
+                          variant="default" 
+                          className="bg-slate-800 text-white hover:bg-slate-700"
+                        >
+                          {camera.accuracy.toFixed(1)}% độ chính xác
                         </Badge>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="flex items-center justify-center h-64 text-gray-500">
+                <div className="flex items-center justify-center h-64 text-slate-500">
                   <div className="text-center">
-                    <Camera className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                    <p>No camera performance data available</p>
-                    <p className="text-sm">Data will appear here once cameras start detecting</p>
+                    <Camera className="h-12 w-12 mx-auto mb-4 text-slate-400" />
+                    <p className="font-medium">Không có dữ liệu hiệu suất camera</p>
+                    <p className="text-sm">Dữ liệu sẽ xuất hiện khi camera bắt đầu hoạt động</p>
                   </div>
                 </div>
               )}
@@ -412,16 +447,23 @@ const AnalyticsPage: React.FC = () => {
         {/* Overview */}
         <TabsContent value="overview" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Detection Distribution</CardTitle>
+            <Card className="border-slate-200 shadow-lg">
+              <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-200">
+                <CardTitle className="text-slate-800">Phân bố nhận diện</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 {stats.detection_types.length > 0 && stats.total_detections > 0 ? (
                   <>
                     <ResponsiveContainer width="100%" height={300}>
                       <RechartsPieChart>
-                        <Tooltip />
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: 'white', 
+                            border: '1px solid #e2e8f0',
+                            borderRadius: '8px',
+                            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                          }} 
+                        />
                         <Pie
                           data={stats.detection_types}
                           cx="50%"
@@ -442,50 +484,60 @@ const AnalyticsPage: React.FC = () => {
                             className="w-3 h-3 rounded-full" 
                             style={{ backgroundColor: type.color }}
                           />
-                          <span className="text-sm">{type.name}: {type.value}</span>
+                          <span className="text-sm text-slate-700 font-medium">
+                            {type.name}: {type.value}
+                          </span>
                         </div>
                       ))}
                     </div>
                   </>
                 ) : (
-                  <div className="flex items-center justify-center h-64 text-gray-500">
+                  <div className="flex items-center justify-center h-64 text-slate-500">
                     <div className="text-center">
-                      <Target className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                      <p>No detection distribution data available</p>
-                      <p className="text-sm">Data will appear here once detections are recorded</p>
+                      <Target className="h-12 w-12 mx-auto mb-4 text-slate-400" />
+                      <p className="font-medium">Không có dữ liệu phân bố nhận diện</p>
+                      <p className="text-sm">Dữ liệu sẽ xuất hiện khi có hoạt động nhận diện</p>
                     </div>
                   </div>
                 )}
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Weekly Summary</CardTitle>
+            <Card className="border-slate-200 shadow-lg">
+              <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-200">
+                <CardTitle className="text-slate-800">Tóm tắt hàng tuần</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 {stats.detection_trends.length > 0 ? (
                   <ResponsiveContainer width="100%" height={300}>
                     <LineChart data={stats.detection_trends}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="date" />
-                      <YAxis />
-                      <Tooltip />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                      <XAxis dataKey="date" tick={{ fill: '#64748b' }} />
+                      <YAxis tick={{ fill: '#64748b' }} />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: 'white', 
+                          border: '1px solid #e2e8f0',
+                          borderRadius: '8px',
+                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                        }} 
+                      />
                       <Line 
                         type="monotone" 
                         dataKey="total" 
-                        stroke="#3B82F6" 
+                        stroke="#475569" 
                         strokeWidth={3}
-                        name="Total Detections"
+                        name="Tổng số nhận diện"
+                        dot={{ fill: '#475569', r: 4 }}
                       />
                     </LineChart>
                   </ResponsiveContainer>
                 ) : (
-                  <div className="flex items-center justify-center h-64 text-gray-500">
+                  <div className="flex items-center justify-center h-64 text-slate-500">
                     <div className="text-center">
-                      <Eye className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                      <p>No weekly summary data available</p>
-                      <p className="text-sm">Data will appear here once detections are recorded</p>
+                      <Eye className="h-12 w-12 mx-auto mb-4 text-slate-400" />
+                      <p className="font-medium">Không có dữ liệu tóm tắt hàng tuần</p>
+                      <p className="text-sm">Dữ liệu sẽ xuất hiện khi có hoạt động nhận diện</p>
                     </div>
                   </div>
                 )}

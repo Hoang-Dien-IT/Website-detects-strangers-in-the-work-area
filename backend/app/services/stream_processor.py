@@ -55,27 +55,95 @@ class StreamProcessor:
 
     def _frame_reader(self, camera_id: str, camera: CameraResponse, frame_queue: 'queue.Queue', stop_event: 'threading.Event'):
         """Luồng đọc frame liên tục cho camera"""
-        if camera.camera_type == "webcam":
-            cap = cv2.VideoCapture(0)
-        elif camera.camera_url:
-            cap = cv2.VideoCapture(camera.camera_url)
-        else:
-            cap = cv2.VideoCapture(0)
-        if not cap.isOpened():
-            return
-        self.active_streams[camera_id]["cap"] = cap
-        while not stop_event.is_set():
-            ret, frame = cap.read()
-            if not ret:
-                continue
-            # Giữ queue chỉ 1 frame mới nhất (loại bỏ frame cũ)
+        cap = None
+        retry_count = 0
+        max_retries = 3
+        
+        while not stop_event.is_set() and retry_count < max_retries:
+            try:
+                # Khởi tạo camera capture
+                if camera.camera_type == "webcam":
+                    cap = cv2.VideoCapture(0)
+                elif camera.camera_url:
+                    print(f"🔵 Attempting to connect to camera URL: {camera.camera_url}")
+                    cap = cv2.VideoCapture(camera.camera_url)
+                    # Thiết lập timeout cho IP camera
+                    cap.set(cv2.CAP_PROP_OPEN_TIMEOUT_MSEC, 5000)  # 5 giây timeout
+                    cap.set(cv2.CAP_PROP_READ_TIMEOUT_MSEC, 3000)  # 3 giây read timeout
+                else:
+                    cap = cv2.VideoCapture(0)
+                
+                if not cap.isOpened():
+                    print(f"❌ Failed to open camera, retry {retry_count + 1}/{max_retries}")
+                    retry_count += 1
+                    time.sleep(2)  # Chờ 2 giây trước khi retry
+                    continue
+                
+                print(f"✅ Camera connected successfully: {camera.name}")
+                self.active_streams[camera_id]["cap"] = cap
+                retry_count = 0  # Reset retry count khi kết nối thành công
+                
+                # Đọc frame liên tục
+                consecutive_failures = 0
+                max_consecutive_failures = 10
+                
+                while not stop_event.is_set():
+                    ret, frame = cap.read()
+                    if not ret:
+                        consecutive_failures += 1
+                        print(f"⚠️ Failed to read frame, consecutive failures: {consecutive_failures}")
+                        
+                        if consecutive_failures >= max_consecutive_failures:
+                            print(f"❌ Too many consecutive failures, reconnecting...")
+                            break  # Thoát vòng lặp để reconnect
+                        
+                        # Tạo dummy frame khi không đọc được
+                        dummy_frame = self._create_dummy_frame(f"Camera {camera.name} - Connection Issue")
+                        if not frame_queue.empty():
+                            try:
+                                frame_queue.get_nowait()
+                            except:
+                                pass
+                        frame_queue.put(dummy_frame)
+                        time.sleep(0.1)
+                        continue
+                    
+                    consecutive_failures = 0  # Reset khi đọc thành công
+                    
+                    # Giữ queue chỉ 1 frame mới nhất (loại bỏ frame cũ)
+                    if not frame_queue.empty():
+                        try:
+                            frame_queue.get_nowait()
+                        except:
+                            pass
+                    frame_queue.put(frame)
+                    
+                cap.release()
+                cap = None
+                
+            except Exception as e:
+                print(f"❌ Error in frame reader: {e}")
+                if cap:
+                    cap.release()
+                    cap = None
+                retry_count += 1
+                time.sleep(2)
+        
+        # Cleanup
+        if cap:
+            cap.release()
+        
+        # Đưa dummy frame cuối cùng vào queue
+        if not stop_event.is_set():
+            dummy_frame = self._create_dummy_frame(f"Camera {camera.name} - No Signal")
             if not frame_queue.empty():
                 try:
                     frame_queue.get_nowait()
-                except Exception:
+                except:
                     pass
-            frame_queue.put(frame)
-        cap.release()
+            frame_queue.put(dummy_frame)
+        
+        print(f"🔴 Frame reader stopped for camera: {camera.name}")
 
     async def start_stream(self, camera_id: str, camera: CameraResponse) -> bool:
         """Bắt đầu stream camera (tối ưu đa luồng đọc frame)"""
@@ -132,23 +200,54 @@ class StreamProcessor:
     async def generate_video_stream(self, camera_id: str, camera: CameraResponse) -> AsyncGenerator[bytes, None]:
         """Generate video stream frames (tối ưu đa luồng, AI mỗi 5 frame)"""
         try:
-            await self.start_stream(camera_id, camera)
-            stream = self.active_streams.get(camera_id)
-            if not stream or "frame_queue" not in stream:
-                async for frame in self._generate_dummy_frames():
+            print(f"🔵 Starting video stream generation for camera: {camera.name}")
+            
+            # Bắt đầu stream
+            stream_started = await self.start_stream(camera_id, camera)
+            if not stream_started:
+                print(f"❌ Failed to start stream for camera: {camera.name}")
+                async for frame in self._generate_error_frames(f"Failed to start camera {camera.name}"):
                     yield frame
                 return
+            
+            stream = self.active_streams.get(camera_id)
+            if not stream or "frame_queue" not in stream:
+                print(f"❌ Stream not found for camera: {camera.name}")
+                async for frame in self._generate_error_frames(f"Stream not available for {camera.name}"):
+                    yield frame
+                return
+            
             frame_queue = stream["frame_queue"]
             frame_count = 0
             last_ai_result = None
+            no_frame_count = 0
+            max_no_frame = 30  # Tối đa 30 lần không có frame trước khi báo lỗi
+            
+            print(f"✅ Video stream generation ready for camera: {camera.name}")
+            
             while True:
                 if camera_id not in self.active_streams or not self.active_streams[camera_id]["is_active"]:
+                    print(f"🔴 Stream stopped for camera: {camera.name}")
                     break
+                
                 try:
-                    frame = frame_queue.get(timeout=1)
-                except Exception:
-                    frame = self._create_dummy_frame(f"Camera {camera.name} - No Signal")
+                    # Thử lấy frame từ queue với timeout
+                    frame = frame_queue.get(timeout=2)  # Tăng timeout lên 2 giây
+                    no_frame_count = 0  # Reset counter khi có frame
+                    
+                except Exception as e:
+                    no_frame_count += 1
+                    print(f"⚠️ No frame from camera {camera.name}, count: {no_frame_count}")
+                    
+                    if no_frame_count >= max_no_frame:
+                        # Quá nhiều lần không có frame, tạo error frame
+                        frame = self._create_dummy_frame(f"Camera {camera.name} - Connection Lost")
+                    else:
+                        # Tạo dummy frame tạm thời
+                        frame = self._create_dummy_frame(f"Camera {camera.name} - Connecting...")
+                
                 frame_count += 1
+                
                 # Chỉ xử lý AI mỗi 5 frame, các frame còn lại chỉ overlay lại kết quả AI cũ
                 if camera.detection_enabled and frame_count % 5 == 0:
                     processed_frame = await self._process_frame(frame.copy(), camera_id, camera)
@@ -167,14 +266,22 @@ class StreamProcessor:
                     cv2.putText(processed_frame, timestamp, (10, processed_frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
                 else:
                     processed_frame = await self._process_frame(frame.copy(), camera_id, camera)
+                
+                # Encode frame thành JPEG
                 _, buffer = cv2.imencode('.jpg', processed_frame, [cv2.IMWRITE_JPEG_QUALITY, 70])
                 frame_bytes = buffer.tobytes()
+                
+                # Yield frame
                 yield (b'--frame\r\n'
                        b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+                
                 await asyncio.sleep(0.001)  # sleep rất nhỏ để tránh block event loop
+                
         except Exception as e:
-            print(f"Error in video stream: {e}")
-            async for frame in self._generate_error_frames(str(e)):
+            print(f"❌ Error in video stream generation: {e}")
+            import traceback
+            print(f"❌ Traceback: {traceback.format_exc()}")
+            async for frame in self._generate_error_frames(f"Stream error: {str(e)}"):
                 yield frame
 
     async def _process_frame(self, frame: np.ndarray, camera_id: str, camera: CameraResponse) -> np.ndarray:
@@ -300,9 +407,33 @@ class StreamProcessor:
     def _create_dummy_frame(self, message: str = "No Camera") -> np.ndarray:
         """Create dummy frame when camera is not available"""
         frame = np.zeros((480, 640, 3), dtype=np.uint8)
-        cv2.putText(frame, message, (50, 240), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
-        cv2.putText(frame, time.strftime("%Y-%m-%d %H:%M:%S"), (50, 280), 
-                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 1)
+        
+        # Thêm background màu đen với viền
+        cv2.rectangle(frame, (20, 20), (620, 460), (50, 50, 50), -1)
+        cv2.rectangle(frame, (20, 20), (620, 460), (255, 255, 255), 2)
+        
+        # Tiêu đề chính
+        cv2.putText(frame, "SafeFace System", (40, 60), 
+                   cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 255), 2)
+        
+        # Thông điệp lỗi
+        lines = message.split(' - ')
+        y_start = 120
+        for i, line in enumerate(lines):
+            cv2.putText(frame, line, (40, y_start + i * 40), 
+                       cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
+        
+        # Thời gian hiện tại
+        timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+        cv2.putText(frame, timestamp, (40, 350), 
+                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+        
+        # Hướng dẫn
+        cv2.putText(frame, "Checking camera connection...", (40, 390), 
+                   cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 0), 1)
+        cv2.putText(frame, "Please verify camera URL and settings", (40, 420), 
+                   cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 0), 1)
+        
         return frame
 
     async def _generate_dummy_frames(self) -> AsyncGenerator[bytes, None]:

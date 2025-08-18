@@ -146,19 +146,19 @@ const FaceRecognitionSettingsPage: React.FC = () => {
   };
 
   const getConfidenceLabel = (value: number) => {
-    if (value >= 0.9) return 'Very High';
-    if (value >= 0.8) return 'High';
-    if (value >= 0.7) return 'Medium';
-    if (value >= 0.6) return 'Low';
-    return 'Very Low';
+    if (value >= 0.9) return 'Rất cao';
+    if (value >= 0.8) return 'Cao';
+    if (value >= 0.7) return 'Trung bình';
+    if (value >= 0.6) return 'Thấp';
+    return 'Rất thấp';
   };
 
   const getSensitivityLabel = (value: number) => {
-    if (value >= 0.8) return 'Maximum';
-    if (value >= 0.7) return 'High';
-    if (value >= 0.5) return 'Medium';
-    if (value >= 0.3) return 'Low';
-    return 'Minimal';
+    if (value >= 0.8) return 'Tối đa';
+    if (value >= 0.7) return 'Cao';
+    if (value >= 0.5) return 'Trung bình';
+    if (value >= 0.3) return 'Thấp';
+    return 'Tối thiểu';
   };
 
   if (loading) {
@@ -166,7 +166,7 @@ const FaceRecognitionSettingsPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-indigo-50 p-6">
       <motion.div 
         className="max-w-6xl mx-auto space-y-8"
         initial={{ opacity: 0, y: 20 }}
@@ -175,7 +175,7 @@ const FaceRecognitionSettingsPage: React.FC = () => {
       >
         {/* Header */}
         <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-3xl opacity-90"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-blue-600 to-indigo-600 rounded-3xl opacity-90"></div>
           <div className="absolute inset-0 bg-black/20 rounded-3xl"></div>
           <div className="relative p-8 text-white">
             <div className="flex items-center justify-between">
@@ -187,27 +187,27 @@ const FaceRecognitionSettingsPage: React.FC = () => {
                   className="text-white hover:bg-white/10"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Settings
+                  Quay lại cài đặt
                 </Button>
                 <div>
                   <h1 className="text-4xl font-bold mb-2 flex items-center">
                     <Brain className="h-10 w-10 mr-3" />
-                    Face Recognition Settings
+                    Cài đặt nhận diện khuôn mặt
                   </h1>
-                  <p className="text-blue-100 text-lg">Configure AI-powered face detection and recognition</p>
+                  <p className="text-emerald-100 text-lg">Tuỳ chỉnh AI nhận diện & phát hiện khuôn mặt</p>
                 </div>
               </div>
               <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2">
                 {settings.detection_enabled ? (
                   <>
-                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
                     <Eye className="h-4 w-4" />
-                    <span className="text-sm font-medium">Active</span>
+                    <span className="text-sm font-medium">Đang bật</span>
                   </>
                 ) : (
                   <>
                     <div className="w-2 h-2 bg-red-400 rounded-full"></div>
-                    <span className="text-sm font-medium">Disabled</span>
+                    <span className="text-sm font-medium">Đã tắt</span>
                   </>
                 )}
               </div>
@@ -223,17 +223,17 @@ const FaceRecognitionSettingsPage: React.FC = () => {
               <div className="text-2xl font-bold text-yellow-600">
                 {performanceMetrics.detection_speed.toFixed(1)}ms
               </div>
-              <div className="text-sm text-gray-600">Detection Speed</div>
+              <div className="text-sm text-slate-600">Tốc độ nhận diện</div>
             </CardContent>
           </Card>
 
           <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
             <CardContent className="p-6 text-center">
-              <Target className="h-8 w-8 text-green-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-green-600">
+              <Target className="h-8 w-8 text-emerald-600 mx-auto mb-2" />
+              <div className="text-2xl font-bold text-emerald-600">
                 {performanceMetrics.accuracy_rate.toFixed(1)}%
               </div>
-              <div className="text-sm text-gray-600">Accuracy Rate</div>
+              <div className="text-sm text-slate-600">Tỷ lệ chính xác</div>
             </CardContent>
           </Card>
 
@@ -243,7 +243,7 @@ const FaceRecognitionSettingsPage: React.FC = () => {
               <div className="text-2xl font-bold text-red-600">
                 {performanceMetrics.false_positive_rate.toFixed(1)}%
               </div>
-              <div className="text-sm text-gray-600">False Positives</div>
+              <div className="text-sm text-slate-600">Cảnh báo sai</div>
             </CardContent>
           </Card>
 
@@ -253,7 +253,7 @@ const FaceRecognitionSettingsPage: React.FC = () => {
               <div className="text-2xl font-bold text-blue-600">
                 {performanceMetrics.processing_load.toFixed(0)}%
               </div>
-              <div className="text-sm text-gray-600">CPU Load</div>
+              <div className="text-sm text-slate-600">Tải CPU</div>
             </CardContent>
           </Card>
 
@@ -263,7 +263,7 @@ const FaceRecognitionSettingsPage: React.FC = () => {
               <div className="text-2xl font-bold text-purple-600">
                 {performanceMetrics.memory_usage.toFixed(0)}%
               </div>
-              <div className="text-sm text-gray-600">Memory Usage</div>
+              <div className="text-sm text-slate-600">Bộ nhớ RAM</div>
             </CardContent>
           </Card>
         </div>
@@ -272,21 +272,21 @@ const FaceRecognitionSettingsPage: React.FC = () => {
         <Tabs defaultValue="detection" className="space-y-6">
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-2">
             <TabsList className="grid w-full grid-cols-4 bg-transparent">
-              <TabsTrigger value="detection" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+              <TabsTrigger value="detection" className="data-[state=active]:bg-emerald-600 data-[state=active]:text-white">
                 <Eye className="w-4 h-4 mr-2" />
-                Detection
+                Nhận diện
               </TabsTrigger>
-              <TabsTrigger value="security" className="data-[state=active]:bg-green-600 data-[state=active]:text-white">
+              <TabsTrigger value="security" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">
                 <Shield className="w-4 h-4 mr-2" />
-                Security
+                Bảo mật
               </TabsTrigger>
               <TabsTrigger value="performance" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white">
                 <Zap className="w-4 h-4 mr-2" />
-                Performance
+                Hiệu năng
               </TabsTrigger>
               <TabsTrigger value="advanced" className="data-[state=active]:bg-orange-600 data-[state=active]:text-white">
                 <Settings className="w-4 h-4 mr-2" />
-                Advanced
+                Nâng cao
               </TabsTrigger>
             </TabsList>
           </div>
@@ -298,14 +298,14 @@ const FaceRecognitionSettingsPage: React.FC = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
                     <Eye className="h-5 w-5" />
-                    <span>Detection Controls</span>
+                    <span>Điều khiển nhận diện</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <Label>Face Detection</Label>
-                      <p className="text-sm text-gray-600">Enable AI-powered face detection</p>
+                      <Label>Bật nhận diện khuôn mặt</Label>
+                      <p className="text-sm text-slate-600">Bật/tắt tính năng nhận diện khuôn mặt AI</p>
                     </div>
                     <Switch
                       checked={settings.detection_enabled}
@@ -319,7 +319,7 @@ const FaceRecognitionSettingsPage: React.FC = () => {
 
                   <div className="space-y-3">
                     <Label>
-                      Confidence Threshold: {Math.round(settings.confidence_threshold * 100)}% 
+                      Ngưỡng tin cậy: {Math.round(settings.confidence_threshold * 100)}% 
                       <Badge variant="outline" className="ml-2">
                         {getConfidenceLabel(settings.confidence_threshold)}
                       </Badge>
@@ -339,8 +339,8 @@ const FaceRecognitionSettingsPage: React.FC = () => {
                       className="w-full"
                     />
                     <div className="flex justify-between text-xs text-gray-500">
-                      <span>50% (More faces)</span>
-                      <span>99% (Fewer faces)</span>
+                      <span>50% (Nhiều khuôn mặt)</span>
+                      <span>99% (Ít khuôn mặt)</span>
                     </div>
                   </div>
 
@@ -348,7 +348,7 @@ const FaceRecognitionSettingsPage: React.FC = () => {
 
                   <div className="space-y-3">
                     <Label>
-                      Detection Sensitivity: {Math.round(settings.detection_sensitivity * 100)}%
+                      Độ nhạy nhận diện: {Math.round(settings.detection_sensitivity * 100)}%
                       <Badge variant="outline" className="ml-2">
                         {getSensitivityLabel(settings.detection_sensitivity)}
                       </Badge>
@@ -368,8 +368,8 @@ const FaceRecognitionSettingsPage: React.FC = () => {
                       className="w-full"
                     />
                     <div className="flex justify-between text-xs text-gray-500">
-                      <span>Low (Fewer alerts)</span>
-                      <span>High (More alerts)</span>
+                      <span>Thấp (Ít cảnh báo)</span>
+                      <span>Cao (Nhiều cảnh báo)</span>
                     </div>
                   </div>
                 </CardContent>
@@ -379,14 +379,14 @@ const FaceRecognitionSettingsPage: React.FC = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
                     <Camera className="h-5 w-5" />
-                    <span>Recognition Options</span>
+                    <span>Tùy chọn nhận diện</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <Label>Save Unknown Faces</Label>
-                      <p className="text-sm text-gray-600">Store images of unrecognized faces</p>
+                      <Label>Lưu khuôn mặt lạ</Label>
+                      <p className="text-sm text-slate-600">Lưu ảnh các khuôn mặt chưa xác định</p>
                     </div>
                     <Switch
                       checked={settings.save_unknown_faces}
@@ -400,8 +400,8 @@ const FaceRecognitionSettingsPage: React.FC = () => {
 
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <Label>Real-time Processing</Label>
-                      <p className="text-sm text-gray-600">Process video frames in real-time</p>
+                      <Label>Xử lý thời gian thực</Label>
+                      <p className="text-sm text-slate-600">Xử lý khung hình video theo thời gian thực</p>
                     </div>
                     <Switch
                       checked={settings.real_time_processing}
@@ -414,7 +414,7 @@ const FaceRecognitionSettingsPage: React.FC = () => {
                   <Separator />
 
                   <div className="space-y-2">
-                    <Label htmlFor="cooldown">Stranger Alert Cooldown (seconds)</Label>
+                    <Label htmlFor="cooldown">Thời gian chờ cảnh báo người lạ (giây)</Label>
                     <Input
                       id="cooldown"
                       type="number"
@@ -428,8 +428,8 @@ const FaceRecognitionSettingsPage: React.FC = () => {
                       min="0"
                       max="3600"
                     />
-                    <p className="text-sm text-gray-600">
-                      Minimum time between alerts for the same stranger
+                    <p className="text-sm text-slate-600">
+                      Thời gian tối thiểu giữa các cảnh báo cho cùng một người lạ
                     </p>
                   </div>
                 </CardContent>
@@ -443,14 +443,14 @@ const FaceRecognitionSettingsPage: React.FC = () => {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <Shield className="h-5 w-5" />
-                  <span>Security Features</span>
+                  <span>Tính năng bảo mật</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>Anti-Spoofing Protection</Label>
-                    <p className="text-sm text-gray-600">Detect fake faces and printed photos</p>
+                    <Label>Chống giả mạo khuôn mặt</Label>
+                    <p className="text-sm text-slate-600">Phát hiện khuôn mặt giả, ảnh in, video</p>
                   </div>
                   <Switch
                     checked={settings.anti_spoofing_enabled}
@@ -463,8 +463,7 @@ const FaceRecognitionSettingsPage: React.FC = () => {
                 <Alert>
                   <Shield className="h-4 w-4" />
                   <AlertDescription>
-                    Anti-spoofing protection helps prevent unauthorized access using photos, 
-                    videos, or 3D models. This may slightly increase processing time.
+                    Chống giả mạo giúp ngăn truy cập trái phép bằng ảnh, video hoặc mô hình 3D. Có thể làm tăng thời gian xử lý.
                   </AlertDescription>
                 </Alert>
               </CardContent>
@@ -478,12 +477,12 @@ const FaceRecognitionSettingsPage: React.FC = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
                     <Zap className="h-5 w-5" />
-                    <span>Performance Tuning</span>
+                    <span>Tối ưu hiệu năng</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="max_faces">Max Faces per Frame</Label>
+                    <Label htmlFor="max_faces">Số khuôn mặt tối đa mỗi khung hình</Label>
                     <Input
                       id="max_faces"
                       type="number"
@@ -497,14 +496,14 @@ const FaceRecognitionSettingsPage: React.FC = () => {
                       min="1"
                       max="50"
                     />
-                    <p className="text-sm text-gray-600">
-                      Maximum number of faces to detect in a single frame
+                    <p className="text-sm text-slate-600">
+                      Số khuôn mặt tối đa nhận diện trên một khung hình
                     </p>
                   </div>
 
                   <div className="space-y-3">
                     <Label>
-                      Face Quality Threshold: {Math.round(settings.face_quality_threshold * 100)}%
+                      Ngưỡng chất lượng khuôn mặt: {Math.round(settings.face_quality_threshold * 100)}%
                     </Label>
                     <input
                       type="range"
@@ -520,9 +519,9 @@ const FaceRecognitionSettingsPage: React.FC = () => {
                       }
                       className="w-full"
                     />
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>Low quality</span>
-                      <span>High quality</span>
+                    <div className="flex justify-between text-xs text-slate-500">
+                      <span>Chất lượng thấp</span>
+                      <span>Chất lượng cao</span>
                     </div>
                   </div>
                 </CardContent>
@@ -532,13 +531,13 @@ const FaceRecognitionSettingsPage: React.FC = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
                     <BarChart3 className="h-5 w-5" />
-                    <span>Current Performance</span>
+                    <span>Hiệu năng hiện tại</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span>CPU Usage</span>
+                      <span>Sử dụng CPU</span>
                       <span>{performanceMetrics.processing_load.toFixed(0)}%</span>
                     </div>
                     <Progress value={performanceMetrics.processing_load} className="h-2" />
@@ -546,7 +545,7 @@ const FaceRecognitionSettingsPage: React.FC = () => {
 
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span>Memory Usage</span>
+                      <span>Sử dụng RAM</span>
                       <span>{performanceMetrics.memory_usage.toFixed(0)}%</span>
                     </div>
                     <Progress value={performanceMetrics.memory_usage} className="h-2" />
@@ -554,7 +553,7 @@ const FaceRecognitionSettingsPage: React.FC = () => {
 
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span>Accuracy Rate</span>
+                      <span>Tỷ lệ chính xác</span>
                       <span>{performanceMetrics.accuracy_rate.toFixed(1)}%</span>
                     </div>
                     <Progress value={performanceMetrics.accuracy_rate} className="h-2" />
@@ -570,14 +569,14 @@ const FaceRecognitionSettingsPage: React.FC = () => {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <Settings className="h-5 w-5" />
-                  <span>Advanced AI Features</span>
+                  <span>Tính năng AI nâng cao</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>Gender Detection</Label>
-                    <p className="text-sm text-gray-600">Detect gender from facial features</p>
+                    <Label>Nhận diện giới tính</Label>
+                    <p className="text-sm text-slate-600">Nhận diện giới tính từ khuôn mặt</p>
                   </div>
                   <Switch
                     checked={settings.enable_gender_detection}
@@ -591,8 +590,8 @@ const FaceRecognitionSettingsPage: React.FC = () => {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>Age Estimation</Label>
-                    <p className="text-sm text-gray-600">Estimate age from facial features</p>
+                    <Label>Ước lượng tuổi</Label>
+                    <p className="text-sm text-slate-600">Ước lượng tuổi từ khuôn mặt</p>
                   </div>
                   <Switch
                     checked={settings.enable_age_estimation}
@@ -606,8 +605,8 @@ const FaceRecognitionSettingsPage: React.FC = () => {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>Emotion Detection</Label>
-                    <p className="text-sm text-gray-600">Detect emotions from facial expressions</p>
+                    <Label>Nhận diện cảm xúc</Label>
+                    <p className="text-sm text-slate-600">Nhận diện cảm xúc từ biểu cảm khuôn mặt</p>
                   </div>
                   <Switch
                     checked={settings.enable_emotion_detection}
@@ -620,8 +619,7 @@ const FaceRecognitionSettingsPage: React.FC = () => {
                 <Alert>
                   <Brain className="h-4 w-4" />
                   <AlertDescription>
-                    Advanced AI features require additional processing power and may impact performance. 
-                    Enable only the features you need for your use case.
+                    Các tính năng AI nâng cao cần nhiều tài nguyên xử lý hơn và có thể ảnh hưởng hiệu năng. Chỉ bật khi thực sự cần thiết.
                   </AlertDescription>
                 </Alert>
               </CardContent>
@@ -634,21 +632,21 @@ const FaceRecognitionSettingsPage: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-semibold">Save Changes</h3>
-                <p className="text-sm text-gray-600">
-                  Apply your face recognition settings to all cameras
+                <h3 className="font-semibold">Lưu thay đổi</h3>
+                <p className="text-sm text-slate-600">
+                  Áp dụng cài đặt nhận diện khuôn mặt cho tất cả camera
                 </p>
               </div>
               <Button onClick={handleSaveSettings} disabled={saving} size="lg">
                 {saving ? (
                   <>
                     <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                    Saving...
+                    Đang lưu...
                   </>
                 ) : (
                   <>
                     <Save className="h-4 w-4 mr-2" />
-                    Save Settings
+                    Lưu cài đặt
                   </>
                 )}
               </Button>

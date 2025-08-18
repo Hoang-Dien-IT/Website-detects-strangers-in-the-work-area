@@ -44,9 +44,9 @@ const ProfilePage: React.FC = () => {
 
   const getAccountBadge = () => {
     if (user?.is_admin) {
-      return <Badge variant="default" className="bg-red-600"><Shield className="w-3 h-3 mr-1" />Administrator</Badge>;
+      return <Badge variant="default" className="bg-red-600"><Shield className="w-3 h-3 mr-1" />Quản trị viên</Badge>;
     }
-    return <Badge variant="outline"><User className="w-3 h-3 mr-1" />User</Badge>;
+    return <Badge variant="outline" className="border-emerald-400 text-emerald-700"><User className="w-3 h-3 mr-1" />Người dùng</Badge>;
   };
 
   const getAccountStats = () => {
@@ -63,34 +63,35 @@ const ProfilePage: React.FC = () => {
   const stats = getAccountStats();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-blue-50">
       {/* Header */}
-      <header className="bg-white border-b px-6 py-4 sticky top-0 z-10">
+      <header className="bg-white/90 border-b border-emerald-100 px-6 py-4 sticky top-0 z-10 shadow-sm backdrop-blur-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate('/dashboard')}
+              className="text-emerald-700 hover:bg-emerald-50"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Dashboard
+              Quay lại trang chủ
             </Button>
             
             <div className="flex items-center space-x-3">
-              <User className="h-6 w-6 text-blue-600" />
+              <User className="h-6 w-6 text-emerald-600" />
               <div>
-                <h1 className="text-xl font-semibold text-gray-900">My Profile</h1>
-                <p className="text-sm text-gray-600">Manage your account settings and preferences</p>
+                <h1 className="text-xl font-semibold text-emerald-900">Hồ sơ cá nhân</h1>
+                <p className="text-sm text-slate-600">Quản lý thông tin và cài đặt tài khoản của bạn</p>
               </div>
             </div>
           </div>
 
           <div className="flex items-center space-x-3">
             {getAccountBadge()}
-            <Button variant="outline" onClick={() => navigate('/settings')}>
+            <Button variant="outline" className="border-emerald-300 hover:bg-emerald-50 text-emerald-700" onClick={() => navigate('/settings')}>
               <Settings className="w-4 h-4 mr-2" />
-              All Settings
+              Cài đặt hệ thống
             </Button>
           </div>
         </div>
@@ -102,12 +103,12 @@ const ProfilePage: React.FC = () => {
           <div className="lg:col-span-1">
             <div className="space-y-6">
               {/* Profile Summary Card */}
-              <Card>
+              <Card className="shadow-md border-emerald-100">
                 <CardHeader className="text-center">
                   <div className="flex justify-center mb-4">
                     <div className="relative">
                       {/* Avatar hiển thị ảnh nếu có, fallback nếu không */}
-                      <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-500">
+                      <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center bg-gradient-to-br from-emerald-500 to-blue-500">
                         <img
                           src={avatarSrc || '/default-avatar.png'}
                           alt="Avatar"
@@ -121,13 +122,13 @@ const ProfilePage: React.FC = () => {
                           </span>
                         )}
                       </div>
-                      <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
+                      <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 rounded-full border-2 border-white flex items-center justify-center">
                         <CheckCircle className="w-3 h-3 text-white" />
                       </div>
                     </div>
                   </div>
-                  <CardTitle className="text-lg">{user?.full_name || 'User'}</CardTitle>
-                  <p className="text-sm text-gray-600">@{user?.username}</p>
+                  <CardTitle className="text-lg text-emerald-900">{user?.full_name || 'Người dùng'}</CardTitle>
+                  <p className="text-sm text-slate-600">@{user?.username}</p>
                   <div className="flex justify-center mt-2">
                     {getAccountBadge()}
                   </div>
@@ -138,20 +139,20 @@ const ProfilePage: React.FC = () => {
                   {/* Quick Stats */}
                   <div className="space-y-3 text-sm">
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-600">Account Status</span>
-                      <Badge variant={user?.is_active ? "default" : "secondary"}>
-                        {stats.accountStatus}
+                      <span className="text-slate-600">Trạng thái tài khoản</span>
+                      <Badge variant={user?.is_active ? "default" : "secondary"} className={user?.is_active ? 'bg-emerald-500 text-white' : 'bg-slate-200 text-slate-700'}>
+                        {user?.is_active ? 'Đang hoạt động' : 'Đã khóa'}
                       </Badge>
                     </div>
                     
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-600">Member Since</span>
-                      <span className="font-medium">{stats.daysSinceJoined} days</span>
+                      <span className="text-slate-600">Thành viên từ</span>
+                      <span className="font-medium">{stats.daysSinceJoined} ngày</span>
                     </div>
                     
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-600">Last Login</span>
-                      <span className="font-medium">{stats.lastLogin.toLocaleDateString()}</span>
+                      <span className="text-slate-600">Đăng nhập gần nhất</span>
+                      <span className="font-medium">{stats.lastLogin.toLocaleDateString('vi-VN')}</span>
                     </div>
                   </div>
 
@@ -159,66 +160,66 @@ const ProfilePage: React.FC = () => {
 
                   {/* Quick Actions */}
                   <div className="space-y-2">
-                    <Button variant="outline" size="sm" className="w-full justify-start">
+                    <Button variant="outline" size="sm" className="w-full justify-start border-emerald-300 text-emerald-700">
                       <Lock className="w-4 h-4 mr-2" />
-                      Change Password
+                      Đổi mật khẩu
                     </Button>
-                    <Button variant="outline" size="sm" className="w-full justify-start">
+                    <Button variant="outline" size="sm" className="w-full justify-start border-emerald-300 text-emerald-700">
                       <Bell className="w-4 h-4 mr-2" />
-                      Notifications
+                      Thông báo
                     </Button>
-                    <Button variant="outline" size="sm" className="w-full justify-start">
+                    <Button variant="outline" size="sm" className="w-full justify-start border-emerald-300 text-emerald-700">
                       <Shield className="w-4 h-4 mr-2" />
-                      Privacy Settings
+                      Bảo mật & quyền riêng tư
                     </Button>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Account Information */}
-              <Card>
+              <Card className="shadow-md border-emerald-100">
                 <CardHeader>
-                  <CardTitle className="text-base">Account Information</CardTitle>
+                  <CardTitle className="text-base text-emerald-900">Thông tin tài khoản</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3 text-sm">
                   {user?.email && (
                     <div className="flex items-center space-x-2">
-                      <Mail className="w-4 h-4 text-gray-400" />
-                      <span className="text-gray-600">{user.email}</span>
+                      <Mail className="w-4 h-4 text-slate-400" />
+                      <span className="text-slate-600">{user.email}</span>
                     </div>
                   )}
                   
                   {user?.created_at && (
                     <div className="flex items-center space-x-2">
-                      <Calendar className="w-4 h-4 text-gray-400" />
-                      <span className="text-gray-600">Joined {new Date(user.created_at).toLocaleDateString()}</span>
+                      <Calendar className="w-4 h-4 text-slate-400" />
+                      <span className="text-slate-600">Tham gia {new Date(user.created_at).toLocaleDateString('vi-VN')}</span>
                     </div>
                   )}
                   
                   <div className="flex items-center space-x-2">
-                    <Eye className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-600">ID: {user?.id?.slice(0, 8)}...</span>
+                    <Eye className="w-4 h-4 text-slate-400" />
+                    <span className="text-slate-600">ID: {user?.id?.slice(0, 8)}...</span>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Security Status */}
-              <Card>
+              <Card className="shadow-md border-emerald-100">
                 <CardHeader>
-                  <CardTitle className="text-base">Security Status</CardTitle>
+                  <CardTitle className="text-base text-emerald-900">Bảo mật tài khoản</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Two-Factor Auth</span>
-                    <Badge variant="outline">Disabled</Badge>
+                    <span className="text-slate-600">Xác thực 2 lớp</span>
+                    <Badge variant="outline" className="border-emerald-300 text-emerald-700">Chưa bật</Badge>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Password Strength</span>
-                    <Badge variant="default">Strong</Badge>
+                    <span className="text-slate-600">Độ mạnh mật khẩu</span>
+                    <Badge variant="default" className="bg-emerald-500 text-white">Mạnh</Badge>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Login Sessions</span>
-                    <span className="font-medium">1 active</span>
+                    <span className="text-slate-600">Phiên đăng nhập</span>
+                    <span className="font-medium">1 hoạt động</span>
                   </div>
                 </CardContent>
               </Card>
@@ -227,11 +228,11 @@ const ProfilePage: React.FC = () => {
 
           {/* Main Profile Settings */}
           <div className="lg:col-span-3">
-            <Card>
+            <Card className="shadow-md border-emerald-100">
               <CardHeader>
-                <CardTitle>Profile Settings</CardTitle>
-                <p className="text-sm text-gray-600">
-                  Update your personal information and profile settings
+                <CardTitle className="text-emerald-900">Cài đặt hồ sơ</CardTitle>
+                <p className="text-sm text-slate-600">
+                  Cập nhật thông tin cá nhân và cài đặt hồ sơ của bạn
                 </p>
               </CardHeader>
               <CardContent>
@@ -242,18 +243,18 @@ const ProfilePage: React.FC = () => {
         </div>
 
         {/* Bottom Action Bar */}
-        <div className="mt-8 p-4 bg-white rounded-lg border shadow-sm">
+        <div className="mt-8 p-4 bg-white/90 rounded-lg border border-emerald-100 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-medium">Need Help?</h3>
-              <p className="text-sm text-gray-600">Contact our support team for assistance</p>
+              <h3 className="font-medium text-emerald-900">Cần hỗ trợ?</h3>
+              <p className="text-sm text-slate-600">Liên hệ đội ngũ SafeFace để được trợ giúp</p>
             </div>
             <div className="flex space-x-3">
-              <Button variant="outline" onClick={() => navigate('/help')}>
-                Get Help
+              <Button variant="outline" className="border-emerald-300 text-emerald-700" onClick={() => navigate('/help')}>
+                Trợ giúp
               </Button>
-              <Button variant="outline">
-                Contact Support
+              <Button variant="outline" className="border-emerald-300 text-emerald-700">
+                Liên hệ hỗ trợ
               </Button>
             </div>
           </div>

@@ -161,17 +161,17 @@ const OverviewPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6 space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-blue-50 p-6 space-y-6">
       {/* Header */}
       <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6">
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center space-y-4 lg:space-y-0">
           <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-xl flex items-center justify-center">
               <Eye className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">System Overview</h1>
-              <p className="text-gray-600">Real-time system status and key metrics</p>
+              <h1 className="text-2xl font-bold text-emerald-900">Tổng quan hệ thống</h1>
+              <p className="text-slate-600">Trạng thái & chỉ số hoạt động của SafeFace theo thời gian thực</p>
             </div>
           </div>
           <div className="flex items-center space-x-3">
@@ -180,10 +180,10 @@ const OverviewPage: React.FC = () => {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="24h">Last 24h</SelectItem>
-                <SelectItem value="7d">Last 7 days</SelectItem>
-                <SelectItem value="30d">Last 30 days</SelectItem>
-                <SelectItem value="90d">Last 90 days</SelectItem>
+                <SelectItem value="24h">24 giờ qua</SelectItem>
+                <SelectItem value="7d">7 ngày qua</SelectItem>
+                <SelectItem value="30d">30 ngày qua</SelectItem>
+                <SelectItem value="90d">90 ngày qua</SelectItem>
               </SelectContent>
             </Select>
             <Button
@@ -194,17 +194,17 @@ const OverviewPage: React.FC = () => {
               }}
               variant="outline"
               disabled={refreshing}
-              className="shadow-sm hover:shadow-md transition-shadow"
+              className="shadow-sm hover:shadow-md transition-shadow border-emerald-300 hover:bg-emerald-50 text-emerald-700"
             >
               <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-              {refreshing ? 'Refreshing...' : 'Refresh'}
+              {refreshing ? 'Đang làm mới...' : 'Làm mới'}
             </Button>
             <Button
               onClick={handleExportOverview}
-              className="shadow-sm hover:shadow-md transition-shadow"
+              className="shadow-sm hover:shadow-md transition-shadow bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
             >
               <Download className="w-4 h-4 mr-2" />
-              Export Report
+              Xuất báo cáo
             </Button>
           </div>
         </div>
@@ -212,73 +212,73 @@ const OverviewPage: React.FC = () => {
 
       {/* Key Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="bg-white/80 backdrop-blur-sm border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300">
+        <Card className="bg-white/80 backdrop-blur-sm border-emerald-200 shadow-lg hover:shadow-xl transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Total Detections</CardTitle>
-            <Eye className="h-4 w-4 text-blue-600" />
+            <CardTitle className="text-sm font-medium text-emerald-700">Tổng lượt phát hiện</CardTitle>
+            <Eye className="h-4 w-4 text-emerald-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-blue-600">{stats.total_detections.toLocaleString()}</div>
+            <div className="text-3xl font-bold text-emerald-600">{stats.total_detections.toLocaleString()}</div>
             <div className="flex items-center space-x-2 mt-2">
-              <Badge variant="secondary" className="text-xs">
-                Today: {stats.today_detections}
+              <Badge variant="secondary" className="text-xs bg-emerald-100 text-emerald-700">
+                Hôm nay: {stats.today_detections}
               </Badge>
-              <Badge variant="outline" className="text-xs">
-                This Week: {stats.this_week_detections}
+              <Badge variant="outline" className="text-xs bg-blue-100 text-blue-700">
+                Tuần này: {stats.this_week_detections}
               </Badge>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white/80 backdrop-blur-sm border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300">
+        <Card className="bg-white/80 backdrop-blur-sm border-emerald-200 shadow-lg hover:shadow-xl transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Known Persons</CardTitle>
-            <Users className="h-4 w-4 text-green-600" />
+            <CardTitle className="text-sm font-medium text-emerald-700">Người quen</CardTitle>
+            <Users className="h-4 w-4 text-emerald-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-green-600">{stats.known_detections.toLocaleString()}</div>
+            <div className="text-3xl font-bold text-emerald-600">{stats.known_detections.toLocaleString()}</div>
             <div className="flex items-center space-x-2 mt-2">
-              <TrendingUp className="h-4 w-4 text-green-500" />
-              <span className="text-sm text-green-600">
+              <TrendingUp className="h-4 w-4 text-emerald-500" />
+              <span className="text-sm text-emerald-700">
                 {stats.total_detections > 0 
-                  ? `${((stats.known_detections / stats.total_detections) * 100).toFixed(1)}% of total`
-                  : '0% of total'
+                  ? `${((stats.known_detections / stats.total_detections) * 100).toFixed(1)}% tổng số`
+                  : '0% tổng số'
                 }
               </span>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white/80 backdrop-blur-sm border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300">
+        <Card className="bg-white/80 backdrop-blur-sm border-emerald-200 shadow-lg hover:shadow-xl transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Strangers Detected</CardTitle>
+            <CardTitle className="text-sm font-medium text-emerald-700">Người lạ</CardTitle>
             <AlertTriangle className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-red-600">{stats.stranger_detections.toLocaleString()}</div>
             <div className="flex items-center space-x-2 mt-2">
               <TrendingDown className="h-4 w-4 text-red-500" />
-              <span className="text-sm text-red-600">
+              <span className="text-sm text-red-700">
                 {stats.total_detections > 0 
-                  ? `${((stats.stranger_detections / stats.total_detections) * 100).toFixed(1)}% of total`
-                  : '0% of total'
+                  ? `${((stats.stranger_detections / stats.total_detections) * 100).toFixed(1)}% tổng số`
+                  : '0% tổng số'
                 }
               </span>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white/80 backdrop-blur-sm border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300">
+        <Card className="bg-white/80 backdrop-blur-sm border-emerald-200 shadow-lg hover:shadow-xl transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">System Accuracy</CardTitle>
+            <CardTitle className="text-sm font-medium text-emerald-700">Độ chính xác hệ thống</CardTitle>
             <Target className="h-4 w-4 text-purple-600" />
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-purple-600">{stats.accuracy_rate.toFixed(1)}%</div>
             <div className="flex items-center space-x-2 mt-2">
               <Shield className="h-4 w-4 text-purple-500" />
-              <span className="text-sm text-purple-600">
-                {stats.alerts_sent} alerts sent
+              <span className="text-sm text-purple-700">
+                {stats.alerts_sent} cảnh báo đã gửi
               </span>
             </div>
           </CardContent>
@@ -288,24 +288,24 @@ const OverviewPage: React.FC = () => {
       {/* System Status and Top Cameras */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* System Status */}
-        <Card className="bg-white/90 backdrop-blur-sm border-slate-200 shadow-lg">
+        <Card className="bg-white/90 backdrop-blur-sm border-emerald-200 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Activity className="h-5 w-5 text-blue-600" />
-              <span>System Status</span>
+              <Activity className="h-5 w-5 text-emerald-600" />
+              <span>Trạng thái hệ thống</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-emerald-50 rounded-lg">
               <div className="flex items-center space-x-3">
-                <Wifi className="h-5 w-5 text-green-600" />
+                <Wifi className="h-5 w-5 text-emerald-600" />
                 <div>
-                  <p className="font-medium text-green-800">Network Status</p>
-                  <p className="text-sm text-green-600">All systems operational</p>
+                  <p className="font-medium text-emerald-800">Kết nối mạng</p>
+                  <p className="text-sm text-emerald-600">Hệ thống hoạt động ổn định</p>
                 </div>
               </div>
-              <Badge variant="default" className="bg-green-100 text-green-800">
-                Connected
+              <Badge variant="default" className="bg-emerald-100 text-emerald-800">
+                Đã kết nối
               </Badge>
             </div>
 
@@ -313,12 +313,12 @@ const OverviewPage: React.FC = () => {
               <div className="flex items-center space-x-3">
                 <Camera className="h-5 w-5 text-blue-600" />
                 <div>
-                  <p className="font-medium text-blue-800">Active Cameras</p>
-                  <p className="text-sm text-blue-600">{stats.cameras_active} of {stats.cameras_total} cameras</p>
+                  <p className="font-medium text-blue-800">Camera đang hoạt động</p>
+                  <p className="text-sm text-blue-600">{stats.cameras_active} / {stats.cameras_total} camera</p>
                 </div>
               </div>
               <Badge variant="outline" className="bg-blue-100 text-blue-800">
-                {stats.cameras_active} Active
+                {stats.cameras_active} hoạt động
               </Badge>
             </div>
 
@@ -326,50 +326,50 @@ const OverviewPage: React.FC = () => {
               <div className="flex items-center space-x-3">
                 <Eye className="h-5 w-5 text-purple-600" />
                 <div>
-                  <p className="font-medium text-purple-800">Detection Engine</p>
-                  <p className="text-sm text-purple-600">Real-time monitoring active</p>
+                  <p className="font-medium text-purple-800">Bộ máy phát hiện</p>
+                  <p className="text-sm text-purple-600">Đang giám sát thời gian thực</p>
                 </div>
               </div>
               <Badge variant="outline" className="bg-purple-100 text-purple-800">
-                Running
+                Đang chạy
               </Badge>
             </div>
           </CardContent>
         </Card>
 
         {/* Top Performing Cameras */}
-        <Card className="bg-white/90 backdrop-blur-sm border-slate-200 shadow-lg">
+        <Card className="bg-white/90 backdrop-blur-sm border-emerald-200 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Camera className="h-5 w-5 text-blue-600" />
-              <span>Top Performing Cameras</span>
+              <span>Camera nổi bật</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             {stats.top_cameras.length > 0 ? (
               <div className="space-y-3">
                 {stats.top_cameras.slice(0, 5).map((camera, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                         <span className="text-sm font-bold text-blue-600">{index + 1}</span>
                       </div>
                       <div>
-                        <p className="font-medium text-gray-800">{camera.camera_name}</p>
-                        <p className="text-sm text-gray-600">{camera.detection_count} detections</p>
+                        <p className="font-medium text-emerald-900">{camera.camera_name}</p>
+                        <p className="text-sm text-slate-600">{camera.detection_count} lượt phát hiện</p>
                       </div>
                     </div>
-                    <Badge variant="outline" className="bg-green-50 text-green-700">
+                    <Badge variant="outline" className="bg-emerald-50 text-emerald-700">
                       {camera.accuracy.toFixed(1)}%
                     </Badge>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8 text-gray-500">
-                <Camera className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                <p>No camera data available</p>
-                <p className="text-sm">Data will appear here once cameras start detecting</p>
+              <div className="text-center py-8 text-slate-500">
+                <Camera className="h-12 w-12 mx-auto mb-4 text-slate-400" />
+                <p>Chưa có dữ liệu camera</p>
+                <p className="text-sm">Dữ liệu sẽ hiển thị khi camera bắt đầu phát hiện</p>
               </div>
             )}
           </CardContent>
@@ -377,32 +377,32 @@ const OverviewPage: React.FC = () => {
       </div>
 
       {/* Recent Activities */}
-      <Card className="bg-white/90 backdrop-blur-sm border-slate-200 shadow-lg">
+      <Card className="bg-white/90 backdrop-blur-sm border-emerald-200 shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <Clock className="h-5 w-5 text-blue-600" />
-            <span>Recent Activities</span>
+            <Clock className="h-5 w-5 text-emerald-600" />
+            <span>Hoạt động gần đây</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {stats.recent_activities.map((activity, index) => (
-              <div key={index} className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
-                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+              <div key={index} className="flex items-center space-x-4 p-3 bg-slate-50 rounded-lg">
+                <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
                   {activity.type === 'detection' ? (
-                    <Eye className="h-5 w-5 text-blue-600" />
+                    <Eye className="h-5 w-5 text-emerald-600" />
                   ) : (
                     <AlertTriangle className="h-5 w-5 text-red-600" />
                   )}
                 </div>
                 <div className="flex-1">
-                  <p className="font-medium text-gray-800">{activity.message}</p>
+                  <p className="font-medium text-emerald-900">{activity.type === 'detection' ? 'Phát hiện người lạ' : 'Cảnh báo an ninh'}</p>
                   <div className="flex items-center space-x-2 mt-1">
-                    <MapPin className="h-4 w-4 text-gray-400" />
-                    <span className="text-sm text-gray-600">{activity.camera}</span>
-                    <Calendar className="h-4 w-4 text-gray-400 ml-4" />
-                    <span className="text-sm text-gray-600">
-                      {new Date(activity.timestamp).toLocaleString()}
+                    <MapPin className="h-4 w-4 text-slate-400" />
+                    <span className="text-sm text-slate-600">{activity.camera}</span>
+                    <Calendar className="h-4 w-4 text-slate-400 ml-4" />
+                    <span className="text-sm text-slate-600">
+                      {new Date(activity.timestamp).toLocaleString('vi-VN')}
                     </span>
                   </div>
                 </div>

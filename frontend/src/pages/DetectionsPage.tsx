@@ -416,11 +416,10 @@ const DetectionsPage: React.FC = () => {
     const now = new Date();
     const detectionTime = new Date(timestamp);
     const diffInMinutes = Math.floor((now.getTime() - detectionTime.getTime()) / (1000 * 60));
-    
-    if (diffInMinutes < 1) return 'Just now';
-    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
-    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
-    return `${Math.floor(diffInMinutes / 1440)}d ago`;
+    if (diffInMinutes < 1) return 'Vừa xong';
+    if (diffInMinutes < 60) return `${diffInMinutes} phút trước`;
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)} giờ trước`;
+    return `${Math.floor(diffInMinutes / 1440)} ngày trước`;
   };
 
   const formatConfidence = (confidence: number) => {
@@ -445,9 +444,9 @@ const DetectionsPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 text-lg">Đang tải các phát hiện...</p>
-          <p className="text-gray-500 text-sm mt-2">Điều này có thể mất vài phút</p>
+          <div className="w-16 h-16 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-slate-700 text-lg">Đang tải dữ liệu nhận diện...</p>
+          <p className="text-slate-500 text-sm mt-2">Vui lòng chờ trong giây lát</p>
         </div>
       </div>
     );
@@ -461,17 +460,17 @@ const DetectionsPage: React.FC = () => {
           {/* Title and Status */}
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-r from-emerald-600 to-blue-500 rounded-xl flex items-center justify-center">
                 <Activity className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Hoạt động phát hiện</h1>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-800 to-emerald-700 bg-clip-text text-transparent">Nhật ký nhận diện</h1>
                 <div className="flex items-center space-x-4 mt-1">
-                  <p className="text-gray-600">Giám sát nhận diện khuôn mặt thời gian thực</p>
+                  <p className="text-slate-600">Theo dõi hoạt động nhận diện khuôn mặt thời gian thực</p>
                   {isConnected ? (
                     <div className="flex items-center space-x-1 text-emerald-600">
                       <Wifi className="h-4 w-4" />
-                      <span className="text-sm font-medium">Cập nhật trực tiếp</span>
+                      <span className="text-sm font-medium">Đang trực tuyến</span>
                     </div>
                   ) : (
                     <div className="flex items-center space-x-1 text-red-600">
@@ -498,7 +497,6 @@ const DetectionsPage: React.FC = () => {
               <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
               {refreshing ? 'Đang làm mới...' : 'Làm mới'}
             </Button>
-            
             <Button
               variant="outline"
               size="sm"
@@ -506,9 +504,8 @@ const DetectionsPage: React.FC = () => {
               className="shadow-sm hover:shadow-md transition-shadow"
             >
               <Download className="h-4 w-4 mr-2" />
-              Xuất dữ liệu
+              Xuất file
             </Button>
-            
             <Button
               variant="outline"
               size="sm"
@@ -723,14 +720,14 @@ const DetectionsPage: React.FC = () => {
         <Card className="bg-white/90 backdrop-blur-sm border-slate-200 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
-              <span>Detection Activity</span>
+              <span>Danh sách nhận diện</span>
               <div className="flex items-center space-x-3">
                 <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                  {filteredDetections.length} results
+                  {filteredDetections.length} kết quả
                 </Badge>
                 {pagination.total > filteredDetections.length && (
                   <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-200">
-                    of {pagination.total} total
+                    trên tổng {pagination.total}
                   </Badge>
                 )}
               </div>
@@ -754,7 +751,7 @@ const DetectionsPage: React.FC = () => {
                         setSelectedDetection(detail);
                         setShowImageDialog(true);
                       } catch (err) {
-                        toast.error('Failed to load detection details');
+                        toast.error('Không thể tải chi tiết nhận diện');
                       } finally {
                         setLoadingDetail(false);
                       }
@@ -763,15 +760,15 @@ const DetectionsPage: React.FC = () => {
                     <div className="flex-1 flex flex-col md:flex-row md:items-center md:space-x-6 w-full">
                       <div className="flex flex-col flex-1 min-w-0">
                         <div className="flex items-center space-x-3 mb-1">
-                          <span className={`font-bold text-lg truncate ${detection.detection_type === 'stranger' ? 'text-red-700' : 'text-emerald-700'}`}>{detection.detection_type === 'stranger' ? 'Unknown Person' : detection.person_name || 'Known Person'}</span>
+                          <span className={`font-bold text-lg truncate ${detection.detection_type === 'stranger' ? 'text-red-700' : 'text-emerald-700'}`}>{detection.detection_type === 'stranger' ? 'Người lạ' : detection.person_name || 'Người đã biết'}</span>
                           <span className="text-xs text-gray-400">#{detection.id.slice(0, 8)}</span>
                           <Badge variant={detection.detection_type === 'stranger' ? 'destructive' : 'default'} className={`ml-2 px-2 py-1 text-xs ${detection.detection_type === 'stranger' ? 'bg-red-100 text-red-700 border-red-300' : 'bg-emerald-100 text-emerald-700 border-emerald-300'}`}>
-                            {detection.detection_type === 'stranger' ? 'Unknown' : 'Known'}
+                            {detection.detection_type === 'stranger' ? 'Lạ' : 'Đã biết'}
                           </Badge>
                         </div>
                         <div className="flex items-center flex-wrap space-x-3 text-sm text-gray-600 mb-1">
                           <Camera className="h-4 w-4 mr-1 inline-block" />
-                          <span>{detection.camera_name || 'Unknown Camera'}</span>
+                          <span>{detection.camera_name || 'Không xác định'}</span>
                           {detection.location && <span className="flex items-center"><MapPin className="h-4 w-4 ml-2 mr-1 inline-block" />{detection.location}</span>}
                           <Clock className="h-4 w-4 ml-2 mr-1 inline-block" />
                           <span title={new Date(detection.timestamp).toLocaleString()}>{formatTimeAgo(detection.timestamp)}</span>
@@ -787,7 +784,7 @@ const DetectionsPage: React.FC = () => {
                           )}
                           {detection.is_alert_sent && (
                             <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-300">
-                              🔔 Alert Sent
+                              🔔 Đã gửi cảnh báo
                             </Badge>
                           )}
                         </div>
@@ -815,24 +812,24 @@ const DetectionsPage: React.FC = () => {
                                 setSelectedDetection(detail);
                                 setShowImageDialog(true);
                               } catch (err) {
-                                toast.error('Failed to load detection details');
+                                toast.error('Không thể tải chi tiết nhận diện');
                               } finally {
                                 setLoadingDetail(false);
                               }
                             }}
                           >
                             <Eye className="h-4 w-4 mr-2" />
-                            {loadingDetail ? 'Loading...' : 'View Details'}
+                            {loadingDetail ? 'Đang tải...' : 'Xem chi tiết'}
                           </DropdownMenuItem>
                           <DropdownMenuItem 
                             onClick={(e) => {
                               e.stopPropagation();
                               navigator.clipboard.writeText(detection.id);
-                              toast.success('Detection ID copied to clipboard');
+                              toast.success('Đã sao chép mã nhận diện');
                             }}
                           >
                             <Calendar className="h-4 w-4 mr-2" />
-                            Copy ID
+                            Sao chép mã
                           </DropdownMenuItem>
                           <DropdownMenuItem 
                             onClick={(e) => {
@@ -842,7 +839,7 @@ const DetectionsPage: React.FC = () => {
                             className="text-red-600 focus:text-red-600"
                           >
                             <Trash2 className="h-4 w-4 mr-2" />
-                            Delete
+                            Xóa nhận diện
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -853,17 +850,17 @@ const DetectionsPage: React.FC = () => {
             ) : (
               <div className="text-center py-12">
                 <Activity className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No detections found</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Không có dữ liệu nhận diện</h3>
                 <p className="text-gray-600 mb-6">
                   {searchTerm || Object.values(filters).some(v => v !== undefined && v !== 20 && v !== 0)
-                    ? 'No detections match your current filters. Try adjusting your search criteria.'
-                    : 'No detections have been recorded yet. Make sure your cameras are active and detection is enabled.'}
+                    ? 'Không tìm thấy kết quả phù hợp với bộ lọc hiện tại. Hãy thử thay đổi điều kiện tìm kiếm.'
+                    : 'Chưa có dữ liệu nhận diện nào được ghi nhận. Hãy đảm bảo camera đang hoạt động và bật tính năng nhận diện.'}
                 </p>
                 <div className="flex justify-center space-x-3">
                   {(searchTerm || Object.values(filters).some(v => v !== undefined && v !== 20 && v !== 0)) && (
                     <Button onClick={clearFilters} variant="outline">
                       <Filter className="h-4 w-4 mr-2" />
-                      Clear Filters
+                      Xóa bộ lọc
                     </Button>
                   )}
                   <Button 
@@ -874,7 +871,7 @@ const DetectionsPage: React.FC = () => {
                     variant="outline"
                   >
                     <RefreshCw className="h-4 w-4 mr-2" />
-                    Refresh
+                    Làm mới
                   </Button>
                 </div>
               </div>
@@ -883,12 +880,9 @@ const DetectionsPage: React.FC = () => {
             {/* Pagination */}
             {pagination.totalPages > 1 && (
               <div className="flex items-center justify-between mt-6 pt-6 border-t">
-                <div className="text-sm text-gray-600">
-                  Showing {((pagination.currentPage - 1) * (filters.limit || 20)) + 1} to{' '}
-                  {Math.min(pagination.currentPage * (filters.limit || 20), pagination.total)} of{' '}
-                  {pagination.total.toLocaleString()} results
+                <div className="text-sm text-slate-600">
+                  Hiển thị {((pagination.currentPage - 1) * (filters.limit || 20)) + 1} - {Math.min(pagination.currentPage * (filters.limit || 20), pagination.total)} trên tổng {pagination.total.toLocaleString()} kết quả
                 </div>
-                
                 <div className="flex items-center space-x-2">
                   <Button
                     variant="outline"
@@ -897,10 +891,10 @@ const DetectionsPage: React.FC = () => {
                     disabled={!pagination.hasPrev}
                   >
                     <ChevronLeft className="h-4 w-4" />
-                    Previous
+                    Trước
                   </Button>
-                  <span className="text-sm text-gray-600 px-3">
-                    Page {pagination.currentPage} of {pagination.totalPages}
+                  <span className="text-sm text-slate-600 px-3">
+                    Trang {pagination.currentPage} / {pagination.totalPages}
                   </span>
                   <Button
                     variant="outline"
@@ -908,7 +902,7 @@ const DetectionsPage: React.FC = () => {
                     onClick={() => handlePageChange(pagination.currentPage + 1)}
                     disabled={!pagination.hasNext}
                   >
-                    Next
+                    Tiếp
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                 </div>
@@ -1074,15 +1068,15 @@ const DetectionsPage: React.FC = () => {
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center space-x-2">
               <Settings className="h-5 w-5" />
-              <span>Cleanup Old Detections</span>
+              <span>Dọn dẹp dữ liệu cũ</span>
             </AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete detections older than the specified number of days. This action cannot be undone.
+              Thao tác này sẽ xóa vĩnh viễn các bản ghi nhận diện cũ hơn số ngày bạn chọn. Không thể hoàn tác!
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <label className="text-sm font-medium text-gray-700">Days to keep</label>
+              <label className="text-sm font-medium text-gray-700">Số ngày giữ lại</label>
               <Input
                 type="number"
                 min="1"
@@ -1093,7 +1087,7 @@ const DetectionsPage: React.FC = () => {
                 disabled={cleanupDialog.loading}
               />
               <p className="text-xs text-gray-500 mt-1">
-                Detections older than {cleanupDialog.daysToKeep} days will be permanently deleted.
+                Các bản ghi nhận diện cũ hơn {cleanupDialog.daysToKeep} ngày sẽ bị xóa vĩnh viễn.
               </p>
             </div>
           </div>
@@ -1102,7 +1096,7 @@ const DetectionsPage: React.FC = () => {
               className="hover:bg-gray-50"
               disabled={cleanupDialog.loading}
             >
-              Cancel
+              Hủy
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleCleanupDetections}
@@ -1112,12 +1106,12 @@ const DetectionsPage: React.FC = () => {
               {cleanupDialog.loading ? (
                 <>
                   <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                  Cleaning up...
+                  Đang dọn dẹp...
                 </>
               ) : (
                 <>
                   <Trash2 className="h-4 w-4 mr-2" />
-                  Cleanup Detections
+                  Dọn dẹp
                 </>
               )}
             </AlertDialogAction>

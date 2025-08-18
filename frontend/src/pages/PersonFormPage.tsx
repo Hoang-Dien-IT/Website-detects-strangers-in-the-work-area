@@ -22,7 +22,7 @@ const PersonFormPage: React.FC = () => {
   if (isBulkImport) {
     console.log('🔵 PersonFormPage: Rendering PersonBulkImport');
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-blue-50">
         <PersonBulkImport />
       </div>
     );
@@ -33,7 +33,7 @@ const PersonFormPage: React.FC = () => {
   
   console.log('🔵 PersonFormPage: Rendering PersonForm with mode:', mode);
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-blue-50">
       <PersonForm mode={mode} />
     </div>
   );
